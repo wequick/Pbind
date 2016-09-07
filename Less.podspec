@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Less'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = 'A tiny MVVM framework that use Plist to build UIs and Databindings.'
 
 # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ Less code, more efficient. Less is a tiny MVVM framework that use Plist to build
   s.source           = { :git => 'https://github.com/wequick/Less.git', :tag => s.version.to_s }
   s.social_media_url = 'https://weibo.com/galenlin'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '7.0'
 
   s.source_files = 'Less/Classes/**/*'
   
