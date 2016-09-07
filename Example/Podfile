@@ -1,0 +1,12 @@
+use_frameworks!
+
+target 'Less_Example' do
+  pod 'Less', :path => '../'
+
+  target 'Less_Tests' do
+    inherit! :search_paths
+
+    pod 'Kiwi'
+  pod 'FBSnapshotTestCase'
+  end
+end
