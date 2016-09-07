@@ -23,6 +23,12 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		687EB1E46C6DBE9D0C0D6042 /* Pods_Less_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D01DDB4E68E182BCD7B858C0 /* Pods_Less_Example.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		F823C76D1D7FF78000B20344 /* LSExample.plist in Resources */ = {isa = PBXBuildFile; fileRef = F823C76C1D7FF78000B20344 /* LSExample.plist */; };
+		F840C2A81D7FF4D600B7D6DE /* UIImageView+LSExample.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2A51D7FF4D600B7D6DE /* UIImageView+LSExample.m */; };
+		F840C2A91D7FF4D600B7D6DE /* LessAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2A71D7FF4D600B7D6DE /* LessAdapter.m */; };
+		F840C2AD1D7FF4ED00B7D6DE /* LSExampleClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2AC1D7FF4ED00B7D6DE /* LSExampleClient.m */; };
+		F840C2B21D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2B01D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.m */; };
+		F840C2B31D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F840C2B11D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +71,16 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D01DDB4E68E182BCD7B858C0 /* Pods_Less_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Less_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F73B7DE6515E1CB18420E6F4 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		F823C76C1D7FF78000B20344 /* LSExample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = LSExample.plist; sourceTree = "<group>"; };
+		F840C2A41D7FF4D600B7D6DE /* UIImageView+LSExample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+LSExample.h"; sourceTree = "<group>"; };
+		F840C2A51D7FF4D600B7D6DE /* UIImageView+LSExample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+LSExample.m"; sourceTree = "<group>"; };
+		F840C2A61D7FF4D600B7D6DE /* LessAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LessAdapter.h; sourceTree = "<group>"; };
+		F840C2A71D7FF4D600B7D6DE /* LessAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LessAdapter.m; sourceTree = "<group>"; };
+		F840C2AB1D7FF4ED00B7D6DE /* LSExampleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSExampleClient.h; sourceTree = "<group>"; };
+		F840C2AC1D7FF4ED00B7D6DE /* LSExampleClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSExampleClient.m; sourceTree = "<group>"; };
+		F840C2AF1D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSExampleGroupMemberAvatarCell.h; sourceTree = "<group>"; };
+		F840C2B01D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSExampleGroupMemberAvatarCell.m; sourceTree = "<group>"; };
+		F840C2B11D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LSExampleGroupMemberAvatarCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +146,10 @@
 		6003F593195388D20070C39A /* Example for Less */ = {
 			isa = PBXGroup;
 			children = (
+				F823C76B1D7FF76000B20344 /* Plist */,
+				F840C2AE1D7FF4F300B7D6DE /* View */,
+				F840C2AA1D7FF4DF00B7D6DE /* Client */,
+				F840C2A31D7FF4C200B7D6DE /* Adapter */,
 				6003F59C195388D20070C39A /* LSAppDelegate.h */,
 				6003F59D195388D20070C39A /* LSAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
@@ -191,6 +211,44 @@
 				124F7FE2AD24B3ABC4412391 /* Pods-Less_Tests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		F823C76B1D7FF76000B20344 /* Plist */ = {
+			isa = PBXGroup;
+			children = (
+				F823C76C1D7FF78000B20344 /* LSExample.plist */,
+			);
+			name = Plist;
+			sourceTree = "<group>";
+		};
+		F840C2A31D7FF4C200B7D6DE /* Adapter */ = {
+			isa = PBXGroup;
+			children = (
+				F840C2A41D7FF4D600B7D6DE /* UIImageView+LSExample.h */,
+				F840C2A51D7FF4D600B7D6DE /* UIImageView+LSExample.m */,
+				F840C2A61D7FF4D600B7D6DE /* LessAdapter.h */,
+				F840C2A71D7FF4D600B7D6DE /* LessAdapter.m */,
+			);
+			name = Adapter;
+			sourceTree = "<group>";
+		};
+		F840C2AA1D7FF4DF00B7D6DE /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				F840C2AB1D7FF4ED00B7D6DE /* LSExampleClient.h */,
+				F840C2AC1D7FF4ED00B7D6DE /* LSExampleClient.m */,
+			);
+			name = Client;
+			sourceTree = "<group>";
+		};
+		F840C2AE1D7FF4F300B7D6DE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F840C2AF1D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.h */,
+				F840C2B01D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.m */,
+				F840C2B11D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.xib */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,8 +335,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				F840C2B31D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.xib in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				F823C76D1D7FF78000B20344 /* LSExample.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +453,10 @@
 				6003F59E195388D20070C39A /* LSAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* LSViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				F840C2A91D7FF4D600B7D6DE /* LessAdapter.m in Sources */,
+				F840C2B21D7FF4FE00B7D6DE /* LSExampleGroupMemberAvatarCell.m in Sources */,
+				F840C2A81D7FF4D600B7D6DE /* UIImageView+LSExample.m in Sources */,
+				F840C2AD1D7FF4ED00B7D6DE /* LSExampleClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

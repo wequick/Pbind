@@ -10,14 +10,21 @@
 
 @interface LSViewController ()
 
+@property (nonatomic, strong) NSDictionary *groupParams;
+
 @end
 
 @implementation LSViewController
+
+- (UITableViewStyle)preferredTableViewStyle {
+    return UITableViewStyleGrouped;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [self.tableView setPlist:@"LSExample"];
 }
 
 - (void)didReceiveMemoryWarning

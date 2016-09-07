@@ -7,7 +7,8 @@
 //
 
 @import UIKit;
+@import Less;
 
-@interface LSViewController : UIViewController
+@interface LSViewController : LSTableViewController
 
 @end
