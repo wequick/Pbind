@@ -1,0 +1,98 @@
+//
+//  LSDictionary.m
+//  Less
+//
+//  Created by galen on 15/5/27.
+//  Copyright (c) 2015年 galen. All rights reserved.
+//
+
+#import "LSDictionary.h"
+
+@implementation LSDictionary
+
+@synthesize dictionary = _dictionary;
+
++ (instancetype)dictionaryWithCapacity:(NSUInteger)capacity
+{
+    LSDictionary *dictionary = [[LSDictionary alloc] init];
+    dictionary->_dictionary = [NSMutableDictionary dictionaryWithCapacity:capacity];
+    return dictionary;
+}
+
++ (instancetype)dictionaryWithDictionary:(NSDictionary *)dict
+{
+    LSDictionary *dictionary = [[LSDictionary alloc] initWithDictionary:dict];
+    return dictionary;
+}
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _dictionary = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict
+{
+    if (self = [super init]) {
+        _dictionary = [NSMutableDictionary dictionaryWithDictionary:dict];
+    }
+    return self;
+}
+
+- (void)setValue:(id)value forKeyPath:(NSString *)keyPath
+{
+    [self willChangeValueForKey:keyPath];
+    [_dictionary setValue:value forKeyPath:keyPath];
+    [self didChangeValueForKey:keyPath];
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    [self willChangeValueForKey:key];
+    [_dictionary setValue:value forKey:key];
+    [self didChangeValueForKey:key];
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    return [_dictionary valueForKey:key];
+}
+
+- (id)valueForKeyPath:(NSString *)keyPath
+{
+    return [_dictionary valueForKeyPath:keyPath];
+}
+
+- (id)objectForKeyedSubscript:(id)key
+{
+    return [_dictionary objectForKeyedSubscript:key];
+}
+
+- (void)setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
+{
+    NSString *keyPath = (id) key;
+    [self willChangeValueForKey:keyPath];
+    [_dictionary setObject:obj forKeyedSubscript:key];
+    [self didChangeValueForKey:keyPath];
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context
+{
+    [super removeObserver:observer forKeyPath:keyPath context:context];
+}
+
+- (NSString *)description {
+    return [_dictionary description];
+}
+
+#pragma mark - Copy
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    NSMutableDictionary *dict = [_dictionary mutableCopyWithZone:zone];
+    LSDictionary *copy = [[LSDictionary allocWithZone:zone] initWithDictionary:dict];
+    return copy;
+}
+
+@end
