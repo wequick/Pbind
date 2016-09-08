@@ -50,7 +50,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 @interface LSClient (Private)
 
-- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
+- (void)_loadRequest:(LSRequest *)request mapper:(LSClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
 
 @end
 
@@ -384,7 +384,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         Class requestClass = [[client class] requestClass];
         LSRequest *request = [[requestClass alloc] init];
         request.action = _resetClientAction;
-        [client _loadRequest:request notifys:NO complection:complection];
+        [client _loadRequest:request mapper:nil notifys:NO complection:complection];
     }
 }
 
@@ -447,7 +447,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if ([self.formDelegate respondsToSelector:@selector(formWillSubmit:)]) {
         [self.formDelegate formWillSubmit:self];
     }
-    [client _loadRequest:request notifys:NO complection:^(LSResponse *response) {
+    [client _loadRequest:request mapper:nil notifys:NO complection:^(LSResponse *response) {
         // Forward to delegate
         BOOL handledError = NO;
         if ([self.formDelegate respondsToSelector:@selector(form:didSubmit:handledError:)]) {
@@ -545,7 +545,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             return nil;
         }
         NSString *clientName = [url host];
-        _submitClient = [[NSClassFromString(clientName) alloc] init];
+        _submitClient = [LSClient clientWithName:clientName];
         _submitClientAction = [url path];
     }
     return _submitClient;
@@ -559,7 +559,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             return nil;
         }
         NSString *clientName = [url host];
-        _resetClient = [[NSClassFromString(clientName) alloc] init];
+        _resetClient = [LSClient clientWithName:clientName];
         _resetClientAction = [url path];
     }
     return _resetClient;

@@ -11,12 +11,38 @@
 NSString *const LSClientWillLoadRequestNotification = @"LSClientWillLoadRequestNotification";
 NSString *const LSClientDidLoadRequestNotification = @"LSClientDidLoadRequestNotification";
 NSString *const LSResponseKey = @"LSResponseKey";
+NSString *const LSResultTipKey = @"LSResultTipKey";
 
 @implementation LSClient
+
+static NSMutableDictionary *kAliasNames;
 
 + (Class)requestClass
 {
     return LSRequest.class;
+}
+
++ (instancetype)clientWithName:(NSString *)clientName
+{
+    NSString *realName = [kAliasNames objectForKey:clientName];
+    if (realName == nil) {
+        realName = clientName;
+    }
+    Class clientClazz = NSClassFromString(realName);
+    if (clientClazz == nil) {
+        return nil;
+    }
+    
+    return [[clientClazz alloc] init];
+}
+
++ (void)registerAlias:(NSDictionary *)alias
+{
+    if (kAliasNames == nil) {
+        kAliasNames = [NSMutableDictionary dictionaryWithDictionary:alias];
+    } else {
+        [kAliasNames addEntriesFromDictionary:alias];
+    }
 }
 
 - (void)GET:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
@@ -25,7 +51,7 @@ NSString *const LSResponseKey = @"LSResponseKey";
     request.action = action;
     request.params = params;
     request.method = @"GET";
-    [self _loadRequest:request notifys:YES complection:complection];
+    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
 }
 
 - (void)POST:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
@@ -34,7 +60,7 @@ NSString *const LSResponseKey = @"LSResponseKey";
     request.action = action;
     request.params = params;
     request.method = @"POST";
-    [self _loadRequest:request notifys:YES complection:complection];
+    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
 }
 
 - (void)PATCH:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
@@ -43,7 +69,7 @@ NSString *const LSResponseKey = @"LSResponseKey";
     request.action = action;
     request.params = params;
     request.method = @"PATCH";
-    [self _loadRequest:request notifys:YES complection:complection];
+    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
 }
 
 - (void)DELETE:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
@@ -52,10 +78,10 @@ NSString *const LSResponseKey = @"LSResponseKey";
     request.action = action;
     request.params = params;
     request.method = @"DELETE";
-    [self _loadRequest:request notifys:YES complection:complection];
+    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
 }
 
-- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection
+- (void)_loadRequest:(LSRequest *)request mapper:(LSClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection
 {
     _canceled = NO;
     LSResponse *debugResponse = [self debugResponse];
@@ -117,11 +143,20 @@ NSString *const LSResponseKey = @"LSResponseKey";
             }
         }
         
-        if (notifys) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:LSClientDidLoadRequestNotification object:self userInfo:@{LSResponseKey: response}];
-        }
-        
         complection(response);
+        
+        if (notifys) {
+            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+            userInfo[LSResponseKey] = response;
+            if (mapper.successTip != nil) {
+                userInfo[LSResultTipKey] = mapper.successTip;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:LSClientDidLoadRequestNotification object:self userInfo:userInfo];
+        }
+
+        if (mapper != nil && mapper.nextClient != nil) {
+            // TODO: Call next
+        }
     } failure:^(NSError *error) {
         LSResponse *response = [[LSResponse alloc] init];
         response.error = error;
@@ -130,6 +165,15 @@ NSString *const LSResponseKey = @"LSResponseKey";
             return;
         }
         complection(response);
+        
+        if (notifys) {
+            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+            userInfo[LSResponseKey] = response;
+            if (mapper.failureTip != nil) {
+                userInfo[LSResultTipKey] = mapper.failureTip;
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:LSClientDidLoadRequestNotification object:self userInfo:userInfo];
+        }
     }];
 }
 

@@ -26,10 +26,12 @@
 
 @property (nonatomic, strong) NSString *plist;
 
+@property (nonatomic, strong) NSArray *clients;
+@property (nonatomic, strong) NSDictionary *actions;
+
 @property (nonatomic, strong) NSString *client;
 @property (nonatomic, strong) NSString *clientAction;
 @property (nonatomic, strong) NSDictionary *clientParams;
-@property (nonatomic, strong) NSArray *clients;
 
 @property (nonatomic, strong) NSString *href;
 @property (nonatomic, strong, readonly, getter=hrefParams) NSDictionary *hrefParams;
@@ -55,6 +57,8 @@
 
 - (UIViewController *)supercontroller;
 - (id)superviewWithClass:(Class)clazz;
+
+- (void)pr_clickHref:(NSString *)href;
 
 - (void)pr_pullData;
 - (void)pr_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id data, NSError *error))transformation;
@@ -110,51 +114,6 @@ typedef void (*LSCallControllerFunc)(id, SEL, id);
 
 UIKIT_STATIC_INLINE void LSViewClickHref(UIView *view, NSString *href)
 {
-    if (href == nil) {
-        return;
-    }
-    
-    NSURL *url;
-    NSDictionary *userInfo = nil;
-    NSRange range = [href rangeOfString:@"?"];
-    if (range.location != NSNotFound) {
-        url = [NSURL URLWithString:[href substringToIndex:range.location]];
-        NSString *query = [href substringFromIndex:range.location + 1];
-        NSMutableDictionary *queries = [[NSMutableDictionary alloc] init];
-        NSArray *pairs = [query componentsSeparatedByString:@"&"];
-        for (NSString *pair in pairs) {
-            NSRange range = [pair rangeOfString:@"="];
-            if (range.location != NSNotFound) {
-                NSString *key = [pair substringToIndex:range.location];
-                NSString *value = [pair substringFromIndex:range.location + 1];
-                queries[key] = value;
-            }
-        }
-        userInfo = queries;
-    } else {
-        url = [NSURL URLWithString:href];
-    }
-    
-    NSString *scheme = url.scheme;
-    if ([scheme isEqualToString:@"note"]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:url.host object:view userInfo:userInfo];
-    } else if ([scheme isEqualToString:@"ctl"]) {
-        // Call a view controller method
-        UIViewController *controller = [view supercontroller];
-        SEL action = NSSelectorFromString([NSString stringWithFormat:@"%@:", url.host]);
-        if ([controller respondsToSelector:action]) {
-            [view setValue:userInfo forAdditionKey:@"hrefParams"];
-            IMP imp = [controller methodForSelector:action];
-            LSCallControllerFunc func = (LSCallControllerFunc)imp;
-            func(controller, action, view);
-        }
-    } else if ([scheme isEqualToString:@"push"]) {
-        // Push to a view controller
-        UIViewController *controller = [view supercontroller];
-        UIViewController *nextController = [[NSClassFromString(url.host) alloc] init];
-        [controller.navigationController pushViewController:nextController animated:YES];
-    }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:LSViewDidClickHrefNotification object:view userInfo:@{@"href":href}];
+    [view pr_clickHref:href];
 }
 

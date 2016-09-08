@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "LSResponse.h"
 #import "LSRequest.h"
+#import "LSClientMapper.h"
 
 //______________________________________________________________________________
 
@@ -27,6 +28,8 @@
 }
 
 + (Class)requestClass; // default is LSRequest.
++ (instancetype)clientWithName:(NSString *)clientName;
++ (void)registerAlias:(NSDictionary *)alias; // alias -> real
 
 @property (nonatomic, assign) id<LSClientDelegate> delegate;
 @property (nonatomic, strong, readonly) LSRequest *request;
@@ -85,3 +88,4 @@ FOUNDATION_EXPORT NSInteger const LSClientCacheForever;
 FOUNDATION_EXPORT NSString *const LSClientWillLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const LSClientDidLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const LSResponseKey;
+FOUNDATION_EXPORT NSString *const LSResultTipKey;

@@ -25,7 +25,7 @@ NSString *const LSViewHrefKey = @"href";
 
 @interface LSClient (Private)
 
-- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
+- (void)_loadRequest:(LSRequest *)request mapper:(LSClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
 
 @end
 
@@ -33,6 +33,8 @@ NSString *const LSViewHrefKey = @"href";
 
 @property (nonatomic, strong) NSArray *_lsClients;
 @property (nonatomic, strong) NSArray *_lsClientMappers;
+@property (nonatomic, strong) NSDictionary *_lsActionClients;
+@property (nonatomic, strong) NSDictionary *_lsActionMappers;
 
 @end
 
@@ -48,11 +50,14 @@ DEF_DYNAMIC_LSOPERTY(pr_unmappableKeys, setPr_unmappableKeys, NSMutableArray *)
 
 DEF_UNDEFINED_LSOPERTY(NSURL *, _lsPlistURL);
 DEF_UNDEFINED_LSOPERTY(NSArray *, _lsClients);
+DEF_UNDEFINED_LSOPERTY(NSDictionary *, _lsActionClients);
 DEF_UNDEFINED_LSOPERTY(NSArray *, _lsClientMappers);
 DEF_UNDEFINED_LSOPERTY(LSMapper *, LS_internalMapper);
+DEF_UNDEFINED_LSOPERTY(NSDictionary *, _lsActionMappers);
 
 DEF_UNDEFINED_LSOPERTY2(NSString *, plist, setPlist)
 DEF_UNDEFINED_LSOPERTY2(NSArray *, clients, setClients)
+DEF_UNDEFINED_LSOPERTY2(NSDictionary *, actions, setActions)
 DEF_UNDEFINED_LSOPERTY2(NSString *, client, setClient)
 DEF_UNDEFINED_LSOPERTY2(NSString *, clientAction, setClientAction)
 DEF_UNDEFINED_LSOPERTY2(NSDictionary *, clientParams, setClientParams)
@@ -139,12 +144,44 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
     
     NSMutableArray *clients = [NSMutableArray arrayWithCapacity:self.clients.count];
     for (LSClientMapper *mapper in self.pr_clientMappers) {
-        Class clientClass = NSClassFromString(mapper.clazz);
-        LSClient *client = [[clientClass alloc] init];
+        LSClient *client = [LSClient clientWithName:mapper.clazz];
         client.delegate = (id) self;
         [clients addObject:client];
     }
     self._lsClients = clients;
+    return clients;
+}
+
+- (NSDictionary *)pr_actionMappers
+{
+    if (self._lsActionMappers != nil) return self._lsActionMappers;
+    
+    if (self.actions == nil) return nil;
+    
+    NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
+    for (NSString *key in self.actions) {
+        LSClientMapper *mapper = [LSClientMapper mapperWithDictionary:self.actions[key]];
+        [mapper initDataForView:self];
+        [mappers setObject:mapper forKey:key];
+    }
+    self._lsActionMappers = mappers;
+    return mappers;
+}
+
+- (NSDictionary *)pr_actionClients
+{
+    if (self._lsActionClients != nil) return self._lsActionClients;
+    
+    if (self.pr_actionMappers == nil) return nil;
+    
+    NSMutableDictionary *clients = [NSMutableDictionary dictionaryWithCapacity:self.pr_actionMappers.count];
+    for (NSString *key in self.pr_actionMappers) {
+        LSClientMapper *mapper = [self.pr_actionMappers objectForKey:key];
+        LSClient *client = [LSClient clientWithName:mapper.clazz];
+        client.delegate = (id) self;
+        [clients setObject:client forKey:key];
+    }
+    self._lsActionClients = clients;
     return clients;
 }
 
@@ -216,7 +253,7 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
 //        } else {
 //            request.params = self.clientParams;
 //        }
-        [client _loadRequest:request notifys:NO complection:^(LSResponse *response) {
+        [client _loadRequest:request mapper:nil notifys:NO complection:^(LSResponse *response) {
             BOOL handledError = NO;
             if ([self.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [self.loadingDelegate view:self didFinishLoading:response handledError:&handledError];
@@ -291,6 +328,97 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
         [client cancel];
     }
     self.pr_loadingCount = 0;
+}
+
+- (void)pr_clickHref:(NSString *)href
+{
+    if (href == nil) {
+        return;
+    }
+    
+    NSURL *url;
+    NSDictionary *userInfo = nil;
+    NSRange range = [href rangeOfString:@"?"];
+    if (range.location != NSNotFound) {
+        url = [NSURL URLWithString:[href substringToIndex:range.location]];
+        NSString *query = [href substringFromIndex:range.location + 1];
+        NSMutableDictionary *queries = [[NSMutableDictionary alloc] init];
+        NSArray *pairs = [query componentsSeparatedByString:@"&"];
+        for (NSString *pair in pairs) {
+            NSRange range = [pair rangeOfString:@"="];
+            if (range.location != NSNotFound) {
+                NSString *key = [pair substringToIndex:range.location];
+                NSString *value = [pair substringFromIndex:range.location + 1];
+                queries[key] = value;
+            }
+        }
+        userInfo = queries;
+    } else {
+        url = [NSURL URLWithString:href];
+    }
+    
+    NSString *scheme = url.scheme;
+    if ([scheme isEqualToString:@"note"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:url.host object:self userInfo:userInfo];
+    } else if ([scheme isEqualToString:@"ctl"]) {
+        // Call a view controller method
+        UIViewController *controller = [self supercontroller];
+        SEL action = NSSelectorFromString([NSString stringWithFormat:@"%@:", url.host]);
+        if ([controller respondsToSelector:action]) {
+            [self setValue:userInfo forAdditionKey:@"hrefParams"];
+            IMP imp = [controller methodForSelector:action];
+            LSCallControllerFunc func = (LSCallControllerFunc)imp;
+            func(controller, action, self);
+        }
+    } else if ([scheme isEqualToString:@"push"]) {
+        // Push to a view controller
+        UIViewController *controller = [self supercontroller];
+        UIViewController *nextController = [[NSClassFromString(url.host) alloc] init];
+        [controller.navigationController pushViewController:nextController animated:YES];
+    } else if ([scheme isEqualToString:@"action"]) {
+        NSString *action = url.host;
+        if ([action isEqualToString:@"alert"]) {
+            // Show alert
+            NSString *title = userInfo[@"title"];
+            NSString *msg = userInfo[@"msg"];
+            NSArray *buttonTitles = [userInfo[@"btns"] componentsSeparatedByString:@"|"];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+            [self setValue:alert forAdditionKey:@"__alert"];
+            int buttonCount = (int) buttonTitles.count;
+            NSDictionary *mappers = [self pr_actionMappers];
+            NSDictionary *clients = [self pr_actionClients];
+            for (int index = 0; index < buttonCount; index++) {
+                NSString *buttonTitle = [buttonTitles objectAtIndex:index];
+                NSString *key = [NSString stringWithFormat:@"_%i", (int) index];
+                LSClientMapper *mapper = [mappers objectForKey:key];
+                [mapper updateWithData:self.data andView:self];
+                LSClient *client = [clients objectForKey:key];
+                UIAlertActionStyle style = (index == 0) ? UIAlertActionStyleCancel : UIAlertViewStyleDefault;
+                if (client == nil) {
+                    [alert addAction:[UIAlertAction actionWithTitle:buttonTitle style:style handler:^(UIAlertAction *alertAction) {
+                        [self setValue:nil forAdditionKey:@"__alert"];
+                    }]];
+                } else {
+                    [alert addAction:[UIAlertAction actionWithTitle:buttonTitle style:style handler:^(UIAlertAction *alertAction) {
+                        [self setValue:nil forAdditionKey:@"__alert"];
+                        LSRequest *request = [[[client.class requestClass] alloc] init];
+                        request.action = mapper.action;
+                        request.params = mapper.params;
+                        [client _loadRequest:request mapper:mapper notifys:YES complection:^(LSResponse *response) {
+                            if (response.error == nil) {
+                                if (mapper.successHref != nil) {
+                                    [self pr_clickHref:mapper.successHref];
+                                }
+                            }
+                        }];
+                    }]];
+                }
+            }
+            [self.supercontroller presentViewController:alert animated:YES completion:nil];
+        }
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:LSViewDidClickHrefNotification object:self userInfo:@{@"href":href}];
 }
 
 #pragma mark -
