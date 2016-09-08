@@ -11,4 +11,6 @@
 
 @interface LSViewController : LSTableViewController
 
+@property (nonatomic, strong) NSString *groupId;
+
 @end

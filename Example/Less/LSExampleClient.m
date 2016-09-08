@@ -14,7 +14,8 @@
 {
     NSString *action = request.action;
     if ([action isEqualToString:@"GetGroupInfo"]) {
-        id data = @{@"memberNum": @3,
+        id data = @{@"groupName": @"My Group",
+                    @"memberNum": @3,
                     @"notification": @"Some notification",
                     @"faceURL:": @"https://placehold.it/165/78b8fc/f0f0f0/?text=PR"};
         success(data);
@@ -29,6 +30,10 @@
         }
         id data = @{@"list": members, @"nickname": @"My nickname"};
         success(data);
+    } else if ([action isEqualToString:@"QuitGroup"]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            success(nil);
+        });
     }
 }
 

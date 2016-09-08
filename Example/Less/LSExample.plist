@@ -117,7 +117,7 @@
 							<key>detailTextLabel.text</key>
 							<string>$notification</string>
 							<key>href</key>
-							<string>%(ctl://showGroupNote?note=%@),$notification</string>
+							<string>%(action://alert?title=%@&amp;btns=确定),$notification</string>
 						</dict>
 					</dict>
 				</array>
@@ -183,7 +183,21 @@
 					<key>title</key>
 					<string>删除并退出</string>
 					<key>href</key>
-					<string>ctl://removeGroup</string>
+					<string>action://alert?title=确定删除并退出群吗？&amp;btns=取消|确定</string>
+					<key>actions</key>
+					<dict>
+						<key>_1</key>
+						<dict>
+							<key>clazz</key>
+							<string>im</string>
+							<key>action</key>
+							<string>QuitGroup</string>
+							<key>params</key>
+							<string>@groupParams</string>
+							<key>successTip</key>
+							<string>删除成功</string>
+						</dict>
+					</dict>
 				</dict>
 			</dict>
 		</array>

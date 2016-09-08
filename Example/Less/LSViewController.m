@@ -24,6 +24,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    _groupId = @"111";
     [self.tableView setPlist:@"LSExample"];
 }
 
@@ -31,6 +32,14 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)clearChat:(id)sender {
+    
+}
+
+- (void)quitGroup:(id)sender {
+    
 }
 
 @end

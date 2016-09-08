@@ -5,7 +5,8 @@ PODS:
   - FBSnapshotTestCase/SwiftSupport (2.1.2):
     - FBSnapshotTestCase/Core
   - Kiwi (2.4.0)
-  - Less (0.1.1)
+  - Less (0.1.2)
+  - MBProgressHUD (1.0.0)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
@@ -14,6 +15,7 @@ DEPENDENCIES:
   - FBSnapshotTestCase
   - Kiwi
   - Less (from `../`)
+  - MBProgressHUD
   - SDWebImage
 
 EXTERNAL SOURCES:
@@ -23,9 +25,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   FBSnapshotTestCase: 918c55861356ee83aee7843d759f55a18ff6982b
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
-  Less: a0e4a14dff5eb2dae047f7fadee762021aaf42c9
+  Less: 96b133d6021e54bfaf617568424b7ef1d856e8ae
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
-PODFILE CHECKSUM: 73c238563d50915f802540b21ab213af3e2e5c3c
+PODFILE CHECKSUM: 3b5069efa1435dfd226d350ef30bc65d5e4207d9
 
 COCOAPODS: 1.0.1
