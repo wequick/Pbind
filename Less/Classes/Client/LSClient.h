@@ -29,8 +29,13 @@
 + (Class)requestClass; // default is LSRequest.
 
 @property (nonatomic, assign) id<LSClientDelegate> delegate;
+@property (nonatomic, strong, readonly) LSRequest *request;
 
-- (void)loadRequest:(LSRequest *)request complection:(void (^)(LSResponse *response))complection;
+- (void)GET:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection;
+- (void)POST:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection;
+- (void)PATCH:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection;
+- (void)DELETE:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection;
+
 - (void)cancel;
 
 @end
@@ -76,3 +81,7 @@ FOUNDATION_EXPORT NSInteger const LSClientCacheForever;
 - (NSDictionary *)pagingParamsWithOffset:(NSUInteger)offset limit:(NSUInteger)limit page:(NSUInteger)page;
 
 @end
+
+FOUNDATION_EXPORT NSString *const LSClientWillLoadRequestNotification;
+FOUNDATION_EXPORT NSString *const LSClientDidLoadRequestNotification;
+FOUNDATION_EXPORT NSString *const LSResponseKey;

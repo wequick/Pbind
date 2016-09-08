@@ -48,6 +48,12 @@ static CGFloat kKeyboardDuration = 0;
 static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
 static NSInteger kMinKeyboardHeightToScroll = 200;
 
+@interface LSClient (Private)
+
+- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
+
+@end
+
 @interface LSScrollView (Private)
 
 - (void)didInitRowViews;
@@ -378,7 +384,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         Class requestClass = [[client class] requestClass];
         LSRequest *request = [[requestClass alloc] init];
         request.action = _resetClientAction;
-        [client loadRequest:request complection:complection];
+        [client _loadRequest:request notifys:NO complection:complection];
     }
 }
 
@@ -441,7 +447,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if ([self.formDelegate respondsToSelector:@selector(formWillSubmit:)]) {
         [self.formDelegate formWillSubmit:self];
     }
-    [client loadRequest:request complection:^(LSResponse *response) {
+    [client _loadRequest:request notifys:NO complection:^(LSResponse *response) {
         // Forward to delegate
         BOOL handledError = NO;
         if ([self.formDelegate respondsToSelector:@selector(form:didSubmit:handledError:)]) {

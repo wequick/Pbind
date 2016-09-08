@@ -8,6 +8,10 @@
 
 #import "LSClient.h"
 
+NSString *const LSClientWillLoadRequestNotification = @"LSClientWillLoadRequestNotification";
+NSString *const LSClientDidLoadRequestNotification = @"LSClientDidLoadRequestNotification";
+NSString *const LSResponseKey = @"LSResponseKey";
+
 @implementation LSClient
 
 + (Class)requestClass
@@ -15,7 +19,43 @@
     return LSRequest.class;
 }
 
-- (void)loadRequest:(LSRequest *)request complection:(void (^)(LSResponse *))complection
+- (void)GET:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
+{
+    LSRequest *request = [[LSRequest alloc] init];
+    request.action = action;
+    request.params = params;
+    request.method = @"GET";
+    [self _loadRequest:request notifys:YES complection:complection];
+}
+
+- (void)POST:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
+{
+    LSRequest *request = [[LSRequest alloc] init];
+    request.action = action;
+    request.params = params;
+    request.method = @"POST";
+    [self _loadRequest:request notifys:YES complection:complection];
+}
+
+- (void)PATCH:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
+{
+    LSRequest *request = [[LSRequest alloc] init];
+    request.action = action;
+    request.params = params;
+    request.method = @"PATCH";
+    [self _loadRequest:request notifys:YES complection:complection];
+}
+
+- (void)DELETE:(NSString *)action params:(NSDictionary *)params complection:(void (^)(LSResponse *response))complection
+{
+    LSRequest *request = [[LSRequest alloc] init];
+    request.action = action;
+    request.params = params;
+    request.method = @"DELETE";
+    [self _loadRequest:request notifys:YES complection:complection];
+}
+
+- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection
 {
     _canceled = NO;
     LSResponse *debugResponse = [self debugResponse];
@@ -55,6 +95,12 @@
         }
     }
     
+    // Post notification
+    _request = request;
+    if (notifys) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:LSClientWillLoadRequestNotification object:self];
+    }
+    
     // Load request
     [self loadRequest:aRequest success:^(id responseData) {
         LSResponse *response = [[LSResponse alloc] init];
@@ -70,6 +116,11 @@
                 [self.readCacheCounts setObject:@(0) forKey:cacheKey];
             }
         }
+        
+        if (notifys) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:LSClientDidLoadRequestNotification object:self userInfo:@{LSResponseKey: response}];
+        }
+        
         complection(response);
     } failure:^(NSError *error) {
         LSResponse *response = [[LSResponse alloc] init];

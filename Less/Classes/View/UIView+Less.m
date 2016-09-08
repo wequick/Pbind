@@ -16,13 +16,18 @@
 #import "LSClientMapper.h"
 #import "LSArray.h"
 
-NSString *const LSViewWillLoadRequestNotification = @"LSViewWillLoad";
-NSString *const LSViewDidLoadRequestNotification = @"LSViewDidLoad";
-NSString *const LSResponseKey = @"response";
+NSString *const LSViewDidStartLoadNotification = @"LSViewDidStartLoadNotification";
+NSString *const LSViewDidFinishLoadNotification = @"LSViewDidFinishLoadNotification";
 NSString *const LSViewHasHandledLoadErrorKey = @"LSViewHasHandledLoadError";
 
 NSString *const LSViewDidClickHrefNotification = @"LSViewDidClickHref";
 NSString *const LSViewHrefKey = @"href";
+
+@interface LSClient (Private)
+
+- (void)_loadRequest:(LSRequest *)request notifys:(BOOL)notifys complection:(void (^)(LSResponse *))complection;
+
+@end
 
 @interface UIView (Less_Private)
 
@@ -183,7 +188,7 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
     }
     
     // Notify loading start
-    [[NSNotificationCenter defaultCenter] postNotificationName:LSViewWillLoadRequestNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:LSViewDidStartLoadNotification object:self];
     
     self.pr_lseparation = preparation;
     self.pr_transformation = transformation;
@@ -211,7 +216,7 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
 //        } else {
 //            request.params = self.clientParams;
 //        }
-        [client loadRequest:request complection:^(LSResponse *response) {
+        [client _loadRequest:request notifys:NO complection:^(LSResponse *response) {
             BOOL handledError = NO;
             if ([self.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [self.loadingDelegate view:self didFinishLoading:response handledError:&handledError];
@@ -222,7 +227,6 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
             } else {
                 userInfo = @{LSViewHasHandledLoadErrorKey:@(handledError)};
             }
-            [[NSNotificationCenter defaultCenter] postNotificationName:LSViewDidLoadRequestNotification object:self userInfo:userInfo];
             
             [client cancel];
             
@@ -239,6 +243,10 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
             }
             
             self.pr_loadingCount--;
+            if (self.pr_loadingCount == 0) {
+                // Notify loading finish
+                [[NSNotificationCenter defaultCenter] postNotificationName:LSViewDidFinishLoadNotification object:self userInfo:userInfo];
+            }
         }];
     }
 }

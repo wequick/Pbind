@@ -64,9 +64,8 @@
 
 @end
 
-UIKIT_EXTERN NSString *const LSViewWillLoadRequestNotification;
-UIKIT_EXTERN NSString *const LSViewDidLoadRequestNotification;
-UIKIT_EXTERN NSString *const LSResponseKey;
+UIKIT_EXTERN NSString *const LSViewDidStartLoadNotification;
+UIKIT_EXTERN NSString *const LSViewDidFinishLoadNotification;
 UIKIT_EXTERN NSString *const LSViewHasHandledLoadErrorKey;
 
 UIKIT_EXTERN NSString *const LSViewDidClickHrefNotification;
