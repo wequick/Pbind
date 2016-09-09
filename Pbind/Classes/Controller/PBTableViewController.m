@@ -8,10 +8,6 @@
 
 #import "PBTableViewController.h"
 
-@interface PBTableViewController ()
-
-@end
-
 @implementation PBTableViewController
 
 - (UITableViewStyle)preferredTableViewStyle {
@@ -24,6 +20,7 @@
     _tableView = [[PBTableView alloc] initWithFrame:[UIScreen mainScreen].bounds style:[self preferredTableViewStyle]];
     _tableView.delegate = self;
     _tableView.dataSource = self;
+    
     self.view = _tableView;
 }
 
@@ -32,14 +29,15 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return -1;
 }
-*/
+
+// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
+// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
 
 @end

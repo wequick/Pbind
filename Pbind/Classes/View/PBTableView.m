@@ -375,11 +375,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    NSInteger rowCount = 0;
     if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
-        return [_delegateInterceptor.receiver tableView:tableView numberOfRowsInSection:section];
+        rowCount = [_delegateInterceptor.receiver tableView:tableView numberOfRowsInSection:section];
+        if (rowCount >= 0) {
+            return rowCount;
+        }
     }
     
-    NSInteger rowCount = 0;
     if (self.row != nil) {
         // response array
         if ([self.data isKindOfClass:[PBSection class]]) {
@@ -471,8 +474,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell *cell = nil;
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:cellForRowAtIndexPath:)]) {
-        return [_delegateInterceptor.receiver tableView:tableView cellForRowAtIndexPath:indexPath];
+        cell = [_delegateInterceptor.receiver tableView:tableView cellForRowAtIndexPath:indexPath];
+        if (cell != nil) {
+            return cell;
+        }
     }
     
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
@@ -488,7 +495,7 @@
         [_hasRegisteredCellClasses addObject:cellClazz];
     }
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:row.id];
+    cell = [tableView dequeueReusableCellWithIdentifier:row.id];
     if (cell == nil) {
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
         if (row.layout) {
