@@ -393,7 +393,7 @@ DEF_UNDEFINED_LSOPERTY2(id (^)(id, NSError *), pr_transformation, setPr_transfor
                 LSClientMapper *mapper = [mappers objectForKey:key];
                 [mapper updateWithData:self.data andView:self];
                 LSClient *client = [clients objectForKey:key];
-                UIAlertActionStyle style = (index == 0) ? UIAlertActionStyleCancel : UIAlertViewStyleDefault;
+                UIAlertActionStyle style = (index == 0) ? UIAlertActionStyleCancel : UIAlertActionStyleDefault;
                 if (client == nil) {
                     [alert addAction:[UIAlertAction actionWithTitle:buttonTitle style:style handler:^(UIAlertAction *alertAction) {
                         [self setValue:nil forAdditionKey:@"__alert"];
