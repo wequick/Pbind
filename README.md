@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/Less.svg?style=flat)](http://cocoapods.org/pods/Less)
 [![Platform](https://img.shields.io/cocoapods/p/Less.svg?style=flat)](http://cocoapods.org/pods/Less)
 
-Less code, more efficient!
+Pbind, a data binder with Plist.
 
 ## Example
 
@@ -13,11 +13,11 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-Less is available through [CocoaPods](http://cocoapods.org). To install
+Pbind is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "Less"
+pod "Pbind"
 ```
 
 ## Plist Reference
@@ -46,7 +46,7 @@ usage: [tag][key]
 
 #### Plist Value (Right column of Plist)
 
-1. Constant (_**@see LSValueParser**_)
+1. Constant (_**@see PBValueParser**_)
 	
 	Tag           | Parse to                 | e.g.
 	:------------ | :----------------------- | ------------
@@ -85,17 +85,17 @@ usage: [tag][key]
 	 *  - plist: :your_enum2
 	 *  - output: 2
 	 */
-	[LSValueParser registerEnums:@{@"{your_enum1}": @1,
+	[PBValueParser registerEnums:@{@"{your_enum1}": @1,
 	                               @"{your_enum2{": @2}];
 	```
 
-2. Variable (_**@see LSExpression**_)
+2. Variable (_**@see PBExpression**_)
 	
 	```
 	usage: [unary-operator][tag][accessory][variable][logic-operator][rvalue][:][rvalueOfNot]
 	```
 	
-    2.1 Tag (_**@see LSVariableMapper**_)  
+    2.1 Tag (_**@see PBVariableMapper**_)  
        
     Tag           | Map to               | e.g.
 	:------------ | :------------------- | ------------
@@ -103,8 +103,8 @@ usage: [tag][key]
 	 .            | target view          | .frame.size
 	 .$           | target view data     | .$name
 	 @            | active controller    | @title
-	 >            | LSForm input text    | >birth
-	 >@           | LSForm input value   | >@birth
+	 >            | PBForm input text    | >birth
+	 >@           | PBForm input value   | >@birth
 	
     2.1.1  User-defined Variable Tag
     
@@ -115,7 +115,7 @@ usage: [tag][key]
 	 *  - plist: $D.userInfo
 	 *  - mapto: [[NSUserDefaults standardDefaults] valueForKey:@"userInfo"]
 	 */
-	[LSVariableMapper registerTag:'D' withMapper:^id(id data, id target) {
+	[PBVariableMapper registerTag:'D' withMapper:^id(id data, id target) {
         return [NSUserDefaults standardDefaults];
     }];
 	```
@@ -145,7 +145,7 @@ usage: [tag][key]
 	 __           | duplex binding (data<->view)  | $__tabIndex
 	 ~            | set value with animated       | ~$contentSize
 
-3. Formatter (_**@see LSMutableExpression**_)
+3. Formatter (_**@see PBMutableExpression**_)
 
 	```
 	usage: %[tag:option]( format ),$arg1,$arg2,...
@@ -159,7 +159,7 @@ usage: [tag][key]
 	 JS           | javascript evaluator     | %JS('goods:' + $1 + ', money:' + $2),$title,$money
 	 AT           | attributed string        | Not available now
 	
-	3.1.1 User-defined Format Tag (_**@see LSVariableEvaluator**_)
+	3.1.1 User-defined Format Tag (_**@see PBVariableEvaluator**_)
 	
 	```
 	/* e.g. Format string to array
@@ -167,12 +167,12 @@ usage: [tag][key]
      *  - input: str="a/b/c"
      *  - output: @[@"a",@"b",@"c"]
      */
-	[LSVariableEvaluator registerTag:@"S2A" withFormatterer:^id(NSString *format, id value) {
+	[PBVariableEvaluator registerTag:@"S2A" withFormatterer:^id(NSString *format, id value) {
         return [value componentsSeparatedByString:format];
     }];
 	```
 	
-	3.1.2 Javascript Evaluator (_**@see LSVariableEvaluator**_)
+	3.1.2 Javascript Evaluator (_**@see PBVariableEvaluator**_)
 	
 	Prism use JavascriptCore to evaluate js.
 	
@@ -180,7 +180,7 @@ usage: [tag][key]
 	
 	Futher more, you can define the return value type by an option like `%JS:type`, the type here is default to `string` and can also be `bool`, `int32`, `date`, `rect` and etc. They are refer to `[JSValue toXx]`.
 
-    3.1.3 String Formatter (_**@see LSString, LSStringFormatter**_)
+    3.1.3 String Formatter (_**@see PBString, PBStringFormatter**_)
 	
 	Flag    | Description                                             | e.g.
 	:------ | :------------------------------------------------------ | --------
@@ -191,7 +191,7 @@ usage: [tag][key]
 	 \<UE\> | URL Encoded, accepts _**NSString**_ arg                 | %(%\<UE\>),$param
 	 \<UEJ\>| Encoded Json, accepts _**NSDictionary, NSArray**_ arg   | %(%\<UEJ\>),$dict
 		
-    3.1.4 User-defined Format Flag (_**@see LSStringFormatter**_)
+    3.1.4 User-defined Format Flag (_**@see PBStringFormatter**_)
     
     ```
     /* e.g. Format array to string
@@ -199,7 +199,7 @@ usage: [tag][key]
      *  - input: arr=@[@"a",@"b",@"c"]
      *  - output: "a/b/c"
      */
-    [LSStringFormatter registerTag:@"A2S" withFormatterer:^NSString *(NSString *format, id value) {
+    [PBStringFormatter registerTag:@"A2S" withFormatterer:^NSString *(NSString *format, id value) {
         return [value componentsJoinedByString:format];
     }];
     ```

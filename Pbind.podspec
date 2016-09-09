@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-Pbind code, more efficient. Pbind is a tiny MVVM framework that use Plist to build UIs and Databindings.
+Pbind, a data binder with Plist, which help you to achieve "Less code, More efficient".
                        DESC
 
   s.homepage         = 'https://github.com/wequick/Pbind'
