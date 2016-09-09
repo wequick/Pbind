@@ -13,5 +13,6 @@
 
 @property (nonatomic, strong) id        data;
 @property (nonatomic, strong) NSError  *error;
+@property (nonatomic, strong) NSString *tips;
 
 @end

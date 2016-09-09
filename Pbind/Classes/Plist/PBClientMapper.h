@@ -19,9 +19,9 @@
 @property (nonatomic, strong) NSDictionary *params;
 @property (nonatomic, assign) BOOL parallel;
 
-@property (nonatomic, strong) NSString *successTip;
+@property (nonatomic, strong) NSString *successTips;
 @property (nonatomic, strong) NSString *successHref; // Trigger a href while succeed
-@property (nonatomic, strong) NSString *failureTip;
+@property (nonatomic, strong) NSString *failureTips;
 
 @property (nonatomic, strong) PBClient *nextClient;
 

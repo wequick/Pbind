@@ -186,7 +186,7 @@
 					<string>action://alert?title=确定删除并退出群吗？&amp;btns=取消|确定</string>
 					<key>actions</key>
 					<dict>
-						<key>_1</key>
+						<key>1</key>
 						<dict>
 							<key>clazz</key>
 							<string>im</string>
@@ -194,7 +194,7 @@
 							<string>QuitGroup</string>
 							<key>params</key>
 							<string>@groupParams</string>
-							<key>successTip</key>
+							<key>successTips</key>
 							<string>删除成功</string>
 						</dict>
 					</dict>

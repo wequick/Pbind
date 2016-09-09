@@ -377,7 +377,27 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         [controller.navigationController pushViewController:nextController animated:YES];
     } else if ([scheme isEqualToString:@"action"]) {
         NSString *action = url.host;
-        if ([action isEqualToString:@"alert"]) {
+        if ([action length] == 1) {
+            NSDictionary *clients = [self pb_actionClients];
+            PBClient *client = [clients objectForKey:action];
+            if (client == nil) {
+                return;
+            }
+            
+            NSDictionary *mappers = [self pb_actionMappers];
+            PBClientMapper *mapper = [mappers objectForKey:action];
+            [mapper updateWithData:self.data andView:self];
+            PBRequest *request = [[[client.class requestClass] alloc] init];
+            request.action = mapper.action;
+            request.params = mapper.params;
+            [client _loadRequest:request mapper:mapper notifys:YES complection:^(PBResponse *response) {
+                if (response.error == nil) {
+                    if (mapper.successHref != nil) {
+                        [self pb_clickHref:mapper.successHref];
+                    }
+                }
+            }];
+        } else if ([action isEqualToString:@"alert"]) {
             // Show alert
             NSString *title = userInfo[@"title"];
             NSString *msg = userInfo[@"msg"];
@@ -389,9 +409,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             NSDictionary *clients = [self pb_actionClients];
             for (int index = 0; index < buttonCount; index++) {
                 NSString *buttonTitle = [buttonTitles objectAtIndex:index];
-                NSString *key = [NSString stringWithFormat:@"_%i", (int) index];
-                PBClientMapper *mapper = [mappers objectForKey:key];
-                [mapper updateWithData:self.data andView:self];
+                NSString *key = [NSString stringWithFormat:@"%i", (int) index];
                 PBClient *client = [clients objectForKey:key];
                 UIAlertActionStyle style = (index == 0) ? UIAlertActionStyleCancel : UIAlertActionStyleDefault;
                 if (client == nil) {
@@ -401,9 +419,14 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                 } else {
                     [alert addAction:[UIAlertAction actionWithTitle:buttonTitle style:style handler:^(UIAlertAction *alertAction) {
                         [self setValue:nil forAdditionKey:@"__alert"];
+                        
+                        PBClientMapper *mapper = [mappers objectForKey:key];
+                        [mapper updateWithData:self.data andView:self];
+                        
                         PBRequest *request = [[[client.class requestClass] alloc] init];
                         request.action = mapper.action;
                         request.params = mapper.params;
+                        
                         [client _loadRequest:request mapper:mapper notifys:YES complection:^(PBResponse *response) {
                             if (response.error == nil) {
                                 if (mapper.successHref != nil) {

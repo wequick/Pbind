@@ -88,4 +88,3 @@ FOUNDATION_EXPORT NSInteger const PBClientCacheForever;
 FOUNDATION_EXPORT NSString *const PBClientWillLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBClientDidLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBResponseKey;
-FOUNDATION_EXPORT NSString *const PBResultTipKey;

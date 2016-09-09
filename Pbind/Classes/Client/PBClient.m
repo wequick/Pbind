@@ -11,7 +11,6 @@
 NSString *const PBClientWillLoadRequestNotification = @"PBClientWillLoadRequestNotification";
 NSString *const PBClientDidLoadRequestNotification = @"PBClientDidLoadRequestNotification";
 NSString *const PBResponseKey = @"PBResponseKey";
-NSString *const PBResultTipKey = @"PBResultTipKey";
 
 @implementation PBClient
 
@@ -148,8 +147,8 @@ static NSMutableDictionary *kAliasNames;
         if (notifys) {
             NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
             userInfo[PBResponseKey] = response;
-            if (mapper.successTip != nil) {
-                userInfo[PBResultTipKey] = mapper.successTip;
+            if (mapper.successTips != nil) {
+                response.tips = mapper.successTips;
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
         }
@@ -169,8 +168,8 @@ static NSMutableDictionary *kAliasNames;
         if (notifys) {
             NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
             userInfo[PBResponseKey] = response;
-            if (mapper.failureTip != nil) {
-                userInfo[PBResultTipKey] = mapper.failureTip;
+            if (mapper.failureTips != nil) {
+                response.tips = mapper.failureTips;
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
         }

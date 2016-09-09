@@ -38,7 +38,7 @@
 + (void)viewDidStartLoad:(NSNotification *)note {
     UIView *view = note.object;
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
-    hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8];
+    hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8f];
     hud.mode = MBProgressHUDModeIndeterminate;
     hud.label.textColor = [UIColor whiteColor];
     hud.label.text = @"正在加载，请稍候...";
@@ -61,9 +61,10 @@
 
 + (void)clientWillLoadRequest:(NSNotification *)note {
     UIWindow *window = [[UIApplication sharedApplication].delegate window];
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:window animated:YES];
-    hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:window animated:NO];
+    hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8f];
     hud.mode = MBProgressHUDModeIndeterminate;
+//    hud.backgroundView.color = [UIColor colorWithWhite:0 alpha:.5f];
     hud.label.textColor = [UIColor whiteColor];
     hud.label.text = @"正在处理，请稍候...";
 }
@@ -71,17 +72,17 @@
 + (void)clientDidLoadRequest:(NSNotification *)note {
     UIWindow *window = [[UIApplication sharedApplication].delegate window];
     PBResponse *response = note.userInfo[PBResponseKey];
-    NSString *tip = note.userInfo[PBResultTipKey];
+    NSString *tips = response.tips;
     if (response.error != nil) {
-        if (tip == nil) {
-            tip = [response.error localizedDescription];
+        if (tips == nil) {
+            tips = [response.error localizedDescription];
         }
     }
     
-    if (tip != nil) {
+    if (tips != nil) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:window];
         hud.mode = MBProgressHUDModeText;
-        hud.label.text = tip;
+        hud.label.text = tips;
         hud.label.textColor = [UIColor whiteColor];
         [hud showAnimated:YES];
         [hud hideAnimated:YES afterDelay:1.f];
