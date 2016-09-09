@@ -1,11 +1,11 @@
 use_frameworks!
 
-target 'Less_Example' do
-  pod 'Less', :path => '../'
+target 'Pbind_Example' do
+  pod 'Pbind', :path => '../'
   pod 'SDWebImage'
   pod 'MBProgressHUD'
 
-  target 'Less_Tests' do
+  target 'Pbind_Tests' do
     inherit! :search_paths
 
     pod 'Kiwi'

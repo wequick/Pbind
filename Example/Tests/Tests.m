@@ -1,6 +1,6 @@
 //
-//  LessTests.m
-//  LessTests
+//  PbindTests.m
+//  PbindTests
 //
 //  Created by galenlin on 09/07/2016.
 //  Copyright (c) 2016 galenlin. All rights reserved.
