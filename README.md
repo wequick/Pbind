@@ -204,10 +204,6 @@ usage: [tag][key]
     }];
     ```
 
-## Author
-
-galenlin, oolgloo.2012@gmail.com
-
 ## License
 
-Less is available under the MIT license. See the LICENSE file for more info.
+Pbind is available under the MIT license. See the LICENSE file for more info.
