@@ -172,10 +172,11 @@
         return attributedString;
     } else if (_formatFlags.custom) {
         text = _formatter(_formatterTag, _format, arguments);
+        return text;
     } else {
         text = [PBString stringWithFormat:_format array:arguments];
+        return [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
     }
-    return [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
 }
 
 - (NSDictionary *)attributeFromFontString:(NSString *)fontString
