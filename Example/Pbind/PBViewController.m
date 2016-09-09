@@ -42,4 +42,8 @@
     
 }
 
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
+    [self.tableView pb_repullData];
+}
+
 @end

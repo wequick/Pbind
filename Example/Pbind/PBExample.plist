@@ -171,7 +171,7 @@
 				<key>height</key>
 				<string>132</string>
 				<key>margin</key>
-				<string>{70,37,0,37}</string>
+				<string>{70,37,70,37}</string>
 				<key>properties</key>
 				<dict>
 					<key>backgroundColor</key>
