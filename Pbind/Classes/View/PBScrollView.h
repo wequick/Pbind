@@ -24,10 +24,8 @@
     PBRowMapper *_rowMapper;
     NSMutableArray *_rowViews;
     NSArray *_rowMappers;
-    UIView *_headerView;
     UIView *_footerView;
-    UIView *_wrapperContentView;
-    NSMutableArray *_heightConstraints;
+    NSMutableArray *_rowHeights;
     CGFloat _statusBarHeight;
 }
 

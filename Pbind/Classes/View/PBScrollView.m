@@ -50,12 +50,10 @@
         return;
     }
     
-    NSLayoutConstraint *constraint = _heightConstraints[index];
-    if (constraint.constant != view.frame.size.height) {
-        CGFloat diff = view.frame.size.height - constraint.constant;
-        constraint.constant = view.frame.size.height;
-        [view setNeedsUpdateConstraints];
-        [view setNeedsLayout];
+    CGFloat height = [_rowHeights[index] floatValue];
+    if (height != view.frame.size.height) {
+        CGFloat diff = view.frame.size.height - height;
+        _rowHeights[index] = @(view.frame.size.height);
         
         CGSize size = self.contentSize;
         size.height += diff;
@@ -105,13 +103,6 @@
     }
 }
 
-//- (void)willMoveToWindow:(UIWindow *)newWindow {
-//    [super willMoveToWindow:newWindow];
-//    if (newWindow != nil) {
-//        [self initRowViews];
-//    }
-//}
-
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     if (self.window) {
@@ -153,13 +144,6 @@
     return view;
 }
 
-//- (void)setData:(id)data {
-//    _data = data;
-//    [self reloadData];
-//}
-
-#if 1
-
 - (void)initRowViewsIfNeeded
 {
     if ([_rowViews count] > 0) {
@@ -167,6 +151,15 @@
         return;
     }
     [self initRowViews];
+}
+
+- (void)didInitRowViews {
+    NSMutableArray *rowHeights = [NSMutableArray arrayWithCapacity:_rowViews.count];
+    for (UIView *view in _rowViews) {
+        CGFloat h = self.horizontal ? view.frame.size.width : view.frame.size.height;
+        [rowHeights addObject:@(h)];
+    }
+    _rowHeights = rowHeights;
 }
 
 - (void)initRowViews
@@ -204,10 +197,6 @@
     }
 }
 
-- (void)didInitRowViews {
-    
-}
-
 - (void)render:(NSIndexSet *)indexes {
     if (_rowViews == nil) return;
     
@@ -239,6 +228,7 @@
             }
             h = self.bounds.size.height - row.margin.top - row.padding.top - row.margin.bottom - row.padding.bottom;
             
+            _rowHeights[index] = @(w);
             [view setFrame:CGRectMake(x, y, w, h)];
             x += w + row.margin.right + row.padding.right;
         }
@@ -285,6 +275,7 @@
                     [view setFrame:CGRectMake(x, y, w, h)];
                 }
             }
+            _rowHeights[index] = @(view.frame.size.height);
             y += h + row.margin.bottom + row.padding.bottom;
         }
         
@@ -300,206 +291,17 @@
     }
 }
 
-#else
-
-
-- (void)initRowViews
-{
-    if ([_rowViews count] > 0) {
-        return;
-    }
-    
-    _wrapperContentView = [[UIView alloc] initWithFrame:self.bounds];
-    [self addSubview:_wrapperContentView];
-    [_wrapperContentView setUserInteractionEnabled:YES];
-    [_wrapperContentView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    NSDictionary *views = @{@"wrapper":_wrapperContentView, @"super":self};
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[wrapper(==super)]-0-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[wrapper]-0-|" options:0 metrics:nil views:views]];
-    
-    // Initialize mapper
-    if (self.row != nil) {
-        _rowMapper = [PBRowMapper mapperWithDictionary:self.row];
-    } else if (self.rows != nil) {
-        NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[self.rows count]];
-        for (NSDictionary *dict in self.rows) {
-            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict];
-            [mappers addObject:mapper];
-            [mapper addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:nil];
-            [mapper addObserver:self forKeyPath:@"height" options:NSKeyValueObservingOptionNew context:nil];
-        }
-        _rowMappers = mappers;
-    }
-    
-    // Initialize view
-    if (_rowMapper != nil && [self.data isKindOfClass:[NSArray class]]) {
-        _rowViews = [NSMutableArray arrayWithCapacity:[self.data count]];
-        _heightConstraints = [NSMutableArray arrayWithCapacity:[self.data count]];
-        for (NSInteger index = 0; index < [self.data count]; index++) {
-            id data = [self.data objectAtIndex:index];
-            PBRowMapper *row = _rowMapper;
-            UIView *view = [self viewWithRow:_rowMapper];
-            [view setData:data];
-            UIView *superview = _wrapperContentView;
-            [superview addSubview:view];
-            [_rowViews addObject:view];
-            
-            /* Auto layout */
-            /*-------------*/
-            [view setTranslatesAutoresizingMaskIntoConstraints:NO];
-            // width
-            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:0];
-            [view addConstraint:heightConstraint];
-            [_heightConstraints addObject:heightConstraint];
-            // margin-top
-            [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeTop multiplier:1 constant:row.margin.top]];
-            // margin-bottom
-            [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeBottom multiplier:1 constant:-row.margin.bottom]];
-            // margin-left
-            if (index == 0) { // relate to superview
-                [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:row.margin.top]];
-            } else { // relate to upperview
-                UIView *upperView = [_rowViews objectAtIndex:index - 1];
-                PBRowMapper *upperRow = row;
-                CGFloat marginLeft = MAX(row.margin.top, upperRow.margin.bottom);
-                [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:upperView attribute:NSLayoutAttributeRight multiplier:1 constant:marginLeft]];
-            }
-            // margin-right
-            BOOL needsMarginRight = (index == [self.data count] - 1);
-            if (needsMarginRight) {
-                [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeRight multiplier:1 constant:-row.margin.bottom]];
-            }
-        }
-    } else {
-        _rowViews = [NSMutableArray arrayWithCapacity:[_rowMappers count]];
-        _heightConstraints = [NSMutableArray arrayWithCapacity:[_rowMappers count]];
-        NSInteger indexOfNonfloatView = [_rowMappers count] - 1;
-        for (; indexOfNonfloatView >= 0; indexOfNonfloatView--) {
-            PBRowMapper *row = [_rowMappers objectAtIndex:indexOfNonfloatView];
-            if (row.floating == PBRowFloatingNone) {
-                break;
-            }
-        }
-        _footerView = nil;
-        for (NSInteger index = 0; index < [_rowMappers count]; index++) {
-            PBRowMapper *row = [_rowMappers objectAtIndex:index];
-            UIView *view = [self viewWithRow:row];
-            UIView *superview = _wrapperContentView;
-            [superview addSubview:view];
-            [_rowViews addObject:view];
-            
-            /* Auto layout */
-            /*-------------*/
-            [view setTranslatesAutoresizingMaskIntoConstraints:NO];
-            BOOL needsMarginBottom = NO;
-            // height
-            CGFloat h = [row heightForView:view withData:self.data];
-            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:h];
-            [view addConstraint:heightConstraint];
-            [_heightConstraints addObject:heightConstraint];
-            // margin-left
-            [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1 constant:row.margin.left]];
-            // margin-right
-            [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeRight multiplier:1 constant:-row.margin.right]];
-            // margin-top
-            if (row.floating != PBRowFloatingBottom) {
-                if (index == 0) { // relate to superview
-                    [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeTop multiplier:1 constant:row.margin.top]];
-                } else { // relate to upperview
-                    UIView *upperView = [_rowViews objectAtIndex:index - 1];
-                    PBRowMapper *upperRow = [_rowMappers objectAtIndex:index - 1];
-                    CGFloat marginTop = MAX(row.margin.top, upperRow.margin.bottom);
-                    [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:upperView attribute:NSLayoutAttributeBottom multiplier:1 constant:marginTop]];
-                }
-                needsMarginBottom = (index == indexOfNonfloatView);
-            } else {
-                _footerView = view;
-                needsMarginBottom = YES;
-            }
-            // margin-bottom
-            if (needsMarginBottom) {
-                [superview addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeBottom multiplier:1 constant:-row.margin.bottom]];
-            }
-        }
-        // Floating view
-        if (_footerView != nil) {
-            [[_footerView superview] bringSubviewToFront:_footerView];
-        }
-    }
-}
-
-- (void)render:(NSIndexSet *)indexes {
-    id data = self.rootData;
-    if (self.horizontal) {
-        for (NSInteger index = 0; index < [_rowViews count]; index++)  {
-            if (indexes != nil && ![indexes containsIndex:index]) {
-                continue;
-            }
-            
-            UIView *view = [_rowViews objectAtIndex:index];
-            PBRowMapper *row = [self rowMapperAtIndex:index];
-            BOOL hidden = [row hiddenForView:view withData:self.data];
-            [view setHidden:hidden];
-            CGFloat w = 0;
-            if (!hidden) {
-                [row mapData:data forView:view];
-                w = [row heightForView:view withData:self.data];
-            }
-            
-            NSLayoutConstraint *heightConstraint = [_heightConstraints objectAtIndex:index];
-            heightConstraint.constant = w;
-            [view setNeedsUpdateConstraints];
-            [view setNeedsLayout];
-        }
-    } else {
-        for (NSInteger index = 0; index < [_rowViews count]; index++)  {
-            if (indexes != nil && ![indexes containsIndex:index]) {
-                continue;
-            }
-
-            UIView *view = [_rowViews objectAtIndex:index];
-            PBRowMapper *row = [self rowMapperAtIndex:index];
-            BOOL hidden = [row hiddenForView:view withData:data];
-            [view setHidden:hidden];
-            CGFloat h = 0;
-            if (!hidden) {
-                [row mapData:data forView:view];
-                h = [row heightForView:view withData:data];
-            }
-
-            if (h != 0 && row.floating == PBRowFloatingBottom) {
-                _footerView = view;
-                UIEdgeInsets insets = self.contentInset;
-                insets.bottom = h;
-                self.contentInset = insets;
-                insets = self.scrollIndicatorInsets;
-                insets.bottom = h;
-                self.scrollIndicatorInsets = insets;
-                //                [self scrollViewDidScroll:self];
-            }
-            
-            NSLayoutConstraint *heightConstraint = [_heightConstraints objectAtIndex:index];
-            heightConstraint.constant = h;
-            [view setNeedsUpdateConstraints];
-            [view setNeedsLayout];
-        }
-    }
-    
-    [self setContentSize:_wrapperContentView.bounds.size];
-}
-
-#endif
-
 - (void)setContentSize:(CGSize)contentSize {
     [super setContentSize:contentSize];
     
-    if (self.autoResize) {
+    if (self.autoResize && contentSize.width != 0 && contentSize.height != 0) {
         CGRect frame = self.frame;
-        frame.size = contentSize;
-        self.frame = frame;
-        [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+        if (!CGSizeEqualToSize(frame.size, contentSize)) {
+            frame.size = contentSize;
+            self.frame = frame;
+            [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+        }
     }
-    
 }
 
 - (void)reloadData
