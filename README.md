@@ -1,6 +1,6 @@
 # Pbind
 
-[![CI Status](http://img.shields.io/travis/galenlin/Pbind.svg?style=flat)](https://travis-ci.org/galenlin/Pbind)
+[![CI Status](http://img.shields.io/travis/wequick/Pbind.svg?style=flat)](https://travis-ci.org/wequick/Pbind)
 [![Version](https://img.shields.io/cocoapods/v/Pbind.svg?style=flat)](http://cocoapods.org/pods/Pbind)
 [![License](https://img.shields.io/cocoapods/l/Pbind.svg?style=flat)](http://cocoapods.org/pods/Pbind)
 [![Platform](https://img.shields.io/cocoapods/p/Pbind.svg?style=flat)](http://cocoapods.org/pods/Pbind)
