@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PBTableView.h"
 
-@interface PBTableViewController : UIViewController
+@interface PBTableViewController : UIViewController<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) PBTableView *tableView;
 
