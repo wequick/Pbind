@@ -58,7 +58,7 @@ usage: [tag][key]
 	 {            | Size\|Point\|EdgeInsets  | {1080,44} \| {0,2,0,2}
 	 {F:          | Font               	     | {F:MicrosoftYaHei,bold,14}<br>{F:itailc,14}<br>{F:14}
 	 
-	 For matching the screen size, the pixel value of `Rect`, `Size` and `Font` will be automatically scale by your sketch width. The default sketch width is 1080, you can specify it by `[Prism setSketchWidth:]`.
+	 For matching the screen size, the pixel value of `Rect`, `Size` and `Font` will be automatically scale by your sketch width. The default sketch width is 1080, you can specify it by `[Pbind setSketchWidth:]`.
 	 
 	 After you do this, you can directly use the pixel value marked in the sketch by your UI designer.
 	 
@@ -174,9 +174,9 @@ usage: [tag][key]
 	
 	3.1.2 Javascript Evaluator (_**@see PBVariableEvaluator**_)
 	
-	Prism use JavascriptCore to evaluate js.
+	Pbind use JavascriptCore to evaluate js.
 	
-	To use Javascript Evaluator, simply declare `%JS( scripts ),vars` in plist. Prism will pass the variables as `$1`, `$2` ... `$N` to the scripts.
+	To use Javascript Evaluator, simply declare `%JS( scripts ),vars` in plist. Pbind will pass the variables as `$1`, `$2` ... `$N` to the scripts.
 	
 	Futher more, you can define the return value type by an option like `%JS:type`, the type here is default to `string` and can also be `bool`, `int32`, `date`, `rect` and etc. They are refer to `[JSValue toXx]`.
 
