@@ -10,7 +10,8 @@
 #import "UIView+Pbind.h"
 #import "UIView+PBLayout.h"
 #import "PBSection.h"
-#import "PBScrollView.h"
+#import "PBTableHeaderView.h"
+#import "PBTableFooterView.h"
 #import "PBArray.h"
 
 @implementation PBTableView
@@ -45,7 +46,7 @@
 - (void)config {
     // Init header view
     CGRect frame = CGRectMake(0, 0, self.frame.size.width, CGFLOAT_MIN); // use CGFLOAT_MIN rather than 0 to hide the top section gapping (36px) of the grouped table view.
-    PBScrollView *headerView = [[PBScrollView alloc] initWithFrame:frame];
+    PBScrollView *headerView = [[PBTableHeaderView alloc] initWithFrame:frame];
     headerView.autoResize = YES;
     headerView.animatedOnRendering = NO;
     headerView.scrollEnabled = NO;
@@ -56,7 +57,7 @@
     
     // Init footer view
     frame.size.height = 0;
-    PBScrollView *footerView = [[PBScrollView alloc] initWithFrame:frame];
+    PBScrollView *footerView = [[PBTableFooterView alloc] initWithFrame:frame];
     footerView.autoResize = YES;
     footerView.animatedOnRendering = NO;
     footerView.scrollEnabled = NO;
@@ -76,10 +77,10 @@
     if ([view isEqual:self.tableHeaderView]) {
         // Reset the header view to make tableView adjust it's height
         self.tableHeaderView = view;
-        return;
-    }
-    
-    if ([view isKindOfClass:[UITableViewCell class]]) {
+    } else if ([view isEqual:self.tableFooterView]) {
+        // Reset the footer view to make tableView adjust it's height
+        self.tableFooterView = view;
+    } else if ([view isKindOfClass:[UITableViewCell class]]) {
         NSIndexPath *indexPath = [self indexPathForCell:(id)view];
         if (indexPath != nil) {
             [self reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -194,28 +195,17 @@
 }
 
 - (void)reloadData {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
-                PBScrollView *headerView = (id) self.tableHeaderView;
-//                [headerView setData:self.data];
-                [headerView setNeedsLoad:YES];
-            } else {
-                CGRect frame = self.tableHeaderView.frame;
-                frame.size.height = 100;
-                self.tableHeaderView.frame = frame;
-            }
-            
-            if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
-                PBScrollView *footerView = (id) self.tableFooterView;
-//                [footerView setData:self.data];
-                [footerView setNeedsLoad:YES];
-            }
-            
-            [super reloadData];
-
-        });
-    });
+    if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
+        PBScrollView *headerView = (id) self.tableHeaderView;
+        [headerView reloadData];
+    }
+    
+    if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
+        PBScrollView *footerView = (id) self.tableFooterView;
+        [footerView reloadData];
+    }
+    
+    [super reloadData];
 }
 
 - (void)dealloc {
