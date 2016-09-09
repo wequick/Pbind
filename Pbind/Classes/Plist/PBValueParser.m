@@ -83,16 +83,13 @@ static NSMutableDictionary *kEnums = nil;
             enumValue = UITableViewCellAccessoryDisclosureIndicator;
         }
         // Cell style
-        else if ([aString isEqualToString:@"cellStyleDefault"]) {
-            enumValue = UITableViewCellStyleDefault;
-        }
-        else if ([aString isEqualToString:@"cellStyleValue1"]) {
+        else if ([aString isEqualToString:@"value1"]) {
             enumValue = UITableViewCellStyleValue1;
         }
-        else if ([aString isEqualToString:@"cellStyleValue2"]) {
+        else if ([aString isEqualToString:@"value2"]) {
             enumValue = UITableViewCellStyleValue2;
         }
-        else if ([aString isEqualToString:@"cellStyleSubtitle"]) {
+        else if ([aString isEqualToString:@"subtitle"]) {
             enumValue = UITableViewCellStyleSubtitle;
         }
         // User defined enums

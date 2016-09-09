@@ -94,7 +94,7 @@
 				<array>
 					<dict>
 						<key>style</key>
-						<string>:cellStyleValue1</string>
+						<string>:value1</string>
 						<key>properties</key>
 						<dict>
 							<key>backgroundColor</key>
@@ -107,7 +107,7 @@
 					</dict>
 					<dict>
 						<key>style</key>
-						<string>:cellStyleValue1</string>
+						<string>:value1</string>
 						<key>properties</key>
 						<dict>
 							<key>backgroundColor</key>
@@ -129,7 +129,7 @@
 				<array>
 					<dict>
 						<key>style</key>
-						<string>:cellStyleValue1</string>
+						<string>:value1</string>
 						<key>properties</key>
 						<dict>
 							<key>backgroundColor</key>
