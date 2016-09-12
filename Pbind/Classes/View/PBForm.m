@@ -876,11 +876,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_pbesentingInput != nil) {
-        if (scrollView.contentOffset.y - scrollView.contentInset.top < -44) {
-            [self endEditing:YES];
-        }
-    }
     if (_indicator.alpha != 0) {
         _indicator.alpha = 0;
     }
@@ -920,11 +915,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     CGFloat visibleCenterY = (keyboardY - tableViewRect.origin.y) / 2;
     CGRect inputRect = [input convertRect:input.bounds toView:self];
     CGPoint offset = [self contentOffset];
-//    UIEdgeInsets insets = [self contentInset];
+    UIEdgeInsets insets = [self contentInset];
 //    CGFloat maxOffsetY = [self contentSize].height + insets.top + insets.bottom - [self bounds].size.height + _keyboardHeight;
     offset.y = inputRect.origin.y + inputRect.size.height / 2 - visibleCenterY;
     offset.y = MIN(offset.y, inputRect.origin.y);
-    offset.y = MAX(offset.y , 0);
+    offset.y = MAX(offset.y , -insets.top);
     
     // Move indicator
     CGFloat cornerRadius = 0;
