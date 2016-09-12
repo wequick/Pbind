@@ -29,6 +29,8 @@
 		F840C2AD1D7FF4ED00B7D6DE /* PBExampleClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2AC1D7FF4ED00B7D6DE /* PBExampleClient.m */; };
 		F840C2B21D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F840C2B01D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.m */; };
 		F840C2B31D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F840C2B11D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.xib */; };
+		F8FB32801D86412500A52286 /* PBCreateGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FB327F1D86412500A52286 /* PBCreateGroupController.m */; };
+		F8FB32821D8641A100A52286 /* PBCreateGroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8FB32811D8641A100A52286 /* PBCreateGroup.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +63,7 @@
 		6003F5A5195388D20070C39A /* PBViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PBViewController.h; sourceTree = "<group>"; };
 		6003F5A6195388D20070C39A /* PBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PBViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6003F5AE195388D20070C39A /* Pbind_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Pbind_Tests.xctest; path = .xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6003F5AE195388D20070C39A /* .xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = .xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -81,6 +83,9 @@
 		F840C2AF1D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleGroupMemberAvatarCell.h; sourceTree = "<group>"; };
 		F840C2B01D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExampleGroupMemberAvatarCell.m; sourceTree = "<group>"; };
 		F840C2B11D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBExampleGroupMemberAvatarCell.xib; sourceTree = "<group>"; };
+		F8FB327E1D86412500A52286 /* PBCreateGroupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCreateGroupController.h; sourceTree = "<group>"; };
+		F8FB327F1D86412500A52286 /* PBCreateGroupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCreateGroupController.m; sourceTree = "<group>"; };
+		F8FB32811D8641A100A52286 /* PBCreateGroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBCreateGroup.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,7 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				6003F58A195388D20070C39A /* Pbind_Example.app */,
-				6003F5AE195388D20070C39A /* Pbind_Tests.xctest */,
+				6003F5AE195388D20070C39A /* .xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,6 +162,8 @@
 				6003F5A6195388D20070C39A /* PBViewController.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				F8FB327E1D86412500A52286 /* PBCreateGroupController.h */,
+				F8FB327F1D86412500A52286 /* PBCreateGroupController.m */,
 			);
 			name = "Example for Pbind";
 			path = Pbind;
@@ -216,6 +223,7 @@
 		F823C76B1D7FF76000B20344 /* Plist */ = {
 			isa = PBXGroup;
 			children = (
+				F8FB32811D8641A100A52286 /* PBCreateGroup.plist */,
 				F823C76C1D7FF78000B20344 /* PBExample.plist */,
 			);
 			name = Plist;
@@ -292,7 +300,7 @@
 			);
 			name = Pbind_Tests;
 			productName = PbindTests;
-			productReference = 6003F5AE195388D20070C39A /* Pbind_Tests.xctest */;
+			productReference = 6003F5AE195388D20070C39A /* .xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -334,6 +342,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8FB32821D8641A100A52286 /* PBCreateGroup.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				F840C2B31D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.xib in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
@@ -453,6 +462,7 @@
 				6003F59E195388D20070C39A /* PBAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* PBViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				F8FB32801D86412500A52286 /* PBCreateGroupController.m in Sources */,
 				F840C2A91D7FF4D600B7D6DE /* PbindAdapter.m in Sources */,
 				F840C2B21D7FF4FE00B7D6DE /* PBExampleGroupMemberAvatarCell.m in Sources */,
 				F840C2A81D7FF4D600B7D6DE /* UIImageView+PBExample.m in Sources */,

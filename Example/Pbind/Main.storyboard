@@ -34,7 +34,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Pbind Example" id="coC-Kl-G2t"/>
+                    <navigationItem key="navigationItem" title="Pbind Example" id="coC-Kl-G2t">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="TDq-eC-CMh">
+                            <connections>
+                                <action selector="joinGroup:" destination="whP-gf-Uak" id="NaA-Ux-kpV"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

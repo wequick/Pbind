@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>properties</key>
+	<dict>
+		<key>action</key>
+		<string>client://im/CreateGroup</string>
+		<key>rows</key>
+		<array>
+			<dict>
+				<key>clazz</key>
+				<string>PBInput</string>
+				<key>properties</key>
+				<dict>
+					<key>name</key>
+					<string>groupName</string>
+					<key>placeholder</key>
+					<string>请输入群组名称</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>clazz</key>
+				<string>PBInput</string>
+				<key>properties</key>
+				<dict>
+					<key>name</key>
+					<string>introduction</string>
+					<key>placeholder</key>
+					<string>请输入群组简介</string>
+					<key>text</key>
+					<string>%(这是&quot; %@ &quot;的简介),&gt;_groupName</string>
+					<key>value</key>
+					<string>%(这是&quot; %@ &quot;的简介),&gt;_groupName</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>clazz</key>
+				<string>PBInput</string>
+				<key>properties</key>
+				<dict>
+					<key>name</key>
+					<string>faceURL</string>
+					<key>placeholder</key>
+					<string>请输入群组图标URL</string>
+					<key>text</key>
+					<string>%JS:string(&apos;placehold.it?text=&apos; + $1.charAt(0)),&gt;_groupName</string>
+					<key>value</key>
+					<string>%JS(&apos;https://placeholdit.imgix.net/~text?txtsize=96&amp;bg=78b8fc&amp;txtclr=f0f0f0&amp;w=165&amp;h=165&amp;txt=&apos; + encodeURI($1.charAt(0))),&gt;_groupName</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>clazz</key>
+				<string>UIButton</string>
+				<key>height</key>
+				<string>132</string>
+				<key>properties</key>
+				<dict>
+					<key>title</key>
+					<string>创建</string>
+					<key>type</key>
+					<string>submit</string>
+					<key>backgroundColor</key>
+					<string>#ff00ff</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>

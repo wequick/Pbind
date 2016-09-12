@@ -34,6 +34,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)joinGroup:(id)sender {
+    [self.navigationController pushViewController:[[NSClassFromString(@"PBCreateGroupController") alloc] init] animated:YES];
+}
+
 - (void)clearChat:(id)sender {
     
 }
