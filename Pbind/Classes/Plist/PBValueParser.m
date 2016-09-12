@@ -94,7 +94,10 @@ static NSMutableDictionary *kEnums = nil;
         }
         // User defined enums
         else {
-            return [kEnums objectForKey:aString];
+            NSNumber *number = [kEnums objectForKey:aString];
+            if (number != nil) {
+                return number;
+            }
         }
         return [NSNumber numberWithInt:enumValue];
     }
