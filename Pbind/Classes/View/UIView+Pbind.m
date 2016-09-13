@@ -374,6 +374,13 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         // Push to a view controller
         UIViewController *controller = [self supercontroller];
         UIViewController *nextController = [[NSClassFromString(url.host) alloc] init];
+        if (userInfo != nil) {
+            @try {
+                [nextController setValuesForKeysWithDictionary:userInfo];
+            } @catch (NSException *exception) {
+                NSLog(@"Pbind: Failed to init properties for %@ (ERROR: %@)", nextController.class, exception);
+            }
+        }
         [controller.navigationController pushViewController:nextController animated:YES];
     } else if ([scheme isEqualToString:@"action"]) {
         NSString *action = url.host;
