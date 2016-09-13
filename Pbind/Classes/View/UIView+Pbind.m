@@ -546,13 +546,34 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
 
 - (UIViewController *)supercontroller
 {
-    id controller = [self nextResponder];
-    while (![controller isKindOfClass:[UIViewController class]]) {
-        controller = [controller nextResponder];
-        if (controller == nil) {
+    id controller = self;
+    while (controller = [controller nextResponder]) {
+        if ([controller isKindOfClass:[UIViewController class]]) {
             break;
         }
+        
+        if ([controller isKindOfClass:[UIWindow class]]) {
+            return [self topcontroller:[(id)controller rootViewController]];
+        }
     }
+    return controller;
+}
+
+- (UIViewController *)topcontroller:(UIViewController *)controller
+{
+    UIViewController *presentedController = [controller presentedViewController];
+    if (presentedController != nil) {
+        return [self topcontroller:presentedController];
+    }
+    
+    if ([controller isKindOfClass:[UINavigationController class]]) {
+        return [self topcontroller:[(id)controller topViewController]];
+    }
+    
+    if ([controller isKindOfClass:[UITabBarController class]]) {
+        return [self topcontroller:[(id)controller selectedViewController]];
+    }
+    
     return controller;
 }
 
