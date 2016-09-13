@@ -103,13 +103,17 @@ static NSMutableDictionary *kEnums = nil;
     }
     // Struct or Object
     if (initial == '{') {
+        CGFloat scale = [Pbind valueScale];
         if (second == 'F') {
             return [self fontWithString:aString];
         } else if (second == '{') { // e.g. {{0, 0}, {320, 480}}
             CGRect rect = CGRectFromString(aString);
+            rect.origin.x *= scale;
+            rect.origin.y *= scale;
+            rect.size.width *= scale;
+            rect.size.height *= scale;
             return [NSValue valueWithCGRect:rect];
         } else {
-            CGFloat scale = [Pbind valueScale];
             NSArray *components = [aString componentsSeparatedByString:@","];
             switch (components.count) {
                 case 2: // e.g. {320, 480}
