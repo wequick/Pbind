@@ -547,7 +547,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
 - (UIViewController *)supercontroller
 {
     id controller = self;
-    while (controller = [controller nextResponder]) {
+    while ((controller = [controller nextResponder]) != nil) {
         if ([controller isKindOfClass:[UIViewController class]]) {
             break;
         }
