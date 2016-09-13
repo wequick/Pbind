@@ -4,11 +4,4 @@ target 'Pbind_Example' do
   pod 'Pbind', :path => '../'
   pod 'SDWebImage'
   pod 'MBProgressHUD'
-
-  target 'Pbind_Tests' do
-    inherit! :search_paths
-
-    pod 'Kiwi'
-  pod 'FBSnapshotTestCase'
-  end
 end
