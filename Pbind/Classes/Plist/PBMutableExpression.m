@@ -14,8 +14,7 @@
 @interface PBExpression (Private)
 
 - (instancetype)initWithUTF8String:(const char *)str;
-- (void)setValueOfOwner:(id)owner forKeyPath:(NSString *)ownerKeyPath withData:(id)data;
-- (void)bindData:(id)data withOwner:(id)owner forKeyPath:(NSString *)ownerKeyPath;
+- (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context;
 
 @end
 
@@ -106,24 +105,24 @@
     }
 }
 
-- (void)mapData:(id)data toOwner:(id)owner forKeyPath:(NSString *)ownerKeyPath
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     if (_format != nil) {
-        [self setValueOfOwner:owner forKeyPath:ownerKeyPath withData:data];
+        [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context];
         for (PBExpression *exp in _expressions) {
-            [exp bindData:data withOwner:owner forKeyPath:ownerKeyPath];
+            [exp bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
         }
     } else {
-        [super mapData:data toOwner:owner forKeyPath:ownerKeyPath];
+        [super mapData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
     }
 }
 
-- (id)valueWithData:(id)data andOwner:(id)owner
+- (id)valueWithData:(id)data target:(id)target context:(UIView *)context
 {
     if (_format != nil) {
         NSMutableArray *arguments = [[NSMutableArray alloc] init];
         for (PBExpression *exp in _expressions) {
-            id value = [exp valueWithData:data andOwner:owner];
+            id value = [exp valueWithData:data target:target context:context];
             if (value == nil) {
                 value = @"";
             }
@@ -131,23 +130,7 @@
         }
         return [self formatedValueWithArguments:arguments];
     }
-    return [super valueWithData:data andOwner:owner];
-}
-
-- (id)valueWithData:(id)data
-{
-    if (_format != nil) {
-        NSMutableArray *arguments = [[NSMutableArray alloc] init];
-        for (PBExpression *exp in _expressions) {
-            id value = [exp valueWithData:data];
-            if (value == nil) {
-                value = @"";
-            }
-            [arguments addObject:value];
-        }
-        return [self formatedValueWithArguments:arguments];
-    }
-    return [super valueWithData:data];
+    return [super valueWithData:data target:target context:context];
 }
 
 #pragma mark - Helper
@@ -230,6 +213,28 @@
         return [self formatedValueWithArguments:_formatedArguments];
     }
     return value;
+}
+
+#pragma mark - Debug
+
+- (NSString *)stringValue {
+    if (_format == nil) {
+        return [super stringValue];
+    }
+    
+    NSMutableString *s = [NSMutableString stringWithString:@"%"];
+    if (_formatterTag != nil) {
+        [s appendString:_formatterTag];
+    }
+    [s appendString:@"("];
+    [s appendString:_format];
+    [s appendString:@")"];
+    for (PBExpression *exp in _expressions) {
+        [s appendString:@","];
+        [s appendString:[exp stringValue]];
+    }
+    
+    return s;
 }
 
 @end

@@ -538,7 +538,8 @@
 
 - (void)__adjustContentOffsetForReshowView:(UIView *)reshowView {
     UIEdgeInsets insets = [self contentInset];
-    CGFloat maxOffsetY = [self contentSize].height + insets.top + insets.bottom - [self bounds].size.height;
+    CGFloat minOffsetY = -insets.top;
+    CGFloat maxOffsetY = MAX(minOffsetY, [self contentSize].height + insets.top + insets.bottom - [self bounds].size.height);
     CGPoint offset = [self contentOffset];
     offset.y = MIN(maxOffsetY, reshowView.frame.origin.y);
     [self setContentOffset:offset animated:YES];

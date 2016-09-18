@@ -750,7 +750,11 @@ else PBINPUT_IFTYPE(_type_, _code_)
 
 - (void)__updateValueByTextOnChanged:(NSString *)text {
     if (_inputFlag.isTextInput && !_inputFlag.usingSharpFormat) {
-        value = text;
+        if ([text length] == 0) {
+            value = _initialValue;
+        } else {
+            value = text;
+        }
     }
 }
 

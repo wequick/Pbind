@@ -107,7 +107,7 @@ DEF_UNDEFINED_PROPERTY2(NSArray *, visualFormats, setVisualFormats)
     for (NSString *key in properties) {
         if ([self mappableForKeyPath:key]) {
             PBExpression *exp = [properties objectForKey:key];
-            [exp mapData:data toOwner:self forKeyPath:key];
+            [exp mapData:data toTarget:self forKeyPath:key inContext:self];
         }
     }
     // Recursive
@@ -131,7 +131,7 @@ DEF_UNDEFINED_PROPERTY2(NSArray *, visualFormats, setVisualFormats)
 - (void)pb_mapData:(id)data forKey:(NSString *)key
 {
     PBExpression *exp = [[self PBDynamicProperties] objectForKey:key];
-    [exp mapData:data toOwner:self forKeyPath:key];
+    [exp mapData:data toTarget:self forKeyPath:key inContext:self];
     // Recursive
     for (UIView *subview in [self subviews]) {
         [subview pb_mapData:data forKey:key];
