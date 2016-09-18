@@ -29,12 +29,12 @@ static NSMutableDictionary *kMappers;
     [kMappers setObject:mapper forKey:@(tag)];
 }
 
-+ (NSArray *)allTags
++ (BOOL)registersTag:(char)tag
 {
-    return [kMappers allKeys];
+    return [[kMappers allKeys] containsObject:@(tag)];
 }
 
-+ (id (^)(id data, id target, int index))mapperForTag:(char)tag
++ (id (^)(id data, id target, UIView *context))mapperForTag:(char)tag
 {
     return [kMappers objectForKey:@(tag)];
 }

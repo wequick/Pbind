@@ -467,8 +467,8 @@ static const int kDataTagUnset = 0xFF;
             break;
         case '+': {
             NSString *keyPath = [targetKeyPath substringFromIndex:1];
-            [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context]; // map value
-            [self bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context]; // binding data
+            [self setValueToTarget:target forKeyPath:keyPath withData:data context:context]; // map value
+            [self bindData:data toTarget:target forKeyPath:keyPath inContext:context]; // binding data
         }
             break;
         default: {
