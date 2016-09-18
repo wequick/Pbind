@@ -44,7 +44,6 @@
     switch (*p) {
         case '!': _flags.no = 1; p++; break;
         case '-': _flags.minus = 1; p++; break;
-        case '~': _flags.animated = 1; p++; break;
         default: break;
     }
     
@@ -99,15 +98,25 @@
         return nil;
     }
     
-    // Binding flag
-    if (*p == '_') {
-        p++;
-        if (*p == '_') {
-            _flags.duplexBinding = 1;
+    // Flag
+    switch (*p) {
+        case '-':
+            // Binding flag
             p++;
-        } else {
-            _flags.onewayBinding = 1;
-        }
+            if (*p == '_') {
+                _flags.duplexBinding = 1;
+                p++;
+            } else {
+                _flags.onewayBinding = 1;
+            }
+            break;
+        case '~':
+            // Animating flag
+            p++;
+            _flags.animated = 1;
+            break;
+        default:
+            break;
     }
     
     // Variable
