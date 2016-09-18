@@ -21,6 +21,17 @@
 			</dict>
 			<dict>
 				<key>clazz</key>
+				<string>UILabel</string>
+				<key>height</key>
+				<string>~&gt;@_groupName?20:0</string>
+				<key>properties</key>
+				<dict>
+					<key>text</key>
+					<string>Got input</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>clazz</key>
 				<string>PBInput</string>
 				<key>properties</key>
 				<dict>
