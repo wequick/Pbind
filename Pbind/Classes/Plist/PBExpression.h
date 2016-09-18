@@ -8,6 +8,39 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ This class is used to parse the expressions configure in Plist.
+ 
+ @discussion Each expression is composed by `[unary op][tag][flag][key][multi op][right value]`.
+ 
+ The [unary op] is optional, supports:
+ 
+ * '!'      -> logic not
+ * '-'      -> negative
+ 
+ The [tag] is required, declares the binding data source, supports:
+ 
+ * '$'      -> value for the key of the root view data
+ * '$[0-9]' -> value for the key of the root view data's element at the index
+ * '.'      -> value for the key of the owner view
+ * '.$'     -> value for the key of the owner view data
+ * '@'      -> value for the key of the owner view controller
+ 
+ The [flag] is optional, supports:
+ 
+ * '~'      -> animated while setting the value for a key of the view
+ * '_'      -> oneway binding, notifys view to update while the data source value changed
+ * '__'     -> duplex binding, notifys each other to update while the view or the data source value changed.
+ 
+ The [multi op] is optional, supports:
+ 
+ * '+', '-', '*', '/'                       -> arithmetic operators
+ * '>', '<', '=', '==', '>=', '<=', '!='    -> logic operators
+ * '?:', '? .. : .. '                       -> test operators
+ 
+ The [right value] is optional, follows by [multi op] only, and only supports constant now.
+ 
+ */
 @interface PBExpression : NSObject
 {
     struct {
@@ -25,7 +58,7 @@
         unsigned int test:1;        // '?'
         unsigned int unaryTest:1;   // '?:'
         
-        // accessories
+        // flags
         unsigned int animated:1;        // '~'
         unsigned int onewayBinding:1;   // '_'
         unsigned int duplexBinding:1;   // '__'
@@ -38,8 +71,6 @@
     NSString *_rvalue;      // right value, accepts constants only
     NSString *_rvalueOfNot; // for `?:' expression, value after ':', accepts constants only
     
-    NSInteger _offset;  // position in mutable expressions
-    
     NSString *_bindingKeyPath;  // the owner's keyPath binding with `_variable'
     id _bindingOwner;
     id _bindingData;
@@ -47,6 +78,14 @@
 
 + (instancetype)expressionWithString:(NSString *)aString;
 
+/**
+ The parent expression, usually is an instance of PBMutableExpression.
+ 
+ @discussion On binding mode, use to notify the parent expression re-calculated.
+ 
+ Example: suppose current expression is `$name` and parent is `%(hello %@!),$name`, 
+ if the `$name` changed to be 'someone', then the parent value should be 'hello someone!'.
+ */
 @property (nonatomic, strong) PBExpression *parent;
 
 - (instancetype)initWithString:(NSString *)aString;

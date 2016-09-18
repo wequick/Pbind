@@ -9,6 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+/**
+ An instance of PBMapperProperties stores the parsing result of the PBMapper's 
+ `properties`, `tagproperties` and `subproperties`.
+ 
+ @discussion Each properties contains:
+ 
+ * constants    -> as `UIColor`, `CGRect`, will be set while the view move to window.
+ * expressions  -> data binding feature, will be set while the data source is ready.
+ 
+ */
 @interface PBMapperProperties : NSObject
 
 + (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary;

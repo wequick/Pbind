@@ -9,6 +9,15 @@
 #import "PBExpression.h"
 #import <UIKit/UIKit.h>
 
+/**
+ A PBMutableExpression allows to calculate a set of PBExpressions.
+ 
+ @discussion Supports:
+ 
+ * %(%@: %@),$a,$b  -> String formater
+ * %JS($2/$1),$a,$b -> Javascript evaluator
+ 
+ */
 @interface PBMutableExpression : PBExpression
 {
     struct {

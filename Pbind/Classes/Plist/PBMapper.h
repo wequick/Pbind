@@ -10,6 +10,18 @@
 #import <UIKit/UIKit.h>
 #import "PBMapperProperties.h"
 
+/**
+ The PBMapper stores all the Plist Key-Value properties and parse them with special format.
+ 
+ @discussion Following reserved keys are used to lazy init:
+ 
+ * properties -> properties for the view
+ * tagproperties -> properties for the subview with tag
+ * subproperties -> properties for the subview at index
+ 
+ The other keyed values are using to set the properties of the mapper self.
+ 
+ */
 @interface PBMapper : NSObject
 {
     PBMapperProperties *_pboperties; // for self
