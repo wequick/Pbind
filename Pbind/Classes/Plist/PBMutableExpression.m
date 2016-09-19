@@ -82,8 +82,8 @@
         *p2++ = *p++;
     }
     *p2 = '\0';
-    free(temp);
     NSString *args =[NSString stringWithUTF8String:temp];
+    free(temp);
     [self initExpressionsWithString:args];
     return self;
 }
