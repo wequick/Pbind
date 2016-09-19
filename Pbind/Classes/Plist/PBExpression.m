@@ -68,6 +68,7 @@ static const int kDataTagUnset = 0xFF;
                 return nil; // constant tag for subscript
             }
             _flags.mapToActiveController = 1;
+            break;
         case '$':
             p++;
             _flags.mapToData = 1;
@@ -171,6 +172,7 @@ static const int kDataTagUnset = 0xFF;
                 NSLog(@"<%@> '!' should together with '=' as '!='.", [[self class] description]);
                 return nil;
             }
+            break;
         case '?':
             _flags.test = 1;
             p++;
