@@ -12,6 +12,7 @@ podfile: Example/Podfile
 before_install:
   - sw_vers # Show osx versions
   - gem install cocoapods # Since Travis is not always on latest version
+  - pod repo update # The Travis repo are TOO old?
   - pod install --project-directory=Example
 script:
   - xctool test -workspace Example/Pbind.xcworkspace -scheme Pbind_Tests -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO
