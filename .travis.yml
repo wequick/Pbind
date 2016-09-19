@@ -12,7 +12,5 @@ before_install:
   - gem install cocoapods # Since Travis is not always on latest version
   - pod update --project-directory=Example
 script:
-  - xcodebuild test -workspace Example/Pbind.xcworkspace -scheme Pbind-Example -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO
-  - xcodebuild build test -workspace Example/Pbind.xcworkspace -scheme Pbind-Example -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO
-  - xctool build test -workspace Example/Pbind.xcworkspace -scheme Pbind-Example -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO
+  - xctool test -workspace Example/Pbind.xcworkspace -scheme Pbind_Tests -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO
   - pod lib lint
