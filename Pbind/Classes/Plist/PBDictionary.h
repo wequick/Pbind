@@ -11,9 +11,9 @@
 /**
  This class is used to extends the Key-Value Observing ability of NSDictionary
  */
-@interface PBDictionary : NSObject <NSCopying>
+@interface PBDictionary<__covariant KeyType, __covariant ObjectType> : NSObject <NSCopying>
 {
-    NSMutableDictionary *_dictionary;
+    NSMutableDictionary<KeyType, ObjectType> *_dictionary;
 }
 
 + (instancetype)dictionaryWithCapacity:(NSUInteger)capacity;
@@ -23,7 +23,10 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-- (id)objectForKeyedSubscript:(id)key NS_AVAILABLE(10_8, 6_0);
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0);
+- (nullable ObjectType)objectForKey:(KeyType)aKey;
+- (void)setObject:(ObjectType)anObject forKey:(KeyType <NSCopying>)aKey;
+
+- (ObjectType)objectForKeyedSubscript:(KeyType)key NS_AVAILABLE(10_8, 6_0);
+- (void)setObject:(ObjectType)obj forKeyedSubscript:(KeyType <NSCopying>)key NS_AVAILABLE(10_8, 6_0);
 
 @end

@@ -65,17 +65,27 @@
     return [_dictionary valueForKeyPath:keyPath];
 }
 
-- (id)objectForKeyedSubscript:(id)key
+- (id)objectForKey:(id)key
 {
     return [_dictionary objectForKeyedSubscript:key];
 }
 
-- (void)setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
+- (void)setObject:(id)obj forKey:(id<NSCopying>)key
 {
     NSString *keyPath = (id) key;
     [self willChangeValueForKey:keyPath];
     [_dictionary setObject:obj forKeyedSubscript:key];
     [self didChangeValueForKey:keyPath];
+}
+
+- (id)objectForKeyedSubscript:(id)key
+{
+    return [self objectForKey:key];
+}
+
+- (void)setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
+{
+    [self setObject:obj forKey:key];
 }
 
 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context
