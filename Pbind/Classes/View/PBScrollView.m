@@ -165,7 +165,7 @@
 - (void)initRowViews
 {
     if (_row != nil) {
-        _rowMapper = [PBRowMapper mapperWithDictionary:_row];
+        _rowMapper = [PBRowMapper mapperWithDictionary:_row owner:self];
         
         if ([self.data isKindOfClass:[NSArray class]]) {
             _rowViews = [NSMutableArray arrayWithCapacity:[self.data count]];
@@ -181,7 +181,7 @@
     } else if (_rows != nil) {
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_rows count]];
         for (NSDictionary *dict in _rows) {
-            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict];
+            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
             mapper.delegate = self;
             [mappers addObject:mapper];
         }

@@ -102,7 +102,7 @@
 }
 
 - (void)setItem:(NSDictionary *)item {
-    _itemMapper = [PBRowMapper mapperWithDictionary:item];
+    _itemMapper = [PBRowMapper mapperWithDictionary:item owner:self];
 }
 
 - (void)reloadData {

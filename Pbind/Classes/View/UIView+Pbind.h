@@ -34,7 +34,7 @@
 @property (nonatomic, strong) NSDictionary *clientParams;
 
 @property (nonatomic, strong) NSString *href;
-@property (nonatomic, strong, readonly, getter=hrefParams) NSDictionary *hrefParams;
+@property (nonatomic, strong) NSDictionary *hrefParams;
 @property (nonatomic, strong, readonly, getter=rootData) id rootData;
 @property (nonatomic, strong) id data;
 @property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
@@ -74,6 +74,7 @@ UIKIT_EXTERN NSString *const PBViewHasHandledLoadErrorKey;
 
 UIKIT_EXTERN NSString *const PBViewDidClickHrefNotification;
 UIKIT_EXTERN NSString *const PBViewHrefKey;
+UIKIT_EXTERN NSString *const PBViewHrefParamsKey;
 
 UIKIT_STATIC_INLINE NSString *PBHrefEncode(NSString *href)
 {

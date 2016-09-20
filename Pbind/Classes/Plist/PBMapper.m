@@ -11,6 +11,12 @@
 #import "UIView+PBLayout.h"
 #import "PBExpression.h"
 
+@interface PBMapperProperties (Private)
+
+- (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
+
+@end
+
 @implementation PBMapper
 
 @synthesize tagProperties=_tagviewProperties;
@@ -31,6 +37,12 @@
         return (id) dictionary;
     }
     return [[self alloc] initWithDictionary:dictionary];
+}
+
++ (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner {
+    PBMapper *mapper = [self mapperWithDictionary:dictionary];
+    [mapper moveDynamicProperties:owner];
+    return mapper;
 }
 
 - (id)initWithDictionary:(NSDictionary *)dictionary
@@ -63,8 +75,8 @@
     [dict removeObjectForKey:@"properties"];
     [dict removeObjectForKey:@"subproperties"];
     [dict removeObjectForKey:@"tagproperties"];
-    _pboperties = [PBMapperProperties propertiesWithDictionary:dict];
-    [_pboperties initDataForOwner:self];
+    _properties = [PBMapperProperties propertiesWithDictionary:dict];
+    [_properties initDataForOwner:self];
     
     return self;
 }
@@ -106,7 +118,7 @@
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
-    [_pboperties mapData:data forOwner:self withView:view];
+    [_properties mapData:data forOwner:self withView:view];
 }
 
 - (void)mapData:(id)data forView:(UIView *)view
@@ -118,6 +130,30 @@
     /* for view */
     /*----------*/
     [view pb_mapData:data];
+}
+
+- (void)moveDynamicProperties:(UIView *)view
+{
+    NSDictionary *properties = [view PBDynamicProperties];
+    if (properties.count == 0) {
+        return;
+    }
+    
+    NSPredicate *pd = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'row.properties'"];
+    NSArray *targetKeys = [[properties allKeys] filteredArrayUsingPredicate:pd];
+    if (targetKeys.count == 0) {
+        return;
+    }
+    
+    for (NSString *key in targetKeys) {
+        NSString *aKey = [key substringFromIndex:15]; // bypass 'row.properties.'
+        PBExpression *exp = [properties objectForKey:key];
+        [_viewProperties setExpression:exp forKey:aKey];
+    }
+    
+    NSMutableDictionary *filteredProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
+    [filteredProperties removeObjectsForKeys:targetKeys];
+    [view setPBDynamicProperties:filteredProperties];
 }
 
 @end

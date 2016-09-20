@@ -216,13 +216,13 @@
 
 - (PBRowMapper *)rowWithDictionary:(NSDictionary *)dictionary indexPath:(NSIndexPath *)indexPath
 {
-    return [PBRowMapper mapperWithDictionary:dictionary];
+    return [PBRowMapper mapperWithDictionary:dictionary owner:self];
 }
 
 - (void)setRow:(PBRowMapper *)row
 {
     if ([row isKindOfClass:[NSDictionary class]]) {
-        row = [PBRowMapper mapperWithDictionary:(id)row];
+        row = [PBRowMapper mapperWithDictionary:(id)row owner:self];
     }
     _row = row;
 }
@@ -244,7 +244,7 @@
     NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[sections count]];
     for (NSInteger section = 0; section < [sections count]; section++) {
         NSDictionary *dict = [sections objectAtIndex:section];
-        PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict];
+        PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self];
         NSMutableArray *rows = [NSMutableArray arrayWithCapacity:[aSection.rows count]];
         for (NSInteger row = 0; row < [aSection.rows count]; row++) {
             NSDictionary *rowDict = [aSection.rows objectAtIndex:row];

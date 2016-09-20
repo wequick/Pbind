@@ -22,6 +22,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
 NSString *const PBViewDidClickHrefNotification = @"PBViewDidClickHref";
 NSString *const PBViewHrefKey = @"href";
+NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 @interface PBClient (Private)
 
@@ -48,12 +49,12 @@ NSString *const PBViewHrefKey = @"href";
 DEF_DYNAMIC_PROPERTY(PB_additionValues, setPB_additionValues, NSMutableDictionary *)
 DEF_DYNAMIC_PROPERTY(pb_unmappableKeys, setPb_unmappableKeys, NSMutableArray *)
 
-DEF_UNDEFINED_PROPERTY(NSURL *, _pbPlistURL);
-DEF_UNDEFINED_PROPERTY(NSArray *, _pbClients);
-DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionClients);
-DEF_UNDEFINED_PROPERTY(NSArray *, _pbClientMappers);
-DEF_UNDEFINED_PROPERTY(PBMapper *, PB_internalMapper);
-DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionMappers);
+DEF_UNDEFINED_PROPERTY(NSURL *, _pbPlistURL)
+DEF_UNDEFINED_PROPERTY(NSArray *, _pbClients)
+DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionClients)
+DEF_UNDEFINED_PROPERTY(NSArray *, _pbClientMappers)
+DEF_UNDEFINED_PROPERTY(PBMapper *, PB_internalMapper)
+DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionMappers)
 
 DEF_UNDEFINED_PROPERTY2(NSString *, plist, setPlist)
 DEF_UNDEFINED_PROPERTY2(NSArray *, clients, setClients)
@@ -63,12 +64,13 @@ DEF_UNDEFINED_PROPERTY2(NSString *, clientAction, setClientAction)
 DEF_UNDEFINED_PROPERTY2(NSDictionary *, clientParams, setClientParams)
 DEF_UNDEFINED_PROPERTY2(id, data, setData)
 DEF_UNDEFINED_PROPERTY2(NSString *, href, setHref)
+DEF_UNDEFINED_PROPERTY2(NSDictionary *, hrefParams, setHrefParams)
 DEF_UNDEFINED_PROPERTY2(id<PBViewLoadingDelegate>, loadingDelegate, setLoadingDelegate)
 
 DEF_UNDEFINED_INT_PROPERTY(pb_loadingCount, setPb_loadingCount, 0)
 DEF_UNDEFINED_BOOL_PROPERTY(pb_interrupted, setPb_interrupted, NO)
 DEF_UNDEFINED_BOOL_PROPERTY(showsLoadingCover, setShowsLoadingCover, YES) //void (^)(void)
-DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_pbeparation, setPb_pbeparation)
+DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_preparation, setPb_preparation)
 DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transformation)
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
@@ -128,7 +130,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     } else {
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:self.clients.count];
         for (id data in self.clients) {
-            PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:data];
+            PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:data owner:self];
             [mappers addObject:mapper];
         }
         self._pbClientMappers = mappers;
@@ -160,7 +162,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     
     NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
     for (NSString *key in self.actions) {
-        PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key]];
+        PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key] owner:self];
         [mapper initDataForView:self];
         [mappers setObject:mapper forKey:key];
     }
@@ -227,7 +229,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     // Notify loading start
     [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:self];
     
-    self.pb_pbeparation = preparation;
+    self.pb_preparation = preparation;
     self.pb_transformation = transformation;
     NSInteger N = self.pb_clients.count;
     self.pb_loadingCount = (int) N;
@@ -272,7 +274,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                 data = transformation(data, response.error);
             }
             if (data) {
-                self.pb_pbeparation = nil;
+                self.pb_preparation = nil;
                 self.pb_transformation = nil;
                 self.data[i] = data;
                 [self pb_mapData:self.rootData];
@@ -290,7 +292,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
 
 - (void)pb_repullData
 {
-    [self pb_pullDataWithPreparation:self.pb_pbeparation transformation:self.pb_transformation];
+    [self pb_pullDataWithPreparation:self.pb_preparation transformation:self.pb_transformation];
 }
 
 - (void)pb_loadData:(id)data
@@ -337,35 +339,45 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     }
     
     NSURL *url;
-    NSDictionary *userInfo = nil;
+    NSMutableDictionary *hrefParams = nil;
     NSRange range = [href rangeOfString:@"?"];
     if (range.location != NSNotFound) {
         url = [NSURL URLWithString:[href substringToIndex:range.location]];
         NSString *query = [href substringFromIndex:range.location + 1];
-        NSMutableDictionary *queries = [[NSMutableDictionary alloc] init];
+        hrefParams = [[NSMutableDictionary alloc] init];
         NSArray *pairs = [query componentsSeparatedByString:@"&"];
         for (NSString *pair in pairs) {
             NSRange range = [pair rangeOfString:@"="];
             if (range.location != NSNotFound) {
                 NSString *key = [pair substringToIndex:range.location];
                 NSString *value = [pair substringFromIndex:range.location + 1];
-                queries[key] = value;
+                hrefParams[key] = value;
             }
         }
-        userInfo = queries;
     } else {
         url = [NSURL URLWithString:href];
     }
     
+    // Merge href parameters
+    if (hrefParams != nil) {
+        if (self.hrefParams != nil) {
+            [hrefParams setValuesForKeysWithDictionary:self.hrefParams];
+            self.hrefParams = hrefParams;
+        } else {
+            self.hrefParams = hrefParams;
+        }
+    } else {
+        hrefParams = self.hrefParams;
+    }
+    
     NSString *scheme = url.scheme;
     if ([scheme isEqualToString:@"note"]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:url.host object:self userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:url.host object:self userInfo:hrefParams];
     } else if ([scheme isEqualToString:@"ctl"]) {
-        // Call a view controller method
+        // Invoke a view controller method
         UIViewController *controller = [self supercontroller];
         SEL action = NSSelectorFromString([NSString stringWithFormat:@"%@:", url.host]);
         if ([controller respondsToSelector:action]) {
-            [self setValue:userInfo forAdditionKey:@"hrefParams"];
             IMP imp = [controller methodForSelector:action];
             PBCallControllerFunc func = (PBCallControllerFunc)imp;
             func(controller, action, self);
@@ -374,9 +386,9 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         // Push to a view controller
         UIViewController *controller = [self supercontroller];
         UIViewController *nextController = [[NSClassFromString(url.host) alloc] init];
-        if (userInfo != nil) {
+        if (hrefParams != nil) {
             @try {
-                [nextController setValuesForKeysWithDictionary:userInfo];
+                [nextController setValuesForKeysWithDictionary:hrefParams];
             } @catch (NSException *exception) {
                 NSLog(@"Pbind: Failed to init properties for %@ (ERROR: %@)", nextController.class, exception);
             }
@@ -406,9 +418,9 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             }];
         } else if ([action isEqualToString:@"alert"]) {
             // Show alert
-            NSString *title = userInfo[@"title"];
-            NSString *msg = userInfo[@"msg"];
-            NSArray *buttonTitles = [userInfo[@"btns"] componentsSeparatedByString:@"|"];
+            NSString *title = hrefParams[@"title"];
+            NSString *msg = hrefParams[@"msg"];
+            NSArray *buttonTitles = [hrefParams[@"btns"] componentsSeparatedByString:@"|"];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
             [self setValue:alert forAdditionKey:@"__alert"];
             int buttonCount = (int) buttonTitles.count;
@@ -448,7 +460,13 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidClickHrefNotification object:self userInfo:@{@"href":href}];
+    // Post a notification
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+    userInfo[PBViewHrefKey] = href;
+    if (hrefParams != nil) {
+        userInfo[PBViewHrefParamsKey] = hrefParams;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidClickHrefNotification object:self userInfo:userInfo];
 }
 
 #pragma mark -
@@ -545,10 +563,6 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         dynamicProperties = [NSMutableDictionary dictionaryWithDictionary:self.PBDynamicProperties];
     }
     [dynamicProperties setObject:aExpression forKey:keyPath];
-}
-
-- (NSDictionary *)hrefParams {
-    return [self valueForAdditionKey:@"hrefParams"];
 }
 
 - (UIViewController *)supercontroller

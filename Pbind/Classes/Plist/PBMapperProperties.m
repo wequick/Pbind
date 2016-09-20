@@ -15,7 +15,6 @@
 {
     NSMutableDictionary *_constants;
     NSMutableDictionary *_expressions;
-    NSDictionary        *_params;     // Key='params'
 }
 
 @end
@@ -25,33 +24,55 @@
 + (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary
 {
     PBMapperProperties *properties = [[self alloc] init];
-//    [properties setValuesForKeysWithDictionary:dictionary];
     for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
-        if ([key isEqualToString:@"@params"]) {
-            properties->_params = value;
+        if ([value isKindOfClass:[NSDictionary class]]) {
+            // Nested
+            NSMutableDictionary *constantPartValue = [[NSMutableDictionary alloc] init];
+            PBMapperProperties *subproperties = [self propertiesWithDictionary:value];
+            [subproperties initDataForOwner:constantPartValue];
+            [properties setConstant:constantPartValue forKey:key];
+            
+            if (subproperties->_expressions != nil) {
+                for (NSString *subkey in subproperties->_expressions) {
+                    NSString *keyPath = [NSString stringWithFormat:@"%@.%@", key, subkey];
+                    PBExpression *exp = [subproperties->_expressions objectForKey:subkey];
+                    [properties setExpression:exp forKey:keyPath];
+                }
+            }
             continue;
         }
         
-        PBMutableExpression *expression = nil;
         if ([value isKindOfClass:[NSString class]]) {
-            expression = [PBMutableExpression expressionWithString:value];
+            PBMutableExpression *expression = [PBMutableExpression expressionWithString:value];
+            if (expression != nil) {
+                [properties setExpression:expression forKey:key];
+                continue;
+            }
+            
+            value = [PBValueParser valueWithString:value];
         }
         
-        if (expression != nil) {
-            if (properties->_expressions == nil) {
-                properties->_expressions = [[NSMutableDictionary alloc] init];
-            }
-            [properties->_expressions setObject:expression forKey:key];
-        } else {
-            if (properties->_constants == nil) {
-                properties->_constants = [[NSMutableDictionary alloc] init];
-            }
-            [properties->_constants setObject:[PBValueParser valueWithString:value] forKey:key];
-        }
+        [properties setConstant:value forKey:key];
     }
     
     return properties;
+}
+
+- (void)setConstant:(id)value forKey:(NSString *)key
+{
+    if (_constants == nil) {
+        _constants = [[NSMutableDictionary alloc] init];
+    }
+    [_constants setObject:value forKey:key];
+}
+
+- (void)setExpression:(PBExpression *)expression forKey:(NSString *)key
+{
+    if (_expressions == nil) {
+        _expressions = [[NSMutableDictionary alloc] init];
+    }
+    [_expressions setObject:expression forKey:key];
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
