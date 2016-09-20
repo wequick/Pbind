@@ -15,13 +15,13 @@
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
     // Do any additional setup after loading the view.
     _tableView = [[PBTableView alloc] initWithFrame:[UIScreen mainScreen].bounds style:[self preferredTableViewStyle]];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     
     self.view = _tableView;
+    [super viewDidLoad];
 }
 
 - (void)didReceiveMemoryWarning {

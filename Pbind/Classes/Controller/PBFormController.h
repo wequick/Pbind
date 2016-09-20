@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "PBForm.h"
+#import "PBViewController.h"
 
-@interface PBFormController : UIViewController<PBFormDelegate>
+@interface PBFormController : PBViewController<PBFormDelegate>
 
 @property (nonatomic, strong) PBForm *form;
 

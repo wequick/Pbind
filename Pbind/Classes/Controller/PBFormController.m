@@ -11,10 +11,10 @@
 @implementation PBFormController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
     _form = [[PBForm alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _form.formDelegate = self;
     self.view = _form;
+    [super viewDidLoad];
 }
 
 @end
