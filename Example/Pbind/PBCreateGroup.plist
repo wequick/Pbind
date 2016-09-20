@@ -23,7 +23,7 @@
 				<key>clazz</key>
 				<string>UILabel</string>
 				<key>height</key>
-				<string>~&gt;@_groupName?20:0</string>
+				<string>&gt;@_groupName?20:0</string>
 				<key>properties</key>
 				<dict>
 					<key>text</key>

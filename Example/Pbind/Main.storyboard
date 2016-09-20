@@ -24,7 +24,7 @@
         <!--Pbind Example-->
         <scene sceneID="wQg-tq-qST">
             <objects>
-                <viewController id="whP-gf-Uak" customClass="PBViewController" sceneMemberID="viewController">
+                <viewController id="whP-gf-Uak" customClass="PBGroupInfoController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="uEw-UM-LJ8"/>
                         <viewControllerLayoutGuide type="bottom" id="Mvr-aV-6Um"/>

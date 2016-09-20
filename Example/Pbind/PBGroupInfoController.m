@@ -6,15 +6,15 @@
 //  Copyright (c) 2016 galenlin. All rights reserved.
 //
 
-#import "PBViewController.h"
+#import "PBGroupInfoController.h"
 
-@interface PBViewController ()
+@interface PBGroupInfoController ()
 
 @property (nonatomic, strong) NSDictionary *groupParams;
 
 @end
 
-@implementation PBViewController
+@implementation PBGroupInfoController
 
 - (UITableViewStyle)preferredTableViewStyle {
     return UITableViewStyleGrouped;
@@ -25,6 +25,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     _groupId = @"111";
+    _groupParams = @{@"group": @"1"};
     [self.tableView setPlist:@"PBExample"];
 }
 

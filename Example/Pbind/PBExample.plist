@@ -83,6 +83,19 @@
 							<string>%(全部群成员 ( %@ )),$memberNum</string>
 							<key>backgroundColor</key>
 							<string>#fff</string>
+							<key>accessoryType</key>
+							<string>:&gt;</string>
+							<key>href</key>
+							<string>push://PBTableViewController</string>
+							<key>hrefParams</key>
+							<dict>
+								<key>title</key>
+								<string>%(%@ ( %@ )),$groupName,$memberNum</string>
+								<key>plist</key>
+								<string>PBGroupMembers</string>
+								<key>data</key>
+								<string>$1.fullList</string>
+							</dict>
 						</dict>
 					</dict>
 				</array>

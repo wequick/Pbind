@@ -14,7 +14,7 @@
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
 		6003F59E195388D20070C39A /* PBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* PBAppDelegate.m */; };
-		6003F5A7195388D20070C39A /* PBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* PBViewController.m */; };
+		6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* PBGroupInfoController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -22,6 +22,7 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F80D432F1D8E667D00FF298B /* PBExpressionTests.m */; };
+		F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */; };
 		F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */; };
 		F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CC1D87AB9C0038A3E5 /* PBExample.plist */; };
 		F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D01D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m */; };
@@ -57,19 +58,20 @@
 		6003F59B195388D20070C39A /* Pbind-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Pbind-Prefix.pch"; sourceTree = "<group>"; };
 		6003F59C195388D20070C39A /* PBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PBAppDelegate.h; sourceTree = "<group>"; };
 		6003F59D195388D20070C39A /* PBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PBAppDelegate.m; sourceTree = "<group>"; };
-		6003F5A5195388D20070C39A /* PBViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PBViewController.h; sourceTree = "<group>"; };
-		6003F5A6195388D20070C39A /* PBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PBViewController.m; sourceTree = "<group>"; };
+		6003F5A5195388D20070C39A /* PBGroupInfoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PBGroupInfoController.h; sourceTree = "<group>"; };
+		6003F5A6195388D20070C39A /* PBGroupInfoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PBGroupInfoController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* Pbind_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pbind_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6DAD5323CFB388DE0933507C /* Pbind.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Pbind.podspec; path = ../Pbind.podspec; sourceTree = "<group>"; };
-		7E08BCADD4B2FCB8CB2F20B2 /* Pods-Pbind_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		C9A6AD796B424285D2184205 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F255872ABDC8B50205417D02 /* Pods-Pbind_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.release.xcconfig"; sourceTree = "<group>"; };
+		F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
+		F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBGroupMembers.plist; sourceTree = "<group>"; };
 		F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBCreateGroup.plist; sourceTree = "<group>"; };
 		F89500CC1D87AB9C0038A3E5 /* PBExample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBExample.plist; sourceTree = "<group>"; };
 		F89500CF1D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleGroupMemberAvatarCell.h; sourceTree = "<group>"; };
@@ -155,8 +157,8 @@
 				6003F59C195388D20070C39A /* PBAppDelegate.h */,
 				6003F59D195388D20070C39A /* PBAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
-				6003F5A5195388D20070C39A /* PBViewController.h */,
-				6003F5A6195388D20070C39A /* PBViewController.m */,
+				6003F5A5195388D20070C39A /* PBGroupInfoController.h */,
+				6003F5A6195388D20070C39A /* PBGroupInfoController.m */,
 				F89500DD1D87AC0E0038A3E5 /* PBCreateGroupController.h */,
 				F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
@@ -209,8 +211,8 @@
 		614EE4597655475B688B1510 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7E08BCADD4B2FCB8CB2F20B2 /* Pods-Pbind_Example.debug.xcconfig */,
 				F255872ABDC8B50205417D02 /* Pods-Pbind_Example.release.xcconfig */,
+				F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -250,6 +252,7 @@
 			children = (
 				F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */,
 				F89500CC1D87AB9C0038A3E5 /* PBExample.plist */,
+				F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */,
 			);
 			name = Plist;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */,
 				F89500D31D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib in Resources */,
+				F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,7 +414,7 @@
 				F89500DB1D87ABCC0038A3E5 /* UIImageView+PBExample.m in Sources */,
 				F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */,
 				F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */,
-				6003F5A7195388D20070C39A /* PBViewController.m in Sources */,
+				6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */,
 				F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */,
 				F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
@@ -531,7 +535,7 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7E08BCADD4B2FCB8CB2F20B2 /* Pods-Pbind_Example.debug.xcconfig */;
+			baseConfigurationReference = F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -563,13 +567,13 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7E08BCADD4B2FCB8CB2F20B2 /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(CONFIGURATION_BUILD_DIR)/**",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -587,13 +591,13 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7E08BCADD4B2FCB8CB2F20B2 /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(CONFIGURATION_BUILD_DIR)/**",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";

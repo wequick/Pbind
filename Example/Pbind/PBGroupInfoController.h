@@ -9,7 +9,7 @@
 @import UIKit;
 @import Pbind;
 
-@interface PBViewController : PBTableViewController
+@interface PBGroupInfoController : PBTableViewController
 
 @property (nonatomic, strong) NSString *groupId;
 
