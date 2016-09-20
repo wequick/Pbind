@@ -367,7 +367,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             self.hrefParams = hrefParams;
         }
     } else {
-        hrefParams = self.hrefParams;
+        hrefParams = [NSMutableDictionary dictionaryWithDictionary:self.hrefParams];
     }
     
     NSString *scheme = url.scheme;
