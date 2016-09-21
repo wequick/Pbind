@@ -13,6 +13,7 @@
 - (void)loadRequest:(PBRequest *)request success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSString *action = request.action;
+    NSString *group = request.params[@"group"];
     if ([action isEqualToString:@"GetGroupInfo"]) {
         
         id data = @{@"groupName": @"My Group",
