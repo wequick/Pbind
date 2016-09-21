@@ -25,7 +25,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     _groupId = @"111";
-    _groupParams = @{@"group": @"1"};
+    _groupParams = @{@"group": @"@TGS"};
     [self.tableView setPlist:@"PBExample"];
 }
 

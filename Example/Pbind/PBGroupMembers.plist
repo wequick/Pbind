@@ -24,15 +24,14 @@
 				<string>{24,36,30,36}</string>
 				<key>imageSize</key>
 				<string>{130,130}</string>
+				<key>imageView.clipsToBounds</key>
+				<true/>
+				<key>imageView.layer.cornerRadius</key>
+				<integer>13</integer>
 				<key>imageView.avatarUrl</key>
 				<string>.$customInfo.avatar</string>
 				<key>textLabel.text</key>
 				<string>.$nameCard</string>
-				<key>hrefParams</key>
-				<dict>
-					<key>data</key>
-					<string>$hello</string>
-				</dict>
 			</dict>
 		</dict>
 	</dict>
