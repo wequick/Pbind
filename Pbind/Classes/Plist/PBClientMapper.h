@@ -105,6 +105,4 @@
  */
 @property (nonatomic, strong) PBClient *nextClient;
 
-+ (instancetype)constMapperWithDictionary:(NSDictionary *)dictionary;
-
 @end

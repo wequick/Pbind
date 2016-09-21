@@ -8,12 +8,19 @@
 
 #import "PBMapper.h"
 #import <UIKit/UIKit.h>
+#import "UIView+Pbind.h"
 #import "UIView+PBLayout.h"
 #import "PBExpression.h"
 
 @interface PBMapperProperties (Private)
 
 - (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
+
+@end
+
+@interface PBMapper ()
+
+@property (nonatomic, strong) id data;
 
 @end
 
@@ -118,6 +125,7 @@
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
+    self.data = [view valueForKey:@"data"];
     [_properties mapData:data forOwner:self withView:view];
 }
 

@@ -10,10 +10,4 @@
 
 @implementation PBClientMapper
 
-+ (instancetype)constMapperWithDictionary:(NSDictionary *)dictionary {
-    PBClientMapper *mapper = [[PBClientMapper alloc] init];
-    [mapper setValuesForKeysWithDictionary:dictionary];
-    return mapper;
-}
-
 @end

@@ -27,6 +27,11 @@
     for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
         if ([value isKindOfClass:[NSDictionary class]]) {
+            if ([key isEqualToString:@"actions"]) { // ignores the action mapper cause it have done by self.
+                [properties setConstant:value forKey:key];
+                continue;
+            }
+            
             // Nested
             NSMutableDictionary *constantPartValue = [[NSMutableDictionary alloc] init];
             PBMapperProperties *subproperties = [self propertiesWithDictionary:value];

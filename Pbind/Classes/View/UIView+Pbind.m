@@ -162,7 +162,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     
     NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
     for (NSString *key in self.actions) {
-        PBClientMapper *mapper = [PBClientMapper constMapperWithDictionary:self.actions[key]];
+        PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key] owner:self];
         [mapper initDataForView:self];
         [mappers setObject:mapper forKey:key];
     }
