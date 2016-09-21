@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PBMapper.h"
 
 @class PBClient;
 
@@ -36,7 +37,7 @@
      </array>
 
  */
-@interface PBClientMapper : NSObject
+@interface PBClientMapper : PBMapper
 
 #pragma mark - Creating
 ///=============================================================================
@@ -104,6 +105,6 @@
  */
 @property (nonatomic, strong) PBClient *nextClient;
 
-+ (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)view;
++ (instancetype)constMapperWithDictionary:(NSDictionary *)dictionary;
 
 @end
