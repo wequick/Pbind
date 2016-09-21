@@ -32,7 +32,9 @@
 - (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target {
     PBExpression *exp = [PBMutableExpression expressionWithString:source];
     XCTAssert([source isEqualToString:[exp stringValue]]);
-    XCTAssert([result isEqual:[exp valueWithData:data target:target]]);
+    
+    id value = [exp valueWithData:data target:target];
+    XCTAssert((result == nil && value == nil) || [result isEqual:value]);
 }
 
 - (void)testCanParseData {
@@ -80,20 +82,48 @@
              withData:@[@{@"repo_owner": @"wequick"}, @{@"repo_name": @"Pbind"}]];
 }
 
-- (void)testCanParseDotToRootView {
-    XCTAssert(TRUE);
+- (void)testCanParseJSDictionary {
+    id target = @{@"awesome": @1, @"repo": @"wequick/Pbind"};
+    id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"%JS({awesome:1, repo:$1}),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:dictionary({awesome:1, repo:$1}),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:dictionary(var t={awesome:1, repo:$1};t;),$repo" toValue:target withData:data];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+- (void)testCanParseJSArray {
+    id target = @[@"awesome", @"wequick/Pbind"];
+    id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"%JS(['awesome', $1]),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:array(['awesome', $1]),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:array(var t=['awesome', $1];t;),$repo" toValue:target withData:data];
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+- (void)testCanParseJSArrayWithDictionary {
+    id target = @[@"awesome", @{@"repo": @"wequick/Pbind"}];
+    id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"%JS(['awesome', {repo: $1}]),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:array(['awesome', {repo: $1}]),$repo" toValue:target withData:data];
+    [self shouldParse:@"%JS:array(var t=['awesome', {repo: $1}];t;),$repo" toValue:target withData:data];
+}
+
+- (void)testCanParseEmpty {
+    [self shouldParse:@"%!(hello %@!),$greet" toValue:nil withData:nil];
+    [self shouldParse:@"%!(hello %@!),$greet" toValue:@"hello Pbind!" withData:@{@"greet": @"Pbind"}];
+}
+
+- (void)testCanParseAttributedText {
+    NSDictionary *attr1 = @{NSFontAttributeName: [UIFont systemFontOfSize:[Pbind valueScale] * 14]};
+    NSDictionary *attr2 = @{NSForegroundColorAttributeName: [UIColor colorWithRed:1 green:1 blue:1 alpha:1]};
+    NSDictionary *attr3 = @{NSFontAttributeName: [UIFont systemFontOfSize:[Pbind valueScale] * 14],
+                            NSForegroundColorAttributeName: [UIColor colorWithRed:1 green:1 blue:1 alpha:1]};
+    NSString *text = @"Hello wequick Pbind";
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:nil];
+    [attributedString addAttributes:attr1 range:NSMakeRange(0, 6)];
+    [attributedString addAttributes:attr2 range:NSMakeRange(6, 7)];
+    [attributedString addAttributes:attr3 range:NSMakeRange(13, 6)];
+    [self shouldParse:@"%AT(Hello |%@| %@),$owner,$repo;{F:14}|#FFFFFF|#FFFFFF-{F:14}"
+              toValue:attributedString
+             withData:@{@"owner": @"wequick", @"repo": @"Pbind"}];
 }
 
 @end
