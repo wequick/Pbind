@@ -10,4 +10,10 @@
 
 @implementation PBClientMapper
 
++ (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)view {
+    PBClientMapper *mapper = [[PBClientMapper alloc] init];
+    [mapper setValuesForKeysWithDictionary:dictionary];
+    return mapper;
+}
+
 @end

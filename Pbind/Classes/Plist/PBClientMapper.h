@@ -8,14 +8,35 @@
 
 #import <Foundation/Foundation.h>
 
-#import "PBMapper.h"
-
 @class PBClient;
 
 /**
- This class stores properties of a PBClient. All of the property will be map at runtime by PBExpression.
+ This class stores the properties of a PBClient.
+ 
+ @discussion Used for mapping the `clients` in Plist:
+ 
+     <key>clients</key>
+     <array>
+        <dict>
+            <key>clazz</key>
+             <string>PBExampleClient</string>
+             <key>action</key>
+             <string>GetGroupInfo</string>
+             <key>params</key>
+             <string>@groupParams</string>
+        </dict>
+        <dict>
+             <key>clazz</key>
+             <string>PBExampleClient</string>
+             <key>action</key>
+             <string>GetGroupMembers</string>
+             <key>params</key>
+             <string>@groupParams</string>
+        </dict>
+     </array>
+
  */
-@interface PBClientMapper : PBMapper
+@interface PBClientMapper : NSObject
 
 #pragma mark - Creating
 ///=============================================================================
@@ -82,5 +103,7 @@
  @discussion This will provide the nested loading ability.
  */
 @property (nonatomic, strong) PBClient *nextClient;
+
++ (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)view;
 
 @end

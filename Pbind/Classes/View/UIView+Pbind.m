@@ -163,7 +163,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
     for (NSString *key in self.actions) {
         PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key] owner:self];
-        [mapper initDataForView:self];
+//        [mapper initDataForView:self];
         [mappers setObject:mapper forKey:key];
     }
     self._pbActionMappers = mappers;
@@ -244,7 +244,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     for (NSInteger i = 0; i < N; i++) {
         PBClient *client = [self.pb_clients objectAtIndex:i];
         PBClientMapper *mapper = [self.pb_clientMappers objectAtIndex:i];
-        [mapper updateWithData:self.data andView:self];
+//        [mapper updateWithData:self.data andView:self];
         
         Class requestClass = [client.class requestClass];
         PBRequest *request = [[requestClass alloc] init];
@@ -396,7 +396,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         [controller.navigationController pushViewController:nextController animated:YES];
     } else if ([scheme isEqualToString:@"action"]) {
         NSString *action = url.host;
-        if ([action length] == 1) {
+        if ([action length] == 1) { // action://1
             NSDictionary *clients = [self pb_actionClients];
             PBClient *client = [clients objectForKey:action];
             if (client == nil) {
@@ -405,7 +405,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             
             NSDictionary *mappers = [self pb_actionMappers];
             PBClientMapper *mapper = [mappers objectForKey:action];
-            [mapper updateWithData:self.data andView:self];
+//            [mapper updateWithData:self.data andView:self];
             PBRequest *request = [[[client.class requestClass] alloc] init];
             request.action = mapper.action;
             request.params = mapper.params;
@@ -416,7 +416,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                     }
                 }
             }];
-        } else if ([action isEqualToString:@"alert"]) {
+        } else if ([action isEqualToString:@"alert"]) { // action://alert
             // Show alert
             NSString *title = hrefParams[@"title"];
             NSString *msg = hrefParams[@"msg"];
@@ -440,7 +440,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                         [self setValue:nil forAdditionKey:@"__alert"];
                         
                         PBClientMapper *mapper = [mappers objectForKey:key];
-                        [mapper updateWithData:self.data andView:self];
+//                        [mapper updateWithData:self.data andView:self];
                         
                         PBRequest *request = [[[client.class requestClass] alloc] init];
                         request.action = mapper.action;
