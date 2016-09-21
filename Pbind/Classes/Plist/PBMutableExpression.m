@@ -10,6 +10,10 @@
 #import "PBValueParser.h"
 #import "PBString.h"
 #import "PBVariableEvaluator.h"
+#import <JavascriptCore/JavascriptCore.h>
+#import "Pbind+API.h"
+
+typedef id (*JSValueConvertorFunc)(id, SEL);
 
 @interface PBExpression (Private)
 
@@ -19,6 +23,15 @@
 @end
 
 @implementation PBMutableExpression
+
++ (JSContext *)sharedJSContext {
+    static JSContext *context = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        context = [[JSContext alloc] init];
+    });
+    return context;
+}
 
 - (instancetype)initWithUTF8String:(const char *)str {
     if (*str != '%') {
@@ -50,12 +63,16 @@
         }
         NSString *tag = [NSString stringWithUTF8String:temp];
         free(temp);
-        if ([tag isEqualToString:@"AT"]) {
+        if ([tag isEqualToString:@"!"]) {
+            _formatFlags.testEmpty = 1;
+        } else if ([tag isEqualToString:@"JS"]) {
+            _formatFlags.javascript = 1;
+        } else if ([tag isEqualToString:@"AT"]) {
             _formatFlags.attributedText = 1;
         } else {
             _formatter = [PBVariableEvaluator evaluatorForTag:tag];
             if (_formatter != nil) {
-                _formatFlags.custom = 1;
+                _formatFlags.customized = 1;
             } else {
                 NSLog(@"Unknown format tag:`%@'", tag);
                 return self;
@@ -78,13 +95,37 @@
     // Variable args
     p += 2;
     p2 = temp = (char *)malloc(len - (p - str));
-    while (*p != '\0') {
+    while (*p != '\0' && *p != ';') {
         *p2++ = *p++;
     }
     *p2 = '\0';
     NSString *args =[NSString stringWithUTF8String:temp];
     free(temp);
     [self initExpressionsWithString:args];
+    
+    if (*p == '\0' || _formatFlags.attributedText == 0) {
+        return self;
+    }
+    
+    // Attributes
+    p++;
+    NSMutableArray *attributes = [[NSMutableArray alloc] init];
+    while (*p != '\0') {
+        p2 = temp = (char *)malloc(len - (p - str));
+        while (*p != '\0' && *p != '|') {
+            *p2++ = *p++;
+        }
+        *p2 = '\0';
+        NSDictionary *attribute = [self attributeFromUTF8String:temp];
+        [attributes addObject:attribute];
+        free(temp);
+        
+        if (*p != '\0') {
+            p++;
+        }
+    }
+    _attributes = attributes;
+    
     return self;
 }
 
@@ -139,7 +180,47 @@
 {
     _formatedArguments = arguments;
     NSString *text = nil;
-    if (_formatFlags.attributedText) {
+    if (_formatFlags.javascript) {
+        JSContext *context = [[self class] sharedJSContext];
+        int argCount = (int) arguments.count;
+        
+        // Map each argument to $1 ~ $N
+        for (int argIndex = 0; argIndex < argCount; argIndex++) {
+            id arg = [arguments objectAtIndex:argIndex];
+            NSString *key = [NSString stringWithFormat:@"$%i", (argIndex + 1)];
+            context[key] = arg;
+        }
+        
+        // Evaluate by Javascript
+        JSValue *result;
+        char c = [_format characterAtIndex:0];
+        switch (c) {
+            case '{': // suppose as a dictionary
+                result = [context evaluateScript:[NSString stringWithFormat:@"var _=%@;_;", _format]];
+                return [result toDictionary];
+            case '[': // suppose as a array
+                result = [context evaluateScript:[NSString stringWithFormat:@"var _=%@;_;", _format]];
+                return [result toArray];
+            default:
+                result = [context evaluateScript:_format];
+        }
+        
+        // Resolve return value
+        if (_formatterTag == nil) {
+            return [result toString];
+        }
+        
+        // string -> toString, bool -> toBool and etc
+        NSString *selName = [NSString stringWithFormat:@"to%c%@", toupper([_formatterTag characterAtIndex:0]), [_formatterTag substringFromIndex:1]];
+        SEL convertor = NSSelectorFromString(selName);
+        if (![result respondsToSelector:convertor]) {
+            return [result toString];
+        }
+        
+        IMP imp = [result methodForSelector:convertor];
+        JSValueConvertorFunc func = (JSValueConvertorFunc) imp;
+        return func(result, convertor);
+    } else if (_formatFlags.attributedText) {
         text = [PBString stringWithFormat:_format array:arguments];
         text = [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
         NSArray *texts = [text componentsSeparatedByString:@"|"];
@@ -153,39 +234,65 @@
             NSLog(@"[%i] %@ - %@", (int)index, aText, [attribute objectForKey:NSForegroundColorAttributeName]);
         }
         return attributedString;
-    } else if (_formatFlags.custom) {
+    } else if (_formatFlags.customized) {
         text = _formatter(_formatterTag, _format, arguments);
         return text;
     } else {
+        if (_formatFlags.testEmpty) {
+            for (id arg in arguments) {
+                if (arg == nil || [arg isEqual:[NSNull null]]
+                    || ([arg isKindOfClass:[NSString class]] && [arg length] == 0)) {
+                    return nil;
+                }
+            }
+        }
         text = [PBString stringWithFormat:_format array:arguments];
         return [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
     }
 }
 
-- (NSDictionary *)attributeFromFontString:(NSString *)fontString
+- (NSDictionary *)attributeFromUTF8String:(const char *)str
 {
-    // {color,font,weight,size}
-    NSString *pattern = @"\\{(#\\w+),(.+)\\}";
-    NSError *error = nil;
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:0 error:&error];
-    if (error != nil) {
-        return nil;
+    // foregroundColor-font : #FFF-{F:13}
+    NSMutableDictionary *attribute = [NSMutableDictionary dictionary];
+    char *p = (char *)str;
+    char *p2;
+    char *temp;
+    
+    if (*p == '#') {
+        // Parse color
+        p2 = temp = (char *)malloc(strlen(str));
+        while (*p != '\0' && *p != '-') {
+            *p2++ = *p++;
+        }
+        *p2 = '\0';
+        NSString *colorString = [NSString stringWithUTF8String:temp];
+        free(temp);
+        UIColor *color = [PBValueParser valueWithString:colorString];
+        if (color != nil) {
+            [attribute setObject:color forKey:NSForegroundColorAttributeName];
+        }
+        if (*p == '\0') {
+            return attribute;
+        }
+        p++;
     }
     
-    NSTextCheckingResult *result = [regex firstMatchInString:fontString options:0 range:NSMakeRange(0, fontString.length)];
-    NSRange range = [result rangeAtIndex:1];
-    if (range.length == 0) {
-        return nil;
+    if (*p == '{') {
+        // Parse font
+        p2 = temp = (char *)malloc(strlen(str));
+        while (*p != '\0') {
+            *p2++ = *p++;
+        }
+        *p2 = '\0';
+        NSString *fontString = [NSString stringWithUTF8String:temp];
+        free(temp);
+        UIFont *font = [PBValueParser valueWithString:fontString];
+        if (font != nil) {
+            [attribute setObject:font forKey:NSFontAttributeName];
+        }
     }
     
-    NSMutableDictionary *attribute = [[NSMutableDictionary alloc] initWithCapacity:2];
-    NSString *colorString = [fontString substringWithRange:range];
-    [attribute setObject:[PBValueParser valueWithString:colorString] forKey:NSForegroundColorAttributeName];
-    range = [result rangeAtIndex:2];
-    if (range.length != 0) {
-        NSString *font = [NSString stringWithFormat:@"{F:%@}", [fontString substringWithRange:range]];
-        [attribute setObject:[PBValueParser valueWithString:font] forKey:NSFontAttributeName];
-    }
     return attribute;
 }
 
@@ -223,8 +330,23 @@
     }
     
     NSMutableString *s = [NSMutableString stringWithString:@"%"];
+    if (_formatFlags.testEmpty) {
+        [s appendString:@"!"];
+    } else if (_formatFlags.javascript) {
+        [s appendString:@"JS"];
+    } else if (_formatFlags.attributedText) {
+        [s appendString:@"AT"];
+    } else if (_formatFlags.customized) {
+        NSArray *allTags = [PBVariableEvaluator allTags];
+        for (NSString *tag in allTags) {
+            if (_formatter == [PBVariableEvaluator evaluatorForTag:tag]) {
+                [s appendString:tag];
+                break;
+            }
+        }
+    }
     if (_formatterTag != nil) {
-        [s appendString:_formatterTag];
+        [s appendFormat:@":%@", _formatterTag];
     }
     [s appendString:@"("];
     [s appendString:_format];
@@ -232,6 +354,32 @@
     for (PBExpression *exp in _expressions) {
         [s appendString:@","];
         [s appendString:[exp stringValue]];
+    }
+    if (_attributes != nil) {
+        [s appendString:@";"];
+        NSMutableArray *attrStrings = [NSMutableArray arrayWithCapacity:_attributes.count];
+        for (NSDictionary *attr in _attributes) {
+            NSMutableString *temp = [NSMutableString string];
+            UIColor *color = [attr objectForKey:NSForegroundColorAttributeName];
+            if (color != nil) {
+                const CGFloat *components = CGColorGetComponents(color.CGColor);
+                CGFloat r = components[0];
+                CGFloat g = components[1];
+                CGFloat b = components[2];
+                NSString *hexString=[NSString stringWithFormat:@"#%02X%02X%02X", (int)(r * 255), (int)(g * 255), (int)(b * 255)];
+                [temp appendString:hexString];
+            }
+            
+            UIFont *font = [attr objectForKey:NSFontAttributeName];
+            if (font != nil) {
+                if (color != nil) {
+                    [temp appendString:@"-"];
+                }
+                [temp appendFormat:@"{F:%i}", (int) (font.pointSize / [Pbind valueScale] + .5f)];
+            }
+            [attrStrings addObject:temp];
+        }
+        [s appendString:[attrStrings componentsJoinedByString:@"|"]];
     }
     
     return s;

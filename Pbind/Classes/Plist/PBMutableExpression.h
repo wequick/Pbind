@@ -15,25 +15,26 @@
  @discussion Supports:
  
  * %(%@: %@),$a,$b  -> String formater
+ * %!(%@: %@),$a,$b -> Format the string only if arguments are not empty
  * %JS($2/$1),$a,$b -> Javascript evaluator
+ * %AT(%@|%@),$a,$b
  
  */
 @interface PBMutableExpression : PBExpression
 {
     struct {
-        unsigned int date:1; // '%DF'
-        unsigned int dateTemplate:1; // '%DT'
+        unsigned int testEmpty:1; // '%!'
+        unsigned int javascript:1; // '%JS'
         unsigned int attributedText:1; // '%AT'
-        unsigned int custom:1; // user customize
+        unsigned int customized:1; // user customization
     } _formatFlags;
     
     NSString *_formatterTag;
     NSString *(^_formatter)(NSString *tag, NSString *format, NSArray *args);
     
-    NSArray *_expressions;
+    NSArray<PBExpression *> *_expressions;
     
-    NSParagraphStyle *_paragraphStyle; // for attributed text
-    NSArray *_attributes; // for attributed text
+    NSArray<NSDictionary *> *_attributes; // for attributed text
     
     NSMutableArray *_formatedArguments;
 }
