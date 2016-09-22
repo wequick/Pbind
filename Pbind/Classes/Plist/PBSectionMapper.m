@@ -15,7 +15,7 @@
 - (void)setHeight:(CGFloat)height
 {
     [self willChangeValueForKey:@"height"];
-    _height = height * [Pbind valueScale];
+    _height = PBValue(height);
     [self didChangeValueForKey:@"height"];
 }
 

@@ -26,7 +26,7 @@ static const CGFloat kHeightAutomatic = -1;
         if (_height == 0) {
             _height = kHeightUnset;
         } else if (_height > 0) {
-            _height *= [Pbind valueScale];
+            _height = PBValue(_height);
         }
         if (_clazz == nil) {
             _clazz = @"UITableViewCell";
