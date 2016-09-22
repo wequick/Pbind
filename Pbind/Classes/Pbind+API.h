@@ -10,7 +10,101 @@
 
 @interface Pbind : NSObject
 
-+ (void)setSketchWidth:(CGFloat)sketchWidth; // The width pixel of the sketch provided by UI designer.
-+ (CGFloat)valueScale; // The scale calculated with the `sketchWidth' and current device screen width. Pbind will use this to adjust all the sizes specified in Plist.
+/**
+ The width pixel of the sketch provided by UI designer.
+ */
++ (void)setSketchWidth:(CGFloat)sketchWidth;
+
+/**
+ The scaled value calculated by the scale of `sketchWidth' and current device screen width.
+ */
++ (CGFloat)valueScale;
+
++ (CGFloat)scaledValue:(CGFloat)value;
+
+/**
+ Add a resources bundle who contains `*.plist', `*.xib', `*.png'.
+ 
+ @discussion: The added bundle will be inserted to the top of `allResourcesBundles', 
+ so the resources inside it will consider to be load by first order.
+ 
+ */
++ (void)addResourcesBundle:(NSBundle *)bundle;
+
+/**
+ Returns all the loaded resources bundles.
+ */
++ (NSArray<NSBundle *> *)allResourcesBundles;
 
 @end
+
+/**
+ Calculate the scaled value.
+ 
+ @discussion Round the decimal value as follow:
+ 
+ * <= 0.3   downto  0
+ * >= 0.7   upto    1
+ * 0.4-0.6  as      0.5
+ 
+ */
+UIKIT_STATIC_INLINE CGFloat PBValue(CGFloat value) {
+    if (value == 0) {
+        return 0;
+    }
+    
+    value *= [Pbind valueScale];
+    if (value < 0) {
+        return value;
+    }
+    
+    int integer = (int) value;
+    int decimal = (value - integer) * 10;
+    if (decimal <= 3) {
+        return integer;
+    } else if (decimal >= 7) {
+        return integer + 1.f;
+    } else {
+        return integer + .5f;
+    }
+}
+
+UIKIT_STATIC_INLINE CGPoint PBPoint(CGPoint point) {
+    return CGPointMake(PBValue(point.x),
+                       PBValue(point.y));
+}
+
+UIKIT_STATIC_INLINE CGPoint PBPointMake(CGFloat x, CGFloat y) {
+    return CGPointMake(PBValue(x), PBValue(y));
+}
+
+UIKIT_STATIC_INLINE CGSize PBSize(CGSize size) {
+    return CGSizeMake(PBValue(size.width),
+                      PBValue(size.height));
+}
+
+UIKIT_STATIC_INLINE CGSize PBSizeMake(CGFloat w, CGFloat h) {
+    return CGSizeMake(PBValue(w), PBValue(h));
+}
+
+UIKIT_STATIC_INLINE CGRect PBRect(CGRect rect) {
+    return CGRectMake(PBValue(rect.origin.x),
+                      PBValue(rect.origin.y),
+                      PBValue(rect.size.width),
+                      PBValue(rect.size.height));
+}
+
+UIKIT_STATIC_INLINE CGRect PBRectMake(CGFloat x, CGFloat y, CGFloat w, CGFloat h) {
+    return CGRectMake(PBValue(x), PBValue(y), PBValue(w), PBValue(h));
+}
+
+UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsets(UIEdgeInsets insets) {
+    return UIEdgeInsetsMake(PBValue(insets.top),
+                            PBValue(insets.left),
+                            PBValue(insets.bottom),
+                            PBValue(insets.right));
+}
+
+UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsetsMake(CGFloat t, CGFloat l, CGFloat b, CGFloat r) {
+    return UIEdgeInsetsMake(PBValue(t), PBValue(l), PBValue(b), PBValue(r));
+}
