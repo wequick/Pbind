@@ -73,18 +73,18 @@
 		<array>
 			<dict>
 				<key>height</key>
-				<string>30</string>
+				<string>0</string>
 				<key>rows</key>
 				<array>
 					<dict>
 						<key>properties</key>
 						<dict>
 							<key>textLabel.attributedText</key>
-							<string>%AT(全部群成员 ( |%@| )),$memberNum/2;|#FF00FF-{F:160}</string>
+							<string>%AT(全部群成员 ( |%@| )),$memberNum;|#FF00FF-{F:60}</string>
 							<key>backgroundColor</key>
-							<string>#fff000</string>
+							<string>#fff</string>
 							<key>accessoryType</key>
-							<string>:/</string>
+							<string>:&gt;</string>
 							<key>href</key>
 							<string>push://PBTableViewController</string>
 							<key>hrefParams</key>
