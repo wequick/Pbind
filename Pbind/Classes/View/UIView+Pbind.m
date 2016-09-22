@@ -101,9 +101,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
 
 - (NSURL *)pb_URLForResource:(NSString *)resource withExtension:(NSString *)extension
 {
-    NSArray *preferredBundles = @[[NSBundle bundleForClass:self.supercontroller.class],
-                                  /* [NSBundle bundleWithPath:patchPath], */
-                                  [NSBundle mainBundle]];
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
     for (NSBundle *bundle in preferredBundles) {
         NSURL *url = [bundle URLForResource:resource withExtension:extension];
         if (url != nil) {
@@ -277,7 +275,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                 self.pb_preparation = nil;
                 self.pb_transformation = nil;
                 self.data[i] = data;
-                [self pb_mapData:self.rootData];
+                [[self pb_mapper] mapData:self.rootData forView:self];
                 [self layoutIfNeeded];
             }
             
@@ -300,26 +298,19 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     [self pb_initData];
     
     [self setData:data];
-    [self pb_mapData:self.rootData];
+    [[self pb_mapper] mapData:self.rootData forView:self];
     
     [self layoutIfNeeded];
 }
 
-- (void)pb_mapData:(id)data
+- (void)pb_reloadPlist
 {
-    if ([self pb_mapper] == nil) {
-        [self pb_mapData:data];
-        return;
-    }
-    [[self pb_mapper] mapData:data forView:self];
-}
-
-- (void)pb_initData
-{
-    if ([self pb_mapper] == nil) {
-        return;
-    }
-    [[self pb_mapper] initDataForView:self];
+    self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
+    self.PB_internalMapper = nil;
+    
+    PBMapper *mapper = [self pb_mapper];
+    [mapper initDataForView:self];
+    [mapper mapData:self.rootData forView:self];
 }
 
 - (void)pb_cancelPull

@@ -60,6 +60,13 @@
 
 - (void)pb_clickHref:(NSString *)href;
 
+/**
+ Reload the plist.
+ 
+ @discussion This will search the plist from `[Pbind allResourcesBundles]' and reload it.
+ */
+- (void)pb_reloadPlist;
+
 - (void)pb_pullData;
 - (void)pb_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id data, NSError *error))transformation;
 - (void)pb_repullData; // repull with previous `preparation' and `transformation'
