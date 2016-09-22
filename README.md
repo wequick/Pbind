@@ -69,7 +69,7 @@ usage: [tag][key]
 	 :left        | NSTextAlignmentLeft
 	 :right       | NSTextAlignmentRight
 	 :center      | NSTextAlignmentCenter
-	 :√           | UITableViewCellAccessoryCheckmark
+	 :/           | UITableViewCellAccessoryCheckmark
 	 :i           | UITableViewCellAccessoryDetailButton
 	 :>           | UITableViewCellAccessoryDisclosureIndicator
 	 :value1      | UITableViewCellStyleValue1
@@ -153,11 +153,12 @@ usage: [tag][key]
 
 	3.1 Tag
 
-    Tag           | Description              | e.g.
-	:------------ | :----------------------- | ------------
-	              | string format            | %(goods:%@, money:%.2f),$title,$money
-	 JS           | javascript evaluator     | %JS('goods:' + $1 + ', money:' + $2),$title,$money
-	 AT           | attributed string        | Not available now
+    Tag           | Description                       | e.g.
+	:------------ | :-------------------------------- | ------------
+	              | string format                     | %(goods:%@, money:%.2f),$title,$money
+     !            | format only if args are not empty | %!(goods:%@, money:%.2f),$title,$money
+	 JS           | javascript evaluator              | %JS('goods:' + $1 + ', money:' + $2),$title,$money
+	 AT           | attributed string                 | %AT(Hello |%@),$man;#fff-{F:13}|{F:14}
 	
 	3.1.1 User-defined Format Tag (_**@see PBVariableEvaluator**_)
 	
