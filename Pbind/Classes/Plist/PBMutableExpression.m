@@ -226,12 +226,13 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         NSArray *texts = [text componentsSeparatedByString:@"|"];
         text = [texts componentsJoinedByString:@""];
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:nil];
-        for (NSInteger index = 0; index < [texts count]; index++) {
+        NSInteger count = MIN(texts.count, _attributes.count);
+        for (NSInteger index = 0; index < count; index++) {
             NSString *aText = [texts objectAtIndex:index];
             NSRange range = [text rangeOfString:aText];
             NSDictionary *attribute = [_attributes objectAtIndex:index];
             [attributedString addAttributes:attribute range:range];
-            NSLog(@"[%i] %@ - %@", (int)index, aText, [attribute objectForKey:NSForegroundColorAttributeName]);
+//            NSLog(@"[%i] %@ - %@", (int)index, aText, [attribute objectForKey:NSForegroundColorAttributeName]);
         }
         return attributedString;
     } else if (_formatFlags.customized) {
