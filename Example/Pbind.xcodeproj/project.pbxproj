@@ -23,6 +23,8 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F80D432F1D8E667D00FF298B /* PBExpressionTests.m */; };
 		F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */; };
+		F84E74ED1D93717E00E97022 /* SGDirWatchdog.m in Sources */ = {isa = PBXBuildFile; fileRef = F84E74EC1D93717E00E97022 /* SGDirWatchdog.m */; };
+		F84E74F01D93724D00E97022 /* PBPlayground.m in Sources */ = {isa = PBXBuildFile; fileRef = F84E74EF1D93724D00E97022 /* PBPlayground.m */; };
 		F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */; };
 		F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CC1D87AB9C0038A3E5 /* PBExample.plist */; };
 		F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D01D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m */; };
@@ -72,6 +74,10 @@
 		F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
 		F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBGroupMembers.plist; sourceTree = "<group>"; };
+		F84E74EB1D93717E00E97022 /* SGDirWatchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGDirWatchdog.h; sourceTree = "<group>"; };
+		F84E74EC1D93717E00E97022 /* SGDirWatchdog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGDirWatchdog.m; sourceTree = "<group>"; };
+		F84E74EE1D93724D00E97022 /* PBPlayground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBPlayground.h; sourceTree = "<group>"; };
+		F84E74EF1D93724D00E97022 /* PBPlayground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBPlayground.m; sourceTree = "<group>"; };
 		F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBCreateGroup.plist; sourceTree = "<group>"; };
 		F89500CC1D87AB9C0038A3E5 /* PBExample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBExample.plist; sourceTree = "<group>"; };
 		F89500CF1D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleGroupMemberAvatarCell.h; sourceTree = "<group>"; };
@@ -150,6 +156,7 @@
 		6003F593195388D20070C39A /* Example for Pbind */ = {
 			isa = PBXGroup;
 			children = (
+				F84E74EA1D93716900E97022 /* PBPlayground */,
 				F89500CA1D87AB8E0038A3E5 /* Plist */,
 				F89500C91D87AB880038A3E5 /* View */,
 				F89500C81D87AB820038A3E5 /* Client */,
@@ -215,6 +222,17 @@
 				F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		F84E74EA1D93716900E97022 /* PBPlayground */ = {
+			isa = PBXGroup;
+			children = (
+				F84E74EB1D93717E00E97022 /* SGDirWatchdog.h */,
+				F84E74EC1D93717E00E97022 /* SGDirWatchdog.m */,
+				F84E74EE1D93724D00E97022 /* PBPlayground.h */,
+				F84E74EF1D93724D00E97022 /* PBPlayground.m */,
+			);
+			path = PBPlayground;
 			sourceTree = "<group>";
 		};
 		F89500C71D87AB7B0038A3E5 /* Adapter */ = {
@@ -410,11 +428,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F84E74ED1D93717E00E97022 /* SGDirWatchdog.m in Sources */,
 				6003F59E195388D20070C39A /* PBAppDelegate.m in Sources */,
 				F89500DB1D87ABCC0038A3E5 /* UIImageView+PBExample.m in Sources */,
 				F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */,
 				F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */,
 				6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */,
+				F84E74F01D93724D00E97022 /* PBPlayground.m in Sources */,
 				F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */,
 				F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
