@@ -65,38 +65,26 @@
 }
 
 - (void)testCanParseCGSize {
-    CGSize size = CGSizeMake(1, 2);
-    CGFloat scale = [Pbind valueScale];
-    size.width *= scale;
-    size.height *= scale;
+    CGSize size = PBSizeMake(1, 2);
     XCTAssertTrue(CGSizeEqualToSize([[PBValueParser valueWithString:@"{1,2}"] CGSizeValue], size));
 }
 
 - (void)testCanParseCGRect {
-    CGRect rect = CGRectMake(1, 2, 3, 4);
-    CGFloat scale = [Pbind valueScale];
-    rect.origin.x *= scale;
-    rect.origin.y *= scale;
-    rect.size.width *= scale;
-    rect.size.height *= scale;
+    CGRect rect = PBRectMake(1, 2, 3, 4);
     XCTAssertTrue(CGRectEqualToRect([[PBValueParser valueWithString:@"{1,2,3,4}"] CGRectValue], rect));
     XCTAssertTrue(CGRectEqualToRect([[PBValueParser valueWithString:@"{{1,2},{3,4}}"] CGRectValue], rect));
 }
 
 - (void)testCanParseUIEdgeInsets {
-    UIEdgeInsets insets = UIEdgeInsetsMake(1, 2, 3, 4);
-    CGFloat scale = [Pbind valueScale];
-    insets.top *= scale;
-    insets.left *= scale;
-    insets.bottom *= scale;
-    insets.right *= scale;
+    UIEdgeInsets insets = PBEdgeInsetsMake(1, 2, 3, 4);
     XCTAssertTrue(UIEdgeInsetsEqualToEdgeInsets([[PBValueParser valueWithString:@"{1,2,3,4}"] UIEdgeInsetsValue], insets));
 }
 
 - (void)testCanParseFont {
-    XCTAssertTrue([[PBValueParser valueWithString:@"{F:14}"] isEqual:[UIFont systemFontOfSize:[Pbind valueScale] * 14]]);
-    XCTAssertTrue([[PBValueParser valueWithString:@"{F:italic,14}"] isEqual:[UIFont italicSystemFontOfSize:[Pbind valueScale] * 14]]);
-    XCTAssertTrue([[PBValueParser valueWithString:@"{F:bold,14}"] isEqual:[UIFont boldSystemFontOfSize:[Pbind valueScale] * 14]]);
+    CGFloat fontSize = PBValue(14);
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:14}"] isEqual:[UIFont systemFontOfSize:fontSize]]);
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:italic,14}"] isEqual:[UIFont italicSystemFontOfSize:fontSize]]);
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:bold,14}"] isEqual:[UIFont boldSystemFontOfSize:fontSize]]);
 }
 
 @end

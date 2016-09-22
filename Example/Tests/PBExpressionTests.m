@@ -112,9 +112,10 @@
 }
 
 - (void)testCanParseAttributedText {
-    NSDictionary *attr1 = @{NSFontAttributeName: [UIFont systemFontOfSize:[Pbind valueScale] * 14]};
+    CGFloat fontSize = PBValue(14);
+    NSDictionary *attr1 = @{NSFontAttributeName: [UIFont systemFontOfSize:fontSize]};
     NSDictionary *attr2 = @{NSForegroundColorAttributeName: [UIColor colorWithRed:1 green:1 blue:1 alpha:1]};
-    NSDictionary *attr3 = @{NSFontAttributeName: [UIFont systemFontOfSize:[Pbind valueScale] * 14],
+    NSDictionary *attr3 = @{NSFontAttributeName: [UIFont systemFontOfSize:fontSize],
                             NSForegroundColorAttributeName: [UIColor colorWithRed:1 green:1 blue:1 alpha:1]};
     NSString *text = @"Hello wequick Pbind";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:nil];
