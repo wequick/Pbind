@@ -73,10 +73,4 @@
     }
 }
 
-//- (void)pb_mapData:(id)data {
-//    [super pb_mapData:data];
-//    
-//    
-//}
-
 @end
