@@ -20,8 +20,6 @@
  */
 + (CGFloat)valueScale;
 
-+ (CGFloat)scaledValue:(CGFloat)value;
-
 /**
  Add a resources bundle who contains `*.plist', `*.xib', `*.png'.
  
