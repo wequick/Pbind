@@ -8,15 +8,13 @@
 
 #import "UIImageView+Pbind.h"
 #import "UIView+Pbind.h"
+#import "Pbind+API.h"
 
 @implementation UIImageView (Pbind)
 
 - (void)setImageName:(NSString *)imageName {
     UIImage *image = nil;
-    // TODO: Add patch bundle
-    NSArray *preferredBundles = @[[NSBundle bundleForClass:self.supercontroller.class],
-                                 [NSBundle mainBundle]
-                                 /* Patch bundle */];
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
     for (NSBundle *bundle in preferredBundles) {
         image = [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
         if (image != nil) {
