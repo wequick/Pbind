@@ -75,7 +75,7 @@ static NSMutableDictionary *kEnums = nil;
             enumValue = NSTextAlignmentCenter;
         }
         // Cell accessory type
-        else if ([aString isEqualToString:@"√"]) {
+        else if ([aString isEqualToString:@"/"]) {
             enumValue = UITableViewCellAccessoryCheckmark;
         } else if ([aString isEqualToString:@"i"]) {
             enumValue = UITableViewCellAccessoryDetailButton;
@@ -103,34 +103,23 @@ static NSMutableDictionary *kEnums = nil;
     }
     // Struct or Object
     if (initial == '{') {
-        CGFloat scale = [Pbind valueScale];
         if (second == 'F') {
             return [self fontWithString:aString];
         } else if (second == '{') { // e.g. {{0, 0}, {320, 480}}
             CGRect rect = CGRectFromString(aString);
-            rect.origin.x *= scale;
-            rect.origin.y *= scale;
-            rect.size.width *= scale;
-            rect.size.height *= scale;
-            return [NSValue valueWithCGRect:rect];
+            return [NSValue valueWithCGRect:PBRect(rect)];
         } else {
             NSArray *components = [aString componentsSeparatedByString:@","];
             switch (components.count) {
                 case 2: // e.g. {320, 480}
                 {
                     CGSize size = CGSizeFromString(aString);
-                    size.width *= scale;
-                    size.height *= scale;
-                    return [NSValue valueWithCGSize:size];
+                    return [NSValue valueWithCGSize:PBSize(size)];
                 }
                 case 4: // e.g. {0, 1, 2, 3}
                 {
                     UIEdgeInsets insets = UIEdgeInsetsFromString(aString);
-                    insets.top *= scale;
-                    insets.left *= scale;
-                    insets.bottom *= scale;
-                    insets.right *= scale;
-                    return [NSValue valueWithUIEdgeInsets:insets];
+                    return [NSValue valueWithUIEdgeInsets:PBEdgeInsets(insets)];
                 }
                 default:
                     break;
@@ -211,7 +200,7 @@ static NSMutableDictionary *kEnums = nil;
         NSRange range = [result rangeAtIndex:2];
         if (range.length != 0) {
             size = [[aString substringWithRange:range] floatValue];
-            size *= [Pbind valueScale];
+            size = PBValue(size);
             range = [result rangeAtIndex:1];
             if (range.length != 0) {
                 name = [aString substringWithRange:range];
