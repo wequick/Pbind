@@ -165,6 +165,9 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         for (PBExpression *exp in _expressions) {
             id value = [exp valueWithData:data target:target context:context];
             if (value == nil) {
+                if (_formatFlags.testEmpty) {
+                    return nil;
+                }
                 value = @"";
             }
             [arguments addObject:value];
