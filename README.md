@@ -164,7 +164,7 @@ usage: [tag][key]
 	              | string format                     | %(goods:%@, money:%.2f),$title,$money
      !            | format only if args are not empty | %!(goods:%@, money:%.2f),$title,$money
 	 JS           | javascript evaluator              | %JS('goods:' + $1 + ', money:' + $2),$title,$money
-	 AT           | attributed string                 | %AT(Hello |%@),$man;#fff-{F:13}|{F:14}
+	 AT           | attributed string                 | %AT(Hello \|%@),$who;#fff-{F:13}\|{F:14}
 	
 	3.1.1 User-defined Format Tag (_**@see PBVariableEvaluator**_)
 	
