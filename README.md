@@ -7,6 +7,8 @@
 
 Pbind, a data binder with Plist.
 
+[中文文档](https://github.com/wequick/Pbind/wiki)
+
 ## Snapshot (Playground)
 
 ![Pbind playground](https://cloud.githubusercontent.com/assets/5291591/18739105/bc203a7a-80d3-11e6-98f9-fdcacecf4197.gif)
