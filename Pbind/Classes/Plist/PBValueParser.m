@@ -190,9 +190,7 @@ static float readcolor(const char **str, int len) {
             return nil;
     }
     
-    UIColor *color = [UIColor colorWithRed:r green:g blue:b alpha:a];
-    NSLog(@"---- %s => %@", str, color);
-    return color;
+    return [UIColor colorWithRed:r green:g blue:b alpha:a];
 }
 
 #pragma mark - UIFont
