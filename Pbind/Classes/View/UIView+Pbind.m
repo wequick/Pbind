@@ -353,9 +353,6 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     if (hrefParams != nil) {
         if (self.hrefParams != nil) {
             [hrefParams setValuesForKeysWithDictionary:self.hrefParams];
-            self.hrefParams = hrefParams;
-        } else {
-            self.hrefParams = hrefParams;
         }
     } else {
         hrefParams = [NSMutableDictionary dictionaryWithDictionary:self.hrefParams];
@@ -371,7 +368,15 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         if ([controller respondsToSelector:action]) {
             IMP imp = [controller methodForSelector:action];
             PBCallControllerFunc func = (PBCallControllerFunc)imp;
+            
+            // Temporary pass the merged href parameters
+            NSDictionary *orgParams = self.hrefParams;
+            self.hrefParams = hrefParams;
+            
             func(controller, action, self);
+            
+            // Restore
+            self.hrefParams = orgParams;
         }
     } else if ([scheme isEqualToString:@"push"]) {
         // Push to a view controller
