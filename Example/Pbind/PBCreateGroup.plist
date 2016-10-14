@@ -23,7 +23,7 @@
 				<key>clazz</key>
 				<string>UILabel</string>
 				<key>height</key>
-				<string>&gt;@_groupName?20:0</string>
+				<string>=&gt;@groupName?20:0</string>
 				<key>properties</key>
 				<dict>
 					<key>text</key>
@@ -40,9 +40,9 @@
 					<key>placeholder</key>
 					<string>请输入群组简介</string>
 					<key>text</key>
-					<string>%(这是&quot; %@ &quot;的简介),&gt;_groupName</string>
+					<string>%(这是&quot; %@ &quot;的简介),=&gt;groupName</string>
 					<key>value</key>
-					<string>%(这是&quot; %@ &quot;的简介),&gt;_groupName</string>
+					<string>%(这是&quot; %@ &quot;的简介),=&gt;groupName</string>
 				</dict>
 			</dict>
 			<dict>
@@ -55,9 +55,9 @@
 					<key>placeholder</key>
 					<string>请输入群组图标URL</string>
 					<key>text</key>
-					<string>%JS:string(&apos;placehold.it?text=&apos; + $1.charAt(0)),&gt;_groupName</string>
+					<string>%JS:string(&apos;placehold.it?text=&apos; + $1.charAt(0)),=&gt;groupName</string>
 					<key>value</key>
-					<string>%JS(&apos;https://placeholdit.imgix.net/~text?txtsize=96&amp;bg=78b8fc&amp;txtclr=f0f0f0&amp;w=165&amp;h=165&amp;txt=&apos; + encodeURI($1.charAt(0))),&gt;_groupName</string>
+					<string>%JS(&apos;https://placeholdit.imgix.net/~text?txtsize=96&amp;bg=78b8fc&amp;txtclr=f0f0f0&amp;w=165&amp;h=165&amp;txt=&apos; + encodeURI($1.charAt(0))),=&gt;groupName</string>
 				</dict>
 			</dict>
 			<dict>
