@@ -53,14 +53,12 @@ static NSMutableDictionary *kEnums = nil;
     }
     // Color
     if (initial == '#') {
-        UIColor *color = [self colorWithHexString:aString];
-        if (color != nil) {
-            if (second == '#') {
-                return (id)color.CGColor;
-            }
-            return color;
+        const char *str = [aString UTF8String];
+        if (*(str + 1) == '#') {
+            return [self colorWithUTF8String:str + 2].CGColor;
+        } else {
+            return [self colorWithUTF8String:str + 1];
         }
-        return aString;
     }
     // Enum
     if (initial == ':') {
@@ -104,7 +102,7 @@ static NSMutableDictionary *kEnums = nil;
     // Struct or Object
     if (initial == '{') {
         if (second == 'F') {
-            return [self fontWithString:aString];
+            return [self fontWithUTF8String:[aString UTF8String]];
         } else if (second == '{') { // e.g. {{0, 0}, {320, 480}}
             CGRect rect = CGRectFromString(aString);
             return [NSValue valueWithCGRect:PBRect(rect)];
@@ -142,104 +140,160 @@ static NSMutableDictionary *kEnums = nil;
 
 #pragma mark - UIColor
 
-+ (UIColor *)colorWithHexString: (NSString *) hexString {
-    NSString *colorString = [[hexString stringByReplacingOccurrencesOfString: @"#" withString: @""] uppercaseString];
-    CGFloat alpha, red, blue, green;
-    switch ([colorString length]) {
-        case 3: // #RGB
-            alpha = 1.0f;
-            red   = [self colorComponentFrom: colorString start: 0 length: 1];
-            green = [self colorComponentFrom: colorString start: 1 length: 1];
-            blue  = [self colorComponentFrom: colorString start: 2 length: 1];
-            break;
-        case 4: // #ARGB
-            alpha = [self colorComponentFrom: colorString start: 0 length: 1];
-            red   = [self colorComponentFrom: colorString start: 1 length: 1];
-            green = [self colorComponentFrom: colorString start: 2 length: 1];
-            blue  = [self colorComponentFrom: colorString start: 3 length: 1];
-            break;
-        case 6: // #RRGGBB
-            alpha = 1.0f;
-            red   = [self colorComponentFrom: colorString start: 0 length: 2];
-            green = [self colorComponentFrom: colorString start: 2 length: 2];
-            blue  = [self colorComponentFrom: colorString start: 4 length: 2];
-            break;
-        case 8: // #AARRGGBB
-            alpha = [self colorComponentFrom: colorString start: 0 length: 2];
-            red   = [self colorComponentFrom: colorString start: 2 length: 2];
-            green = [self colorComponentFrom: colorString start: 4 length: 2];
-            blue  = [self colorComponentFrom: colorString start: 6 length: 2];
-            break;
-        default:
-            return nil;
+static int ctohex(char c) {
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
     }
-    return [UIColor colorWithRed: red green: green blue: blue alpha: alpha];
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    return c - '0';
 }
 
-+ (CGFloat) colorComponentFrom: (NSString *) string start: (NSUInteger) start length: (NSUInteger) length {
-    NSString *substring = [string substringWithRange: NSMakeRange(start, length)];
-    NSString *fullHex = length == 2 ? substring : [NSString stringWithFormat: @"%@%@", substring, substring];
-    unsigned hexComponent;
-    [[NSScanner scannerWithString: fullHex] scanHexInt: &hexComponent];
-    return hexComponent / 255.0;
+static float readcolor(const char **str, int len) {
+    char *p = *str;
+    int value = ctohex(*p++);
+    if (len == 2) {
+        value = value * 16 + ctohex(*p++);
+    }
+    *str = p;
+    return value / 255.f;
+}
+
++ (UIColor *)colorWithUTF8String:(const char *)str {
+    CGFloat a, r, g, b;
+    char *p = (char *)str;
+    int len = strlen(p);
+    switch (len) {
+        case 3: // RGB
+            a = 1.f;
+            r = readcolor(&p, 1);
+            g = readcolor(&p, 1);
+            b = readcolor(&p, 1);
+            break;
+        case 6: // RRGGBB
+            a = 1.f;
+            r = readcolor(&p, 2);
+            g = readcolor(&p, 2);
+            b = readcolor(&p, 2);
+            break;
+        case 8: // RRGGBBAA
+            r = readcolor(&p, 2);
+            g = readcolor(&p, 2);
+            b = readcolor(&p, 2);
+            a = readcolor(&p, 2);
+            break;
+        default:
+            NSLog(@"PBValueParser: Invalid color format '%s'", str);
+            return nil;
+    }
+    
+    return [UIColor colorWithRed:r green:g blue:b alpha:a];
 }
 
 #pragma mark - UIFont
 
-+ (UIFont *)fontWithString:(NSString *)aString {
-    NSString *name = nil;
-    CGFloat size = [UIFont systemFontSize];
-    BOOL bold = NO;
-    BOOL italic = NO;
-    // family, weight|style, size
-    NSString *pattern = @"\\{F:([^\\d]+)?(\\d+)\\}";
-    NSError *error = nil;
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:0 error:&error];
-    if (error == nil) {
-        NSTextCheckingResult *result = [regex firstMatchInString:aString options:0 range:NSMakeRange(0, aString.length)];
-        NSRange range = [result rangeAtIndex:2];
-        if (range.length != 0) {
-            size = [[aString substringWithRange:range] floatValue];
-            size = PBValue(size);
-            range = [result rangeAtIndex:1];
-            if (range.length != 0) {
-                name = [aString substringWithRange:range];
-                range = [name rangeOfString:@"bold"];
-                if (range.length != 0) {
-                    bold = YES;
-                    name = [name substringToIndex:range.location];
-                } else {
-                    range = [name rangeOfString:@"italic"];
-                    if (range.length != 0) {
-                        italic = YES;
-                        name = [name substringToIndex:range.location];
-                    }
-                }
-                if (![name isEqualToString:@""]) {
-                    name = [name stringByReplacingOccurrencesOfString:@"," withString:@""];
-                }
-            }
-        }
-        //
++ (UIFont *)fontWithUTF8String:(const char *)str {
+    // {F:[name][bold|italic][size]}
+    int size = [UIFont systemFontSize];
+    UIFont *systemFont = [UIFont systemFontOfSize:size];
+    
+    char *p = (char *)str;
+    int len = strlen(str);
+    if (len < 4 || *p != '{' || *(p+1) != 'F' || *(p+2) != ':' || *(p+len-1) != '}') {
+        NSLog(@"PBValueParser: Font expression should with format '{F:[name][bold|italic][size]}'");
+        return systemFont;
     }
     
-    // family, size
-    // weight|style, size
-    // size
-    UIFont *font = nil;
-    if (name != nil) {
-        font = [UIFont fontWithName:name size:size];
-    }
-    if (font == nil) {
-        if (bold) {
-            font = [UIFont boldSystemFontOfSize:size];
-        } else if (italic) {
-            font = [UIFont italicSystemFontOfSize:size];
-        } else {
-            font = [UIFont systemFontOfSize:size];
+    char *components[3]; // $family, bold|italic, $size
+    char *p2;
+    p += 3;
+    int i = 0;
+    while (*p != '}') {
+        p2 = components[i++] = (char *)malloc(len - (p - str));
+        while (*p != ',' && *p != '}') {
+            *p2++ = *p++;
+        }
+        *p2 = '\0';
+        if (*p == ',') {
+            p++;
         }
     }
-    return font;
+    
+    UIFontDescriptorSymbolicTraits traits = 0;
+    NSString *name = nil;
+    char *temp;
+    
+    switch (i) {
+        case 3:
+            name = [NSString stringWithUTF8String:components[0]];
+            size = PBValue(atoi(components[2]));
+            temp = components[1];
+            if (strcmp(temp, "bold") == 0) {
+                traits = UIFontDescriptorTraitBold;
+            } else if (strcmp(temp, "italic") == 0) {
+                traits = UIFontDescriptorTraitItalic;
+            } else if (strcmp(temp, "bold|italic") == 0) {
+                traits = UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic;
+            }
+            break;
+        case 2:
+            temp = components[1];
+            if (*temp >= '0' && *temp <= '9') {
+                size = PBValue(atoi(temp));
+                temp = components[0];
+                if (strcmp(temp, "bold") == 0) {
+                    traits = UIFontDescriptorTraitBold;
+                } else if (strcmp(temp, "italic") == 0) {
+                    traits = UIFontDescriptorTraitItalic;
+                } else if (strcmp(temp, "bold|italic") == 0) {
+                    traits = UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic;
+                } else {
+                    name = [NSString stringWithUTF8String:temp];
+                }
+            } else {
+                if (strcmp(temp, "bold") == 0) {
+                    traits = UIFontDescriptorTraitBold;
+                } else if (strcmp(temp, "italic") == 0) {
+                    traits = UIFontDescriptorTraitItalic;
+                } else if (strcmp(temp, "bold|italic") == 0) {
+                    traits = UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic;
+                }
+                name = [NSString stringWithUTF8String:components[0]];
+            }
+            break;
+        case 1:
+            temp = components[0];
+            if (*temp >= '0' && *temp <= '9') {
+                size = PBValue(atoi(temp));
+            } else if (strcmp(temp, "bold") == 0) {
+                traits = UIFontDescriptorTraitBold;
+            } else if (strcmp(temp, "italic") == 0) {
+                traits = UIFontDescriptorTraitItalic;
+            } else if (strcmp(temp, "bold|italic") == 0) {
+                traits = UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic;
+            } else {
+                name = [NSString stringWithUTF8String:temp];
+            }
+        default:
+            break;
+    }
+    
+    for (int j = 0; j < i; j++) {
+        free(components[j]);
+    }
+    
+    NSDictionary *defaultAttributes = systemFont.fontDescriptor.fontAttributes;
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:defaultAttributes];
+    if (name != nil) {
+        [attributes removeObjectForKey:@"NSCTFontUIUsageAttribute"];
+        attributes[UIFontDescriptorNameAttribute] = name;
+    }
+    if (traits != 0) {
+        attributes[UIFontDescriptorTraitsAttribute] = @{UIFontSymbolicTrait: @(traits)};
+    }
+    UIFontDescriptor *fontDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:attributes];
+    return [UIFont fontWithDescriptor:fontDescriptor size:size];
 }
 
 @end
