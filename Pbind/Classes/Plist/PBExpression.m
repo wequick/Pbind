@@ -52,15 +52,31 @@ static const int kDataTagUnset = 0xFF;
     char *p = (char *)str;
     NSUInteger len = strlen(str) + 1;
     
+    // Binding flag
+    if (*p == '=') {
+        p++;
+        if (*p == '=') {
+            _flags.duplexBinding = 1;
+            p++;
+        } else {
+            _flags.onewayBinding = 1;
+        }
+    }
+    
+    // Animation flag
+    if (*p == '~') {
+        p++;
+        _flags.animated = 1;
+    }
+    
     // Unary operator
     switch (*p) {
         case '!': _flags.unaryNot = 1; p++; break;
         case '-': _flags.negative = 1; p++; break;
-        case '~': _flags.animated = 1; p++; break;
         default: break;
     }
     
-    // Tag
+    // Tag for data source
     switch (*p) {
         case '@':
             p++;
@@ -107,34 +123,20 @@ static const int kDataTagUnset = 0xFF;
             return nil;
     }
     
-    // Flag
-    switch (*p) {
-        case '_':
-            // Binding flag
-            p++;
-            if (*p == '_') {
-                _flags.duplexBinding = 1;
-                p++;
-            } else {
-                _flags.onewayBinding = 1;
-            }
-            break;
-        default:
-            break;
-    }
-    
     // Variable
     char *temp = (char *)malloc(len - (p - str));
     char *p2 = temp;
-    // first char should be [a-z][A-Z]
-    if ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z')) {
+    // first char should be [a-z][A-Z] or '_'
+    if ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || *p == '_') {
         *p2++ = *p++;
     } else {
-        NSLog(@"<%@> Variable should be start with [a-z] or [A-Z].", [[self class] description]);
+        NSLog(@"<%@> Variable should be start with alphabet or underline.", [[self class] description]);
         return nil;
     }
     
-    while ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p == '_')
+    while ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z')
+           || (*p >= '0' && *p <= '9')
+           || (*p == '_')
            || (*p == '.' /* allows nested key */)) {
         *p2++ = *p++;
     }

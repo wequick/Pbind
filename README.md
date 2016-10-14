@@ -101,7 +101,22 @@ usage: [tag][key]
 	usage: [unary-operator][tag][accessory][variable][logic-operator][rvalue][:][rvalueOfNot]
 	```
 	
-    2.1 Tag (_**@see PBVariableMapper**_)  
+	2.1 Flags
+	
+	2.1.1 Binding flag
+	
+	Flag          | Description                   | e.g.
+	:------------ | :---------------------------- | ------------
+	 =            | one-way binding (data->view)  | =$selected
+	 ==           | duplex binding (data<->view)  | ==$tabIndex
+	 
+	2.1.2 Animation flag
+	
+	Flag          | Description                   | e.g.
+	:------------ | :---------------------------- | ------------
+	 ~            | set value with animated       | ~$contentSize
+
+    2.2 Tag (_**@see PBVariableMapper**_)  
        
     Tag           | Map to               | e.g.
 	:------------ | :------------------- | ------------
@@ -112,7 +127,7 @@ usage: [tag][key]
 	 >            | PBForm input text    | >birth
 	 >@           | PBForm input value   | >@birth
 	
-    2.1.1  User-defined Variable Tag
+    2.2.1  User-defined Variable Tag
     
     User-defined tag accepts one-char only, as if you defined `D`, then you can use `$D.` in plist.
     
@@ -126,7 +141,7 @@ usage: [tag][key]
     }];
 	```
 
-	2.2 Operator
+	2.3 Operator
 	
 	Operator      | Description              | e.g.
 	:------------ | :----------------------- | ------------
@@ -143,14 +158,6 @@ usage: [tag][key]
 	 /            | devide                   | $count/3
 	 ?:           | test                     | $value?:2; $flag?1:2
 	 
-	2.3 Accessory flags
-	
-	Accessory     | Description                   | e.g.
-	:------------ | :---------------------------- | ------------
-	 _            | one-way binding (data->view)  | $_selected
-	 __           | duplex binding (data<->view)  | $__tabIndex
-	 ~            | set value with animated       | ~$contentSize
-
 3. Formatter (_**@see PBMutableExpression**_)
 
 	```

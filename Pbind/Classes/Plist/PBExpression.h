@@ -11,7 +11,14 @@
 /**
  This class is used to parse the expressions configure in Plist.
  
- @discussion Each expression is composed by `[unary op][tag][flag][key][multi op][right value]`.
+ @discussion Each expression is composed by `[binding flag][unary op][tag][key][multi op][right value]`.
+ 
+ The [flag] is optional, supports:
+ 
+ * '='      -> oneway binding, notifys view to update while the data source value changed
+ * '=='     -> duplex binding, notifys each other to update on the other value changed.
+ 
+ If was not defined, just map the data to the view.
  
  The [unary op] is optional, supports:
  
@@ -28,11 +35,6 @@
  * '@'      -> value for the key of the owner view controller
  * '>'      -> text for the owner form's key-named input
  * '>@'     -> value for the owner form's key-named input
- 
- The [flag] is optional, supports:
- 
- * '_'      -> oneway binding, notifys view to update while the data source value changed
- * '__'     -> duplex binding, notifys each other to update while the view or the data source value changed.
  
  The [multi op] is optional, supports:
  
