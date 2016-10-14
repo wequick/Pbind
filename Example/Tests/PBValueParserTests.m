@@ -36,6 +36,7 @@
 }
 
 - (void)testCanParseUIColor {
+    XCTAssertTrue([[PBValueParser valueWithString:@"#FFF"] isEqual:[UIColor colorWithRed:1 green:1 blue:1 alpha:1]]);
     XCTAssertTrue([[PBValueParser valueWithString:@"#FF00FF"] isEqual:[UIColor colorWithRed:1 green:0 blue:1 alpha:1]]);
 }
 
