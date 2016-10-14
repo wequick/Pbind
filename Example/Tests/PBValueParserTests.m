@@ -50,7 +50,7 @@
     XCTAssertEqual([[PBValueParser valueWithString:@":right"] intValue], NSTextAlignmentRight);
     XCTAssertEqual([[PBValueParser valueWithString:@":center"] intValue], NSTextAlignmentCenter);
     // Cell accessory type
-    XCTAssertEqual([[PBValueParser valueWithString:@":√"] intValue], UITableViewCellAccessoryCheckmark);
+    XCTAssertEqual([[PBValueParser valueWithString:@":/"] intValue], UITableViewCellAccessoryCheckmark);
     XCTAssertEqual([[PBValueParser valueWithString:@":i"] intValue], UITableViewCellAccessoryDetailButton);
     XCTAssertEqual([[PBValueParser valueWithString:@":>"] intValue], UITableViewCellAccessoryDisclosureIndicator);
     // Cell style
@@ -81,10 +81,22 @@
 }
 
 - (void)testCanParseFont {
-    CGFloat fontSize = PBValue(14);
+    CGFloat fontSize = PBValue(14); // Helvetica
     XCTAssertTrue([[PBValueParser valueWithString:@"{F:14}"] isEqual:[UIFont systemFontOfSize:fontSize]]);
     XCTAssertTrue([[PBValueParser valueWithString:@"{F:italic,14}"] isEqual:[UIFont italicSystemFontOfSize:fontSize]]);
     XCTAssertTrue([[PBValueParser valueWithString:@"{F:bold,14}"] isEqual:[UIFont boldSystemFontOfSize:fontSize]]);
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:Helvetica,14}"] isEqual:[UIFont fontWithName:@"Helvetica" size:fontSize]]);
+    
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    attributes[UIFontDescriptorNameAttribute] = @"Helvetica";
+    attributes[UIFontDescriptorTraitsAttribute] = @{UIFontSymbolicTrait: @(UIFontDescriptorTraitBold)};
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:Helvetica,bold,14}"] isEqual:[UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:attributes] size:fontSize]]);
+    
+    attributes[UIFontDescriptorTraitsAttribute] = @{UIFontSymbolicTrait: @(UIFontDescriptorTraitItalic)};
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:Helvetica,italic,14}"] isEqual:[UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:attributes] size:fontSize]]);
+    
+    attributes[UIFontDescriptorTraitsAttribute] = @{UIFontSymbolicTrait: @(UIFontDescriptorTraitBold|UIFontDescriptorTraitItalic)};
+    XCTAssertTrue([[PBValueParser valueWithString:@"{F:Helvetica,bold|italic,14}"] isEqual:[UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:attributes] size:fontSize]]);
 }
 
 @end
