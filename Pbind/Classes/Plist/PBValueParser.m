@@ -152,12 +152,14 @@ static int ctohex(char c) {
 
 static float readcolor(const char **str, int len) {
     char *p = *str;
+    float max = 15.f;
     int value = ctohex(*p++);
     if (len == 2) {
         value = value * 16 + ctohex(*p++);
+        max = 255.f;
     }
     *str = p;
-    return value / 255.f;
+    return value / max;
 }
 
 + (UIColor *)colorWithUTF8String:(const char *)str {
@@ -188,7 +190,9 @@ static float readcolor(const char **str, int len) {
             return nil;
     }
     
-    return [UIColor colorWithRed:r green:g blue:b alpha:a];
+    UIColor *color = [UIColor colorWithRed:r green:g blue:b alpha:a];
+    NSLog(@"---- %s => %@", str, color);
+    return color;
 }
 
 #pragma mark - UIFont
