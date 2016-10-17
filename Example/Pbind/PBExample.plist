@@ -130,7 +130,7 @@
 							<key>detailTextLabel.text</key>
 							<string>$notification</string>
 							<key>href</key>
-							<string>%(action://alert?title=%@&amp;btns=确定),$notification</string>
+							<string>%!(action://alert?title=%@&amp;btns=确定),$notification</string>
 						</dict>
 					</dict>
 				</array>
