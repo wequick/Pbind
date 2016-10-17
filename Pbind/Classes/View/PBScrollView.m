@@ -144,6 +144,28 @@
     return view;
 }
 
+- (void)setRow:(NSDictionary *)row {
+    if (_row != nil && _rowViews != nil) {
+        // Reset
+        for (UIView *view in _rowViews) {
+            [view removeFromSuperview];
+        }
+        _rowViews = nil;
+    }
+    _row = row;
+}
+
+- (void)setRows:(NSArray *)rows {
+    if (_rows != nil && _rowViews != nil) {
+        // Reset
+        for (UIView *view in _rowViews) {
+            [view removeFromSuperview];
+        }
+        _rowViews = nil;
+    }
+    _rows = rows;
+}
+
 - (void)initRowViewsIfNeeded
 {
     if ([_rowViews count] > 0) {
@@ -284,17 +306,13 @@
             w = self.frame.size.width;
         }
         [self setContentSize:CGSizeMake(w, y)];
-        if (self.autoResize) {
-            CGRect frame = self.frame;
-            [self setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, y)];
-        }
     }
 }
 
 - (void)setContentSize:(CGSize)contentSize {
     [super setContentSize:contentSize];
     
-    if (self.autoResize && contentSize.width != 0 && contentSize.height != 0) {
+    if (self.autoResize) {
         CGRect frame = self.frame;
         if (!CGSizeEqualToSize(frame.size, contentSize)) {
             frame.size = contentSize;

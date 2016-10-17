@@ -107,19 +107,24 @@
 
 - (void)reloadData {
     [super reloadData];
-    if (self.data != nil && self.autoResize) {
-        CGSize size = self.collectionViewLayout.collectionViewContentSize;
-        self.contentSize = size;
-        CGRect frame = self.frame;
-        frame.size = size;
-        self.frame = frame;
-        [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.autoResize) {
+            CGSize size = self.collectionViewLayout.collectionViewContentSize;
+            self.contentSize = size;
+            CGRect frame = self.frame;
+            frame.size = size;
+            self.frame = frame;
+            [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+        }
+    });
 }
 
 #pragma mark - UICollectionViewDelegate
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    if ([self.data count] == 0) {
+        return 0;
+    }
     return 1;
 }
 
