@@ -116,6 +116,10 @@
 							<string>群聊名称</string>
 							<key>detailTextLabel.text</key>
 							<string>$groupName</string>
+							<key>detailTextLabel.layer.borderColor</key>
+							<string>##ff00ff</string>
+							<key>detailTextLabel.layer.borderWidth</key>
+							<string>1</string>
 						</dict>
 					</dict>
 					<dict>
