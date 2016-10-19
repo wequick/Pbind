@@ -55,8 +55,7 @@ static NSMutableDictionary *kEnums = nil;
     if (initial == '#') {
         const char *str = [aString UTF8String];
         if (*(str + 1) == '#') {
-            id color = [self colorWithUTF8String:str + 2];
-            return [NSValue valueWithPointer:[color CGColor]];
+            return (id) [[self colorWithUTF8String:str + 2] CGColor];
         } else {
             return [self colorWithUTF8String:str + 1];
         }
