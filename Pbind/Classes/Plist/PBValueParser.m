@@ -55,7 +55,8 @@ static NSMutableDictionary *kEnums = nil;
     if (initial == '#') {
         const char *str = [aString UTF8String];
         if (*(str + 1) == '#') {
-            return [self colorWithUTF8String:str + 2].CGColor;
+            id color = [self colorWithUTF8String:str + 2];
+            return [NSValue valueWithPointer:[color CGColor]];
         } else {
             return [self colorWithUTF8String:str + 1];
         }
@@ -150,7 +151,7 @@ static int ctohex(char c) {
     return c - '0';
 }
 
-static float readcolor(const char **str, int len) {
+static float readcolor(char **str, int len) {
     char *p = *str;
     float max = 15.f;
     int value = ctohex(*p++);
@@ -165,7 +166,7 @@ static float readcolor(const char **str, int len) {
 + (UIColor *)colorWithUTF8String:(const char *)str {
     CGFloat a, r, g, b;
     char *p = (char *)str;
-    int len = strlen(p);
+    size_t len = strlen(p);
     switch (len) {
         case 3: // RGB
             a = 1.f;
@@ -201,7 +202,7 @@ static float readcolor(const char **str, int len) {
     UIFont *systemFont = [UIFont systemFontOfSize:size];
     
     char *p = (char *)str;
-    int len = strlen(str);
+    size_t len = strlen(str);
     if (len < 4 || *p != '{' || *(p+1) != 'F' || *(p+2) != ':' || *(p+len-1) != '}') {
         NSLog(@"PBValueParser: Font expression should with format '{F:[name][bold|italic][size]}'");
         return systemFont;

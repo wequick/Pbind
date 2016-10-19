@@ -122,6 +122,13 @@
 #pragma mark - UICollectionViewDelegate
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    if ([_dataSourceInterceptor.receiver respondsToSelector:@selector(numberOfSectionsInCollectionView:)]) {
+        NSInteger num = [_dataSourceInterceptor.receiver numberOfSectionsInCollectionView:collectionView];
+        if (num >= 0) {
+            return num;
+        }
+    }
+    
     if ([self.data count] == 0) {
         return 0;
     }
@@ -129,10 +136,24 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if ([_dataSourceInterceptor.receiver respondsToSelector:@selector(collectionView:numberOfItemsInSection:)]) {
+        NSInteger num = [_dataSourceInterceptor.receiver collectionView:collectionView numberOfItemsInSection:section];
+        if (num > 0) {
+            return num;
+        }
+    }
+    
     return [self.data count];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([_dataSourceInterceptor.receiver respondsToSelector:@selector(collectionView:cellForItemAtIndexPath:)]) {
+        id cell = [_dataSourceInterceptor.receiver cellForItemAtIndexPath:indexPath];
+        if (cell != nil) {
+            return cell;
+        }
+    }
+    
     PBRowMapper *item = [self itemAtIndexPath:indexPath];
     if (![_registedCellClass isEqual:item.viewClass]) {
         UINib *nib = [UINib nibWithNibName:item.nib bundle:[NSBundle bundleForClass:item.viewClass]];

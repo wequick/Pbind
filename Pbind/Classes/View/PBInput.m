@@ -83,6 +83,7 @@ static NSMutableDictionary *kInitializations = nil;
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     [self config];
 }
 
