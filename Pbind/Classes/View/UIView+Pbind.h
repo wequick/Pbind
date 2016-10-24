@@ -14,15 +14,14 @@
 @protocol PBViewLoadingDelegate <NSObject>
 
 @optional
-- (NSDictionary *)pullParamsForView:(UIView *)view;
-- (void)view:(UIView *)view didChangePullStatus:(NSInteger)status;
+- (BOOL)view:(UIView *)view shouldLoadRequest:(PBRequest *)request;
 - (void)view:(UIView *)view didFinishLoading:(PBResponse *)response handledError:(BOOL *)handledError;
 
 @end
 
 //______________________________________________________________________________
 
-@interface UIView (Pbind)
+@interface UIView (Pbind) <PBViewLoadingDelegate>
 
 @property (nonatomic, strong) NSString *plist;
 

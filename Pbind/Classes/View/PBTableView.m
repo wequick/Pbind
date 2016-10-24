@@ -225,6 +225,15 @@
         row = [PBRowMapper mapperWithDictionary:(id)row owner:self];
     }
     _row = row;
+    
+    if (![row isExpressiveHeight]) {
+        if (row.height == -1) {
+            [self setEstimatedRowHeight:44.f];
+            [self setRowHeight:UITableViewAutomaticDimension];
+        } else {
+            [self setRowHeight:row.height];
+        }
+    }
 }
 
 - (void)setRows:(NSArray *)rows
@@ -376,8 +385,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger rowCount = 0;
-    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
-        rowCount = [_delegateInterceptor.receiver tableView:tableView numberOfRowsInSection:section];
+    if ([_dataSourceInterceptor.receiver respondsToSelector:_cmd]) {
+        rowCount = [_dataSourceInterceptor.receiver tableView:tableView numberOfRowsInSection:section];
         if (rowCount >= 0) {
             return rowCount;
         }
@@ -388,7 +397,7 @@
         if ([self.data isKindOfClass:[PBSection class]]) {
             rowCount = [[(PBSection *)self.data recordsInSection:section] count];
         } else if ([self.data isKindOfClass:[PBArray class]]) {
-            rowCount = [[self.data list] count];
+            rowCount = [[self listForArray:self.data] count];
         } else {
             rowCount = [self.data count];
         }
@@ -405,31 +414,40 @@
     return rowCount;
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
-//        return [_delegateInterceptor.receiver tableView:tableView estimatedHeightForRowAtIndexPath:indexPath];
-//    }
-//    
-//    PBRowMapper *row = [self rowAtIndexPath:indexPath];
-//    if (row == nil) {
-//        return tableView.rowHeight;
-//    }
-//    
-//    id data = [self dataAtIndexPath:indexPath];
-//    NSDictionary *fakeView = nil;
-//    if (data != nil) {
-//        fakeView = @{@"data":data}; // for `$$' to map to view.data
-//    }
-//    BOOL hidden = [row hiddenForView:fakeView withData:self.data];
-//    if (hidden) {
-//        return 0;
-//    }
-//    
-//    if (row.height != 0) {
-//        return row.height;
-//    }
-//    return tableView.rowHeight;
-//}
+- (NSArray *)listForArray:(PBArray *)array {
+    id list = [array list];
+    if ([list isKindOfClass:[NSArray class]]) {
+        return list;
+    }
+    
+    if (self.listKey == nil || ![list isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+    
+    list = [list objectForKey:self.listKey];
+    return list;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        return [_delegateInterceptor.receiver tableView:tableView estimatedHeightForRowAtIndexPath:indexPath];
+    }
+    
+    PBRowMapper *row = [self rowAtIndexPath:indexPath];
+    if (row == nil) {
+        return tableView.estimatedRowHeight;
+    }
+    
+    if (row.hidden) {
+        return 0;
+    }
+    
+    if (row.estimatedHeight != 0) {
+        return row.estimatedHeight;
+    }
+    
+    return tableView.estimatedRowHeight;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -442,24 +460,24 @@
         return tableView.rowHeight;
     }
     
-    id data = [self dataAtIndexPath:indexPath];
-    NSDictionary *fakeView = nil;
-    if (data != nil) {
-        fakeView = @{@"data":data}; // for `$$' to map to view.data
+    if (![row isExpressiveHeight]) {
+        return row.height;
     }
-    BOOL hidden = [row hiddenForView:fakeView withData:self.data];
-    if (hidden) {
+    
+    id data = [self dataAtIndexPath:indexPath];
+    [row updateWithData:data andView:nil];
+    if (row.hidden) {
         return 0;
     }
     
-    if (row.height != 0) {
-        return row.height;
-//        return [row heightForView:fakeView withData:self.data];
-    }
-    return tableView.rowHeight;
+    return row.height;
 }
 
 - (UINib *)nibForRow:(PBRowMapper *)row {
+    if (row == nil) {
+        return nil;
+    }
+    
     // TODO: Add a patch bundle
     NSArray *bundles = @[[NSBundle bundleForClass:row.viewClass],
                          [NSBundle bundleForClass:self.supercontroller.class],
@@ -475,8 +493,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
-    if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:cellForRowAtIndexPath:)]) {
-        cell = [_delegateInterceptor.receiver tableView:tableView cellForRowAtIndexPath:indexPath];
+    if ([_dataSourceInterceptor.receiver respondsToSelector:@selector(tableView:cellForRowAtIndexPath:)]) {
+        cell = [_dataSourceInterceptor.receiver tableView:tableView cellForRowAtIndexPath:indexPath];
         if (cell != nil) {
             return cell;
         }
@@ -516,19 +534,23 @@
         [cell setData:[self dataAtIndexPath:indexPath]];
     }
     [row initDataForView:cell];
+//    PBRowMapper *row = [self rowAtIndexPath:indexPath];
+    [row mapData:_data forView:cell];
+    
+    NSLog(@"++create: %i-%i", indexPath.section, indexPath.row);
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL blur = [[tableView valueForAdditionKey:@"__blur"] boolValue];
-    if (blur) {
-        [cell setBackgroundColor:[UIColor clearColor]];
-    }
-    PBRowMapper *row = [self rowAtIndexPath:indexPath];
-//    id data = [self dataAtIndexPath:indexPath];
-    [row mapData:_data forView:cell];
+//    BOOL blur = [[tableView valueForAdditionKey:@"__blur"] boolValue];
+//    if (blur) {
+//        [cell setBackgroundColor:[UIColor clearColor]];
+//    }
+//    PBRowMapper *row = [self rowAtIndexPath:indexPath];
+//    [row mapData:_data forView:cell];
+    NSLog(@"--willDisplay: %i-%i", indexPath.section, indexPath.row);
     
     // Forward delegate
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {
@@ -596,7 +618,7 @@
         if ([data isKindOfClass:[NSArray class]]) {
             return [data objectAtIndex:indexPath.row];
         } else if ([data isKindOfClass:[PBArray class]]) {
-            return [data list][indexPath.row];
+            return [self listForArray:self.data][indexPath.row];
         } else if ([data isKindOfClass:[PBSection class]]) {
             return [(PBSection *)data recordAtIndexPath:indexPath];
         }

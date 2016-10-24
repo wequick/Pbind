@@ -85,20 +85,9 @@
     NSLog(@"%@ undefinedKey: %@", [[self class] description], key);
 }
 
-- (NSArray *)propertiesForKey:(NSString *)key
+- (BOOL)isExpressiveForKey:(NSString *)key
 {
-    NSMutableArray *properties = [NSMutableArray array];
-    for (NSString *aKey in _constants) {
-        if ([aKey isEqualToString:key]) {
-            [properties addObject:[_constants objectForKey:aKey]];
-        }
-    }
-    for (NSString *aKey in _expressions) {
-        if ([aKey isEqualToString:key]) {
-            [properties addObject:[_expressions objectForKey:aKey]];
-        }
-    }
-    return properties;
+    return [[_expressions allKeys] containsObject:key];
 }
 
 - (void)initPropertiesForOwner:(id)owner

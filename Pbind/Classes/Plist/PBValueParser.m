@@ -90,6 +90,10 @@ static NSMutableDictionary *kEnums = nil;
         else if ([aString isEqualToString:@"subtitle"]) {
             enumValue = UITableViewCellStyleSubtitle;
         }
+        // Cell height
+        else if ([aString isEqualToString:@"auto"]) {
+            enumValue = UITableViewAutomaticDimension;
+        }
         // User defined enums
         else {
             NSNumber *number = [kEnums objectForKey:aString];

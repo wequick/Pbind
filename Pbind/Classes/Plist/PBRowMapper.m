@@ -117,6 +117,10 @@ static const CGFloat kHeightAutomatic = -1;
     return height;
 }
 
+- (BOOL)isExpressiveHeight {
+    [self->_properties isExpressiveForKey:@"height"];
+}
+
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
     _pbFlags.mapping = YES;

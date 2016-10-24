@@ -39,6 +39,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, strong) NSString *nib;
 @property (nonatomic, strong) NSString *clazz;
 @property (nonatomic, strong) NSString *id;
+@property (nonatomic, assign) CGFloat estimatedHeight;
 @property (nonatomic, assign) CGFloat height;
 @property (nonatomic, assign) BOOL hidden;
 @property (nonatomic, assign) UIEdgeInsets margin;
@@ -53,6 +54,11 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) Class viewClass;
 
 @property (nonatomic, assign) id<PBRowMapperDelegate> delegate;
+
+/**
+ Whether the height is defined by an expression.
+ */
+@property (nonatomic, assign, readonly, getter=isExpressiveHeight) BOOL expressiveHeight;
 
 - (BOOL)hiddenForView:(id)view withData:(id)data;
 - (CGFloat)heightForView:(id)view withData:(id)data;

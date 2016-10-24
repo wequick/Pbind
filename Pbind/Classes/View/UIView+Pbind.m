@@ -72,10 +72,11 @@ DEF_UNDEFINED_BOOL_PROPERTY(pb_interrupted, setPb_interrupted, NO)
 DEF_UNDEFINED_BOOL_PROPERTY(showsLoadingCover, setShowsLoadingCover, YES) //void (^)(void)
 DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_preparation, setPb_preparation)
 DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transformation)
+DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
 
-- (void)willMoveToWindow:(UIWindow *)newWindow
+- (void)didMoveToWindow
 {
-    if (newWindow == nil) {
+    if (self.window == nil) {
         if (self.pb_loading) {
             // If super controller is neither a singleton nor a child of `UITabBarController', mark interrupted flag to reload at next appearance
             if (![[[[self supercontroller] navigationController] parentViewController] isKindOfClass:[UITabBarController class]]) {
@@ -84,14 +85,21 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             }
         }
     } else {
-        if (self.plist != nil && self._pbPlistURL == nil) {
-            self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
-            dispatch_async(dispatch_get_global_queue(0, 0), ^{
-               dispatch_sync(dispatch_get_main_queue(), ^{
-                   [[self pb_mapper] initDataForView:self];
-               });
-            });
+        if (self.plist != nil) {
+            if (self._pbPlistURL == nil) {
+                self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
+                dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                   dispatch_sync(dispatch_get_main_queue(), ^{
+                       [self _pb_initData];
+                   });
+                });
+            }
+        } else {
+            if ([[self valueForAdditionKey:@"pb_expressible"] boolValue]) {
+                [self _pb_initData];
+            }
         }
+        
         if (self.pb_interrupted) {
             self.pb_interrupted = NO;
             [self pb_repullData];
@@ -206,8 +214,16 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     [self pb_pullDataWithPreparation:nil transformation:nil];
 }
 
-- (void)pb_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id, NSError *))transformation
+- (void)pb_pullDataWithPreparation:(void (^)(void))preparation
+                    transformation:(id (^)(id, NSError *))transformation
 {
+    
+//}
+//
+//- (void)pb_pullDataWithPreparation:(void (^)(void))preparation
+//                    transformation:(id (^)(id, NSError *))transformation
+//                       complection:(void (^)(void))complection
+//{
     if (self.pb_loading) {
         return;
     }
@@ -233,9 +249,11 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     self.pb_loadingCount = (int) N;
     
     // Init null data
-    self.data = [PBArray arrayWithCapacity:self.clients.count];
-    for (NSInteger i = 0; i < N; i++) {
-        [self.data addObject:[NSNull null]];
+    if (self.data == nil) {
+        self.data = [PBArray arrayWithCapacity:self.clients.count];
+        for (NSInteger i = 0; i < N; i++) {
+            [self.data addObject:[NSNull null]];
+        }
     }
     
     // Load request parallel
@@ -248,13 +266,25 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         PBRequest *request = [[requestClass alloc] init];
         request.action = mapper.action;
         request.params = mapper.params;
-//        if ([self.loadingDelegate respondsToSelector:@selector(pullParamsForView:)]) {
-//            request.params = [self.loadingDelegate pullParamsForView:self];
-//        } else {
-//            request.params = self.clientParams;
-//        }
+        
+        if ([self respondsToSelector:@selector(view:shouldLoadRequest:)]) {
+            BOOL flag = [self view:self shouldLoadRequest:request];
+            if (!flag) {
+                continue;
+            }
+        }
+        if ([self.loadingDelegate respondsToSelector:@selector(view:shouldLoadRequest:)]) {
+            BOOL flag = [self.loadingDelegate view:self shouldLoadRequest:request];
+            if (!flag) {
+                continue;
+            }
+        }
+        
         [client _loadRequest:request mapper:nil notifys:NO complection:^(PBResponse *response) {
             BOOL handledError = NO;
+            if ([self respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
+                [self view:self didFinishLoading:response handledError:&handledError];
+            }
             if ([self.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [self.loadingDelegate view:self didFinishLoading:response handledError:&handledError];
             }
@@ -275,7 +305,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
                 self.pb_preparation = nil;
                 self.pb_transformation = nil;
                 self.data[i] = data;
-                [[self pb_mapper] mapData:self.rootData forView:self];
+                [self _pb_mapData:self.rootData];
                 [self layoutIfNeeded];
             }
             
@@ -286,6 +316,26 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
             }
         }];
     }
+}
+
+- (void)_pb_initData {
+    PBMapper *mapper = [self pb_mapper];
+    if (mapper == nil) {
+        [self pb_initData];
+        return;
+    }
+    
+    [mapper initDataForView:self];
+}
+
+- (void)_pb_mapData:(id)data {
+    PBMapper *mapper = [self pb_mapper];
+    if (mapper == nil) {
+        [self pb_mapData:data];
+        return;
+    }
+    
+    [mapper mapData:data forView:self];
 }
 
 - (void)pb_repullData
@@ -551,6 +601,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     if (aExpression == nil) {
         return;
     }
+    
     NSMutableDictionary *dynamicProperties;
     if (self.PBDynamicProperties == nil) {
         dynamicProperties = [[NSMutableDictionary alloc] init];
@@ -559,6 +610,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
         dynamicProperties = [NSMutableDictionary dictionaryWithDictionary:self.PBDynamicProperties];
     }
     [dynamicProperties setObject:aExpression forKey:keyPath];
+    [self setValue:@(YES) forAdditionKey:@"pb_expressible"];
 }
 
 - (UIViewController *)supercontroller
@@ -566,7 +618,7 @@ DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transfor
     id controller = self;
     while ((controller = [controller nextResponder]) != nil) {
         if ([controller isKindOfClass:[UIViewController class]]) {
-            break;
+            return [self topcontroller:controller];
         }
         
         if ([controller isKindOfClass:[UIWindow class]]) {

@@ -28,4 +28,6 @@
 - (void)initDataForOwner:(id)owner;
 - (void)mapData:(id)data forOwner:(id)owner withView:(id)view;
 
+- (BOOL)isExpressiveForKey:(NSString *)key;
+
 @end
