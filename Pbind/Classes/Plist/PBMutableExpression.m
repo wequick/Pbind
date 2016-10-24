@@ -146,13 +146,22 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     }
 }
 
+- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
+{
+    if (_expressions == nil) {
+        return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+    }
+    
+    for (PBExpression *exp in _expressions) {
+        [exp bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+    }
+}
+
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     if (_format != nil) {
         [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context];
-        for (PBExpression *exp in _expressions) {
-            [exp bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
-        }
+        [self bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
     } else {
         [super mapData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
     }

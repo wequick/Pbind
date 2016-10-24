@@ -41,36 +41,36 @@ DEF_UNDEFINED_PROPERTY2(NSArray *, visualFormats, setVisualFormats)
     }
 }
 
-- (void)didMoveToWindow
-{
-    if (self.superview != nil) {
-        // Add visual formats
-        if (self.visualFormats != nil) {
-            [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-            NSMutableDictionary *views = [[NSMutableDictionary alloc] init];
-            views[@"self"] = self;
-            for (int tag = 1; tag <= kMaxTagCount; tag++) {
-                UIView *tagView = [self.superview viewWithTag:tag];
-                if (tagView == nil) {
-                    break;
-                }
-                NSString *tagString = [NSString stringWithFormat:@"t%i", tag];
-                views[tagString] = tagView;
-            }
-            NSArray *parentViews = [self.superview subviews];
-            NSInteger subviewIndex = [parentViews indexOfObject:self];
-            if (subviewIndex > 0) {
-                views[@"prev"] = [parentViews objectAtIndex:subviewIndex - 1];
-            }
-            if (subviewIndex + 1 < [[self.superview subviews] count]) {
-                views[@"next"] = [parentViews objectAtIndex:subviewIndex + 1];
-            }
-            for (NSString *format in self.visualFormats) {
-                [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:nil views:views]];
-            }
-        }
-    }
-}
+//- (void)didMoveToWindow
+//{
+//    if (self.superview != nil) {
+//        // Add visual formats
+//        if (self.visualFormats != nil) {
+//            [self setTranslatesAutoresizingMaskIntoConstraints:NO];
+//            NSMutableDictionary *views = [[NSMutableDictionary alloc] init];
+//            views[@"self"] = self;
+//            for (int tag = 1; tag <= kMaxTagCount; tag++) {
+//                UIView *tagView = [self.superview viewWithTag:tag];
+//                if (tagView == nil) {
+//                    break;
+//                }
+//                NSString *tagString = [NSString stringWithFormat:@"t%i", tag];
+//                views[tagString] = tagView;
+//            }
+//            NSArray *parentViews = [self.superview subviews];
+//            NSInteger subviewIndex = [parentViews indexOfObject:self];
+//            if (subviewIndex > 0) {
+//                views[@"prev"] = [parentViews objectAtIndex:subviewIndex - 1];
+//            }
+//            if (subviewIndex + 1 < [[self.superview subviews] count]) {
+//                views[@"next"] = [parentViews objectAtIndex:subviewIndex + 1];
+//            }
+//            for (NSString *format in self.visualFormats) {
+//                [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:nil views:views]];
+//            }
+//        }
+//    }
+//}
 
 - (void)pb_initData
 {
@@ -80,6 +80,9 @@ DEF_UNDEFINED_PROPERTY2(NSArray *, visualFormats, setVisualFormats)
         value = [PBValueParser valueWithString:value];
         [self setValue:value forKey:key];
     }
+    
+    [self pb_bindData];
+    
     // Recursive
     if ([self respondsToSelector:@selector(reloadData)]) {
         
@@ -98,6 +101,15 @@ DEF_UNDEFINED_PROPERTY2(NSArray *, visualFormats, setVisualFormats)
         [self pb_mapData:nil];
     } else if ([self respondsToSelector:@selector(reloadData)]) {
         [(id)self reloadData];
+    }
+}
+
+- (void)pb_bindData
+{
+    NSDictionary *properties = [self PBDynamicProperties];
+    for (NSString *key in properties) {
+        PBExpression *exp = [properties objectForKey:key];
+        [exp bindData:nil toTarget:self forKeyPath:key inContext:self];
     }
 }
 
