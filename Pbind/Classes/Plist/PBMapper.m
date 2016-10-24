@@ -147,14 +147,21 @@
         return;
     }
     
-    NSPredicate *pd = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'row.properties'"];
+    [self moveDynamicProperties:properties toView:view forKey:@"row"];
+    [self moveDynamicProperties:properties toView:view forKey:@"item"];
+}
+
+- (void)moveDynamicProperties:(NSDictionary *)properties toView:(UIView *)view forKey:(NSString *)key {
+    NSString *prefix = [key stringByAppendingString:@".properties."];
+    NSPredicate *pd = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] %@", prefix];
     NSArray *targetKeys = [[properties allKeys] filteredArrayUsingPredicate:pd];
     if (targetKeys.count == 0) {
         return;
     }
     
+    NSInteger prefixLen = prefix.length;
     for (NSString *key in targetKeys) {
-        NSString *aKey = [key substringFromIndex:15]; // bypass 'row.properties.'
+        NSString *aKey = [key substringFromIndex:prefixLen]; // bypass 'row.properties.'
         PBExpression *exp = [properties objectForKey:key];
         [_viewProperties setExpression:exp forKey:aKey];
     }
