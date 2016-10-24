@@ -389,7 +389,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (void)_endPullup {
     if (_pullupIndexPaths != nil) {
-        [_pullupControl beginRefreshing];
         [self performBatchUpdates:^{
             [self insertItemsAtIndexPaths:_pullupIndexPaths];
         } completion:^(BOOL finished) {
