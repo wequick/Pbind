@@ -195,17 +195,29 @@
 }
 
 - (void)reloadData {
-    if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
-        PBScrollView *headerView = (id) self.tableHeaderView;
-        [headerView reloadData];
+    if (_pullupControl.refreshing) {
+        NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _pullupBeginTime;
+        if (spentTime < kMinRefreshControlDisplayingTime) {
+            NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self _endPullup];
+            });
+        } else {
+            [self _endPullup];
+        }
+    } else {
+        if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
+            PBScrollView *headerView = (id) self.tableHeaderView;
+            [headerView reloadData];
+        }
+        
+        if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
+            PBScrollView *footerView = (id) self.tableFooterView;
+            [footerView reloadData];
+        }
+        
+        [super reloadData];
     }
-    
-    if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
-        PBScrollView *footerView = (id) self.tableFooterView;
-        [footerView reloadData];
-    }
-    
-    [super reloadData];
 }
 
 - (void)dealloc {
@@ -225,15 +237,6 @@
         row = [PBRowMapper mapperWithDictionary:(id)row owner:self];
     }
     _row = row;
-    
-    if (![row isExpressiveHeight]) {
-        if (row.height == -1) {
-            [self setEstimatedRowHeight:44.f];
-            [self setRowHeight:UITableViewAutomaticDimension];
-        } else {
-            [self setRowHeight:row.height];
-        }
-    }
 }
 
 - (void)setRows:(NSArray *)rows
@@ -396,10 +399,8 @@
         // response array
         if ([self.data isKindOfClass:[PBSection class]]) {
             rowCount = [[(PBSection *)self.data recordsInSection:section] count];
-        } else if ([self.data isKindOfClass:[PBArray class]]) {
-            rowCount = [[self listForArray:self.data] count];
         } else {
-            rowCount = [self.data count];
+            rowCount = [[self list] count];
         }
         // header
         if (self.headerRows != nil) {
@@ -414,8 +415,16 @@
     return rowCount;
 }
 
-- (NSArray *)listForArray:(PBArray *)array {
-    id list = [array list];
+- (NSArray *)list {
+    id list = self.data;
+    if ([list isKindOfClass:[NSArray class]]) {
+        return list;
+    }
+    
+    if ([list isKindOfClass:[PBArray class]]) {
+        list = [list list];
+    }
+    
     if ([list isKindOfClass:[NSArray class]]) {
         return list;
     }
@@ -446,7 +455,11 @@
         return row.estimatedHeight;
     }
     
-    return tableView.estimatedRowHeight;
+    if (tableView.estimatedRowHeight != 0) {
+        return tableView.estimatedRowHeight;
+    }
+    
+    return UITableViewAutomaticDimension;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -460,7 +473,7 @@
         return tableView.rowHeight;
     }
     
-    if (![row isExpressiveHeight]) {
+    if (![row isHeightExpressive]) {
         return row.height;
     }
     
@@ -617,10 +630,10 @@
         id data = self.rowsData ?: _data;
         if ([data isKindOfClass:[NSArray class]]) {
             return [data objectAtIndex:indexPath.row];
-        } else if ([data isKindOfClass:[PBArray class]]) {
-            return [self listForArray:self.data][indexPath.row];
         } else if ([data isKindOfClass:[PBSection class]]) {
             return [(PBSection *)data recordAtIndexPath:indexPath];
+        } else {
+            return [self list][indexPath.row];
         }
     } else if (self.rows != nil) {
         // Distinct row configured by `rows'
@@ -648,4 +661,189 @@
     // for subclass to implement
 }
 
+#pragma mark - Paging
+
+static const CGFloat kMinRefreshControlDisplayingTime = .75f;
+
+- (void)refresh {
+    if (_refreshControl == nil) {
+        return;
+    }
+    
+    if (_refreshControl.isRefreshing) {
+        return;
+    }
+    
+    CGPoint offset = self.contentOffset;
+    offset.y = -self.contentInset.top - _refreshControl.bounds.size.height;
+    self.contentOffset = offset;
+    [_refreshControl beginRefreshing];
+    [_refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
+}
+
+- (void)setPagingParams:(PBDictionary *)pagingParams {
+    if (_refreshControl == nil) {
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        [refreshControl addTarget:self action:@selector(refreshControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+        [self addSubview:refreshControl];
+        _refreshControl = refreshControl;
+    }
+    _pagingParams = pagingParams;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        [_delegateInterceptor.receiver scrollViewDidScroll:scrollView];
+    }
+    
+    if (self.pagingParams == nil) {
+        return;
+    }
+    
+    if (_pullupControl != nil && ![_pullupControl isEnabled]) {
+        return;
+    }
+    
+    CGPoint contentOffset = scrollView.contentOffset;
+    UIEdgeInsets contentInset = scrollView.contentInset;
+    CGFloat height = scrollView.bounds.size.height;
+    CGFloat pullupY = (contentOffset.y + contentInset.top + height) - MAX((self.contentSize.height + contentInset.bottom + contentInset.top), height);
+    
+    if (pullupY > 0) {
+        UITableView *wrapper = _pullControlWrapper;
+        if (wrapper == nil) {
+            wrapper = [[UITableView alloc] initWithFrame:self.frame];
+            wrapper.userInteractionEnabled = NO;
+            wrapper.backgroundColor = [UIColor clearColor];
+            wrapper.separatorStyle = UITableViewCellSeparatorStyleNone;
+            wrapper.transform = CGAffineTransformMakeRotation(M_PI);
+            _pullupControl = [[UIRefreshControl alloc] init];
+            [_pullupControl addTarget:self action:@selector(pullupControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+            [wrapper addSubview:_pullupControl];
+            _pullControlWrapper = wrapper;
+            
+            [self.superview insertSubview:_pullControlWrapper aboveSubview:self];
+        }
+    }
+    
+    if (_pullControlWrapper == nil) {
+        return;
+    }
+    
+    if (pullupY >= _pullupControl.bounds.size.height * 1.5) {
+        if (!_pullupControl.refreshing) {
+            [_pullupControl beginRefreshing];
+            [_pullupControl sendActionsForControlEvents:UIControlEventValueChanged];
+        }
+    } else {
+        CGPoint pullupOffset = _pullControlWrapper.contentOffset;
+        pullupOffset.y = -pullupY;
+        _pullControlWrapper.contentOffset = pullupOffset;
+    }
+}
+- (void)refreshControlDidReleased:(UIRefreshControl *)sender {
+    NSDate *start = [NSDate date];
+    
+    // Reset paging params
+    self.page = 0;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'pagingParams'"];
+    NSArray *filters = [[self.PBDynamicProperties allKeys] filteredArrayUsingPredicate:predicate];
+    for (NSString *key in filters) {
+        PBExpression *expression = [self.PBDynamicProperties objectForKey:key];
+        [expression stringValue];
+        id value = [expression valueWithData:nil];
+        NSString *pagingKey = [key substringFromIndex:13]; // bypass 'pagingParams.'
+        [self.pagingParams setObject:value forKey:pagingKey];
+    }
+    
+    [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+        NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:start];
+        if (spentTime < kMinRefreshControlDisplayingTime) {
+            NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [sender endRefreshing];
+            });
+        } else {
+            [sender endRefreshing];
+        }
+        
+        if (_pullupControl != nil) {
+            [_pullupControl setEnabled:YES];
+        }
+        
+        return data;
+    }];
+}
+
+- (void)pullupControlDidReleased:(UIRefreshControl *)sender {
+    UIEdgeInsets insets = self.contentInset;
+    insets.bottom += _pullupControl.bounds.size.height;
+    self.contentInset = insets;
+    
+    self.page++;
+    
+    _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
+    [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+        NSInteger prevNumberOfItems = [[self list] count];
+        NSInteger currNumberOfItems;
+        
+        if (self.listKey != nil) {
+            NSMutableArray *list = [NSMutableArray arrayWithArray:self.list];
+            [list addObjectsFromArray:[data valueForKey:self.listKey]];
+            currNumberOfItems = list.count;
+            if ([data isKindOfClass:[NSDictionary class]]) {
+                NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithDictionary:data];
+                [newData setValue:list forKey:self.listKey];
+                data = newData;
+            } else {
+                [data setValue:list forKey:self.listKey];
+            }
+        } else {
+            NSMutableArray *list = [NSMutableArray arrayWithArray:self.data];
+            [list addObjectsFromArray:data];
+            currNumberOfItems = list.count;
+            data = list;
+        }
+        
+        if (currNumberOfItems > prevNumberOfItems) {
+            NSMutableArray *pullupIndexPaths = [NSMutableArray array];
+            for (NSInteger item = prevNumberOfItems; item < currNumberOfItems; item++) {
+                [pullupIndexPaths addObject:[NSIndexPath indexPathForItem:item inSection:0]];
+            }
+            _pullupIndexPaths = pullupIndexPaths;
+        } else {
+            _pullupIndexPaths = nil;
+        }
+        
+        return data;
+    }];
+}
+
+- (BOOL)view:(UIView *)view shouldLoadRequest:(PBRequest *)request {
+    if (self.pagingParams != nil) {
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:request.params];
+        for (NSString *key in self.pagingParams) {
+            [params setObject:self.pagingParams[key] forKey:key];
+        }
+        request.params = params;
+    }
+    return YES;
+}
+
+- (void)_endPullup {
+    if (_pullupIndexPaths != nil) {
+//        [self beginUpdates];
+        [self insertRowsAtIndexPaths:_pullupIndexPaths withRowAnimation:UITableViewRowAnimationBottom];
+//        [self endUpdates];
+        
+        _pullupIndexPaths = nil;
+        [_pullupControl endRefreshing];
+        UIEdgeInsets insets = self.contentInset;
+        insets.bottom -= _pullupControl.bounds.size.height;
+        self.contentInset = insets;
+    } else {
+        [_pullupControl endRefreshing];
+        [_pullupControl setEnabled:NO];
+    }
+}
 @end

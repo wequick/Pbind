@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PBDictionary.h"
 #import "PBRowMapper.h"
 #import "PBSectionMapper.h"
 #import "PBMessageInterceptor.h"
@@ -21,6 +22,12 @@
     UIEdgeInsets _initedContentInset;
     PBMessageInterceptor *_dataSourceInterceptor;
     PBMessageInterceptor *_delegateInterceptor;
+    
+    UIRefreshControl *_refreshControl;
+    UITableView *_pullControlWrapper;
+    UIRefreshControl *_pullupControl;
+    NSTimeInterval _pullupBeginTime;
+    NSArray<NSIndexPath *> *_pullupIndexPaths;
 
     struct {
         unsigned int deallocing:1;
@@ -46,49 +53,30 @@
 @property (nonatomic, getter=isHorizontal) BOOL horizontal;
 
 @property (nonatomic, strong) id data;
-@property (nonatomic, strong) NSString *listKey; // array list key for data if data was a NSDictionary
+
+/**
+ The key used to get the list from `self.data` for display.
+ */
+@property (nonatomic, strong) NSString *listKey;
+
+/**
+ The params used to paging, usually as {page: .page+1, pageSize: 10} or {offset: .page*10, limit: 10}.
+ If was set, will automatically add a `_refreshControl` for `pull-down-to-refresh`
+ and a `_pullupControl` for `pull-up-to-load-more`.
+ */
+@property (nonatomic, strong) PBDictionary *pagingParams;
+
+/**
+ The loading page count, default is 0.
+ While `_pullupControl` released, the value will be increased by 1.
+ */
+@property (nonatomic, assign) NSInteger page;
+
+/**
+ Re-fetch data with the initial paging parameters and reload the table view.
+ */
+- (void)refresh;
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
-
-@end
-
-////______________________________________________________________________________
-//
-//@protocol PBTableViewPagingDelegate <UITableViewDelegate>
-//
-//- (BOOL)tableView:(UITableView *)tableView allowsFloatForSection:(NSInteger)section;
-//
-//@end
-//
-////______________________________________________________________________________
-//
-//typedef NS_ENUM(NSInteger, PBTableViewPagingState)
-//{
-//    PBTableViewPagingStateIdle,
-//    PBTableViewPagingStatePullDownBegin,
-//    PBTableViewPagingStatePullDownMove,
-//    PBTableViewPagingStatePullDownEnd,
-//    PBTableViewPagingStateRefreshing,
-//    
-//    PBTableViewPagingStatePullUpBegin,
-//    PBTableViewPagingStatePullUpMove,
-//    PBTableViewPagingStatePullUpEnd,
-//    PBTableViewPagingStateLoadingMore
-//};
-
-@interface PBTableView (Paging)
-
-//@property (nonatomic, assign) id<PBTableViewPagingDelegate> pagingDelegate;
-@property (nonatomic) NSUInteger numberOfRowsInPage;
-//@property (nonatomic, assign) CGFloat refreshingViewHeight;
-//@property (nonatomic, assign) CGFloat loadingMoreViewHeight;
-//@property (nonatomic, getter=isRefreshingEnabled) BOOL refreshingEnabled;
-//@property (nonatomic, getter=isLoadingMoreEnabled) BOOL loadingMoreEnabled;
-//
-//@property (nonatomic, assign) PBTableViewPagingState pagingState;
-//
-//@property (nonatomic, assign) NSUInteger rowOffset;
-//@property (nonatomic, assign) NSUInteger pageIndex;
-//@property (nonatomic, assign) BOOL noMore;
 
 @end
