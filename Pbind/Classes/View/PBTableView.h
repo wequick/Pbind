@@ -46,6 +46,7 @@
 @property (nonatomic, getter=isHorizontal) BOOL horizontal;
 
 @property (nonatomic, strong) id data;
+@property (nonatomic, strong) NSString *listKey; // array list key for data if data was a NSDictionary
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 
