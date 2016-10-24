@@ -7,12 +7,20 @@
 //
 
 #import "PBCollectionView.h"
+#import "PBArray.h"
+#import "PBExpression.h"
 #import "PBSection.h"
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
 #import "UIView+PBLayout.h"
 
+@interface PBCollectionView () <UIScrollViewDelegate>
+
+@end
+
 @implementation PBCollectionView
+
+static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
@@ -106,17 +114,29 @@
 }
 
 - (void)reloadData {
-    [super reloadData];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.autoResize) {
-            CGSize size = self.collectionViewLayout.collectionViewContentSize;
-            self.contentSize = size;
-            CGRect frame = self.frame;
-            frame.size = size;
-            self.frame = frame;
-            [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+    if (_pullupControl.refreshing) {
+        NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _pullupBeginTime;
+        if (spentTime < kMinRefreshControlDisplayingTime) {
+            NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self _endPullup];
+            });
+        } else {
+            [self _endPullup];
         }
-    });
+    } else {
+        [super reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.autoResize) {
+                CGSize size = self.collectionViewLayout.collectionViewContentSize;
+                self.contentSize = size;
+                CGRect frame = self.bounds;
+                frame.size = size;
+                self.bounds = frame;
+                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+            }
+        });
+    }
 }
 
 #pragma mark - UICollectionViewDelegate
@@ -129,7 +149,7 @@
         }
     }
     
-    if ([self.data count] == 0) {
+    if ([self.list count] == 0) {
         return 0;
     }
     return 1;
@@ -143,7 +163,7 @@
         }
     }
     
-    return [self.data count];
+    return [self.list count];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -253,6 +273,189 @@
     return (_pbCollectionViewFlags.autoResize == 1);
 }
 
+- (void)setPagingParams:(PBDictionary *)pagingParams {
+    if (_refreshControl == nil) {
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        [refreshControl addTarget:self action:@selector(refreshControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+        [self addSubview:refreshControl];
+        _refreshControl = refreshControl;
+    }
+    _pagingParams = pagingParams;
+}
+
+- (NSArray *)list {
+    id data = self.data;
+    if ([data isKindOfClass:[PBArray class]]) {
+        data = [data list];
+    }
+    
+    if (self.listKey != nil) {
+        return [data valueForKey:self.listKey];
+    }
+    
+    return data;
+}
+
+#pragma mark - Refresh control
+
+- (void)refreshControlDidReleased:(UIRefreshControl *)sender {
+    NSDate *start = [NSDate date];
+    
+    // Reset paging params
+    self.page = 0;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'pagingParams'"];
+    NSArray *filters = [[self.PBDynamicProperties allKeys] filteredArrayUsingPredicate:predicate];
+    for (NSString *key in filters) {
+        PBExpression *expression = [self.PBDynamicProperties objectForKey:key];
+        [expression stringValue];
+        id value = [expression valueWithData:nil];
+        NSString *pagingKey = [key substringFromIndex:13]; // bypass 'pagingParams.'
+        [self.pagingParams setObject:value forKey:pagingKey];
+    }
+    
+    [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+        NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:start];
+        if (spentTime < kMinRefreshControlDisplayingTime) {
+            NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [sender endRefreshing];
+            });
+        } else {
+            [sender endRefreshing];
+        }
+        
+        if (_pullupControl != nil) {
+            [_pullupControl setEnabled:YES];
+        }
+        
+        return data;
+    }];
+}
+
+- (void)pullupControlDidReleased:(UIRefreshControl *)sender {
+    UIEdgeInsets insets = self.contentInset;
+    insets.bottom += _pullupControl.bounds.size.height;
+    self.contentInset = insets;
+    
+    self.page++;
+    
+    _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
+    [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+        NSInteger prevNumberOfItems = [[self list] count];
+        NSInteger currNumberOfItems;
+        
+        if (self.listKey != nil) {
+            NSMutableArray *list = [NSMutableArray arrayWithArray:self.list];
+            [list addObjectsFromArray:[data valueForKey:self.listKey]];
+            currNumberOfItems = list.count;
+            if ([data isKindOfClass:[NSDictionary class]]) {
+                NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithDictionary:data];
+                [newData setValue:list forKey:self.listKey];
+                data = newData;
+            } else {
+                [data setValue:list forKey:self.listKey];
+            }
+        } else {
+            NSMutableArray *list = [NSMutableArray arrayWithArray:self.data];
+            [list addObjectsFromArray:data];
+            currNumberOfItems = list.count;
+            data = list;
+        }
+        
+        if (currNumberOfItems > prevNumberOfItems) {
+            NSMutableArray *pullupIndexPaths = [NSMutableArray array];
+            for (NSInteger item = prevNumberOfItems; item < currNumberOfItems; item++) {
+                [pullupIndexPaths addObject:[NSIndexPath indexPathForItem:item inSection:0]];
+            }
+            _pullupIndexPaths = pullupIndexPaths;
+        } else {
+            _pullupIndexPaths = nil;
+        }
+        
+        return data;
+    }];
+}
+
+- (BOOL)view:(UIView *)view shouldLoadRequest:(PBRequest *)request {
+    if (self.pagingParams != nil) {
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:request.params];
+        for (NSString *key in self.pagingParams) {
+            [params setObject:self.pagingParams[key] forKey:key];
+        }
+        request.params = params;
+    }
+    return YES;
+}
+
+- (void)_endPullup {
+    if (_pullupIndexPaths != nil) {
+        [_pullupControl beginRefreshing];
+        [self performBatchUpdates:^{
+            [self insertItemsAtIndexPaths:_pullupIndexPaths];
+        } completion:^(BOOL finished) {
+            _pullupIndexPaths = nil;
+            [_pullupControl endRefreshing];
+            UIEdgeInsets insets = self.contentInset;
+            insets.bottom -= _pullupControl.bounds.size.height;
+            self.contentInset = insets;
+        }];
+    } else {
+        [_pullupControl endRefreshing];
+        [_pullupControl setEnabled:NO];
+    }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([_delegateInterceptor.receiver respondsToSelector:@selector(scrollViewDidScroll:)]) {
+        [_delegateInterceptor.receiver scrollViewDidScroll:scrollView];
+    }
+    
+    if (self.pagingParams == nil) {
+        return;
+    }
+    
+    if (_pullupControl != nil && ![_pullupControl isEnabled]) {
+        return;
+    }
+    
+    CGPoint contentOffset = scrollView.contentOffset;
+    UIEdgeInsets contentInset = scrollView.contentInset;
+    CGFloat height = scrollView.bounds.size.height;
+    CGFloat pullupY = (contentOffset.y + contentInset.top + height) - MAX((self.contentSize.height + contentInset.bottom + contentInset.top), height);
+    
+    if (pullupY > 0) {
+        UITableView *wrapper = _pullControlWrapper;
+        if (wrapper == nil) {
+            wrapper = [[UITableView alloc] initWithFrame:self.frame];
+            wrapper.userInteractionEnabled = NO;
+            wrapper.backgroundColor = [UIColor clearColor];
+            wrapper.separatorStyle = UITableViewCellSeparatorStyleNone;
+            wrapper.transform = CGAffineTransformMakeRotation(M_PI);
+            _pullupControl = [[UIRefreshControl alloc] init];
+            [_pullupControl addTarget:self action:@selector(pullupControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+            [wrapper addSubview:_pullupControl];
+            _pullControlWrapper = wrapper;
+            
+            [self.superview insertSubview:_pullControlWrapper aboveSubview:self];
+        }
+    }
+    
+    if (_pullControlWrapper == nil) {
+        return;
+    }
+    
+    if (pullupY >= _pullupControl.bounds.size.height * 1.5) {
+        if (!_pullupControl.refreshing) {
+            [_pullupControl beginRefreshing];
+            [_pullupControl sendActionsForControlEvents:UIControlEventValueChanged];
+        }
+    } else {
+        CGPoint pullupOffset = _pullControlWrapper.contentOffset;
+        pullupOffset.y = -pullupY;
+        _pullControlWrapper.contentOffset = pullupOffset;
+    }
+}
+
 #pragma mark - Helper
 
 - (PBRowMapper *)itemAtIndexPath:(NSIndexPath *)indexPath
@@ -276,7 +479,7 @@
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    id _data = self.data;
+    id _data = self.list;
     if (_data == nil) {
         return nil;
     }

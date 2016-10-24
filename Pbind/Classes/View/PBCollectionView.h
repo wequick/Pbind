@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PBDictionary.h"
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
 
@@ -21,6 +22,12 @@
         unsigned int deallocing:1;
         unsigned int autoResize:1;
     } _pbCollectionViewFlags;
+    
+    UIRefreshControl *_refreshControl;
+    UITableView *_pullControlWrapper;
+    UIRefreshControl *_pullupControl;
+    NSTimeInterval _pullupBeginTime;
+    NSArray<NSIndexPath *> *_pullupIndexPaths;
 }
 
 @property (nonatomic, strong) NSDictionary *item;
@@ -32,5 +39,23 @@
 @property (nonatomic, assign) CGSize spacingSize;
 
 @property (nonatomic, assign, getter=isAutoResize) BOOL autoResize; // auto resize the frame with it's content size, default is NO.
+
+/**
+ The key used to get the list from `self.data` for display.
+ */
+@property (nonatomic, strong) NSString *listKey;
+
+/**
+ The params used to paging, usually as {page: .page+1, pageSize: 10} or {offset: .page*10, limit: 10}.
+ If was set, will automatically add a `_refreshControl` for `pull-down-to-refresh`
+ and a `_pullupControl` for `pull-up-to-load-more`.
+ */
+@property (nonatomic, strong) PBDictionary *pagingParams;
+
+/**
+ The loading page count, default is 0.
+ While `_pullupControl` released, the value will be increased by 1.
+ */
+@property (nonatomic, assign) NSInteger page;
 
 @end
