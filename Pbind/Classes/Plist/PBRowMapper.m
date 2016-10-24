@@ -11,7 +11,6 @@
 #import "Pbind+API.h"
 
 static const CGFloat kHeightUnset = -2;
-static const CGFloat kHeightAutomatic = -1;
 
 @interface PBMapper (Private)
 
@@ -23,11 +22,20 @@ static const CGFloat kHeightAutomatic = -1;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     if (self = [super initWithDictionary:dictionary]) {
-        if (_height == 0) {
-            _height = kHeightUnset;
-        } else if (_height > 0) {
-            _height = PBValue(_height);
+        if (![[dictionary allKeys] containsObject:@"height"]) {
+            _height = kHeightUnset; // default as automatic
+        } else {
+            if (![self isHeightExpressive]) {
+                if (_height == UITableViewAutomaticDimension) {
+                    if (_estimatedHeight == 0) {
+                        _estimatedHeight = 44.f; // initialize default estimated height
+                    }
+                } else if (_height > 0) {
+                    _height = PBValue(_height);
+                }
+            }
         }
+        
         if (_clazz == nil) {
             _clazz = @"UITableViewCell";
             _viewClass = [UITableViewCell class];
@@ -67,7 +75,7 @@ static const CGFloat kHeightAutomatic = -1;
 {
     [self _mapValuesForKeysWithData:data andView:view];
     CGFloat height = _height;
-    if (height == kHeightAutomatic/*UITableViewAutomaticDimension*/) {
+    if (height == UITableViewAutomaticDimension) {
         // Auto layout
         CGFloat additionHeight = 0;
         for (NSInteger index = 1; index <= 20/* 20 tagged views should be enough */; index++) {
@@ -111,13 +119,13 @@ static const CGFloat kHeightAutomatic = -1;
 
 - (CGFloat)height {
     CGFloat height = _height;
-    if (height <= kHeightUnset) {
-        height = 0;
+    if (height == kHeightUnset) {
+        height = UITableViewAutomaticDimension;
     }
     return height;
 }
 
-- (BOOL)isExpressiveHeight {
+- (BOOL)isHeightExpressive {
     [self->_properties isExpressiveForKey:@"height"];
 }
 

@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 /**
  Whether the height is defined by an expression.
  */
-@property (nonatomic, assign, readonly, getter=isExpressiveHeight) BOOL expressiveHeight;
+@property (nonatomic, assign, readonly, getter=isHeightExpressive) BOOL heightExpressive;
 
 - (BOOL)hiddenForView:(id)view withData:(id)data;
 - (CGFloat)heightForView:(id)view withData:(id)data;
