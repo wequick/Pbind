@@ -15,6 +15,7 @@
 #import "PBForm.h"
 #import "PBDictionary.h"
 #import "PBMutableExpression.h"
+#import "PBArray.h"
 
 static const int kDataTagUnset = 0xFF;
 
@@ -146,28 +147,20 @@ static const int kDataTagUnset = 0xFF;
     
     // Arithmetic operator
     switch (*p) {
-        case '+': _flags.plus = 1;
-        case '-': _flags.minus = 1;
-        case '*': _flags.times = 1;
-        case '/': _flags.divide = 1;
-        case '=': _flags.equal = 1;
+        case '+': _flags.plus = 1; p++; break;
+        case '-': _flags.minus = 1; p++; break;
+        case '*': _flags.times = 1; p++; break;
+        case '/': _flags.divide = 1; p++; break;
+        case '=':
+            _flags.equal = 1;
             p++;
             if (*p == '=') {
-                _flags.equal = 1;
                 p++;
             }
-            
-            p2 = temp = (char *)malloc(len - (p - str));
-            while (*p != '\0') {
-                *p2++ = *p++;
-            }
-            *p2 = '\0';
-            _rvalue = [NSString stringWithUTF8String:temp];
-            free(temp);
             break;
         case '!':
-            p++;
             _flags.multiNot = 1;
+            p++;
             if (*p == '=') {
                 _flags.equal = 1;
             } else {
@@ -182,14 +175,6 @@ static const int kDataTagUnset = 0xFF;
                 // $var ?: 0
                 _flags.unaryTest = 1;
                 p++;
-                
-                p2 = temp = (char *)malloc(len - (p - str));
-                while (*p != '\0') {
-                    *p2++ = *p++;
-                }
-                *p2 = '\0';
-                _rvalue = [NSString stringWithUTF8String:temp];
-                free(temp);
             } else {
                 // $var ? 0 : 1
                 p2 = temp = (char *)malloc(len - (p - str));
@@ -214,8 +199,17 @@ static const int kDataTagUnset = 0xFF;
                 free(temp);
             }
             break;
-        default: break;
+        default: return self;
     }
+    
+    // Parse right value
+    p2 = temp = (char *)malloc(len - (p - str));
+    while (*p != '\0') {
+        *p2++ = *p++;
+    }
+    *p2 = '\0';
+    _rvalue = [NSString stringWithUTF8String:temp];
+    free(temp);
     
     return self;
 }
@@ -230,10 +224,6 @@ static const int kDataTagUnset = 0xFF;
 - (id)valueWithData:(id)data target:(id)target context:(UIView *)context
 {
     id dataSource = [self _dataSourceWithData:data target:target context:context];
-    if (dataSource == nil) {
-        return nil;
-    }
-    
     return [self _valueWithData:dataSource];
 }
 
@@ -251,7 +241,7 @@ static const int kDataTagUnset = 0xFF;
     } else if (_flags.mapToTarget) {
         return target;
     } else if (_flags.mapToTargetData) {
-        return [target data];
+        return [self _dataSourceWithData:[target data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
     } else if (_flags.mapToFormFieldText) {
@@ -271,7 +261,7 @@ static const int kDataTagUnset = 0xFF;
 }
 
 - (id)_dataSourceWithData:(id)data atIndex:(int)index {
-    if (![data respondsToSelector:@selector(objectAtIndexedSubscript:)]) return data;
+    if (![data isKindOfClass:[PBArray class]]) return data;
     
     if (index >= [data count]) return nil;
     id value = data[index];
@@ -544,15 +534,25 @@ static const int kDataTagUnset = 0xFF;
 
 - (NSString *)stringValue {
     NSMutableString *s = [[NSMutableString alloc] init];
+    
+    // Binding flags
+    if (_flags.onewayBinding) {
+        [s appendString:@"="];
+    } else if (_flags.duplexBinding) {
+        [s appendString:@"=="];
+    }
+    
+    // Animation flag
+    if (_flags.animated) {
+        [s appendString:@"~"];
+    }
+    
     // Unary operators
     if (_flags.unaryNot) {
         [s appendString:@"!"];
     }
     if (_flags.negative) {
         [s appendString:@"-"];
-    }
-    if (_flags.animated) {
-        [s appendString:@"~"];
     }
     
     // Tag
