@@ -107,24 +107,33 @@ static NSMutableDictionary *kEnums = nil;
     if (initial == '{') {
         if (second == 'F') {
             return [self fontWithUTF8String:[aString UTF8String]];
-        } else if (second == '{') { // e.g. {{0, 0}, {320, 480}}
-            CGRect rect = CGRectFromString(aString);
-            return [NSValue valueWithCGRect:PBRect(rect)];
         } else {
-            NSArray *components = [aString componentsSeparatedByString:@","];
-            switch (components.count) {
-                case 2: // e.g. {320, 480}
-                {
-                    CGSize size = CGSizeFromString(aString);
-                    return [NSValue valueWithCGSize:PBSize(size)];
+            NSArray *components = [aString componentsSeparatedByString:@"@"];
+            CGFloat sketchWidth = 0;
+            if (components.count == 2) {
+                sketchWidth = [[components lastObject] floatValue];
+            }
+            aString = [components firstObject];
+            
+            if (second == '{') { // e.g. {{0, 0}, {320, 480}}
+                CGRect rect = CGRectFromString(aString);
+                return [NSValue valueWithCGRect:PBRect2(rect, sketchWidth)];
+            } else {
+                NSArray *components = [aString componentsSeparatedByString:@","];
+                switch (components.count) {
+                    case 2: // e.g. {320, 480}
+                    {
+                        CGSize size = CGSizeFromString(aString);
+                        return [NSValue valueWithCGSize:PBSize2(size, sketchWidth)];
+                    }
+                    case 4: // e.g. {0, 1, 2, 3}
+                    {
+                        UIEdgeInsets insets = UIEdgeInsetsFromString(aString);
+                        return [NSValue valueWithUIEdgeInsets:PBEdgeInsets2(insets, sketchWidth)];
+                    }
+                    default:
+                        break;
                 }
-                case 4: // e.g. {0, 1, 2, 3}
-                {
-                    UIEdgeInsets insets = UIEdgeInsetsFromString(aString);
-                    return [NSValue valueWithUIEdgeInsets:PBEdgeInsets(insets)];
-                }
-                default:
-                    break;
             }
         }
     }

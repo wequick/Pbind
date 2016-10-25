@@ -46,12 +46,12 @@
  * 0.4-0.6  as      0.5
  
  */
-UIKIT_STATIC_INLINE CGFloat PBValue(CGFloat value) {
+UIKIT_STATIC_INLINE CGFloat PBValueByScale(CGFloat value, CGFloat scale) {
     if (value == 0) {
         return 0;
     }
     
-    value *= [Pbind valueScale];
+    value *= scale;
     if (value < 0) {
         return value;
     }
@@ -67,9 +67,26 @@ UIKIT_STATIC_INLINE CGFloat PBValue(CGFloat value) {
     }
 }
 
+UIKIT_STATIC_INLINE CGFloat PBValue2(CGFloat value, CGFloat sketchWidth) {
+    CGFloat scale = [Pbind valueScale];
+    if (sketchWidth != 0) {
+        scale = [UIScreen mainScreen].bounds.size.width / sketchWidth;
+    }
+    return PBValueByScale(value, scale);
+}
+
+UIKIT_STATIC_INLINE CGFloat PBValue(CGFloat value) {
+    return PBValueByScale(value, [Pbind valueScale]);
+}
+
 UIKIT_STATIC_INLINE CGPoint PBPoint(CGPoint point) {
     return CGPointMake(PBValue(point.x),
                        PBValue(point.y));
+}
+
+UIKIT_STATIC_INLINE CGPoint PBPoint2(CGPoint point, CGFloat sketchWidth) {
+    return CGPointMake(PBValue2(point.x, sketchWidth),
+                       PBValue2(point.y, sketchWidth));
 }
 
 UIKIT_STATIC_INLINE CGPoint PBPointMake(CGFloat x, CGFloat y) {
@@ -79,6 +96,11 @@ UIKIT_STATIC_INLINE CGPoint PBPointMake(CGFloat x, CGFloat y) {
 UIKIT_STATIC_INLINE CGSize PBSize(CGSize size) {
     return CGSizeMake(PBValue(size.width),
                       PBValue(size.height));
+}
+
+UIKIT_STATIC_INLINE CGSize PBSize2(CGSize size, CGFloat sketchWidth) {
+    return CGSizeMake(PBValue2(size.width, sketchWidth),
+                      PBValue2(size.height, sketchWidth));
 }
 
 UIKIT_STATIC_INLINE CGSize PBSizeMake(CGFloat w, CGFloat h) {
@@ -92,6 +114,13 @@ UIKIT_STATIC_INLINE CGRect PBRect(CGRect rect) {
                       PBValue(rect.size.height));
 }
 
+UIKIT_STATIC_INLINE CGRect PBRect2(CGRect rect, CGFloat sketchWidth) {
+    return CGRectMake(PBValue2(rect.origin.x, sketchWidth),
+                      PBValue2(rect.origin.y, sketchWidth),
+                      PBValue2(rect.size.width, sketchWidth),
+                      PBValue2(rect.size.height, sketchWidth));
+}
+
 UIKIT_STATIC_INLINE CGRect PBRectMake(CGFloat x, CGFloat y, CGFloat w, CGFloat h) {
     return CGRectMake(PBValue(x), PBValue(y), PBValue(w), PBValue(h));
 }
@@ -101,6 +130,13 @@ UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsets(UIEdgeInsets insets) {
                             PBValue(insets.left),
                             PBValue(insets.bottom),
                             PBValue(insets.right));
+}
+
+UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsets2(UIEdgeInsets insets, CGFloat sketchWidth) {
+    return UIEdgeInsetsMake(PBValue2(insets.top, sketchWidth),
+                            PBValue2(insets.left, sketchWidth),
+                            PBValue2(insets.bottom, sketchWidth),
+                            PBValue2(insets.right, sketchWidth));
 }
 
 UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsetsMake(CGFloat t, CGFloat l, CGFloat b, CGFloat r) {
