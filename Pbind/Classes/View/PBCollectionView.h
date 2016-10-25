@@ -41,6 +41,11 @@
 @property (nonatomic, assign, getter=isAutoResize) BOOL autoResize; // auto resize the frame with it's content size, default is NO.
 
 /**
+ Scroll the view with horizontal direction.
+ */
+@property (nonatomic, assign, getter=isHorizontal) BOOL horizontal;
+
+/**
  The key used to get the list from `self.data` for display.
  */
 @property (nonatomic, strong) NSString *listKey;

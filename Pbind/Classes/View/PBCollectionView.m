@@ -283,6 +283,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     _pagingParams = pagingParams;
 }
 
+- (void)setHorizontal:(BOOL)horizontal {
+    UICollectionViewFlowLayout *layout = (id) self.collectionViewLayout;
+    layout.scrollDirection = horizontal ? UICollectionViewScrollDirectionHorizontal : UICollectionViewScrollDirectionVertical;
+    _horizontal = horizontal;
+}
+
 - (NSArray *)list {
     id data = self.data;
     if ([data isKindOfClass:[PBArray class]]) {
