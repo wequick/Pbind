@@ -547,10 +547,7 @@
         [cell setData:[self dataAtIndexPath:indexPath]];
     }
     [row initDataForView:cell];
-//    PBRowMapper *row = [self rowAtIndexPath:indexPath];
     [row mapData:_data forView:cell];
-    
-    NSLog(@"++create: %i-%i", indexPath.section, indexPath.row);
     
     return cell;
 }
@@ -563,7 +560,6 @@
 //    }
 //    PBRowMapper *row = [self rowAtIndexPath:indexPath];
 //    [row mapData:_data forView:cell];
-    NSLog(@"--willDisplay: %i-%i", indexPath.section, indexPath.row);
     
     // Forward delegate
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {
