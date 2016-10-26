@@ -27,7 +27,9 @@
     for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
         if ([value isKindOfClass:[NSDictionary class]]) {
-            if ([key isEqualToString:@"actions"]) { // ignores the action mapper cause it have done by self.
+            if ([key isEqualToString:@"actions"]
+                || [key isEqualToString:@"row"]
+                || [key isEqualToString:@"item"]) { // ignores the action mapper cause it have done by self.
                 [properties setConstant:value forKey:key];
                 continue;
             }
