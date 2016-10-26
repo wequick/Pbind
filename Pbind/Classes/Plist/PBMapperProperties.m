@@ -9,7 +9,7 @@
 #import "PBMapperProperties.h"
 #import "PBValueParser.h"
 #import "PBMutableExpression.h"
-#import "UIView+PBLayout.h"
+#import "UIView+Pbind.h"
 
 @interface PBMapperProperties()
 {

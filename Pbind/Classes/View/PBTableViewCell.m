@@ -8,7 +8,6 @@
 
 #import "PBTableViewCell.h"
 #import "PBRowMapper.h"
-#import "UIView+PBLayout.h"
 
 @interface PBTableViewCell ()
 {

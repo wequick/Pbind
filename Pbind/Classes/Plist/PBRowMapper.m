@@ -7,7 +7,6 @@
 //
 
 #import "PBRowMapper.h"
-#import "UIView+PBLayout.h"
 #import "Pbind+API.h"
 
 static const CGFloat kHeightUnset = -2;

@@ -9,7 +9,6 @@
 #import "PBMapper.h"
 #import <UIKit/UIKit.h>
 #import "UIView+Pbind.h"
-#import "UIView+PBLayout.h"
 #import "PBExpression.h"
 
 @interface PBMapperProperties (Private)

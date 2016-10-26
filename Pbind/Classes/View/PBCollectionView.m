@@ -12,7 +12,6 @@
 #import "PBSection.h"
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
-#import "UIView+PBLayout.h"
 
 @interface PBCollectionView () <UIScrollViewDelegate>
 
@@ -186,10 +185,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
     if (cell == nil) {
         cell = [[item.viewClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:item.id];
-        if (item.layout) {
-            UIView *view = [UIView viewWithLayout:item.layout bundle:[NSBundle bundleForClass:item.viewClass]];
-            [cell.contentView addSubview:view];
-        }
     }
     
     // Init data for cell

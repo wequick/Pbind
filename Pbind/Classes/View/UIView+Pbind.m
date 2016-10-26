@@ -7,7 +7,6 @@
 //
 
 #import "UIView+Pbind.h"
-#import "UIView+PBLayout.h"
 #import "Pbind.h"
 #import "PBClient.h"
 #import "PBMapper.h"
@@ -16,6 +15,8 @@
 #import "PBClientMapper.h"
 #import "PBArray.h"
 
+NSString *const PBViewWillRemoveFromSuperviewNotification = @"PBViewWillRemoveFromSuperview";
+NSString *const PBViewDidChangeSizeNotification = @"PBViewDidChangeSize";
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
 NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
@@ -48,6 +49,9 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 DEF_DYNAMIC_PROPERTY(PB_additionValues, setPB_additionValues, NSMutableDictionary *)
 DEF_DYNAMIC_PROPERTY(pb_unmappableKeys, setPb_unmappableKeys, NSMutableArray *)
+
+DEF_UNDEFINED_PROPERTY(NSDictionary *, PBConstantProperties)
+DEF_UNDEFINED_PROPERTY(NSDictionary *, PBDynamicProperties)
 
 DEF_UNDEFINED_PROPERTY(NSURL *, _pbPlistURL)
 DEF_UNDEFINED_PROPERTY(NSArray *, _pbClients)
@@ -104,6 +108,14 @@ DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
             self.pb_interrupted = NO;
             [self pb_repullData];
         }
+    }
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview
+{
+    if (newSuperview == nil) {
+        // Notify for observers to unobserved
+        [[NSNotificationCenter defaultCenter] postNotificationName:PBViewWillRemoveFromSuperviewNotification object:self];
     }
 }
 
@@ -336,6 +348,84 @@ DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
     }
     
     [mapper mapData:data forView:self];
+}
+
+- (void)pb_initData
+{
+    NSDictionary *properties = [self PBConstantProperties];
+    for (NSString *key in properties) {
+        id value = [properties objectForKey:key];
+        value = [PBValueParser valueWithString:value];
+        [self setValue:value forKey:key];
+    }
+    
+    [self pb_bindData];
+    
+    // Recursive
+    if ([self respondsToSelector:@selector(reloadData)]) {
+        
+    } else {
+        for (UIView *subview in [self subviews]) {
+            [subview pb_initData];
+        }
+    }
+    
+    if (self.data == nil && (self.client != nil || self.clients != nil)) {
+        if (self.window == nil) {
+            // Cause the plist value may be specify with expression `@xx', which requires the view's super controller. If window is nil, it means the super controller is also not yet ready.
+            return;
+        }
+        
+        [self pb_mapData:nil];
+    } else if ([self respondsToSelector:@selector(reloadData)]) {
+        [(id)self reloadData];
+    }
+}
+
+- (void)pb_bindData
+{
+    NSDictionary *properties = [self PBDynamicProperties];
+    for (NSString *key in properties) {
+        PBExpression *exp = [properties objectForKey:key];
+        [exp bindData:nil toTarget:self forKeyPath:key inContext:self];
+    }
+}
+
+- (void)pb_mapData:(id)data
+{
+    NSDictionary *properties = [self PBDynamicProperties];
+    for (NSString *key in properties) {
+        if ([self mappableForKeyPath:key]) {
+            PBExpression *exp = [properties objectForKey:key];
+            [exp mapData:data toTarget:self forKeyPath:key inContext:self];
+        }
+    }
+    // Recursive
+    if ([self respondsToSelector:@selector(reloadData)]) {
+        
+    } else {
+        for (UIView *subview in [self subviews]) {
+            [subview pb_mapData:data];
+        }
+    }
+    
+    if (self.data == nil && (self.client != nil || self.clients != nil)) {
+        [self pb_pullData];
+    } else {
+        if ([self respondsToSelector:@selector(reloadData)]) {
+            [(id)self reloadData];
+        }
+    }
+}
+
+- (void)pb_mapData:(id)data forKey:(NSString *)key
+{
+    PBExpression *exp = [[self PBDynamicProperties] objectForKey:key];
+    [exp mapData:data toTarget:self forKeyPath:key inContext:self];
+    // Recursive
+    for (UIView *subview in [self subviews]) {
+        [subview pb_mapData:data forKey:key];
+    }
 }
 
 - (void)pb_repullData

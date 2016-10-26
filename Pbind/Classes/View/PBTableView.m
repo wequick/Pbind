@@ -8,7 +8,6 @@
 
 #import "PBTableView.h"
 #import "UIView+Pbind.h"
-#import "UIView+PBLayout.h"
 #import "PBSection.h"
 #import "PBTableHeaderView.h"
 #import "PBTableFooterView.h"
@@ -562,10 +561,6 @@
     cell = [tableView dequeueReusableCellWithIdentifier:row.id];
     if (cell == nil) {
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
-        if (row.layout) {
-            UIView *view = [UIView viewWithLayout:row.layout bundle:[NSBundle bundleForClass:row.viewClass]];
-            [cell.contentView addSubview:view];
-        }
         
         // Default to non-selection
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];

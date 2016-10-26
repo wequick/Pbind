@@ -23,6 +23,9 @@
 
 @interface UIView (Pbind) <PBViewLoadingDelegate>
 
+@property (nonatomic, strong) NSDictionary *PBConstantProperties;
+@property (nonatomic, strong) NSDictionary *PBDynamicProperties;
+
 @property (nonatomic, strong) NSString *plist;
 
 @property (nonatomic, strong) NSArray *clients;
@@ -65,7 +68,8 @@
  @discussion This will search the plist from `[Pbind allResourcesBundles]' and reload it.
  */
 - (void)pb_reloadPlist;
-
+- (void)pb_initData; // Init constant properties
+- (void)pb_mapData:(id)data; // Init dynamic properties by data
 - (void)pb_pullData;
 - (void)pb_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id data, NSError *error))transformation;
 - (void)pb_repullData; // repull with previous `preparation' and `transformation'
@@ -81,6 +85,9 @@ UIKIT_EXTERN NSString *const PBViewHasHandledLoadErrorKey;
 UIKIT_EXTERN NSString *const PBViewDidClickHrefNotification;
 UIKIT_EXTERN NSString *const PBViewHrefKey;
 UIKIT_EXTERN NSString *const PBViewHrefParamsKey;
+
+UIKIT_EXTERN NSString *const PBViewWillRemoveFromSuperviewNotification;
+UIKIT_EXTERN NSString *const PBViewDidChangeSizeNotification;
 
 UIKIT_STATIC_INLINE NSString *PBHrefEncode(NSString *href)
 {

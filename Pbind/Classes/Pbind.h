@@ -16,7 +16,6 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Pbind/PublicHeader.h>
 
-#import "UIView+PBLayout.h"
 #import "UIView+Pbind.h"
 #import "PBValueParser.h"
 #import "PBInline.h"
