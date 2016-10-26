@@ -31,6 +31,13 @@
 + (instancetype)clientWithName:(NSString *)clientName;
 + (void)registerAlias:(NSDictionary *)alias; // alias -> real
 
+/**
+ Register a debug server which used for instant run.
+
+ @param server A block function that returns response data.
+ */
++ (void)registerDebugServer:(id (^)(PBClient *client, PBRequest *request))server;
+
 @property (nonatomic, assign) id<PBClientDelegate> delegate;
 @property (nonatomic, strong, readonly) PBRequest *request;
 
