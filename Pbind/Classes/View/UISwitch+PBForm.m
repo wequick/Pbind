@@ -7,14 +7,9 @@
 //
 
 #import "UISwitch+PBForm.h"
-#import "PBCompat.h"
+#import "UIView+Pbind.h"
 
 @implementation UISwitch (PBForm)
-
-DEF_UNDEFINED_PROPERTY2(NSString *, type, setType)
-DEF_UNDEFINED_PROPERTY2(NSString *, name, setName)
-DEF_UNDEFINED_PROPERTY2(NSString *, requiredTips, setRequiredTips)
-DEF_UNDEFINED_BOOL_PROPERTY(isRequired, setRequired, NO)
 
 - (void)didMoveToSuperview {
     SEL aSel = @selector(valueChanged:);
@@ -42,6 +37,38 @@ DEF_UNDEFINED_BOOL_PROPERTY(isRequired, setRequired, NO)
 
 - (void)reset {
     [self setValue:nil];
+}
+
+- (void)setType:(NSString *)value {
+    [self setValue:value forAdditionKey:@"type"];
+}
+
+- (NSString *)type {
+    return [self valueForAdditionKey:@"type"];
+}
+
+- (void)setName:(NSString *)value {
+    [self setValue:value forAdditionKey:@"name"];
+}
+
+- (NSString *)name {
+    return [self valueForAdditionKey:@"name"];
+}
+
+- (void)setRequiredTips:(NSString *)value {
+    [self setValue:value forAdditionKey:@"requiredTips"];
+}
+
+- (NSString *)requiredTips {
+    return [self valueForAdditionKey:@"requiredTips"];
+}
+
+- (void)setRequired:(BOOL)required {
+    [self setValue:(required ? @(required) : nil) forAdditionKey:@"required"];
+}
+
+- (BOOL)isRequired {
+    return [self valueForAdditionKey:@"required"];
 }
 
 @end

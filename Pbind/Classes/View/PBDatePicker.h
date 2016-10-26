@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PBCompat.h"
 #import "PBInput.h"
 
 typedef NS_ENUM(NSInteger, PBDatePickerMode) {
@@ -21,6 +20,6 @@ typedef NS_ENUM(NSInteger, PBDatePickerMode) {
     } _pbFlags;
 }
 
-AS_SINGLETON(sharedDatePicker)
++ (instancetype)sharedDatePicker;
 
 @end

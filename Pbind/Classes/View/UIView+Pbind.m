@@ -10,7 +10,6 @@
 #import "Pbind.h"
 #import "PBClient.h"
 #import "PBMapper.h"
-#import "PBCompat.h"
 #import "PBMutableExpression.h"
 #import "PBClientMapper.h"
 #import "PBArray.h"
@@ -47,36 +46,8 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 @dynamic data;
 @dynamic needsLoad;
 
-DEF_DYNAMIC_PROPERTY(PB_additionValues, setPB_additionValues, NSMutableDictionary *)
-DEF_DYNAMIC_PROPERTY(pb_unmappableKeys, setPb_unmappableKeys, NSMutableArray *)
-
-DEF_UNDEFINED_PROPERTY(NSDictionary *, PBConstantProperties)
-DEF_UNDEFINED_PROPERTY(NSDictionary *, PBDynamicProperties)
-
-DEF_UNDEFINED_PROPERTY(NSURL *, _pbPlistURL)
-DEF_UNDEFINED_PROPERTY(NSArray *, _pbClients)
-DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionClients)
-DEF_UNDEFINED_PROPERTY(NSArray *, _pbClientMappers)
-DEF_UNDEFINED_PROPERTY(PBMapper *, PB_internalMapper)
-DEF_UNDEFINED_PROPERTY(NSDictionary *, _pbActionMappers)
-
-DEF_UNDEFINED_PROPERTY2(NSString *, plist, setPlist)
-DEF_UNDEFINED_PROPERTY2(NSArray *, clients, setClients)
-DEF_UNDEFINED_PROPERTY2(NSDictionary *, actions, setActions)
-DEF_UNDEFINED_PROPERTY2(NSString *, client, setClient)
-DEF_UNDEFINED_PROPERTY2(NSString *, clientAction, setClientAction)
-DEF_UNDEFINED_PROPERTY2(NSDictionary *, clientParams, setClientParams)
-DEF_UNDEFINED_PROPERTY2(id, data, setData)
-DEF_UNDEFINED_PROPERTY2(NSString *, href, setHref)
-DEF_UNDEFINED_PROPERTY2(NSDictionary *, hrefParams, setHrefParams)
-DEF_UNDEFINED_PROPERTY2(id<PBViewLoadingDelegate>, loadingDelegate, setLoadingDelegate)
-
-DEF_UNDEFINED_INT_PROPERTY(pb_loadingCount, setPb_loadingCount, 0)
-DEF_UNDEFINED_BOOL_PROPERTY(pb_interrupted, setPb_interrupted, NO)
-DEF_UNDEFINED_BOOL_PROPERTY(showsLoadingCover, setShowsLoadingCover, YES) //void (^)(void)
-DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_preparation, setPb_preparation)
-DEF_UNDEFINED_PROPERTY2(id (^)(id, NSError *), pb_transformation, setPb_transformation)
-DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
+#pragma mark -
+#pragma mark - Override methods
 
 - (void)didMoveToWindow
 {
@@ -632,28 +603,6 @@ DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
     }
 }
 
-- (void)setValue:(id)value forAdditionKey:(NSString *)key
-{
-    [self willChangeValueForKey:key];
-    if (value == nil) {
-        [self.PB_additionValues removeObjectForKey:key];
-        if (self.PB_additionValues != nil && [self.PB_additionValues count] == 0) {
-            self.PB_additionValues = nil;
-        }
-    } else {
-        if (self.PB_additionValues == nil) {
-            self.PB_additionValues = [[NSMutableDictionary alloc] init];
-        }
-        [self.PB_additionValues setObject:value forKey:key];
-    }
-    [self didChangeValueForKey:key];
-}
-
-- (id)valueForAdditionKey:(NSString *)key
-{
-    return [self.PB_additionValues objectForKey:key];
-}
-
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath
 {
     if (self.pb_unmappableKeys == nil) {
@@ -755,6 +704,201 @@ DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
         }
     }
     return view;
+}
+
+
+#pragma mark - Addition properties
+
+- (void)setPb_unmappableKeys:(NSMutableArray *)keys {
+    [self setValue:keys forAdditionKey:@"pb_unmappableKeys"];
+}
+
+- (NSMutableArray *)pb_unmappableKeys {
+    return [self valueForAdditionKey:@"pb_unmappableKeys"];
+}
+
+- (void)setPBConstantProperties:(NSDictionary *)properties {
+    [self setValue:properties forAdditionKey:@"pb_constantProperties"];
+}
+
+- (NSDictionary *)PBConstantProperties {
+    return [self valueForAdditionKey:@"pb_constantProperties"];
+}
+
+- (void)setPBDynamicProperties:(NSDictionary *)properties {
+    [self setValue:properties forAdditionKey:@"pb_dynamicProperties"];
+}
+
+- (NSDictionary *)PBDynamicProperties {
+    return [self valueForAdditionKey:@"pb_dynamicProperties"];
+}
+
+- (void)set_pbPlistURL:(NSURL *)value {
+    [self setValue:value forAdditionKey:@"_pbPlistURL"];
+}
+
+- (NSURL *)_pbPlistURL {
+    return [self valueForAdditionKey:@"_pbPlistURL"];
+}
+
+- (void)set_pbClients:(NSArray *)value {
+    [self setValue:value forAdditionKey:@"_pbClients"];
+}
+
+- (NSArray *)_pbClients {
+    return [self valueForAdditionKey:@"_pbClients"];
+}
+
+- (void)set_pbActionClients:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"_pbActionClients"];
+}
+
+- (NSDictionary *)_pbActionClients {
+    return [self valueForAdditionKey:@"_pbActionClients"];
+}
+
+- (void)set_pbClientMappers:(NSArray *)value {
+    [self setValue:value forAdditionKey:@"_pbClientMappers"];
+}
+
+- (NSArray *)_pbClientMappers {
+    return [self valueForAdditionKey:@"_pbClientMappers"];
+}
+
+- (void)setPB_internalMapper:(PBMapper *)value {
+    [self setValue:value forAdditionKey:@"PB_internalMapper"];
+}
+
+- (PBMapper *)PB_internalMapper {
+    return [self valueForAdditionKey:@"PB_internalMapper"];
+}
+
+- (void)set_pbActionMappers:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"_pbActionMappers"];
+}
+
+- (NSDictionary *)_pbActionMappers {
+    return [self valueForAdditionKey:@"_pbActionMappers"];
+}
+
+- (void)setPlist:(NSString *)value {
+    [self setValue:value forAdditionKey:@"plist"];
+}
+
+- (NSString *)plist {
+    return [self valueForAdditionKey:@"plist"];
+}
+
+- (void)setClients:(NSArray *)value {
+    [self setValue:value forAdditionKey:@"clients"];
+}
+
+- (NSArray *)clients {
+    return [self valueForAdditionKey:@"clients"];
+}
+
+- (void)setActions:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"actions"];
+}
+
+- (NSDictionary *)actions {
+    return [self valueForAdditionKey:@"actions"];
+}
+
+- (void)setClient:(NSString *)value {
+    [self setValue:value forAdditionKey:@"client"];
+}
+
+- (NSString *)client {
+    return [self valueForAdditionKey:@"client"];
+}
+
+- (void)setClientAction:(NSString *)value {
+    [self setValue:value forAdditionKey:@"clientAction"];
+}
+
+- (NSString *)clientAction {
+    return [self valueForAdditionKey:@"clientAction"];
+}
+
+- (void)setClientParams:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"clientParams"];
+}
+
+- (NSDictionary *)clientParams {
+    return [self valueForAdditionKey:@"clientParams"];
+}
+
+- (void)setData:(id)value {
+    [self setValue:value forAdditionKey:@"data"];
+}
+
+- (id)data {
+    return [self valueForAdditionKey:@"data"];
+}
+
+- (void)setHref:(NSString *)value {
+    [self setValue:value forAdditionKey:@"href"];
+}
+
+- (NSString *)href {
+    return [self valueForAdditionKey:@"href"];
+}
+
+- (void)setHrefParams:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"hrefParams"];
+}
+
+- (NSDictionary *)hrefParams {
+    return [self valueForAdditionKey:@"hrefParams"];
+}
+
+- (void)setLoadingDelegate:(id<PBViewLoadingDelegate>)value {
+    [self setValue:value forAdditionKey:@"loadingDelegate"];
+}
+
+- (id<PBViewLoadingDelegate>)loadingDelegate {
+    return [self valueForAdditionKey:@"loadingDelegate"];
+}
+
+- (void)setPb_preparation:(void (^)(void))value {
+    [self setValue:value forAdditionKey:@"pb_preparation"];
+}
+
+- (void (^)(void))pb_preparation {
+    return [self valueForAdditionKey:@"pb_preparation"];
+}
+
+- (void)setPb_transformation:(id (^)(id, NSError *))value {
+    [self setValue:value forAdditionKey:@"pb_transformation"];
+}
+
+- (id (^)(id, NSError *))pb_transformation {
+    return [self valueForAdditionKey:@"pb_transformation"];
+}
+
+- (void)setPb_complection:(void (^)(void))value {
+    [self setValue:value forAdditionKey:@"pb_complection"];
+}
+
+- (void (^)(void))pb_complection {
+    return [self valueForAdditionKey:@"pb_complection"];
+}
+
+- (void)setPb_loadingCount:(NSInteger)value {
+    [self setValue:[NSNumber numberWithInteger:value] forAdditionKey:@"pb_loadingCount"];
+}
+
+- (NSInteger)pb_loadingCount {
+    return [[self valueForAdditionKey:@"pb_loadingCount"] integerValue];
+}
+
+- (void)setPb_interrupted:(BOOL)value {
+    [self setValue:[NSNumber numberWithBool:value] forAdditionKey:@"pb_interrupted"];
+}
+
+- (BOOL)pb_interrupted {
+    return [[self valueForAdditionKey:@"pb_interrupted"] boolValue];
 }
 
 @end

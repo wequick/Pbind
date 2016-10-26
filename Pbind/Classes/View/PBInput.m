@@ -9,7 +9,6 @@
 #import "PBInput.h"
 #import "PBDatePicker.h"
 #import "PBForm.h"
-#import "PBCompat.h"
 #import "UIView+Pbind.h"
 #import "PBOptionPicker.h"
 #import "PBTextView.h"

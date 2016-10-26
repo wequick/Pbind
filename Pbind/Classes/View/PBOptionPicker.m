@@ -10,7 +10,14 @@
 
 @implementation PBOptionPicker
 
-DEF_SINGLETON(sharedOptionPicker)
++ (instancetype)sharedDatePicker {
+    static id o = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        o = [[self alloc] init];
+    });
+    return o;
+}
 
 + (UIFont *)labelFont
 {

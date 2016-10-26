@@ -38,6 +38,9 @@
  */
 + (void)registerDebugServer:(id (^)(PBClient *client, PBRequest *request))server;
 
+@property (nonatomic, assign) NSInteger cacheCount; // default is PBClientCacheNever;
+@property (nonatomic, strong) NSMutableDictionary *readCacheCounts;
+
 @property (nonatomic, assign) id<PBClientDelegate> delegate;
 @property (nonatomic, strong, readonly) PBRequest *request;
 
@@ -57,9 +60,6 @@
 //______________________________________________________________________________
 
 @interface PBClient (Caching)
-
-@property (nonatomic, assign) NSInteger cacheCount; // default is PBClientCacheNever;
-@property (nonatomic, strong) NSMutableDictionary *readCacheCounts;
 
 - (NSString *)cacheKeyForRequest:(PBRequest *)request;
 

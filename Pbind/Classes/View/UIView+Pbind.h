@@ -52,9 +52,6 @@
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath;
 - (BOOL)mappableForKeyPath:(NSString *)keyPath;
 
-- (void)setValue:(id)value forAdditionKey:(NSString *)key;
-- (id)valueForAdditionKey:(NSString *)key;
-
 - (void)setExpression:(NSString *)expression forKeyPath:(NSString *)keyPath;
 
 - (UIViewController *)supercontroller;
@@ -75,6 +72,13 @@
 - (void)pb_repullData; // repull with previous `preparation' and `transformation'
 - (void)pb_loadData:(id)data;
 - (void)pb_cancelPull;
+
+@end
+
+@interface UIView (PBAdditionProperties)
+
+- (void)setValue:(id)value forAdditionKey:(NSString *)key;
+- (id)valueForAdditionKey:(NSString *)key;
 
 @end
 

@@ -21,6 +21,11 @@
 
 @property (nonatomic, strong, readonly) NSDictionary *dictionary;
 
+/**
+ Notify Keyed-value change events to the owner, default is nil and just notify to self.
+ */
+@property (nonatomic, weak) id owner;
+
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (id)objectForKey:(id)aKey;
@@ -28,5 +33,7 @@
 
 - (id)objectForKeyedSubscript:(id)key NS_AVAILABLE(10_8, 6_0);
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0);
+
+- (void)removeObjectForKey:(id)aKey;
 
 @end

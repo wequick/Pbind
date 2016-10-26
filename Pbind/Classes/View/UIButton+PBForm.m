@@ -8,7 +8,6 @@
 
 #import "UIButton+PBForm.h"
 #import "PBForm.h"
-#import "PBCompat.h"
 #import "UIView+Pbind.h"
 
 #define COVER_USE_BLUR (0)
@@ -27,13 +26,53 @@ NSString *const kPopdownButtonFrameKey = @"__popdownButtonFrame";
 NSString *const kPopdownCoverKey = @"__popdownCover";
 NSString *const kPopdownTargetKey = @"__popdownTarget";
 
-DEF_UNDEFINED_PROPERTY2(NSString *, name, setName)
-DEF_UNDEFINED_PROPERTY2(NSString *, action, setAction)
-DEF_UNDEFINED_BOOL_PROPERTY(isRequired, setRequired, NO)
-DEF_UNDEFINED_PROPERTY2(NSString *, requiredTips, setRequiredTips)
-DEF_UNDEFINED_PROPERTY2(NSDictionary *, actionProperties, setActionProperties)
+- (void)setName:(NSString *)value {
+    [self setValue:value forAdditionKey:@"name"];
+}
 
-DEF_UNDEFINED_PROPERTY2(UILabel *, placeholderLabel, setPlaceholderLabel)
+- (NSString *)name {
+    return [self valueForAdditionKey:@"name"];
+}
+
+- (void)setAction:(NSString *)value {
+    [self setValue:value forAdditionKey:@"action"];
+}
+
+- (NSString *)action {
+    return [self valueForAdditionKey:@"action"];
+}
+
+- (void)setRequiredTips:(NSString *)value {
+    [self setValue:value forAdditionKey:@"requiredTips"];
+}
+
+- (NSString *)requiredTips {
+    return [self valueForAdditionKey:@"requiredTips"];
+}
+
+- (void)setActionProperties:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"actionProperties"];
+}
+
+- (NSDictionary *)actionProperties {
+    return [self valueForAdditionKey:@"actionProperties"];
+}
+
+- (void)setPlaceholderLabel:(UILabel *)value {
+    [self setValue:value forAdditionKey:@"placeholderLabel"];
+}
+
+- (UILabel *)placeholderLabel {
+    return [self valueForAdditionKey:@"placeholderLabel"];
+}
+
+- (void)setRequired:(BOOL)required {
+    [self setValue:(required ? @(required) : nil) forAdditionKey:@"required"];
+}
+
+- (BOOL)isRequired {
+    return [self valueForAdditionKey:@"required"];
+}
 
 - (void)setTitle:(NSString *)title {
     [self setText:title];

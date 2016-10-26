@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PBCompat.h"
 #import "PBInput.h"
 
 @interface PBOptionPicker : UIControl<PBTextInput, UIPickerViewDataSource, UIPickerViewDelegate>
@@ -16,7 +15,7 @@
     CGFloat _componentWidth;
 }
 
-AS_SINGLETON(sharedOptionPicker)
++ (instancetype)sharedOptionPicker;
 
 + (UIFont *)labelFont;
 

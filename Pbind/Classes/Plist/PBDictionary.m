@@ -88,6 +88,29 @@
     [self setObject:obj forKey:key];
 }
 
+- (void)removeObjectForKey:(id)aKey
+{
+    [_dictionary removeObjectForKey:aKey];
+}
+
+- (void)willChangeValueForKey:(NSString *)key
+{
+    if (self.owner != nil) {
+        [self.owner willChangeValueForKey:key];
+        return;
+    }
+    [super willChangeValueForKey:key];
+}
+
+- (void)didChangeValueForKey:(NSString *)key
+{
+    if (self.owner != nil) {
+        [self.owner didChangeValueForKey:key];
+        return;
+    }
+    [super didChangeValueForKey:key];
+}
+
 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context
 {
     [super removeObserver:observer forKeyPath:keyPath context:context];
