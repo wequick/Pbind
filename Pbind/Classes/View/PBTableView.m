@@ -216,6 +216,12 @@
             [footerView reloadData];
         }
         
+        if (_sections != nil) {
+            for (PBSectionMapper *mapper in _sections) {
+                [mapper updateWithData:self.data andView:nil];
+            }
+        }
+        
         [super reloadData];
     }
 }
@@ -257,14 +263,18 @@
     for (NSInteger section = 0; section < [sections count]; section++) {
         NSDictionary *dict = [sections objectAtIndex:section];
         PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self];
-        NSMutableArray *rows = [NSMutableArray arrayWithCapacity:[aSection.rows count]];
-        for (NSInteger row = 0; row < [aSection.rows count]; row++) {
-            NSDictionary *rowDict = [aSection.rows objectAtIndex:row];
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-            PBRowMapper *aRow = [self rowWithDictionary:rowDict indexPath:indexPath];
-            [rows addObject:aRow];
+        if (aSection.row != nil) {
+            aSection.row = [self rowWithDictionary:aSection.row indexPath:nil];
+        } else {
+            NSMutableArray *rows = [NSMutableArray arrayWithCapacity:[aSection.rows count]];
+            for (NSInteger row = 0; row < [aSection.rows count]; row++) {
+                NSDictionary *rowDict = [aSection.rows objectAtIndex:row];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                PBRowMapper *aRow = [self rowWithDictionary:rowDict indexPath:indexPath];
+                [rows addObject:aRow];
+            }
+            aSection.rows = rows;
         }
-        aSection.rows = rows;
         [temp addObject:aSection];
     }
     _sections = temp;
@@ -385,6 +395,25 @@
     return nil;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        return [_delegateInterceptor.receiver tableView:tableView viewForHeaderInSection:section];
+    }
+    
+    PBSectionMapper *mapper = [self.sections objectAtIndex:section];
+    if (mapper == nil || mapper.viewClass == nil) {
+        return nil;
+    }
+    
+    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, mapper.height);
+    UIView *view = [[mapper.viewClass alloc] initWithFrame:frame];
+    [mapper initDataForView:view];
+    [mapper mapData:_data forView:view];
+    
+    return view;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger rowCount = 0;
@@ -410,7 +439,11 @@
         rowCount = [self.rows count];
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        rowCount = [aSection.rows count];
+        if (aSection.row != nil) {
+            rowCount = [aSection.data count];
+        } else {
+            rowCount = [aSection.rows count];
+        }
     }
     return rowCount;
 }
@@ -605,6 +638,9 @@
         // Distinct row configured by `sections'
         PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
         if (section != nil) {
+            if (section.row != nil) {
+                return section.row;
+            }
             return [section.rows objectAtIndex:indexPath.row];
         }
     }
@@ -639,10 +675,21 @@
         return _data;
     } else if (self.sections != nil) {
         // Distinct row configured by `sections'
-        if ([_data isKindOfClass:[PBArray class]]) {
-            return [_data list];
+        id data = _data;
+        PBSectionMapper *mapper = [self.sections objectAtIndex:indexPath.section];
+        if (mapper != nil && mapper.data != nil) {
+            data = mapper.data;
         }
-        return _data;
+        
+        if ([data isKindOfClass:[PBArray class]]) {
+            data = [data list];
+        }
+        
+        if ([data isKindOfClass:[NSArray class]]) {
+            data = [data objectAtIndex:indexPath.row];
+        }
+        
+        return data;
     }
     
     return nil;

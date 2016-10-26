@@ -8,15 +8,21 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "PBMapper.h"
+#import "PBRowMapper.h"
 
-@interface PBSectionMapper : PBMapper
+@interface PBSectionMapper : PBRowMapper
 
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, assign) CGFloat height;
 @property (nonatomic, strong) NSArray *rows; // PBRowMapper
-@property (nonatomic, assign) BOOL floating;
 
-- (CGFloat)heightForView:(id)view withData:(id)data;
+/**
+ The data for the section.
+ */
+@property (nonatomic, strong) id data;
+
+/**
+ The distinct row mapper for the section.
+ */
+@property (nonatomic, strong) NSDictionary *row;
 
 @end

@@ -12,16 +12,4 @@
 
 @implementation PBSectionMapper
 
-- (void)setHeight:(CGFloat)height
-{
-    [self willChangeValueForKey:@"height"];
-    _height = PBValue(height);
-    [self didChangeValueForKey:@"height"];
-}
-
-- (CGFloat)heightForView:(id)view withData:(id)data
-{
-    return _height;
-}
-
 @end
