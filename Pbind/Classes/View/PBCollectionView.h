@@ -63,4 +63,14 @@
  */
 @property (nonatomic, assign) NSInteger page;
 
+/**
+ The data of the selected index path.
+ */
+@property (nonatomic, strong) id selectedData;
+
+/**
+ The index path selected by user.
+ */
+@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+
 @end

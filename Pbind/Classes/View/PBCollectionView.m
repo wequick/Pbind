@@ -215,9 +215,24 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
     PBViewClickHref(cell, cell.href);
+    
+    self.selectedData = [self dataAtIndexPath:indexPath];
+    
+    [self willChangeValueForKey:@"selectedIndexPath"];
+    _selectedIndexPath = indexPath;
+    [self didChangeValueForKey:@"selectedIndexPath"];
+    
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
         [_delegateInterceptor.receiver collectionView:collectionView didSelectItemAtIndexPath:indexPath];
     }
+}
+
+- (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath {
+    [self setSelectedIndexPath:selectedIndexPath animated:NO];
+}
+
+- (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath animated:(BOOL)animated {
+    [self selectItemAtIndexPath:selectedIndexPath animated:NO scrollPosition:0];
 }
 
 #pragma mark - UICollectionViewDelegateLayout
