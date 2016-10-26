@@ -355,6 +355,10 @@ DEF_UNDEFINED_PROPERTY2(void (^)(void), pb_complection, setPb_complection)
 
 - (void)pb_reloadPlist
 {
+    if (self.plist == nil) {
+        return;
+    }
+    
     self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
     self.PB_internalMapper = nil;
     
