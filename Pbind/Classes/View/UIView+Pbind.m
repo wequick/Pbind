@@ -416,16 +416,23 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_reloadPlist
 {
-    if (self.plist == nil) {
+    [self pb_reloadPlistForView:self];
+}
+
+- (void)pb_reloadPlistForView:(UIView *)view {
+    if (view.plist == nil) {
+        for (UIView *subview in view.subviews) {
+            [self pb_reloadPlistForView:subview];
+        }
         return;
     }
     
-    self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
-    self.PB_internalMapper = nil;
+    view._pbPlistURL = [view pb_URLForResource:view.plist withExtension:@"plist"];
+    view.PB_internalMapper = nil;
     
-    PBMapper *mapper = [self pb_mapper];
-    [mapper initDataForView:self];
-    [mapper mapData:self.rootData forView:self];
+    PBMapper *mapper = [view pb_mapper];
+    [mapper initDataForView:view];
+    [mapper mapData:view.rootData forView:view];
 }
 
 - (void)pb_cancelPull
