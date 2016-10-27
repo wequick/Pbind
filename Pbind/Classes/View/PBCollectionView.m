@@ -134,6 +134,22 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
                 self.bounds = frame;
                 [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
             }
+            
+            // Select the item with index path.
+            
+            BOOL needsSelectedItem = (_selectedIndexPath != nil && [self dataAtIndexPath:_selectedIndexPath] != nil);
+            if (!needsSelectedItem) {
+                return;
+            }
+            
+            NSArray *selectedIndexPaths = [self indexPathsForSelectedItems];
+            BOOL hasSelectedItem = (selectedIndexPaths != nil && [selectedIndexPaths containsObject:_selectedIndexPath]);
+            if (hasSelectedItem) {
+                return;
+            }
+            
+            [self selectItemAtIndexPath:_selectedIndexPath animated:NO scrollPosition:0];
+            [self collectionView:self didSelectItemAtIndexPath:_selectedIndexPath];
         });
     }
 }
@@ -232,7 +248,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath animated:(BOOL)animated {
-    [self selectItemAtIndexPath:selectedIndexPath animated:NO scrollPosition:0];
+    if ([self dataAtIndexPath:selectedIndexPath] == nil) {
+        _selectedIndexPath = selectedIndexPath;
+        return;
+    }
+    
+    [self selectItemAtIndexPath:selectedIndexPath animated:animated scrollPosition:0];
 }
 
 #pragma mark - UICollectionViewDelegateLayout
@@ -499,6 +520,9 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return nil;
     }
     if ([_data isKindOfClass:[NSArray class]]) {
+        if ([_data count] < indexPath.row) {
+            return nil;
+        }
         return [_data objectAtIndex:indexPath.row];
     } else if ([_data isKindOfClass:[PBSection class]]) {
         return [(PBSection *)_data recordAtIndexPath:indexPath];
