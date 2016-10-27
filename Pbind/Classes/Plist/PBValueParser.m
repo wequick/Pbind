@@ -138,6 +138,30 @@ static NSMutableDictionary *kEnums = nil;
         }
     }
     
+    // NSIndexPath
+    if (initial == '[') {
+        if (second >= '0' && second <= '9') {
+            NSInteger section = second - '0';
+            const char *str = [aString UTF8String];
+            char *p = (char *)str + 2;
+            while (*p != '\0' && (*p >= '0' && *p <= '9')) {
+                section = section * 10 + *p - '0';
+                p++;
+            }
+            if (*p == '-') {
+                p++;
+                NSInteger row = 0;
+                while (*p != '\0' && (*p >= '0' && *p <= '9')) {
+                    row = row * 10 + *p - '0';
+                    p++;
+                }
+                if (*p == ']') {
+                    return [NSIndexPath indexPathForRow:row inSection:section];
+                }
+            }
+        }
+    }
+    
     // Replace '\n'
     return [aString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
 }
