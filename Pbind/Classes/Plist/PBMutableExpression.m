@@ -259,8 +259,8 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
                 }
             }
         }
-        text = [PBString stringWithFormat:_format array:arguments];
-        return [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        NSString *format = [_format stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        return [PBString stringWithFormat:format array:arguments];
     }
 }
 
