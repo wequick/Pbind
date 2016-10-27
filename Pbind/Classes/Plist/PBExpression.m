@@ -83,7 +83,22 @@ static const int kDataTagUnset = 0xFF;
             if (*p == '[' || *p == ']') {
                 return nil; // constant tag for subscript
             }
-            _flags.mapToActiveController = 1;
+            if (*p >= '0' && *p <= '9') {
+                int dataTag = *p - '0';
+                p++;
+                while (*p != '\0' && *p != '.') {
+                    dataTag = dataTag * 10 + *p - '0';
+                    p++;
+                }
+                if (*p != '.') {
+                    return nil; // should format as @123.xx
+                }
+                p++;
+                _flags.mapToTaggedView = 1;
+                _flags.dataTag = dataTag;
+            } else {
+                _flags.mapToActiveController = 1;
+            }
             break;
         case '$':
             p++;
@@ -255,6 +270,14 @@ static const int kDataTagUnset = 0xFF;
             return nil;
         }
         return [form inputValues];
+    } else if (_flags.mapToTaggedView) {
+        UIView *rootView = [context supercontroller].view;
+        if (rootView == nil) {
+            return nil;
+        }
+        
+        UIView *taggedView = [rootView viewWithTag:_flags.dataTag];
+        return taggedView;
     }
     return nil;
 }
@@ -497,6 +520,7 @@ static const int kDataTagUnset = 0xFF;
             PBMutableExpression *parent = (id) self.parent;
             newValue = [parent valueByUpdatingObservedValue:newValue fromChild:self];
         }
+        newValue = [self validatingValue:newValue forKeyPath:contextKeyPath];
     } else {
         contextKeyPath = _variable;
     }
@@ -573,6 +597,8 @@ static const int kDataTagUnset = 0xFF;
         [s appendString:@">"];
     } else if (_flags.mapToFormFieldValue) {
         [s appendString:@">@"];
+    } else if (_flags.mapToTaggedView) {
+        [s appendFormat:@"@%d.", _flags.dataTag];
     }
     
     [s appendString:_variable];

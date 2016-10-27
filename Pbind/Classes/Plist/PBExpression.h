@@ -33,6 +33,7 @@
  * '.'      -> value for the key of the target
  * '.$'     -> value for the key of the target data
  * '@'      -> value for the key of the owner view controller
+ * '@N.'    -> value for the key of the N-tagged view
  * '>'      -> text for the owner form's key-named input
  * '>@'     -> value for the owner form's key-named input
  
@@ -82,8 +83,8 @@
         unsigned int mapToFormFieldText:1;      // '>'
         unsigned int mapToFormFieldValue:1;     // '>@'
         unsigned int mapToActiveController:1;   // '@'
+        unsigned int mapToTaggedView:1;         // '@0.'
         unsigned int mapToReserved0:1;
-        unsigned int mapToReserved1:1;
     } _flags;
     
     NSString *_format;
