@@ -8,6 +8,7 @@
 
 #import "PBRowMapper.h"
 #import "Pbind+API.h"
+#import "PBTableViewCell.h"
 
 static const CGFloat kHeightUnset = -2;
 
@@ -45,8 +46,13 @@ static const CGFloat kHeightUnset = -2;
         }
         
         if (_clazz == nil) {
-            _clazz = @"UITableViewCell";
-            _viewClass = [UITableViewCell class];
+            if (_style == 0) {
+                _clazz = @"UITableViewCell";
+                _viewClass = [UITableViewCell class];
+            } else {
+                _clazz = @"PBTableViewCell";
+                _viewClass = [PBTableViewCell class];
+            }
         }
     }
     return self;
