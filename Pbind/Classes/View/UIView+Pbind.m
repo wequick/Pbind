@@ -13,6 +13,7 @@
 #import "PBMutableExpression.h"
 #import "PBClientMapper.h"
 #import "PBArray.h"
+#import "PBSpellChecker.h"
 
 NSString *const PBViewWillRemoveFromSuperviewNotification = @"PBViewWillRemoveFromSuperview";
 NSString *const PBViewDidChangeSizeNotification = @"PBViewDidChangeSize";
@@ -603,9 +604,18 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             for (; i < N - 1; i++) {
                 target = [target valueForKey:keys[i]];
             }
-            [target setValue:value forKey:keys[i]];
+            key = keys[i];
+            @try {
+                [target setValue:value forKey:key];
+            } @catch (NSException *exception) {
+                [[PBSpellChecker defaultSpellChecker] checkKeysLikeKey:key withValue:value ofObject:target];
+            }
         } else {
-            [super setValue:value forKey:key];
+            @try {
+                [super setValue:value forKey:key];
+            } @catch (NSException *exception) {
+                [[PBSpellChecker defaultSpellChecker] checkKeysLikeKey:key withValue:value ofObject:self];
+            }
         }
     }
 }
