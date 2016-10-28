@@ -34,6 +34,9 @@
         unsigned int hasAppear:1;
         unsigned int refreshing:1;
         unsigned int loadingMore:1;
+        unsigned int horizontal:1;
+        unsigned int indexViewHidden:1;
+        unsigned int deselectsRowOnReturn:1;
     } _pbTableViewFlags;
 }
 
@@ -51,6 +54,11 @@
 
 @property (nonatomic, getter=isIndexViewHidden) BOOL indexViewHidden;
 @property (nonatomic, getter=isHorizontal) BOOL horizontal;
+
+/**
+ If we'd push a controller by selected a row, then while it return, we maybe needs to deselects the row.
+ */
+@property (nonatomic, getter=isDeselectsRowOnReturn) BOOL deselectsRowOnReturn;
 
 @property (nonatomic, strong) id data;
 

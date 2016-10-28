@@ -142,14 +142,18 @@
 }
 
 - (void)setIndexViewHidden:(BOOL)indexViewHidden {
-    _indexViewHidden = indexViewHidden;
+    _pbTableViewFlags.indexViewHidden = indexViewHidden;
     if ([self numberOfSections] != 0) {
         [self reloadSectionIndexTitles];
     }
 }
 
+- (BOOL)isIndexViewHidden {
+    return _pbTableViewFlags.indexViewHidden;
+}
+
 - (void)setHorizontal:(BOOL)horizontal {
-    _horizontal = horizontal;
+    _pbTableViewFlags.horizontal = horizontal;
     if (horizontal) {
         _horizontalFrame = [self frame];
         CGRect bounds = [self bounds];
@@ -163,6 +167,18 @@
     } else {
         [self setTransform:CGAffineTransformIdentity];
     }
+}
+
+- (BOOL)isHorizontal {
+    return _pbTableViewFlags.horizontal;
+}
+
+- (void)setDeselectsRowOnReturn:(BOOL)deselectsRowOnReturn {
+    _pbTableViewFlags.deselectsRowOnReturn = deselectsRowOnReturn;
+}
+
+- (BOOL)isDeselectsRowOnReturn {
+    return _pbTableViewFlags.deselectsRowOnReturn;
 }
 
 - (void)setHeaders:(NSArray *)headers {
@@ -187,6 +203,32 @@
             _initedContentInset = UIEdgeInsetsMake(i.top, i.left, i.bottom, i.right);
         }
     }
+}
+
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    if (self.window == nil) {
+        return;
+    }
+    
+    // Deselect the row at the selected index path if needed.
+    if (!_pbTableViewFlags.deselectsRowOnReturn) {
+        return;
+    }
+    
+    UIViewController *vc = [self supercontroller];
+    if (vc != vc.navigationController.topViewController) {
+        return;
+    }
+    
+    NSIndexPath *selectedIndexPath = [self indexPathForSelectedRow];
+    if (selectedIndexPath == nil) {
+        return;
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self deselectRowAtIndexPath:selectedIndexPath animated:YES];
+    });
 }
 
 - (void)layoutSubviews {
