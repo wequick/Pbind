@@ -124,8 +124,7 @@
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
-    self.data = [view valueForKey:@"data"];
-    [_properties mapData:data forOwner:self withView:view];
+    [_properties mapData:data forOwner:self withTarget:view context:view];
 }
 
 - (void)mapData:(id)data forView:(UIView *)view
