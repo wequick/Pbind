@@ -428,12 +428,25 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         return;
     }
     
+    // Reset the plist mapper
     view._pbPlistURL = [view pb_URLForResource:view.plist withExtension:@"plist"];
     view.PB_internalMapper = nil;
-    
     PBMapper *mapper = [view pb_mapper];
+    
+    // Reset all the PBMapper properties for self and subviews
+    [self _pb_resetMappersForView:view];
+    
     [mapper initDataForView:view];
     [mapper mapData:view.rootData forView:view];
+}
+
+- (void)_pb_resetMappersForView:(UIView *)view {
+    if ([view respondsToSelector:@selector(pb_resetMappers)]) {
+        [(id) view pb_resetMappers];
+    }
+    for (UIView *subview in view.subviews) {
+        [self _pb_resetMappersForView:subview];
+    }
 }
 
 - (void)pb_cancelPull

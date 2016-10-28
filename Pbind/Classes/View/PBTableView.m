@@ -235,6 +235,14 @@
     [super layoutSubviews]; // *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Auto Layout still required after executing -layoutSubviews. PBTableView's implementation of -layoutSubviews needs to call super.'
 }
 
+- (void)pb_resetMappers {
+    _row = nil;
+    _rows = nil;
+    _sections = nil;
+    [self setHeaders:nil];
+    [self setFooters:nil];
+}
+
 - (void)reloadData {
     [self initRowMapper];
     if (_pullupControl.refreshing) {

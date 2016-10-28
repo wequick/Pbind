@@ -21,7 +21,16 @@
 
 //______________________________________________________________________________
 
-@interface UIView (Pbind) <PBViewLoadingDelegate>
+@protocol PBViewMappingDelegate <NSObject>
+
+@optional
+- (void)pb_resetMappers;
+
+@end
+
+//______________________________________________________________________________
+
+@interface UIView (Pbind) <PBViewLoadingDelegate, PBViewMappingDelegate>
 
 @property (nonatomic, strong) NSDictionary *PBConstantProperties;
 @property (nonatomic, strong) NSDictionary *PBDynamicProperties;
