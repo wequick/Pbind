@@ -26,8 +26,18 @@
 - (void)initPropertiesForOwner:(id)owner; // UIView
 
 - (void)initDataForOwner:(id)owner;
-- (void)mapData:(id)data forOwner:(id)owner withView:(id)view;
+- (void)mapData:(id)data forOwner:(id)owner withTarget:(id)target context:(UIView *)context;
 
 - (BOOL)isExpressiveForKey:(NSString *)key;
+
+/**
+ The initial dictionary count, also is the sum of the parsed constants count and expressions count
+ */
+- (NSInteger)count;
+
+/**
+ The initial dictionay description
+ */
+- (NSString *)description;
 
 @end

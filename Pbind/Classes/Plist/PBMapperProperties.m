@@ -35,17 +35,12 @@
             }
             
             // Nested
-            NSMutableDictionary *constantPartValue = [[NSMutableDictionary alloc] init];
             PBMapperProperties *subproperties = [self propertiesWithDictionary:value];
-            [subproperties initDataForOwner:constantPartValue];
-            [properties setConstant:constantPartValue forKey:key];
-            
-            if (subproperties->_expressions != nil) {
-                for (NSString *subkey in subproperties->_expressions) {
-                    NSString *keyPath = [NSString stringWithFormat:@"%@.%@", key, subkey];
-                    PBExpression *exp = [subproperties->_expressions objectForKey:subkey];
-                    [properties setExpression:exp forKey:keyPath];
-                }
+            if (subproperties->_expressions == nil) {
+                [properties setConstant:value forKey:key];
+            } else {
+                PBMutableExpression *expression = [[PBMutableExpression alloc] initWithProperties:subproperties];
+                [properties setExpression:expression forKey:key];
             }
             continue;
         }
@@ -105,16 +100,32 @@
     }
 }
 
-- (void)mapData:(id)data forOwner:(id)owner withView:(id)view
+- (void)mapData:(id)data forOwner:(id)owner withTarget:(id)target context:(UIView *)context
 {
     for (NSString *key in _expressions) {
         PBExpression *exp = _expressions[key];
-        id value = [exp valueWithData:data target:owner context:view];
+        id value = [exp valueWithData:data target:target context:context];
         if (value != nil) {
             [owner setValue:value forKeyPath:key];
         }
-        [exp bindData:data toTarget:owner forKeyPath:key inContext:view];
+        [exp bindData:data toTarget:target forKeyPath:key inContext:context];
     }
+}
+
+- (NSInteger)count
+{
+    return [_constants count] + [_expressions count];
+}
+
+- (NSString *)description
+{
+    NSMutableDictionary *value = [[NSMutableDictionary alloc] initWithCapacity:self.count];
+    [self initDataForOwner:value];
+    for (NSString *key in _expressions) {
+        PBExpression *exp = _expressions[key];
+        [value setObject:[exp stringValue] forKey:key];
+    }
+    return [value description];
 }
 
 @end

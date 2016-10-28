@@ -129,6 +129,14 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     return self;
 }
 
+- (instancetype)initWithProperties:(PBMapperProperties *)properties
+{
+    if (self = [super init]) {
+        _properties = properties;
+    }
+    return self;
+}
+
 - (void)initExpressionsWithString:(NSString *)aString
 {
     NSArray *components = [aString componentsSeparatedByString:@","];
@@ -182,6 +190,11 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             [arguments addObject:value];
         }
         return [self formatedValueWithArguments:arguments];
+    } else if (_properties != nil) {
+        NSMutableDictionary *value = [[NSMutableDictionary alloc] initWithCapacity:_properties.count];
+        [_properties initDataForOwner:value];
+        [_properties mapData:data forOwner:value withTarget:target context:context];
+        return value;
     }
     return [super valueWithData:data target:target context:context];
 }
@@ -339,7 +352,11 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 
 - (NSString *)stringValue {
     if (_format == nil) {
-        return [super stringValue];
+        if (_properties == nil) {
+            return [super stringValue];
+        }
+        
+        return [_properties description];
     }
     
     NSMutableString *s = [NSMutableString stringWithString:@"%"];

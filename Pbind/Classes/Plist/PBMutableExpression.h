@@ -7,6 +7,7 @@
 //
 
 #import "PBExpression.h"
+#import "PBMapperProperties.h"
 #import <UIKit/UIKit.h>
 
 /**
@@ -33,10 +34,13 @@
     NSString *(^_formatter)(NSString *tag, NSString *format, NSArray *args);
     
     NSArray<PBExpression *> *_expressions;
+    PBMapperProperties *_properties;
     
     NSArray<NSDictionary *> *_attributes; // for attributed text
     
     NSMutableArray *_formatedArguments;
 }
+
+- (instancetype)initWithProperties:(PBMapperProperties *)properties;
 
 @end
