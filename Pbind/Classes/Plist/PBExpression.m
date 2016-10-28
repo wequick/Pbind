@@ -138,6 +138,10 @@ static const int kDataTagUnset = 0xFF;
             return nil;
     }
     
+    if (*p == '\0') {
+        return self;
+    }
+    
     // Variable
     char *temp = (char *)malloc(len - (p - str));
     char *p2 = temp;
@@ -305,14 +309,12 @@ static const int kDataTagUnset = 0xFF;
 
 - (id)_valueWithData:(id)data
 {
-    if (_variable == nil) {
-        return data;
-    }
-    
     id value = data;
-    NSArray *keys = [_variable componentsSeparatedByString:@"."];
-    for (NSString *key in keys) {
-        value = [value valueForKeyPath:key];
+    if (value != nil && _variable != nil) {
+        NSArray *keys = [_variable componentsSeparatedByString:@"."];
+        for (NSString *key in keys) {
+            value = [value valueForKeyPath:key];
+        }
     }
     return [self valueByOperatingValue:value];
 }
@@ -599,6 +601,10 @@ static const int kDataTagUnset = 0xFF;
         [s appendString:@">@"];
     } else if (_flags.mapToTaggedView) {
         [s appendFormat:@"@%d.", _flags.dataTag];
+    }
+    
+    if (_variable == nil) {
+        return s;
     }
     
     [s appendString:_variable];
