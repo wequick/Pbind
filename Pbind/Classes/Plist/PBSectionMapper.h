@@ -25,4 +25,9 @@
  */
 @property (nonatomic, strong) NSDictionary *row;
 
+/**
+ The empty row used to create a placeholder cell to display while the section data is nil.
+ */
+@property (nonatomic, strong) NSDictionary *emptyRow;
+
 @end

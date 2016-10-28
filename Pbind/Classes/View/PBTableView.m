@@ -358,6 +358,10 @@
             } else if (aRowSource != nil) {
                 aSection.row = [self rowWithDictionary:aRowSource indexPath:nil];
             }
+            
+            if (aSection.emptyRow != nil) {
+                aSection.emptyRow = [self rowWithDictionary:aSection.emptyRow indexPath:nil];
+            }
             [temp addObject:aSection];
         }
         _sections = temp;
@@ -542,6 +546,9 @@
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
         if (aSection.row != nil) {
             rowCount = [aSection.data count];
+            if (rowCount == 0 && aSection.emptyRow != nil) {
+                rowCount = 1;
+            }
         } else {
             rowCount = [aSection.rows count];
         }
@@ -736,6 +743,9 @@
         PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
         if (section != nil) {
             if (section.row != nil) {
+                if (section.emptyRow != nil && [self dataAtIndexPath:indexPath] == nil) {
+                    return section.emptyRow;
+                }
                 return section.row;
             }
             return [section.rows objectAtIndex:indexPath.row];
@@ -783,6 +793,9 @@
         }
         
         if ([data isKindOfClass:[NSArray class]]) {
+            if ([data count] <= indexPath.row) {
+                return nil;
+            }
             data = [data objectAtIndex:indexPath.row];
         }
         
