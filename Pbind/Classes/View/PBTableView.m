@@ -194,6 +194,7 @@
 }
 
 - (void)reloadData {
+    [self initRowMapper];
     if (_pullupControl.refreshing) {
         NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _pullupBeginTime;
         if (spentTime < kMinRefreshControlDisplayingTime) {
@@ -225,6 +226,116 @@
     }
 }
 
+- (NSDictionary *)_mergeDictionary:(NSDictionary *)oneDictionay with:(NSDictionary *)otherDictionay
+{
+    NSMutableDictionary *mergedDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *valuesOnlyInOther = [NSMutableDictionary dictionaryWithDictionary:otherDictionay];
+    for (NSString *key in oneDictionay) {
+        id oneValue = [oneDictionay objectForKey:key];
+        id otherValue = [otherDictionay objectForKey:key];
+        if (otherValue == nil) {
+            otherValue = oneValue;
+        } else {
+            if ([oneValue isKindOfClass:[NSDictionary class]]) {
+                otherValue = [self _mergeDictionary:oneValue with:otherValue];
+            }
+            [valuesOnlyInOther removeObjectForKey:key];
+        }
+        [mergedDictionary setObject:otherValue forKey:key];
+    }
+    [mergedDictionary setValuesForKeysWithDictionary:valuesOnlyInOther];
+    return mergedDictionary;
+}
+
+- (void)initRowMapper {
+    PBRowMapper *row = self.row;
+    if ([row isKindOfClass:[PBRowMapper class]]) {
+        return;
+    }
+    
+    NSDictionary *rowSource = (id) row;
+    
+    // Parsing rows: NSArray<NSDictionary> to NSArray<PBRowMapper>
+    NSArray *rows = self.rows;
+    if ([rows count] > 0) {
+        if ([[rows firstObject] isKindOfClass:[PBRowMapper class]]) {
+            return;
+        }
+        
+        NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[rows count]];
+        for (NSInteger index = 0; index < [rows count]; index++) {
+            NSDictionary *dict = [rows objectAtIndex:index];
+            if (rowSource != nil) {
+                // Take the `row' as base mapper
+                dict = [self _mergeDictionary:rowSource with:dict];
+                self.row = nil; // don't need any more.
+            }
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+            PBRowMapper *aRow = [self rowWithDictionary:dict indexPath:indexPath];
+            [temp addObject:aRow];
+        }
+        _rows = temp;
+        return;
+    }
+    
+    // Parsing sections: NSArray<NSDcitionary> to NSArray<PBSectionMapper>
+    NSArray *sections = self.sections;
+    if ([sections count] > 0) {
+        if ([[sections firstObject] isKindOfClass:[PBSectionMapper class]]) {
+            return;
+        }
+        
+        NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[sections count]];
+        for (NSInteger section = 0; section < [sections count]; section++) {
+            NSDictionary *dict = [sections objectAtIndex:section];
+            PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self];
+            NSDictionary *aRowSource = aSection.row;
+            
+            if ([aSection.rows count] > 0) {
+                NSMutableArray *rows = [NSMutableArray arrayWithCapacity:[aSection.rows count]];
+                for (NSInteger index = 0; index < [aSection.rows count]; index++) {
+                    NSDictionary *dict = [aSection.rows objectAtIndex:index];
+                    if (aRowSource != nil) {
+                        // Take the `row' as base mapper
+                        dict = [self _mergeDictionary:aRowSource with:dict];
+                        aSection.row = nil; // don't need any more.
+                    }
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:section];
+                    PBRowMapper *aRow = [self rowWithDictionary:dict indexPath:indexPath];
+                    [rows addObject:aRow];
+                }
+                aSection.rows = rows;
+            } else if (aRowSource != nil) {
+                aSection.row = [self rowWithDictionary:aRowSource indexPath:nil];
+            }
+            [temp addObject:aSection];
+        }
+        _sections = temp;
+        // Init section index titles
+        NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[temp count]];
+        BOOL hasTitle = NO;
+        for (PBSectionMapper *section in temp) {
+            NSString *title;
+            if (section.title == nil) {
+                title = @"";
+            } else {
+                title = [section.title substringToIndex:1];
+                hasTitle = YES;
+            }
+            [titles addObject:title];
+        }
+        if (hasTitle) {
+            _sectionIndexTitles = titles;
+        }
+        return;
+    }
+    
+    if (rowSource != nil) {
+        self.row = [PBRowMapper mapperWithDictionary:rowSource owner:self];
+    }
+    return;
+}
+
 - (void)dealloc {
     _dataSourceInterceptor = nil;
     _delegateInterceptor = nil;
@@ -234,65 +345,6 @@
 - (PBRowMapper *)rowWithDictionary:(NSDictionary *)dictionary indexPath:(NSIndexPath *)indexPath
 {
     return [PBRowMapper mapperWithDictionary:dictionary owner:self];
-}
-
-- (void)setRow:(PBRowMapper *)row
-{
-    if ([row isKindOfClass:[NSDictionary class]]) {
-        row = [PBRowMapper mapperWithDictionary:(id)row owner:self];
-    }
-    _row = row;
-}
-
-- (void)setRows:(NSArray *)rows
-{
-    NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[rows count]];
-    for (NSInteger row = 0; row < [rows count]; row++) {
-        NSDictionary *dict = [rows objectAtIndex:row];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-        PBRowMapper *aRow = [self rowWithDictionary:dict indexPath:indexPath];
-        [temp addObject:aRow];
-    }
-    _rows = temp;
-}
-
-- (void)setSections:(NSArray *)sections
-{
-    NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[sections count]];
-    for (NSInteger section = 0; section < [sections count]; section++) {
-        NSDictionary *dict = [sections objectAtIndex:section];
-        PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self];
-        if (aSection.row != nil) {
-            aSection.row = [self rowWithDictionary:aSection.row indexPath:nil];
-        } else {
-            NSMutableArray *rows = [NSMutableArray arrayWithCapacity:[aSection.rows count]];
-            for (NSInteger row = 0; row < [aSection.rows count]; row++) {
-                NSDictionary *rowDict = [aSection.rows objectAtIndex:row];
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-                PBRowMapper *aRow = [self rowWithDictionary:rowDict indexPath:indexPath];
-                [rows addObject:aRow];
-            }
-            aSection.rows = rows;
-        }
-        [temp addObject:aSection];
-    }
-    _sections = temp;
-    // Init section index titles
-    NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[temp count]];
-    BOOL hasTitle = NO;
-    for (PBSectionMapper *section in temp) {
-        NSString *title;
-        if (section.title == nil) {
-            title = @"";
-        } else {
-            title = [section.title substringToIndex:1];
-            hasTitle = YES;
-        }
-        [titles addObject:title];
-    }
-    if (hasTitle) {
-        _sectionIndexTitles = titles;
-    }
 }
 
 //___________________________________________________________________________________________________
@@ -784,15 +836,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     // Reset paging params
     self.page = 0;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'pagingParams'"];
-    NSArray *filters = [[self.PBDynamicProperties allKeys] filteredArrayUsingPredicate:predicate];
-    for (NSString *key in filters) {
-        PBExpression *expression = [self.PBDynamicProperties objectForKey:key];
-        [expression stringValue];
-        id value = [expression valueWithData:nil];
-        NSString *pagingKey = [key substringFromIndex:13]; // bypass 'pagingParams.'
-        [self.pagingParams setObject:value forKey:pagingKey];
-    }
+    [self pb_mapData:_data forKey:@"pagingParams"];
     
     [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
         NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:start];
@@ -818,7 +862,9 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     insets.bottom += _pullupControl.bounds.size.height;
     self.contentInset = insets;
     
+    // Increase page
     self.page++;
+    [self pb_mapData:_data forKey:@"pagingParams"];
     
     _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
     [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {

@@ -392,11 +392,11 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 - (void)pb_mapData:(id)data forKey:(NSString *)key
 {
     PBExpression *exp = [[self PBDynamicProperties] objectForKey:key];
-    [exp mapData:data toTarget:self forKeyPath:key inContext:self];
-    // Recursive
-    for (UIView *subview in [self subviews]) {
-        [subview pb_mapData:data forKey:key];
+    if (exp == nil) {
+        return;
     }
+    
+    [exp mapData:data toTarget:self forKeyPath:key inContext:self];
 }
 
 - (void)pb_repullData

@@ -340,15 +340,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     // Reset paging params
     self.page = 0;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] 'pagingParams'"];
-    NSArray *filters = [[self.PBDynamicProperties allKeys] filteredArrayUsingPredicate:predicate];
-    for (NSString *key in filters) {
-        PBExpression *expression = [self.PBDynamicProperties objectForKey:key];
-        [expression stringValue];
-        id value = [expression valueWithData:nil];
-        NSString *pagingKey = [key substringFromIndex:13]; // bypass 'pagingParams.'
-        [self.pagingParams setObject:value forKey:pagingKey];
-    }
+    [self pb_mapData:self.data forKey:@"pagingParams"];
     
     [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
         NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:start];
@@ -374,7 +366,9 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     insets.bottom += _pullupControl.bounds.size.height;
     self.contentInset = insets;
     
+    // Increase page
     self.page++;
+    [self pb_mapData:self.data forKey:@"pagingParams"];
     
     _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
     [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
