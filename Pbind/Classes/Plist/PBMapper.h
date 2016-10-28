@@ -28,6 +28,7 @@
     PBMapperProperties *_viewProperties; // for view
     NSMutableArray *_subviewProperties; // for view's subview
     NSMutableArray *_tagviewProperties; // for view's tagged subview
+    NSMutableDictionary *_outletProperties;// for view's outlet subview
 }
 
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url;

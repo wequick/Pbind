@@ -57,8 +57,14 @@
         return nil;
     }
     
+    NSMutableDictionary *selfProperties = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    
     NSDictionary *properties = [dictionary objectForKey:@"properties"];
-    _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
+    if (properties != nil) {
+        _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
+        [selfProperties removeObjectForKey:@"properties"];
+    }
+    
     NSArray *subproperties = [dictionary objectForKey:@"subproperties"];
     if (subproperties != nil) {
         _subviewProperties = [[NSMutableArray alloc] initWithCapacity:[subproperties count]];
@@ -66,7 +72,9 @@
             properties = [subproperties objectAtIndex:index];
             [_subviewProperties addObject:[PBMapperProperties propertiesWithDictionary:properties]];
         }
+        [selfProperties removeObjectForKey:@"subproperties"];
     }
+    
     NSArray *tagproperties = [dictionary objectForKey:@"tagproperties"];
     if (tagproperties != nil) {
         _tagviewProperties = [[NSMutableArray alloc] initWithCapacity:[tagproperties count]];
@@ -74,15 +82,22 @@
             properties = [tagproperties objectAtIndex:index];
             [_tagviewProperties addObject:[PBMapperProperties propertiesWithDictionary:properties]];
         }
+        [selfProperties removeObjectForKey:@"tagproperties"];
     }
     
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:dictionary];
-    [dict removeObjectForKey:@"properties"];
-    [dict removeObjectForKey:@"subproperties"];
-    [dict removeObjectForKey:@"tagproperties"];
-    _properties = [PBMapperProperties propertiesWithDictionary:dict];
-    [_properties initDataForOwner:self];
+    NSArray *outletKeys = [[selfProperties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '.'"]];
+    if (outletKeys.count > 0) {
+        _outletProperties = [[NSMutableDictionary alloc] initWithCapacity:outletKeys.count];
+        for (NSString *key in outletKeys) {
+            NSString *aKey = [key substringFromIndex:1]; // bypass '.'
+            properties = [selfProperties objectForKey:key];
+            [_outletProperties setObject:[PBMapperProperties propertiesWithDictionary:properties] forKey:aKey];
+        }
+        [selfProperties removeObjectsForKeys:outletKeys];
+    }
     
+    _properties = [PBMapperProperties propertiesWithDictionary:selfProperties];
+    [_properties initDataForOwner:self];
     return self;
 }
 
@@ -113,6 +128,16 @@
         PBMapperProperties *properties = [_subviewProperties objectAtIndex:index];
         [properties initPropertiesForOwner:subview];
     }
+    // Init owner's outlet view properties
+    for (NSString *key in _outletProperties) {
+        id subview = [view valueForKey:key];
+        if (subview == nil) {
+            continue;
+        }
+        PBMapperProperties *properties = [_outletProperties objectForKey:key];
+        [properties initPropertiesForOwner:subview];
+    }
+    
     [view pb_initData];
 }
 
