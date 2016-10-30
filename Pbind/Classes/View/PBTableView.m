@@ -548,14 +548,7 @@
         rowCount = [self.rows count];
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        if (aSection.row != nil) {
-            rowCount = [aSection.data count];
-            if (rowCount == 0 && aSection.emptyRow != nil) {
-                rowCount = 1;
-            }
-        } else {
-            rowCount = [aSection.rows count];
-        }
+        rowCount = aSection.rowCount;
     }
     return rowCount;
 }
@@ -692,14 +685,26 @@
     return cell;
 }
 
+- (void)_hidesBottomSeparatorForCell:(UITableViewCell *)cell {
+    UIView *bottomSeparator = nil;
+    for (UIView *subview in cell.subviews) {
+        if (subview == cell.contentView) {
+            continue;
+        }
+        
+        subview.alpha = 0;
+    }
+}
+
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    BOOL blur = [[tableView valueForAdditionKey:@"__blur"] boolValue];
-//    if (blur) {
-//        [cell setBackgroundColor:[UIColor clearColor]];
-//    }
-//    PBRowMapper *row = [self rowAtIndexPath:indexPath];
-//    [row mapData:_data forView:cell];
+    // Hides last separator
+    if (self.sections.count > indexPath.section) {
+        PBSectionMapper *mapper = [self.sections objectAtIndex:indexPath.section];
+        if (mapper.hidesLastSeparator && indexPath.row == mapper.rowCount - 1) {
+            [self _hidesBottomSeparatorForCell:cell];
+        }
+    }
     
     // Forward delegate
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {

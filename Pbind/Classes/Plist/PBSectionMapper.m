@@ -12,4 +12,17 @@
 
 @implementation PBSectionMapper
 
+- (NSInteger)rowCount {
+    NSInteger rowCount = 0;
+    if (self.row != nil) {
+        rowCount = [self.data count];
+        if (rowCount == 0 && self.emptyRow != nil) {
+            rowCount = 1;
+        }
+    } else {
+        rowCount = [self.rows count];
+    }
+    return rowCount;
+}
+
 @end
