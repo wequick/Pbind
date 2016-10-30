@@ -313,10 +313,22 @@ static const int kDataTagUnset = 0xFF;
     if (value != nil && _variable != nil) {
         NSArray *keys = [_variable componentsSeparatedByString:@"."];
         for (NSString *key in keys) {
-            value = [value valueForKeyPath:key];
+            value = [self _valueOfObject:value forKey:key];
         }
     }
     return [self valueByOperatingValue:value];
+}
+
+- (id)_valueOfObject:(id)object forKey:(NSString *)key {
+    // Sometime, we needs to access methods but not properties.
+    // e.g. `$datas.count==0`, the `count' here cannot access by KVC.
+    if ([object isKindOfClass:[NSArray class]]) {
+        if ([key isEqualToString:@"count"]) {
+            return [NSNumber numberWithInteger:[object count]];
+        }
+    }
+    
+    return [object valueForKeyPath:key];
 }
 
 - (id)valueByOperatingValue:(id)value
