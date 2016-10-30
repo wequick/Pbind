@@ -55,7 +55,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewDidChangeSize:) name:PBViewDidChangeSizeNotification object:nil];
     
     // Init footer view
-    frame.size.height = 0;
     PBScrollView *footerView = [[PBTableFooterView alloc] initWithFrame:frame];
     footerView.autoResize = YES;
     footerView.animatedOnRendering = NO;

@@ -7,7 +7,8 @@
 //
 
 #import <Pbind/Pbind.h>
+#import "PBTableHeaderView.h"
 
-@interface PBTableFooterView : PBScrollView
+@interface PBTableFooterView : PBTableHeaderView
 
 @end
