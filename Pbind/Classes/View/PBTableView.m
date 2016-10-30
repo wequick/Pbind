@@ -362,6 +362,10 @@
             if (aSection.emptyRow != nil) {
                 aSection.emptyRow = [self rowWithDictionary:aSection.emptyRow indexPath:nil];
             }
+            
+            if (aSection.footer != nil) {
+                aSection.footer = [self rowWithDictionary:aSection.footer indexPath:nil];
+            }
             [temp addObject:aSection];
         }
         _sections = temp;
@@ -592,15 +596,14 @@
         return 0;
     }
     
-    if (row.estimatedHeight != 0) {
-        return row.estimatedHeight;
+    if (row.estimatedHeight == UITableViewAutomaticDimension) {
+        if (tableView.estimatedRowHeight > 0) {
+            return tableView.estimatedRowHeight;
+        }
+        return UITableViewAutomaticDimension;
     }
     
-    if (tableView.estimatedRowHeight != 0) {
-        return tableView.estimatedRowHeight;
-    }
-    
-    return UITableViewAutomaticDimension;
+    return row.estimatedHeight;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -724,6 +727,46 @@
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
         [_delegateInterceptor.receiver tableView:tableView didSelectRowAtIndexPath:indexPath];
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        return [_delegateInterceptor.receiver tableView:tableView heightForFooterInSection:section];
+    }
+    
+    if (self.sections.count <= section) {
+        return 0;
+    }
+    
+    PBSectionMapper *mapper = [self.sections objectAtIndex:section];
+    if (mapper.footer == nil) {
+        return 0;
+    }
+    
+    PBRowMapper *footerMapper = (id) mapper.footer;
+    return footerMapper.height;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        return [_delegateInterceptor.receiver tableView:tableView viewForFooterInSection:section];
+    }
+    
+    if (self.sections.count <= section) {
+        return nil;
+    }
+    
+    PBSectionMapper *mapper = [self.sections objectAtIndex:section];
+    if (mapper.footer == nil) {
+        return 0;
+    }
+    
+    PBRowMapper *footerMapper = (id) mapper.footer;
+    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, footerMapper.height);
+    UIView *view = [[footerMapper.viewClass alloc] initWithFrame:frame];
+    [footerMapper initDataForView:view];
+    [footerMapper mapData:_data forView:view];
+    return view;
 }
 
 - (PBRowMapper *)rowAtIndexPath:(NSIndexPath *)indexPath

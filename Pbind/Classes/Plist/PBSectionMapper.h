@@ -22,12 +22,23 @@
 
 /**
  The distinct row mapper for the section.
+ 
+ @discussion the dictionary here will be parsed to a PBRowMapper.
  */
 @property (nonatomic, strong) NSDictionary *row;
 
 /**
  The empty row used to create a placeholder cell to display while the section data is nil.
+ 
+ @discussion the dictionary here will be parsed to a PBRowMapper.
  */
 @property (nonatomic, strong) NSDictionary *emptyRow;
+
+/**
+ The footer view of the section.
+ 
+ @discussion the dictionary here will be parsed to a PBRowMapper.
+ */
+@property (nonatomic, strong) NSDictionary *footer;
 
 @end

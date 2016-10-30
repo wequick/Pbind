@@ -22,6 +22,10 @@ static const CGFloat kHeightUnset = -2;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     if (self = [super initWithDictionary:dictionary]) {
+        if ([dictionary objectForKey:@"estimatedHeight"] == nil) {
+            _estimatedHeight = UITableViewAutomaticDimension;
+        }
+        
         NSString *heightString = [dictionary objectForKey:@"height"];
         if (heightString == nil) {
             _height = kHeightUnset; // default as automatic
@@ -35,7 +39,7 @@ static const CGFloat kHeightUnset = -2;
                     _height = PBValue2([components[0] floatValue], [components[1] floatValue]);
                 } else {
                     if (_height == UITableViewAutomaticDimension) {
-                        if (_estimatedHeight == 0) {
+                        if (_estimatedHeight <= 0) {
                             _estimatedHeight = 44.f; // initialize default estimated height
                         }
                     } else if (_height > 0) {
