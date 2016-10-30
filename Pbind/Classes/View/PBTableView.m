@@ -700,7 +700,8 @@
     // Hides last separator
     if (self.sections.count > indexPath.section) {
         PBSectionMapper *mapper = [self.sections objectAtIndex:indexPath.section];
-        if (mapper.hidesLastSeparator && indexPath.row == mapper.rowCount - 1) {
+        if (mapper.hidesLastSeparator && indexPath.row == mapper.rowCount - 1
+            && [self dataAtIndexPath:indexPath] != nil) {
             [self _hidesBottomSeparatorForCell:cell];
         }
     }
