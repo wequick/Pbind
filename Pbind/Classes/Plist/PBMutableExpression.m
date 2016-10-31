@@ -235,7 +235,30 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             return [result toString];
         }
         
-        // string -> toString, bool -> toBool and etc
+        // Wrap non-object values (atomic, struct)
+        if ([_formatterTag isEqualToString:@"bool"]) {
+            return [NSNumber numberWithBool:[result toBool]];
+        } else if ([_formatterTag isEqualToString:@"float"]) {
+            return [NSNumber numberWithFloat:[result toDouble]];
+        } else if ([_formatterTag isEqualToString:@"double"]) {
+            return [NSNumber numberWithDouble:[result toDouble]];
+        } else if ([_formatterTag isEqualToString:@"int"]
+                   || [_formatterTag isEqualToString:@"int32"]) {
+            return [NSNumber numberWithInt:[result toInt32]];
+        } else if ([_formatterTag isEqualToString:@"uint"]
+                   || [_formatterTag isEqualToString:@"uint32"]) {
+            return [NSNumber numberWithInt:[result toUInt32]];
+        } else if ([_formatterTag isEqualToString:@"point"]) {
+            return [NSValue valueWithCGPoint:[result toPoint]];
+        } else if ([_formatterTag isEqualToString:@"range"]) {
+            return [NSValue valueWithRange:[result toRange]];
+        } else if ([_formatterTag isEqualToString:@"rect"]) {
+            return [NSValue valueWithCGRect:[result toRect]];
+        } else if ([_formatterTag isEqualToString:@"size"]) {
+            return [NSValue valueWithCGSize:[result toSize]];
+        }
+        
+        // Return object values (number, date, array, dictionary)
         NSString *selName = [NSString stringWithFormat:@"to%c%@", toupper([_formatterTag characterAtIndex:0]), [_formatterTag substringFromIndex:1]];
         SEL convertor = NSSelectorFromString(selName);
         if (![result respondsToSelector:convertor]) {
