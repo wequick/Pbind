@@ -29,7 +29,9 @@
         if ([value isKindOfClass:[NSDictionary class]]) {
             if ([key isEqualToString:@"actions"]
                 || [key isEqualToString:@"row"]
-                || [key isEqualToString:@"item"]) { // ignores the action mapper cause it have done by self.
+                || [key isEqualToString:@"item"]
+                || [key isEqualToString:@"emptyRow"]
+                || [key isEqualToString:@"footer"]) { // ignores the action mapper cause it have done by self.
                 [properties setConstant:value forKey:key];
                 continue;
             }
