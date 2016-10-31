@@ -737,7 +737,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (id)rootData
 {
-    return self.supercontroller.view.data;
+    UIView * view = self;
+    while (view != nil && view.plist == nil) {
+        view = [view superview];
+    }
+    if (view == nil) {
+        return nil;
+    }
+    return view.data;
 }
 
 - (id)superviewWithClass:(Class)clazz
