@@ -83,6 +83,14 @@
 - (void)pb_loadData:(id)data;
 - (void)pb_cancelPull;
 
+/**
+ Reload data from clients.
+ 
+ @discussion This will introduce the instant updating feature since you specify a debug server by:
+ [PBClient registerDebugServer:]
+ */
+- (void)pb_reloadClient;
+
 @end
 
 @interface UIView (PBAdditionProperties)

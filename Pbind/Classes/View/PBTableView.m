@@ -749,6 +749,10 @@
     }
     
     PBRowMapper *footerMapper = (id) mapper.footer;
+    [footerMapper mapData:_data forView:nil];
+    if (footerMapper.hidden) {
+        return 0;
+    }
     return footerMapper.height;
 }
 

@@ -440,6 +440,22 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [mapper mapData:view.rootData forView:view];
 }
 
+- (void)pb_reloadClient
+{
+    [self pb_reloadClientForView:self];
+}
+
+- (void)pb_reloadClientForView:(UIView *)view {
+    if (view.pb_clientMappers == nil) {
+        for (UIView *subview in view.subviews) {
+            [self pb_reloadClientForView:subview];
+        }
+        return;
+    }
+    
+    [view pb_repullData];
+}
+
 - (void)_pb_resetMappersForView:(UIView *)view {
     if ([view respondsToSelector:@selector(pb_resetMappers)]) {
         [(id) view pb_resetMappers];
