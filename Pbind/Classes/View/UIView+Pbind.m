@@ -702,6 +702,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [self setValue:@(YES) forAdditionKey:@"pb_expressible"];
 }
 
+- (BOOL)hasExpressionForKeyPath:(NSString *)keyPath
+{
+    if (self.PBDynamicProperties == nil) {
+        return nil;
+    }
+    return [[self.PBDynamicProperties allKeys] containsObject:keyPath];
+}
+
 - (UIViewController *)supercontroller
 {
     id controller = self;

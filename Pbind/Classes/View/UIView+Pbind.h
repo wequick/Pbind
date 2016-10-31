@@ -62,6 +62,7 @@
 - (BOOL)mappableForKeyPath:(NSString *)keyPath;
 
 - (void)setExpression:(NSString *)expression forKeyPath:(NSString *)keyPath;
+- (BOOL)hasExpressionForKeyPath:(NSString *)keyPath;
 
 - (UIViewController *)supercontroller;
 - (id)superviewWithClass:(Class)clazz;
