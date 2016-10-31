@@ -244,6 +244,7 @@
 
 - (void)reloadData {
     [self initRowMapper];
+    
     if (_pullupControl.refreshing) {
         NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _pullupBeginTime;
         if (spentTime < kMinRefreshControlDisplayingTime) {
@@ -915,6 +916,10 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     CGFloat pullupY = (contentOffset.y + contentInset.top + height) - MAX((self.contentSize.height + contentInset.bottom + contentInset.top), height);
     
     if (pullupY > 0) {
+        if (!self.needsLoadMore) {
+            return;
+        }
+        
         UITableView *wrapper = _pullControlWrapper;
         if (wrapper == nil) {
             wrapper = [[UITableView alloc] initWithFrame:self.frame];
@@ -926,6 +931,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             [_pullupControl addTarget:self action:@selector(pullupControlDidReleased:) forControlEvents:UIControlEventValueChanged];
             [wrapper addSubview:_pullupControl];
             _pullControlWrapper = wrapper;
+            
+            _needsLoadMore = YES;
             
             [self.superview insertSubview:_pullControlWrapper aboveSubview:self];
         }
@@ -946,6 +953,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         _pullControlWrapper.contentOffset = pullupOffset;
     }
 }
+
 - (void)refreshControlDidReleased:(UIRefreshControl *)sender {
     NSDate *start = [NSDate date];
     
@@ -983,13 +991,9 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
     [self pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
-        NSInteger prevNumberOfItems = [[self list] count];
-        NSInteger currNumberOfItems;
-        
         if (self.listKey != nil) {
             NSMutableArray *list = [NSMutableArray arrayWithArray:self.list];
             [list addObjectsFromArray:[data valueForKey:self.listKey]];
-            currNumberOfItems = list.count;
             if ([data isKindOfClass:[NSDictionary class]]) {
                 NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithDictionary:data];
                 [newData setValue:list forKey:self.listKey];
@@ -1000,18 +1004,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         } else {
             NSMutableArray *list = [NSMutableArray arrayWithArray:self.data];
             [list addObjectsFromArray:data];
-            currNumberOfItems = list.count;
             data = list;
-        }
-        
-        if (currNumberOfItems > prevNumberOfItems) {
-            NSMutableArray *pullupIndexPaths = [NSMutableArray array];
-            for (NSInteger item = prevNumberOfItems; item < currNumberOfItems; item++) {
-                [pullupIndexPaths addObject:[NSIndexPath indexPathForItem:item inSection:0]];
-            }
-            _pullupIndexPaths = pullupIndexPaths;
-        } else {
-            _pullupIndexPaths = nil;
         }
         
         return data;
@@ -1030,19 +1023,14 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)_endPullup {
-    if (_pullupIndexPaths != nil) {
-//        [self beginUpdates];
-        [self insertRowsAtIndexPaths:_pullupIndexPaths withRowAnimation:UITableViewRowAnimationBottom];
-//        [self endUpdates];
-        
-        _pullupIndexPaths = nil;
-        [_pullupControl endRefreshing];
+    [_pullupControl endRefreshing];
+    [self reloadData];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Adjust content insets
         UIEdgeInsets insets = self.contentInset;
         insets.bottom -= _pullupControl.bounds.size.height;
         self.contentInset = insets;
-    } else {
-        [_pullupControl endRefreshing];
-        [_pullupControl setEnabled:NO];
-    }
+    });
 }
 @end

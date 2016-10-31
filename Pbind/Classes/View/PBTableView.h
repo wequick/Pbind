@@ -27,7 +27,6 @@
     UITableView *_pullControlWrapper;
     UIRefreshControl *_pullupControl;
     NSTimeInterval _pullupBeginTime;
-    NSArray<NSIndexPath *> *_pullupIndexPaths;
 
     struct {
         unsigned int deallocing:1;
@@ -79,6 +78,19 @@
  While `_pullupControl` released, the value will be increased by 1.
  */
 @property (nonatomic, assign) NSInteger page;
+
+/**
+ Whether needs to load more page.
+ 
+ @discussion This needs binding an expression by:
+ 
+ - setting `needsLoadMore=$expression` in your plist or
+ - call [self setExpression:@"$expression" forKey:@"needsLoadMore"]
+ 
+ The default expression is nil and the value will be always YES. If an expression was set, then
+ while pulling up to load more, the expression will be re-calculated and set to this property.
+ */
+@property (nonatomic, assign) BOOL needsLoadMore;
 
 /**
  Re-fetch data with the initial paging parameters and reload the table view.
