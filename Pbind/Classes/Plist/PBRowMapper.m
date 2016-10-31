@@ -144,7 +144,7 @@ static const CGFloat kHeightUnset = -2;
 }
 
 - (BOOL)isHeightExpressive {
-    [self->_properties isExpressiveForKey:@"height"];
+    return [self->_properties isExpressiveForKey:@"height"];
 }
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
