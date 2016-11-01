@@ -218,56 +218,34 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         
         // Evaluate by Javascript
         JSValue *result;
-        char c = [_format characterAtIndex:0];
+        NSString *js = _format;
+        NSString *type = _formatterTag;
+        char c = [js characterAtIndex:0];
         switch (c) {
-            case '{': // suppose as a dictionary
-                result = [context evaluateScript:[NSString stringWithFormat:@"var _=%@;_;", _format]];
-                return [result toDictionary];
-            case '[': // suppose as a array
-                result = [context evaluateScript:[NSString stringWithFormat:@"var _=%@;_;", _format]];
-                return [result toArray];
+            case '{': // suppose as a JS object
+            case '[': // suppose as a JS array
+                js = [NSString stringWithFormat:@"_=%@;_", js];
             default:
-                result = [context evaluateScript:_format];
+                break;
         }
         
-        // Resolve return value
-        if (_formatterTag == nil) {
-            return [result toString];
+        result = [context evaluateScript:js];
+        
+        // Wrap struct values
+        if (type != nil && [result isObject]) {
+            if ([type isEqualToString:@"point"]) {
+                return [NSValue valueWithCGPoint:[result toPoint]];
+            } else if ([type isEqualToString:@"range"]) {
+                return [NSValue valueWithRange:[result toRange]];
+            } else if ([type isEqualToString:@"rect"]) {
+                return [NSValue valueWithCGRect:[result toRect]];
+            } else if ([type isEqualToString:@"size"]) {
+                return [NSValue valueWithCGSize:[result toSize]];
+            }
         }
         
-        // Wrap non-object values (atomic, struct)
-        if ([_formatterTag isEqualToString:@"bool"]) {
-            return [NSNumber numberWithBool:[result toBool]];
-        } else if ([_formatterTag isEqualToString:@"float"]) {
-            return [NSNumber numberWithFloat:[result toDouble]];
-        } else if ([_formatterTag isEqualToString:@"double"]) {
-            return [NSNumber numberWithDouble:[result toDouble]];
-        } else if ([_formatterTag isEqualToString:@"int"]
-                   || [_formatterTag isEqualToString:@"int32"]) {
-            return [NSNumber numberWithInt:[result toInt32]];
-        } else if ([_formatterTag isEqualToString:@"uint"]
-                   || [_formatterTag isEqualToString:@"uint32"]) {
-            return [NSNumber numberWithInt:[result toUInt32]];
-        } else if ([_formatterTag isEqualToString:@"point"]) {
-            return [NSValue valueWithCGPoint:[result toPoint]];
-        } else if ([_formatterTag isEqualToString:@"range"]) {
-            return [NSValue valueWithRange:[result toRange]];
-        } else if ([_formatterTag isEqualToString:@"rect"]) {
-            return [NSValue valueWithCGRect:[result toRect]];
-        } else if ([_formatterTag isEqualToString:@"size"]) {
-            return [NSValue valueWithCGSize:[result toSize]];
-        }
-        
-        // Return object values (number, date, array, dictionary)
-        NSString *selName = [NSString stringWithFormat:@"to%c%@", toupper([_formatterTag characterAtIndex:0]), [_formatterTag substringFromIndex:1]];
-        SEL convertor = NSSelectorFromString(selName);
-        if (![result respondsToSelector:convertor]) {
-            return [result toString];
-        }
-        
-        IMP imp = [result methodForSelector:convertor];
-        JSValueConvertorFunc func = (JSValueConvertorFunc) imp;
-        return func(result, convertor);
+        // Return the automically converted value
+        return [result toObject];
     } else if (_formatFlags.attributedText) {
         text = [PBString stringWithFormat:_format array:arguments];
         text = [text stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
