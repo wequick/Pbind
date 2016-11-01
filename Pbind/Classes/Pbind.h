@@ -37,4 +37,5 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBMutableExpression.h"
 #import "PBString.h"
 #import "PBStringFormatter.h"
+#import "PBArray.h"
 #import "Pbind+API.h"

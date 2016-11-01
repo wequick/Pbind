@@ -23,7 +23,14 @@
     return arr;
 }
 
-- (id)initWithArray:(NSArray *)array {
+- (instancetype)init {
+    if (self = [super init]) {
+        _array = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (instancetype)initWithArray:(NSArray *)array {
     if (self = [super init]) {
         _array = [NSMutableArray arrayWithArray:array];
     }
