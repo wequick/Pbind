@@ -110,7 +110,7 @@
         if (value != nil) {
             [owner setValue:value forKeyPath:key];
         }
-        [exp bindData:data toTarget:target forKeyPath:key inContext:context];
+        [exp bindData:data toTarget:owner forKeyPath:key inContext:context];
     }
 }
 
