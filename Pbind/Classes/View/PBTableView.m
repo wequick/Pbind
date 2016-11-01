@@ -580,6 +580,9 @@
         return [_delegateInterceptor.receiver tableView:tableView estimatedHeightForRowAtIndexPath:indexPath];
     }
     
+    // Ensure the row mapper has been initialized, cause somethime(calling 'setLayoutMargins' or etc.) we did not called reloadData but trigger 'estimatedHeightForRowAtIndexPath' first.
+    [self initRowMapper];
+    
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
     if (row == nil) {
         return tableView.estimatedRowHeight;
