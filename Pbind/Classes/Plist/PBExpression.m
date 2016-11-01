@@ -169,18 +169,28 @@ static const int kDataTagUnset = 0xFF;
         case '-': _flags.minus = 1; p++; break;
         case '*': _flags.times = 1; p++; break;
         case '/': _flags.divide = 1; p++; break;
-        case '=':
-            _flags.equal = 1;
-            p++;
+        case '>': _flags.greater = 1; p++;
             if (*p == '=') {
+                _flags.equal = 1;
                 p++;
             }
             break;
-        case '!':
-            _flags.multiNot = 1;
-            p++;
+        case '<': _flags.lesser = 1; p++;
             if (*p == '=') {
                 _flags.equal = 1;
+                p++;
+            }
+            break;
+        case '=': _flags.equal = 1; p++;
+            if (*p == '=') {
+                // _flags.equal = 2;
+                p++;
+            }
+            break;
+        case '!': _flags.multiNot = 1; p++;
+            if (*p == '=') {
+                _flags.equal = 1;
+                p++;
             } else {
                 NSLog(@"<%@> '!' should together with '=' as '!='.", [[self class] description]);
                 return nil;
@@ -199,20 +209,13 @@ static const int kDataTagUnset = 0xFF;
                 while (*p != ':' && *p != '\0') {
                     *p2++ = *p++;
                 }
-                if (*p == '\0') {
+                if (*p != ':') {
                     NSLog(@"<%@> Missing ':' after '?', should as '?*:*'.", [[self class] description]);
                     return nil;
                 }
-                *p2 = '\0';
-                _rvalue = [NSString stringWithUTF8String:temp];
-                
                 p++;
-                p2 = temp = (char *)malloc(len - (p - str));
-                while (*p != '\0') {
-                    *p2++ = *p++;
-                }
                 *p2 = '\0';
-                _rvalueOfNot = [NSString stringWithUTF8String:temp];
+                _rvalueForTrue = [NSString stringWithUTF8String:temp];
                 
                 free(temp);
             }
@@ -428,7 +431,7 @@ static const int kDataTagUnset = 0xFF;
             }
             value = pass ? value : rvalue;
         } else {
-            value = pass ? _rvalue : _rvalueOfNot;
+            value = pass ? _rvalueForTrue : _rvalue;
         }
         return [PBValueParser valueWithString:value];
     }
@@ -630,7 +633,7 @@ static const int kDataTagUnset = 0xFF;
             [s appendString:@"?:"];
             [s appendString:_rvalue];
         } else {
-            [s appendFormat:@"?%@:%@",_rvalue,_rvalueOfNot];
+            [s appendFormat:@"?%@:%@",_rvalueForTrue,_rvalue];
         }
     } else {
         if (_flags.lesser) {

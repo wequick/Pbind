@@ -90,7 +90,7 @@
     NSString *_format;
     NSString *_variable;    // the key of the data source
     NSString *_rvalue;      // right value, accepts constants only
-    NSString *_rvalueOfNot; // for `?:' expression, value after ':', accepts constants only
+    NSString *_rvalueForTrue; // for `?:' expression, value after '?', accepts constants only
     
     NSString *_bindingKeyPath;  // the owner's keyPath binding with `_variable'
     id _bindingOwner;
