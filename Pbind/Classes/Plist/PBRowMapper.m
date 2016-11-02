@@ -69,10 +69,18 @@ static const CGFloat kHeightUnset = -2;
 
 - (NSString *)id
 {
-    if (_id == nil) {
-        return [NSString stringWithFormat:@"%@%d", _clazz, (int)_style];
+    NSMutableString *identifier = [[NSMutableString alloc] init];
+    if (_id != nil) {
+        [identifier appendString:_id];
+    } else {
+        [identifier appendString:_clazz];
+        if (_layout != nil) {
+            [identifier appendFormat:@"@%@", _layout];
+        }
     }
-    return [NSString stringWithFormat:@"%@%d", _id, (int)_style];
+    
+    [identifier appendFormat:@"%d", (int)_style];
+    return identifier;
 }
 
 - (NSString *)nib

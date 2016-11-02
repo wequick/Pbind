@@ -767,6 +767,37 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return view;
 }
 
+- (UIView *)viewWithAlias:(NSString *)alias
+{
+    if (alias == nil) {
+        return nil;
+    }
+    
+    if ([alias isKindOfClass:[NSNumber class]]) {
+        return [self viewWithTag:[alias integerValue]];
+    }
+    
+    NSInteger tag;
+    NSScanner *scanner = [NSScanner scannerWithString:alias];
+    if ([scanner scanInteger:&tag]) {
+        return [self viewWithTag:tag];
+    }
+    
+    return [self _lookupViewWithAlias:alias];
+}
+
+- (UIView *)_lookupViewWithAlias:(NSString *)alias {
+    if ([self.alias isEqualToString:alias]) {
+        return self;
+    }
+    for (UIView *subview in self.subviews) {
+        UIView *theView = [subview _lookupViewWithAlias:alias];
+        if (theView != nil) {
+            return theView;
+        }
+    }
+    return nil;
+}
 
 #pragma mark - Addition properties
 
@@ -960,6 +991,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (BOOL)pb_interrupted {
     return [[self valueForAdditionKey:@"pb_interrupted"] boolValue];
+}
+
+- (void)setAlias:(NSString *)alias {
+    [self setValue:alias forAdditionKey:@"alias"];
+}
+
+- (NSString *)alias {
+    return [self valueForAdditionKey:@"alias"];
 }
 
 @end

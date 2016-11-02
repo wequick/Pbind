@@ -58,6 +58,13 @@
 @property (nonatomic, assign) void (^pb_preparation)(void);
 @property (nonatomic, assign) id (^pb_transformation)(id data, NSError *error);
 
+/**
+ The alias name for the view.
+ 
+ @discussion you can use [view viewWithAlias:] to get the specify aliased subview.
+ */
+@property (nonatomic, strong) NSString *alias;
+
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath;
 - (BOOL)mappableForKeyPath:(NSString *)keyPath;
 
@@ -91,6 +98,17 @@
  [PBClient registerDebugServer:]
  */
 - (void)pb_reloadClient;
+
+/**
+ Find subview with alias.
+ 
+ @discussion If the alias is an integer, use [viewWithTag:] instead.
+
+ @param alias the alias for the view
+
+ @return the subview with the alias.
+ */
+- (UIView *)viewWithAlias:(NSString *)alias;
 
 @end
 

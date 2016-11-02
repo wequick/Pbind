@@ -27,14 +27,12 @@
     PBMapperProperties *_properties; // for self
     PBMapperProperties *_viewProperties; // for view
     NSMutableArray *_subviewProperties; // for view's subview
-    NSMutableArray *_tagviewProperties; // for view's tagged subview
+    NSMutableDictionary *_aliasProperties; // for view's aliased subview
     NSMutableDictionary *_outletProperties;// for view's outlet subview
 }
 
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url;
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
-
-@property (nonatomic, strong, readonly) NSArray *tagProperties;
 
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 - (void)initDataForView:(UIView *)view;

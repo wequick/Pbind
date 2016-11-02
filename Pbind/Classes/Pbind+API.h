@@ -142,3 +142,22 @@ UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsets2(UIEdgeInsets insets, CGFloat sket
 UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsetsMake(CGFloat t, CGFloat l, CGFloat b, CGFloat r) {
     return UIEdgeInsetsMake(PBValue(t), PBValue(l), PBValue(b), PBValue(r));
 }
+
+UIKIT_STATIC_INLINE NSURL *PBResourceURL(NSString *resource, NSString *extension) {
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
+    for (NSBundle *bundle in preferredBundles) {
+        NSURL *url = [bundle URLForResource:resource withExtension:extension];
+        if (url != nil) {
+            return url;
+        }
+    }
+    return nil;
+}
+
+UIKIT_STATIC_INLINE NSDictionary *PBPlist(NSString *plistName) {
+    NSURL *url = PBResourceURL(plistName, @"plist");
+    if (url == nil) {
+        return nil;
+    }
+    return [NSDictionary dictionaryWithContentsOfURL:url];
+}

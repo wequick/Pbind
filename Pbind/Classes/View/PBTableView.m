@@ -12,6 +12,7 @@
 #import "PBTableHeaderView.h"
 #import "PBTableFooterView.h"
 #import "PBArray.h"
+#import "PBLayoutMapper.h"
 
 @implementation PBTableView
 
@@ -669,10 +670,16 @@
     cell = [tableView dequeueReusableCellWithIdentifier:row.id];
     if (cell == nil) {
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
-        
-        // Default to non-selection
-        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     }
+    
+    if (row.layout != nil) {
+        NSDictionary *dict = PBPlist(row.layout);
+        PBLayoutMapper *layout = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
+        [layout addtoParent:cell.contentView];
+    }
+    
+    // Default to non-selection
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     
     if ([self isHorizontal]) {
         [cell.contentView setTransform:CGAffineTransformMakeRotation(M_PI_2)];

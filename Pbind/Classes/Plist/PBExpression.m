@@ -50,6 +50,7 @@ static const int kDataTagUnset = 0xFF;
 
 - (instancetype)initWithUTF8String:(const char *)str {
     char *p = (char *)str;
+    char *temp, *p2;
     NSUInteger len = strlen(str) + 1;
     
     // Binding flag
@@ -80,24 +81,25 @@ static const int kDataTagUnset = 0xFF;
     switch (*p) {
         case '@':
             p++;
-            if (*p == '[' || *p == ']') {
+            if (*p == '[' || *p == '{') {
                 return nil; // constant tag for subscript
             }
-            if (*p >= '0' && *p <= '9') {
-                int dataTag = *p - '0';
+            if (*p == '@') {
+                _flags.mapToActiveController = 1;
                 p++;
+            } else {
+                p2 = temp = (char *)malloc(len - (p - str));
                 while (*p != '\0' && *p != '.') {
-                    dataTag = dataTag * 10 + *p - '0';
-                    p++;
+                    *p2++ = *p++;
                 }
                 if (*p != '.') {
-                    return nil; // should format as @123.xx
+                    return nil; // should format as '@xx.xx'
                 }
+                *p2 = '\0';
+                _alias = [[NSString alloc] initWithUTF8String:temp];
+                free(temp);
+                _flags.mapToAliasView = 1;
                 p++;
-                _flags.mapToTaggedView = 1;
-                _flags.dataTag = dataTag;
-            } else {
-                _flags.mapToActiveController = 1;
             }
             break;
         case '$':
@@ -143,8 +145,7 @@ static const int kDataTagUnset = 0xFF;
     }
     
     // Variable
-    char *temp = (char *)malloc(len - (p - str));
-    char *p2 = temp;
+    p2 = temp = (char *)malloc(len - (p - str));
     // first char should be [a-z][A-Z] or '_'
     if ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || *p == '_') {
         *p2++ = *p++;
@@ -244,6 +245,11 @@ static const int kDataTagUnset = 0xFF;
 
 - (id)valueWithData:(id)data target:(id)target context:(UIView *)context
 {
+    return [self valueWithData:data keyPath:nil target:target context:context];
+}
+
+- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target context:(UIView *)context
+{
     id dataSource = [self _dataSourceWithData:data target:target context:context];
     return [self _valueWithData:dataSource];
 }
@@ -277,13 +283,13 @@ static const int kDataTagUnset = 0xFF;
             return nil;
         }
         return [form inputValues];
-    } else if (_flags.mapToTaggedView) {
+    } else if (_flags.mapToAliasView) {
         UIView *rootView = [context supercontroller].view;
         if (rootView == nil) {
             return nil;
         }
         
-        UIView *taggedView = [rootView viewWithTag:_flags.dataTag];
+        UIView *taggedView = [rootView viewWithAlias:_alias];
         return taggedView;
     }
     return nil;
@@ -513,7 +519,7 @@ static const int kDataTagUnset = 0xFF;
 }
 
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context {
-    id value = [self valueWithData:data target:target context:context];
+    id value = [self valueWithData:data keyPath:targetKeyPath target:target context:context];
     value = [self validatingValue:value forKeyPath:targetKeyPath];
     [target setValue:value forKeyPath:targetKeyPath]; // map value
 }
@@ -614,8 +620,8 @@ static const int kDataTagUnset = 0xFF;
         [s appendString:@">"];
     } else if (_flags.mapToFormFieldValue) {
         [s appendString:@">@"];
-    } else if (_flags.mapToTaggedView) {
-        [s appendFormat:@"@%d.", _flags.dataTag];
+    } else if (_flags.mapToAliasView) {
+        [s appendFormat:@"@%@.", _alias];
     }
     
     if (_variable == nil) {

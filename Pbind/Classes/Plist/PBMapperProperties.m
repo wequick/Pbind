@@ -106,7 +106,7 @@
 {
     for (NSString *key in _expressions) {
         PBExpression *exp = _expressions[key];
-        id value = [exp valueWithData:data target:target context:context];
+        id value = [exp valueWithData:data keyPath:key target:target context:context];
         if (value != nil) {
             [owner setValue:value forKeyPath:key];
         }

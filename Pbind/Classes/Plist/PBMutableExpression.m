@@ -12,6 +12,7 @@
 #import "PBVariableEvaluator.h"
 #import <JavascriptCore/JavascriptCore.h>
 #import "Pbind+API.h"
+#import "PBDictionary.h"
 
 typedef id (*JSValueConvertorFunc)(id, SEL);
 
@@ -175,7 +176,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     }
 }
 
-- (id)valueWithData:(id)data target:(id)target context:(UIView *)context
+- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target context:(UIView *)context
 {
     if (_format != nil) {
         NSMutableArray *arguments = [[NSMutableArray alloc] init];
@@ -191,12 +192,17 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         }
         return [self formatedValueWithArguments:arguments];
     } else if (_properties != nil) {
-        NSMutableDictionary *value = [[NSMutableDictionary alloc] initWithCapacity:_properties.count];
-        [_properties initDataForOwner:value];
+        id value = [target valueForKeyPath:keyPath];
+        if (value == nil) {
+            value = [NSMutableDictionary dictionaryWithCapacity:_properties.count];
+            [_properties initDataForOwner:value];
+            [target setValue:value forKeyPath:keyPath];
+        }
+        
         [_properties mapData:data forOwner:value withTarget:target context:context];
         return value;
     }
-    return [super valueWithData:data target:target context:context];
+    return [super valueWithData:data keyPath:keyPath target:target context:context];
 }
 
 #pragma mark - Helper

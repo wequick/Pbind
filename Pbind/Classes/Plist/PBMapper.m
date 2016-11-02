@@ -25,8 +25,6 @@
 
 @implementation PBMapper
 
-@synthesize tagProperties=_tagviewProperties;
-
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url
 {
     NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfURL:url];
@@ -59,8 +57,49 @@
     
     NSMutableDictionary *selfProperties = [NSMutableDictionary dictionaryWithDictionary:dictionary];
     
+    NSDictionary *outletProperties = nil;
+    NSMutableDictionary *taggedProperties = nil;
     NSDictionary *properties = [dictionary objectForKey:@"properties"];
     if (properties != nil) {
+        // Filter outlet properties who's key starts with '.'
+        NSArray *outletKeys = [[properties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '.'"]];
+        if (outletKeys.count > 0) {
+            outletProperties = [properties dictionaryWithValuesForKeys:outletKeys];
+            
+            NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
+            [temp removeObjectsForKeys:outletKeys];
+            properties = temp;
+        }
+        
+        // Filter tagged properties who's key starts with '@'
+        NSArray *taggedKeys = [[properties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '@'"]];
+        if (taggedKeys.count > 0) {
+            taggedProperties = [NSMutableDictionary dictionaryWithCapacity:taggedKeys.count];
+            for (NSString *key in taggedKeys) {
+                NSRange range = [key rangeOfString:@"."];
+                if (range.location == NSNotFound) {
+                    continue;
+                }
+                
+                NSString *keyForTaggedView = [key substringFromIndex:range.location + 1];
+                
+                range.length = range.location - 1;
+                range.location = 1;
+                NSString *tag = [key substringWithRange:range];
+                
+                NSMutableDictionary *aProperties = [taggedProperties objectForKey:tag];
+                if (aProperties == nil) {
+                    aProperties = [NSMutableDictionary dictionary];
+                    [taggedProperties setObject:aProperties forKey:tag];
+                }
+                [aProperties setObject:properties[key] forKey:keyForTaggedView];
+            }
+            
+            NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
+            [temp removeObjectsForKeys:taggedKeys];
+            properties = temp;
+        }
+        
         _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
         [selfProperties removeObjectForKey:@"properties"];
     }
@@ -75,25 +114,21 @@
         [selfProperties removeObjectForKey:@"subproperties"];
     }
     
-    NSArray *tagproperties = [dictionary objectForKey:@"tagproperties"];
-    if (tagproperties != nil) {
-        _tagviewProperties = [[NSMutableArray alloc] initWithCapacity:[tagproperties count]];
-        for (NSInteger index = 0; index < [tagproperties count]; index++) {
-            properties = [tagproperties objectAtIndex:index];
-            [_tagviewProperties addObject:[PBMapperProperties propertiesWithDictionary:properties]];
+    if (taggedProperties != nil) {
+        _aliasProperties = [NSMutableDictionary dictionaryWithCapacity:taggedProperties.count];
+        for (NSString *tag in taggedProperties) {
+            PBMapperProperties *p = [PBMapperProperties propertiesWithDictionary:taggedProperties[tag]];
+            [_aliasProperties setObject:p forKey:tag];
         }
-        [selfProperties removeObjectForKey:@"tagproperties"];
     }
     
-    NSArray *outletKeys = [[selfProperties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '.'"]];
-    if (outletKeys.count > 0) {
-        _outletProperties = [[NSMutableDictionary alloc] initWithCapacity:outletKeys.count];
-        for (NSString *key in outletKeys) {
+    if (outletProperties != nil) {
+        _outletProperties = [[NSMutableDictionary alloc] initWithCapacity:outletProperties.count];
+        for (NSString *key in outletProperties) {
             NSString *aKey = [key substringFromIndex:1]; // bypass '.'
-            properties = [selfProperties objectForKey:key];
+            NSDictionary *properties = [outletProperties objectForKey:key];
             [_outletProperties setObject:[PBMapperProperties propertiesWithDictionary:properties] forKey:aKey];
         }
-        [selfProperties removeObjectsForKeys:outletKeys];
     }
     
     _properties = [PBMapperProperties propertiesWithDictionary:selfProperties];
@@ -112,10 +147,10 @@
     // Init owner's properties
     [_viewProperties initPropertiesForOwner:view];
     // Init owner's tagged-subviews properties
-    for (NSInteger index = 0; index < [_tagviewProperties count]; index++) {
-        id subview = [view viewWithTag:index + 1];
+    for (NSString *alias in _aliasProperties) {
+        id subview = [view viewWithAlias:alias];
         if (subview != nil) {
-            PBMapperProperties *properties = [_tagviewProperties objectAtIndex:index];
+            PBMapperProperties *properties = [_aliasProperties objectForKey:alias];
             [properties initPropertiesForOwner:subview];
         }
     }
