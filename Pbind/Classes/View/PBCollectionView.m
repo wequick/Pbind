@@ -514,7 +514,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return nil;
     }
     if ([_data isKindOfClass:[NSArray class]]) {
-        if ([_data count] < indexPath.row) {
+        if ([_data count] <= indexPath.row) {
             return nil;
         }
         return [_data objectAtIndex:indexPath.row];
