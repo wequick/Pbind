@@ -344,7 +344,12 @@ static const int kDataTagUnset = 0xFF;
 {
     // Unary operators
     if (_flags.unaryNot) {
-        BOOL temp = [value intValue] == 0;
+        BOOL temp;
+        if ([value respondsToSelector:@selector(intValue)]) {
+            temp = [value intValue] == 0;
+        } else {
+            temp = value != nil;
+        }
         value = [NSNumber numberWithBool:temp];
     }
     
