@@ -20,6 +20,14 @@
 
 //______________________________________________________________________________
 
+@protocol PBRowDataSource <NSObject>
+
+- (id)dataAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
+//______________________________________________________________________________
+
 typedef NS_ENUM(NSUInteger, PBRowFloating)
 {
     PBRowFloatingNone = 0,
@@ -33,6 +41,8 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 {
     struct {
         unsigned int mapping:1;
+        unsigned int heightExpressive:1;
+        unsigned int hiddenExpressive:1;
     } _pbFlags;
 }
 
@@ -62,5 +72,8 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 
 - (BOOL)hiddenForView:(id)view withData:(id)data;
 - (CGFloat)heightForView:(id)view withData:(id)data;
+
+- (CGFloat)heightForData:(id)data rowDataSource:(id<PBRowDataSource>)dataSource atIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)heightForData:(id)data;
 
 @end

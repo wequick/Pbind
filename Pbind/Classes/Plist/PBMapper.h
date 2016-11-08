@@ -39,5 +39,6 @@
 - (void)mapData:(id)data forView:(UIView *)view;
 
 - (void)updateWithData:(id)data andView:(UIView *)view;
+- (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view;
 
 @end

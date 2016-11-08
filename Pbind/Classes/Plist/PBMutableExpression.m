@@ -199,7 +199,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             [target setValue:value forKeyPath:keyPath];
         }
         
-        [_properties mapData:data forOwner:value withTarget:target context:context];
+        [_properties mapData:data toOwner:value withTarget:target context:context];
         return value;
     }
     return [super valueWithData:data keyPath:keyPath target:target context:context];

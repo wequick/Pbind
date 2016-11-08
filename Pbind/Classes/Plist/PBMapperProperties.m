@@ -102,15 +102,33 @@
     }
 }
 
-- (void)mapData:(id)data forOwner:(id)owner withTarget:(id)target context:(UIView *)context
+- (void)mapData:(id)data toOwner:(id)owner withTarget:(id)target context:(UIView *)context
 {
-    for (NSString *key in _expressions) {
-        PBExpression *exp = _expressions[key];
-        id value = [exp valueWithData:data keyPath:key target:target context:context];
-        if (value != nil) {
-            [owner setValue:value forKeyPath:key];
+    [self mapData:data toOwner:owner forKeyPath:nil withTarget:target context:context];
+}
+
+- (void)mapData:(id)data toOwner:(id)owner forKeyPath:(NSString *)keyPath withTarget:(id)target context:(UIView *)context
+{
+    if (keyPath == nil) {
+        for (NSString *key in _expressions) {
+            PBExpression *exp = _expressions[key];
+            id value = [exp valueWithData:data keyPath:key target:target context:context];
+            if (value != nil) {
+                [owner setValue:value forKeyPath:key];
+            }
+            [exp bindData:data toTarget:owner forKeyPath:key inContext:context];
         }
-        [exp bindData:data toTarget:owner forKeyPath:key inContext:context];
+    } else {
+        PBExpression *exp = _expressions[keyPath];
+        if (exp == nil) {
+            return;
+        }
+        
+        id value = [exp valueWithData:data keyPath:keyPath target:target context:context];
+        if (value != nil) {
+            [owner setValue:value forKeyPath:keyPath];
+        }
+        [exp bindData:data toTarget:owner forKeyPath:keyPath inContext:context];
     }
 }
 

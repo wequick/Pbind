@@ -26,7 +26,8 @@
 - (void)initPropertiesForOwner:(id)owner; // UIView
 
 - (void)initDataForOwner:(id)owner;
-- (void)mapData:(id)data forOwner:(id)owner withTarget:(id)target context:(UIView *)context;
+- (void)mapData:(id)data toOwner:(id)owner withTarget:(id)target context:(UIView *)context;
+- (void)mapData:(id)data toOwner:(id)owner forKeyPath:(NSString *)keyPath withTarget:(id)target context:(UIView *)context;
 
 - (BOOL)isExpressiveForKey:(NSString *)key;
 

@@ -14,7 +14,7 @@
 
 //______________________________________________________________________________
 
-@interface PBTableView : UITableView <UITableViewDelegate, UITableViewDataSource>
+@interface PBTableView : UITableView <UITableViewDelegate, UITableViewDataSource, PBRowDataSource>
 {
     NSMutableArray *_hasRegisteredCellClasses;
     NSArray *_sectionIndexTitles;
@@ -96,7 +96,5 @@
  Re-fetch data with the initial paging parameters and reload the table view.
  */
 - (void)refresh;
-
-- (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

@@ -30,7 +30,8 @@ static const CGFloat kHeightUnset = -2;
         if (heightString == nil) {
             _height = kHeightUnset; // default as automatic
         } else {
-            if (![self isHeightExpressive]) {
+            _pbFlags.heightExpressive = [_properties isExpressiveForKey:@"height"];
+            if (!_pbFlags.heightExpressive) {
                 NSArray *components = nil;
                 if ([heightString isKindOfClass:[NSString class]]) {
                     components = [heightString componentsSeparatedByString:@"@"];
@@ -48,6 +49,8 @@ static const CGFloat kHeightUnset = -2;
                 }
             }
         }
+        
+        _pbFlags.hiddenExpressive = [_properties isExpressiveForKey:@"hidden"];
         
         if (_clazz == nil) {
             if (_style == 0) {
@@ -152,7 +155,7 @@ static const CGFloat kHeightUnset = -2;
 }
 
 - (BOOL)isHeightExpressive {
-    return [self->_properties isExpressiveForKey:@"height"];
+    return _pbFlags.heightExpressive;
 }
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
@@ -168,6 +171,47 @@ static const CGFloat kHeightUnset = -2;
     if (!_pbFlags.mapping && [self.delegate respondsToSelector:@selector(rowMapper:didChangeValue:forKey:)]) {
         [self.delegate rowMapper:self didChangeValue:value forKey:keyPath];
     }
+}
+
+- (CGFloat)heightForData:(id)data
+{
+    if (_pbFlags.hiddenExpressive) {
+        [self updateValueForKey:@"hidden" withData:data andView:nil];
+    }
+    if (self.hidden) {
+        return 0;
+    }
+    
+    if (_pbFlags.heightExpressive) {
+        [self updateValueForKey:@"height" withData:data andView:nil];
+    }
+    return self.height;
+}
+
+- (CGFloat)heightForData:(id)data rowDataSource:(id<PBRowDataSource>)dataSource atIndexPath:(NSIndexPath *)indexPath
+{
+    if (!_pbFlags.hiddenExpressive) {
+        if (self.hidden) {
+            return 0;
+        } else if (!_pbFlags.heightExpressive) {
+            return self.height;
+        }
+    }
+    
+    id rowViewWrapper;
+    id rowData = [dataSource dataAtIndexPath:indexPath];
+    if (rowData != nil) {
+        rowViewWrapper = @{@"data": rowData};
+    }
+    [self updateValueForKey:@"hidden" withData:data andView:rowData];
+    if (self.hidden) {
+        return 0;
+    }
+    
+    if (_pbFlags.heightExpressive) {
+        [self updateValueForKey:@"height" withData:data andView:rowData];
+    }
+    return self.height;
 }
 
 @end

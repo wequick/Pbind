@@ -183,7 +183,12 @@
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
-    [_properties mapData:data forOwner:self withTarget:view context:view];
+    [_properties mapData:data toOwner:self withTarget:view context:view];
+}
+
+- (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view
+{
+    [_properties mapData:data toOwner:self forKeyPath:key withTarget:view context:view];
 }
 
 - (void)mapData:(id)data forView:(UIView *)view

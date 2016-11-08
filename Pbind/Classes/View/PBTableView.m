@@ -468,12 +468,9 @@
     
     if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-//        if (aSection.height != nil) {
-            // FIXME: map for height
-//            return [aSection.height floatValue];
-//        }
-        if (aSection.height != 0) {
-            return aSection.height;
+        CGFloat height = [aSection heightForData:_data];
+        if (height >= 0) {
+            return height;
         }
         return tableView.sectionHeaderHeight;
     } else if ([self.data isKindOfClass:[PBSection class]]) {
@@ -614,17 +611,7 @@
         return tableView.rowHeight;
     }
     
-    if (![row isHeightExpressive]) {
-        return row.height;
-    }
-    
-    id data = [self dataAtIndexPath:indexPath];
-    [row updateWithData:data andView:nil];
-    if (row.hidden) {
-        return 0;
-    }
-    
-    return row.height;
+    return [row heightForData:_data rowDataSource:self atIndexPath:indexPath];
 }
 
 - (UINib *)nibForRow:(PBRowMapper *)row {
@@ -760,11 +747,11 @@
     }
     
     PBRowMapper *footerMapper = (id) mapper.footer;
-    [footerMapper mapData:_data forView:nil];
-    if (footerMapper.hidden) {
-        return 0;
+    CGFloat height = [footerMapper heightForData:_data];
+    if (height >= 0) {
+        return height;
     }
-    return footerMapper.height;
+    return tableView.sectionFooterHeight;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
