@@ -348,7 +348,7 @@ static const int kDataTagUnset = 0xFF;
         if ([value respondsToSelector:@selector(intValue)]) {
             temp = [value intValue] == 0;
         } else {
-            temp = value != nil;
+            temp = value == nil;
         }
         value = [NSNumber numberWithBool:temp];
     }
