@@ -13,6 +13,11 @@
 #import "PBTableFooterView.h"
 #import "PBArray.h"
 #import "PBLayoutMapper.h"
+#import "PBViewResizingDelegate.h"
+
+@interface PBTableView () <PBViewResizingDelegate>
+
+@end
 
 @implementation PBTableView
 
@@ -51,9 +56,8 @@
     headerView.animatedOnRendering = NO;
     headerView.scrollEnabled = NO;
     headerView.backgroundColor = [UIColor clearColor];
+    headerView.resizingDelegate = self;
     self.tableHeaderView = headerView;
-    // Observe the header view size changed
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewDidChangeSize:) name:PBViewDidChangeSizeNotification object:nil];
     
     // Init footer view
     PBScrollView *footerView = [[PBTableFooterView alloc] initWithFrame:frame];
@@ -61,6 +65,7 @@
     footerView.animatedOnRendering = NO;
     footerView.scrollEnabled = NO;
     footerView.backgroundColor = [UIColor clearColor];
+    footerView.resizingDelegate = self;
     self.tableFooterView = footerView;
     
     /* Message interceptor to intercept tableView dataSource messages */
@@ -71,8 +76,7 @@
     _hasRegisteredCellClasses = [[NSMutableArray alloc] init];
 }
 
-- (void)viewDidChangeSize:(NSNotification *)note {
-    UIView *view = note.object;
+- (void)viewDidChangeFrame:(UIView *)view {
     if ([view isEqual:self.tableHeaderView]) {
         // Reset the header view to make tableView adjust it's height
         self.tableHeaderView = view;

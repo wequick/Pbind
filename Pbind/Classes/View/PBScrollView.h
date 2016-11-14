@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
+#import "PBViewResizingDelegate.h"
 
-@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate>
+@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizingDelegate>
 {
     struct {
         unsigned int deallocing:1;
@@ -37,6 +38,8 @@
 @property (nonatomic, assign, getter=isAutoResize) BOOL autoResize; // default is NO.
 @property (nonatomic, assign, getter=isAnimatedOnRendering) BOOL animatedOnRendering; // default is YES.
 @property (nonatomic, assign, getter=isAnimatedOnValueChanged) BOOL animatedOnValueChanged; // default is YES.
+
+@property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 - (void)config;
 

@@ -34,17 +34,13 @@
     _pbFlags.needsReloadData = 1;
     _pbFlags.animatedOnRendering = 1;
     _pbFlags.animatedOnValueChanged = 1;
-    
-    // Observe view size changed
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewDidChangeSize:) name:PBViewDidChangeSizeNotification object:nil];
 }
 
-- (void)viewDidChangeSize:(NSNotification *)note {
+- (void)viewDidChangeFrame:(UIView *)view {
     if (_rowViews == nil) {
         return;
     }
     
-    UIView *view = note.object;
     NSInteger index = [_rowViews indexOfObject:view];
     if (index == NSNotFound) {
         return;
@@ -141,6 +137,9 @@
         view = [[row.viewClass alloc] init];
     }
     [row initDataForView:view];
+    if ([view respondsToSelector:@selector(setResizingDelegate:)]) {
+        [(id)view setResizingDelegate:self];
+    }
     return view;
 }
 
@@ -317,7 +316,9 @@
         if (!CGSizeEqualToSize(frame.size, contentSize)) {
             frame.size = contentSize;
             self.frame = frame;
-            [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+            if (self.resizingDelegate != nil) {
+                [self.resizingDelegate viewDidChangeFrame:self];
+            }
         }
     }
 }

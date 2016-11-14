@@ -129,10 +129,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             if (self.autoResize) {
                 CGSize size = self.collectionViewLayout.collectionViewContentSize;
                 self.contentSize = size;
-                CGRect frame = self.bounds;
+                CGRect frame = self.frame;
                 frame.size = size;
-                self.bounds = frame;
-                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidChangeSizeNotification object:self];
+                self.frame = frame;
+                if (self.resizingDelegate != nil) {
+                    [self.resizingDelegate viewDidChangeFrame:self];
+                }
             }
             
             // Select the item with index path.
@@ -219,8 +221,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {  // Called on iOS8+
     PBRowMapper *item = [self itemAtIndexPath:indexPath];
-    id data = [self dataAtIndexPath:indexPath];
-    [item mapData:data forView:cell];
+    [item mapData:[self data] forView:cell];
     
     // Forward delegate
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(collectionView:willDisplayCell:forItemAtIndexPath:)]) {

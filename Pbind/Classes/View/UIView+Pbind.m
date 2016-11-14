@@ -16,7 +16,6 @@
 #import "PBSpellChecker.h"
 
 NSString *const PBViewWillRemoveFromSuperviewNotification = @"PBViewWillRemoveFromSuperview";
-NSString *const PBViewDidChangeSizeNotification = @"PBViewDidChangeSize";
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
 NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
@@ -328,7 +327,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     for (NSString *key in properties) {
         id value = [properties objectForKey:key];
         value = [PBValueParser valueWithString:value];
-        [self setValue:value forKey:key];
+        [self pb_setValue:value forKeyPath:key];
     }
     
     [self pb_bindData];
@@ -620,7 +619,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 #pragma mark -
 #pragma mark - KVC
 
-- (void)setValue:(id)value forKey:(NSString *)key
+- (void)pb_setValue:(id)value forKeyPath:(NSString *)key
 {
     if ([key length] > 1 && [key characterAtIndex:0] == '+') {
         [self setValue:value forAdditionKey:[key substringFromIndex:1]];
@@ -631,9 +630,16 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             id target = self;
             int i = 0;
             for (; i < N - 1; i++) {
-                target = [target valueForKey:keys[i]];
+                key = keys[i];
+                if ([key characterAtIndex:0] == '@') {
+                    key = [key substringFromIndex:1];
+                    target = [target viewWithAlias:key];
+                } else {
+                    target = [target valueForKey:key];
+                }
             }
             key = keys[i];
+            
             @try {
                 [target setValue:value forKey:key];
             } @catch (NSException *exception) {

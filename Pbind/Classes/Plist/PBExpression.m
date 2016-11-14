@@ -526,7 +526,11 @@ static const int kDataTagUnset = 0xFF;
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context {
     id value = [self valueWithData:data keyPath:targetKeyPath target:target context:context];
     value = [self validatingValue:value forKeyPath:targetKeyPath];
-    [target setValue:value forKeyPath:targetKeyPath]; // map value
+    if ([target respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
+        [target pb_setValue:value forKeyPath:targetKeyPath];
+    } else {
+        [target setValue:value forKeyPath:targetKeyPath]; // map value
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

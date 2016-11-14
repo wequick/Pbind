@@ -72,33 +72,33 @@
         }
         
         // Filter tagged properties who's key starts with '@'
-        NSArray *taggedKeys = [[properties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '@'"]];
-        if (taggedKeys.count > 0) {
-            taggedProperties = [NSMutableDictionary dictionaryWithCapacity:taggedKeys.count];
-            for (NSString *key in taggedKeys) {
-                NSRange range = [key rangeOfString:@"."];
-                if (range.location == NSNotFound) {
-                    continue;
-                }
-                
-                NSString *keyForTaggedView = [key substringFromIndex:range.location + 1];
-                
-                range.length = range.location - 1;
-                range.location = 1;
-                NSString *tag = [key substringWithRange:range];
-                
-                NSMutableDictionary *aProperties = [taggedProperties objectForKey:tag];
-                if (aProperties == nil) {
-                    aProperties = [NSMutableDictionary dictionary];
-                    [taggedProperties setObject:aProperties forKey:tag];
-                }
-                [aProperties setObject:properties[key] forKey:keyForTaggedView];
-            }
-            
-            NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
-            [temp removeObjectsForKeys:taggedKeys];
-            properties = temp;
-        }
+//        NSArray *taggedKeys = [[properties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '@'"]];
+//        if (taggedKeys.count > 0) {
+//            taggedProperties = [NSMutableDictionary dictionaryWithCapacity:taggedKeys.count];
+//            for (NSString *key in taggedKeys) {
+//                NSRange range = [key rangeOfString:@"."];
+//                if (range.location == NSNotFound) {
+//                    continue;
+//                }
+//                
+//                NSString *keyForTaggedView = [key substringFromIndex:range.location + 1];
+//                
+//                range.length = range.location - 1;
+//                range.location = 1;
+//                NSString *tag = [key substringWithRange:range];
+//                
+//                NSMutableDictionary *aProperties = [taggedProperties objectForKey:tag];
+//                if (aProperties == nil) {
+//                    aProperties = [NSMutableDictionary dictionary];
+//                    [taggedProperties setObject:aProperties forKey:tag];
+//                }
+//                [aProperties setObject:properties[key] forKey:keyForTaggedView];
+//            }
+//            
+//            NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
+//            [temp removeObjectsForKeys:taggedKeys];
+//            properties = temp;
+//        }
         
         _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
         [selfProperties removeObjectForKey:@"properties"];

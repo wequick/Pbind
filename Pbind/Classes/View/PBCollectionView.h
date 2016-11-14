@@ -10,6 +10,7 @@
 #import "PBDictionary.h"
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
+#import "PBViewResizingDelegate.h"
 
 @interface PBCollectionView : UICollectionView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 {
@@ -72,5 +73,7 @@
  The index path selected by user.
  */
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+
+@property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 @end

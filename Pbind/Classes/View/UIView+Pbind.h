@@ -110,6 +110,8 @@
  */
 - (UIView *)viewWithAlias:(NSString *)alias;
 
+- (void)pb_setValue:(id)value forKeyPath:(NSString *)keyPath;
+
 @end
 
 @interface UIView (PBAdditionProperties)
@@ -128,7 +130,6 @@ UIKIT_EXTERN NSString *const PBViewHrefKey;
 UIKIT_EXTERN NSString *const PBViewHrefParamsKey;
 
 UIKIT_EXTERN NSString *const PBViewWillRemoveFromSuperviewNotification;
-UIKIT_EXTERN NSString *const PBViewDidChangeSizeNotification;
 
 UIKIT_STATIC_INLINE NSString *PBHrefEncode(NSString *href)
 {
