@@ -466,6 +466,10 @@ static const int kDataTagUnset = 0xFF;
         return;
     }
     
+    if (_variable == nil) {
+        return;
+    }
+    
     if (_flags.duplexBinding || _flags.onewayBinding) {
         id dataSource = [self _dataSourceWithData:data target:target context:context];
         if (dataSource == nil) {

@@ -20,6 +20,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 
 - (instancetype)initWithUTF8String:(const char *)str;
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context;
+- (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context;
 
 @end
 
@@ -39,62 +40,77 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         return [super initWithUTF8String:str];
     }
     
-    // Format tag
     char *p = (char *)(str + 1);
     NSUInteger len = strlen(str) + 1;
     char *temp;
     char *p2;
     
-    if (*p != '(') {
-        char *tag_pos = NULL;
-        p2 = temp = (char *)malloc(len - (p - str));
-        while (*p != '\0' && *p != '(') {
-            if (*p == ':') {
-                tag_pos = p2;
+    if (*p == '=') {
+        // Mutable variable binding
+        p++;
+        if (*p == '=') {
+            p++;
+            _flags.duplexBinding = 1;
+        } else {
+            _flags.onewayBinding = 1;
+        }
+    } else {
+        if (*p != '(') {
+            // Format tag
+            char *tag_pos = NULL;
+            p2 = temp = (char *)malloc(len - (p - str));
+            while (*p != '\0' && *p != '(') {
+                if (*p == ':') {
+                    tag_pos = p2;
+                }
+                *p2++ = *p++;
             }
+            if (*p == '\0') return nil;
+            
+            *p2 = '\0';
+            if (tag_pos != NULL) {
+                *tag_pos = '\0';
+                tag_pos++;
+                _formatterTag = [NSString stringWithUTF8String:tag_pos];
+            }
+            NSString *tag = [NSString stringWithUTF8String:temp];
+            free(temp);
+            if ([tag isEqualToString:@"!"]) {
+                _formatFlags.testEmpty = 1;
+            } else if ([tag isEqualToString:@"JS"]) {
+                _formatFlags.javascript = 1;
+            } else if ([tag isEqualToString:@"AT"]) {
+                _formatFlags.attributedText = 1;
+            } else {
+                _formatter = [PBVariableEvaluator evaluatorForTag:tag];
+                if (_formatter != nil) {
+                    _formatFlags.customized = 1;
+                } else {
+                    NSLog(@"PBMutableExpression: Unknown format tag:`%@'", tag);
+                    return nil;
+                }
+            }
+        }
+        
+        // Format text
+        p++;
+        p2 = temp = (char *)malloc(len - (p - str));
+        while (*p != '\0' && !(*p == ')' && *(p + 1) == ',')) {
             *p2++ = *p++;
         }
-        if (*p == '\0') return nil;
+        if (*p == '\0') {
+            NSLog(@"PBMutableExpression: '%(),' should keep up with as least as 1 expression.");
+            return nil;
+        }
         
         *p2 = '\0';
-        if (tag_pos != NULL) {
-            *tag_pos = '\0';
-            tag_pos++;
-            _formatterTag = [NSString stringWithUTF8String:tag_pos];
-        }
-        NSString *tag = [NSString stringWithUTF8String:temp];
+        _format = [NSString stringWithUTF8String:temp];
         free(temp);
-        if ([tag isEqualToString:@"!"]) {
-            _formatFlags.testEmpty = 1;
-        } else if ([tag isEqualToString:@"JS"]) {
-            _formatFlags.javascript = 1;
-        } else if ([tag isEqualToString:@"AT"]) {
-            _formatFlags.attributedText = 1;
-        } else {
-            _formatter = [PBVariableEvaluator evaluatorForTag:tag];
-            if (_formatter != nil) {
-                _formatFlags.customized = 1;
-            } else {
-                NSLog(@"Unknown format tag:`%@'", tag);
-                return self;
-            }
-        }
+        
+        p += 2; // bypass '),'
     }
-    
-    // Format text
-    p++;
-    p2 = temp = (char *)malloc(len - (p - str));
-    while (*p != '\0' && !(*p == ')' && *(p + 1) == ',')) {
-        *p2++ = *p++;
-    }
-    if (*p == '\0') return nil;
-    
-    *p2 = '\0';
-    _format = [NSString stringWithUTF8String:temp];
-    free(temp);
     
     // Variable args
-    p += 2;
     p2 = temp = (char *)malloc(len - (p - str));
     while (*p != '\0' && *p != ';') {
         *p2++ = *p++;
@@ -103,6 +119,11 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     NSString *args =[NSString stringWithUTF8String:temp];
     free(temp);
     [self initExpressionsWithString:args];
+    
+    if ((_flags.onewayBinding || _flags.duplexBinding) && _expressions.count < 2) {
+        NSLog(@"PBMutableExpression: '%=' or '%==' should keep up with as least as 2 expressions.");
+        return nil;
+    }
     
     if (*p == '\0' || _formatFlags.attributedText == 0) {
         return self;
@@ -155,9 +176,32 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     }
 }
 
+- (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context
+{
+    if (_expressions != nil && (_flags.onewayBinding || _flags.duplexBinding)) {
+        PBExpression *mainExpression = _expressions[0];
+        id dataSource = [mainExpression _dataSourceWithData:data target:target context:context];
+        if (mainExpression->_variable != nil) {
+            return [dataSource valueForKeyPath:mainExpression->_variable];
+        } else {
+            return dataSource;
+        }
+    }
+    
+    return [super _dataSourceWithData:data target:target context:context];
+}
+
 - (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     if (_expressions == nil) {
+        return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+    }
+    
+    if (_flags.onewayBinding || _flags.duplexBinding) {
+        if (![self initMutableVariableWithData:data keyPath:targetKeyPath target:target context:context]) {
+            return;
+        }
+        
         return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
     }
     
@@ -201,8 +245,38 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         
         [_properties mapData:data toOwner:value withTarget:target context:context];
         return value;
+    } else if ((_flags.onewayBinding || _flags.duplexBinding) && _variable == nil) {
+        if (![self initMutableVariableWithData:data keyPath:keyPath target:target context:context]) {
+            return nil;
+        }
     }
     return [super valueWithData:data keyPath:keyPath target:target context:context];
+}
+
+- (BOOL)initMutableVariableWithData:(id)data
+                            keyPath:(NSString *)keyPath
+                             target:(id)target
+                            context:(UIView *)context {
+    if (_variable != nil) {
+        return YES;
+    }
+    
+    NSMutableString *fullKeyPath = [NSMutableString string];
+    NSInteger numberOfExpressions = _expressions.count;
+    NSMutableArray *keys = [NSMutableArray arrayWithCapacity:numberOfExpressions - 1];
+    for (NSInteger index = 1; index < numberOfExpressions; index++) {
+        PBExpression *keyExpression = _expressions[index];
+        NSString *key = [keyExpression valueWithData:data keyPath:keyPath target:target context:context];
+        if (key == nil) {
+            // Something was not ready, hold on...
+            return NO;
+        }
+        
+        [keys addObject:key];
+    }
+    
+    _variable = [keys componentsJoinedByString:@"."];
+    return YES;
 }
 
 #pragma mark - Helper
