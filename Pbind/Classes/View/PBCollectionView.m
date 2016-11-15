@@ -244,6 +244,15 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    self.deselectedData = [self dataAtIndexPath:indexPath];
+    
+    if ([_delegateInterceptor.receiver respondsToSelector:_cmd]) {
+        [_delegateInterceptor.receiver collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
+    }
+}
+
 - (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath {
     [self setSelectedIndexPath:selectedIndexPath animated:NO];
 }

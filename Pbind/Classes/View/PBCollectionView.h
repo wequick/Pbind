@@ -12,7 +12,7 @@
 #import "PBMessageInterceptor.h"
 #import "PBViewResizingDelegate.h"
 
-@interface PBCollectionView : UICollectionView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface PBCollectionView : UICollectionView <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PBRowDataSource>
 {
     PBRowMapper *_itemMapper;
     Class _registedCellClass;
@@ -65,9 +65,14 @@
 @property (nonatomic, assign) NSInteger page;
 
 /**
- The data of the selected index path.
+ The data of the current selected index path.
  */
 @property (nonatomic, strong) id selectedData;
+
+/**
+ The data of the previous selected index path.
+ */
+@property (nonatomic, strong) id deselectedData;
 
 /**
  The index path selected by user.
