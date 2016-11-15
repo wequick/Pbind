@@ -26,6 +26,8 @@
  */
 @property (nonatomic, weak) id owner;
 
+@property (readonly) NSUInteger count;
+
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (id)objectForKey:(id)aKey;

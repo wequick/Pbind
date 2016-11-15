@@ -249,6 +249,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         PBRequest *request = [[requestClass alloc] init];
         request.action = mapper.action;
         request.params = mapper.params;
+        request.requiresMutableResponse = mapper.mutable;
         
         if ([self respondsToSelector:@selector(view:shouldLoadRequest:)]) {
             BOOL flag = [self view:self shouldLoadRequest:request];

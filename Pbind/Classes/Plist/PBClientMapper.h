@@ -53,6 +53,9 @@
 /** The parameters of the PBRequest which will be loaded by the PBClient. */
 @property (nonatomic, strong) NSDictionary *params;
 
+/** The mutable of the PBRequest which will be loaded by the PBClient. */
+@property (nonatomic, assign) BOOL mutable;
+
 /** Load the request in parallel mode. Default is YES. */
 @property (nonatomic, assign) BOOL parallel;
 

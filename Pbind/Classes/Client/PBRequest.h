@@ -15,4 +15,11 @@
 @property (nonatomic, strong) NSDictionary *params; // Major params.
 @property (nonatomic, strong) NSDictionary *extParams; // Minor params.
 
+/**
+ Whether the response data should be mutable, default is NO.
+ 
+ @discussion if set to YES then will convert all the response data from NSDictionary to PBDictionary in nested.
+ */
+@property (nonatomic, assign) BOOL requiresMutableResponse;
+
 @end

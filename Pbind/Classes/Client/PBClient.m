@@ -7,6 +7,7 @@
 //
 
 #import "PBClient.h"
+#import "PBDictionary.h"
 
 NSString *const PBClientWillLoadRequestNotification = @"PBClientWillLoadRequestNotification";
 NSString *const PBClientDidLoadRequestNotification = @"PBClientDidLoadRequestNotification";
@@ -92,7 +93,7 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
     // Custom debug response
     PBResponse *debugResponse = [self debugResponse];
     if (debugResponse != nil) {
-        debugResponse = [self transformingResponse:debugResponse];
+        debugResponse = [self transformingResponse:debugResponse withRequest:request];
         complection(debugResponse);
         return;
     }
@@ -103,7 +104,7 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
         if (data != nil) {
             PBResponse *response = [[PBResponse alloc] init];
             response.data = data;
-            response = [self transformingResponse:response];
+            response = [self transformingResponse:response withRequest:request];
             complection(response);
             return;
         }
@@ -149,7 +150,7 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
     [self loadRequest:aRequest success:^(id responseData) {
         PBResponse *response = [[PBResponse alloc] init];
         response.data = responseData;
-        response = [self transformingResponse:response];
+        response =  [self transformingResponse:response withRequest:request];
         if (_canceled) {
             return;
         }
@@ -193,6 +194,46 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
         }
     }];
+}
+
+- (PBResponse *)transformingResponse:(PBResponse *)response withRequest:(PBRequest *)request {
+    response = [self transformingResponse:response];
+    if (response == nil || response.data == nil) {
+        return response;
+    }
+    
+    if (request.requiresMutableResponse) {
+        response.data = [self editableDataWithData:response.data];
+    }
+    return response;
+}
+
+- (id)editableDataWithData:(id)data {
+    if ([data isKindOfClass:[NSArray class]]) {
+        NSInteger N = [data count];
+        if (N > 0) {
+            id firstObject = [data firstObject];
+            id convertedObject = [self editableDataWithData:firstObject];
+            if (convertedObject != firstObject) {
+                NSMutableArray *convertedArray = [NSMutableArray arrayWithCapacity:N];
+                [convertedArray addObject:convertedObject];
+                for (NSInteger i = 1; i < N; i++) {
+                    convertedObject = [self editableDataWithData:[data objectAtIndex:i]];
+                    [convertedArray addObject:convertedObject];
+                }
+                return convertedArray;
+            }
+        }
+        return data;
+    } else if ([data isKindOfClass:[NSDictionary class]]) {
+        PBDictionary *dict = [[PBDictionary alloc] init];
+        for (NSString *key in data) {
+            id value = [self editableDataWithData:[data objectForKey:key]];
+            [dict setObject:value forKey:key];
+        }
+        return dict;
+    }
+    return data;
 }
 
 - (void)cancel

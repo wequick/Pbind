@@ -120,6 +120,10 @@
     return [_dictionary description];
 }
 
+- (NSUInteger)count {
+    return [_dictionary count];
+}
+
 #pragma mark - Copy
 
 - (id)copyWithZone:(nullable NSZone *)zone {
