@@ -220,13 +220,13 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {  // Called on iOS8+
-    PBRowMapper *item = [self itemAtIndexPath:indexPath];
-    [item mapData:[self data] forView:cell];
-    
     // Forward delegate
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(collectionView:willDisplayCell:forItemAtIndexPath:)]) {
         [_delegateInterceptor.receiver collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
     }
+    
+    PBRowMapper *item = [self itemAtIndexPath:indexPath];
+    [item mapData:[self data] forView:cell];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
