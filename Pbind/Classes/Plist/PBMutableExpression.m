@@ -99,7 +99,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             *p2++ = *p++;
         }
         if (*p == '\0') {
-            NSLog(@"PBMutableExpression: '%(),' should keep up with as least as 1 expression.");
+            NSLog(@"PBMutableExpression: '%%(),' should keep up with as least as 1 expression.");
             return nil;
         }
         
@@ -121,7 +121,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     [self initExpressionsWithString:args];
     
     if ((_flags.onewayBinding || _flags.duplexBinding) && _expressions.count < 2) {
-        NSLog(@"PBMutableExpression: '%=' or '%==' should keep up with as least as 2 expressions.");
+        NSLog(@"PBMutableExpression: '%%=' or '%%==' should keep up with as least as 2 expressions.");
         return nil;
     }
     
@@ -261,7 +261,6 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         return YES;
     }
     
-    NSMutableString *fullKeyPath = [NSMutableString string];
     NSInteger numberOfExpressions = _expressions.count;
     NSMutableArray *keys = [NSMutableArray arrayWithCapacity:numberOfExpressions - 1];
     for (NSInteger index = 1; index < numberOfExpressions; index++) {

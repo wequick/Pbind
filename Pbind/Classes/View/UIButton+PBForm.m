@@ -71,7 +71,7 @@ NSString *const kPopdownTargetKey = @"__popdownTarget";
 }
 
 - (BOOL)isRequired {
-    return [self valueForAdditionKey:@"required"];
+    return [[self valueForAdditionKey:@"required"] boolValue];
 }
 
 - (void)setTitle:(NSString *)title {

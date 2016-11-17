@@ -64,7 +64,7 @@
     // Add all the constraints from configuration.
     NSDictionary *metrics = nil;
     if (self.metrics != nil) {
-        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithCapacity:self.metrics];
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithCapacity:self.metrics.count];
         for (NSString *key in self.metrics) {
             [temp setObject:@(PBValue([self.metrics[key] floatValue])) forKey:key];
         }

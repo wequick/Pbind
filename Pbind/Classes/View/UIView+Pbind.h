@@ -53,7 +53,6 @@
 
 @property (nonatomic, assign, readonly) BOOL pb_loading;
 @property (nonatomic, assign) BOOL pb_interrupted;
-@property (nonatomic, assign) BOOL showsLoadingCover;
 
 @property (nonatomic, assign) void (^pb_preparation)(void);
 @property (nonatomic, assign) id (^pb_transformation)(id data, NSError *error);

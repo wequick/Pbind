@@ -21,10 +21,10 @@
 }
 
 - (BOOL)isSimilarString:(const char *)str1 toString:(const char *)str2 {
-    int len1 = strlen(str1);
-    int len2 = strlen(str2);
-    int len = MIN(len1, len2);
-    int i = 0;
+    NSInteger len1 = strlen(str1);
+    NSInteger len2 = strlen(str2);
+    NSInteger len = MIN(len1, len2);
+    NSInteger i = 0;
     char *p1 = (char *)str1;
     char *p2 = (char *)str2;
     while (i++ < len) {

@@ -11,7 +11,7 @@
 /**
  This class is used to extends the Key-Value Observing ability of NSDictionary
  */
-@interface PBDictionary : NSObject <NSCopying>
+@interface PBDictionary : NSObject <NSCopying, NSFastEnumeration>
 {
     NSMutableDictionary *_dictionary;
 }

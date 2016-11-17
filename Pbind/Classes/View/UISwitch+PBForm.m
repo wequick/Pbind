@@ -68,7 +68,7 @@
 }
 
 - (BOOL)isRequired {
-    return [self valueForAdditionKey:@"required"];
+    return [[self valueForAdditionKey:@"required"] boolValue];
 }
 
 @end

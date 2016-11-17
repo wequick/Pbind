@@ -40,21 +40,21 @@
  
  @discussion the dictionary here will be parsed to a PBRowMapper.
  */
-@property (nonatomic, strong) NSDictionary *row;
+@property (nonatomic, strong) id row;
 
 /**
  The empty row used to create a placeholder cell to display while the section data is nil.
  
  @discussion the dictionary here will be parsed to a PBRowMapper.
  */
-@property (nonatomic, strong) NSDictionary *emptyRow;
+@property (nonatomic, strong) id emptyRow;
 
 /**
  The footer view of the section.
  
  @discussion the dictionary here will be parsed to a PBRowMapper.
  */
-@property (nonatomic, strong) NSDictionary *footer;
+@property (nonatomic, strong) id footer;
 
 /**
  The row count for the section.

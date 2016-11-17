@@ -10,7 +10,7 @@
 
 @implementation PBOptionPicker
 
-+ (instancetype)sharedDatePicker {
++ (instancetype)sharedOptionPicker {
     static id o = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

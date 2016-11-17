@@ -712,7 +712,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 - (BOOL)hasExpressionForKeyPath:(NSString *)keyPath
 {
     if (self.PBDynamicProperties == nil) {
-        return nil;
+        return NO;
     }
     return [[self.PBDynamicProperties allKeys] containsObject:keyPath];
 }

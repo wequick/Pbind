@@ -93,6 +93,10 @@
     [_dictionary removeObjectForKey:aKey];
 }
 
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
+    return [_dictionary countByEnumeratingWithState:state objects:buffer count:len];
+}
+
 - (void)willChangeValueForKey:(NSString *)key
 {
     if (self.owner != nil) {

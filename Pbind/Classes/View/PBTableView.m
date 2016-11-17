@@ -687,7 +687,6 @@
 }
 
 - (void)_hidesBottomSeparatorForCell:(UITableViewCell *)cell {
-    UIView *bottomSeparator = nil;
     for (UIView *subview in cell.subviews) {
         if (subview == cell.contentView) {
             continue;
