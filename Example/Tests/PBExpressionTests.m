@@ -65,7 +65,7 @@
 }
 
 - (void)testCanParseImplictDataElements {
-    NSMutableArray *data = [NSMutableArray arrayWithCapacity:1];
+    PBArray *data = [[PBArray alloc] init];
     id data0 = @{@"repo_owner": @"wequick"};
     [data addObject:data0];
     
@@ -77,10 +77,55 @@
 }
 
 - (void)testCanParseDataElements {
+    PBArray *data = [[PBArray alloc] init];
+    [data addObject:@{@"repo_owner": @"wequick"}];
+    [data addObject:@{@"repo_name": @"Pbind"}];
     [self shouldParse:@"%(https://github.com/%@/%@),$0.repo_owner,$1.repo_name"
               toValue:@"https://github.com/wequick/Pbind"
-             withData:@[@{@"repo_owner": @"wequick"}, @{@"repo_name": @"Pbind"}]];
+             withData:data];
 }
+
+#pragma mark -
+
+#pragma mark - Arithmetic operators
+
+- (void)testCanParseArithmeticOpertors {
+    NSArray *list = @[@1, @2];
+    [self shouldParse:@"$count+1" toValue:@(3) withData:list];
+    [self shouldParse:@"$count-1" toValue:@(1) withData:list];
+    [self shouldParse:@"$count*2" toValue:@(4) withData:list];
+    [self shouldParse:@"$count/2" toValue:@(1) withData:list];
+}
+
+#pragma mark - Test operator
+
+- (void)testCanParseTestOperator {
+    NSArray *list = @[@1, @2];
+    [self shouldParse:@"$count?A:B" toValue:@"A" withData:list];
+    [self shouldParse:@"$count?:10" toValue:@(2) withData:list];
+    list = @[];
+    [self shouldParse:@"$count?A:B" toValue:@"B" withData:list];
+    [self shouldParse:@"$count?:10" toValue:@(10) withData:list];
+}
+
+#pragma mark - Comparision operators
+
+- (void)testCanParseComparisionOperators {
+    NSArray *list = @[@1, @2];
+    [self shouldParse:@"$count=2" toValue:@(YES) withData:list];
+    [self shouldParse:@"$count!=2" toValue:@(NO) withData:list];
+    [self shouldParse:@"$count>=2" toValue:@(YES) withData:list];
+    [self shouldParse:@"$count<=2" toValue:@(YES) withData:list];
+    
+    [self shouldParse:@"$count>1" toValue:@(YES) withData:list];
+    [self shouldParse:@"$count<3" toValue:@(YES) withData:list];
+    [self shouldParse:@"$count>2" toValue:@(NO) withData:list];
+    [self shouldParse:@"$count<2" toValue:@(NO) withData:list];
+}
+
+#pragma mark -
+
+#pragma mark - Javascript tag: '%JS'
 
 - (void)testCanParseJSDictionary {
     id target = @{@"awesome": @1, @"repo": @"wequick/Pbind"};
@@ -106,10 +151,45 @@
     [self shouldParse:@"%JS:array(var t=['awesome', {repo: $1}];t;),$repo" toValue:target withData:data];
 }
 
+- (void)testCanParseJSRange {
+    id target = [NSValue valueWithRange:NSMakeRange(1, 2)];
+    id data = @{@"w": @(1), @"h": @(2)};
+    [self shouldParse:@"%JS:range({location:$1, length:$2}),$w,$h" toValue:target withData:data];
+}
+
+- (void)testCanParseJSPoint {
+    id target = [NSValue valueWithCGPoint:CGPointMake(1, 2)];
+    id data = @{@"w": @(1), @"h": @(2)};
+    [self shouldParse:@"%JS:point({x:$1, y:$2}),$w,$h" toValue:target withData:data];
+}
+
+- (void)testCanParseJSRect {
+    id target = [NSValue valueWithCGRect:CGRectMake(1, 2, 3, 4)];
+    id data = @{@"x": @(1), @"y": @(2), @"w": @(3), @"h": @(4)};
+    [self shouldParse:@"%JS:rect({x:$1, y:$2, width:$3, height:$4}),$x,$y,$w,$h" toValue:target withData:data];
+}
+
+- (void)testCanParseJSSize {
+    id target = [NSValue valueWithCGSize:CGSizeMake(1, 2)];
+    id data = @{@"w": @(1), @"h": @(2)};
+    [self shouldParse:@"%JS:size({width:$1, height:$2}),$w,$h" toValue:target withData:data];
+}
+
+- (void)testCanParseJSDate {
+    long interval = 1477979504;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
+    id data = @{@"interval": @(interval * 1000)};
+    [self shouldParse:@"%JS(new Date($1)),$interval" toValue:date withData:data];
+}
+
+#pragma mark - Test tag: '%!'
+
 - (void)testCanParseEmpty {
     [self shouldParse:@"%!(hello %@!),$greet" toValue:nil withData:nil];
     [self shouldParse:@"%!(hello %@!),$greet" toValue:@"hello Pbind!" withData:@{@"greet": @"Pbind"}];
 }
+
+#pragma mark - Attributed string tag: '%AT'
 
 - (void)testCanParseAttributedText {
     CGFloat fontSize = PBValue(14);

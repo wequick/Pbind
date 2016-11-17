@@ -14,7 +14,7 @@
 				<key>action</key>
 				<string>GetGroupInfo</string>
 				<key>params</key>
-				<string>@groupParams</string>
+				<string>@^groupParams</string>
 			</dict>
 			<dict>
 				<key>clazz</key>
@@ -22,7 +22,7 @@
 				<key>action</key>
 				<string>GetGroupMembers</string>
 				<key>params</key>
-				<string>@groupParams</string>
+				<string>@^groupParams</string>
 			</dict>
 		</array>
 		<key>headers</key>
@@ -46,19 +46,15 @@
 					<dict>
 						<key>clazz</key>
 						<string>PBExampleGroupMemberAvatarCell</string>
-						<key>tagproperties</key>
-						<array>
-							<dict>
-								<key>avatarUrl</key>
-								<string>$customInfo.avatar</string>
-							</dict>
-							<dict>
-								<key>text</key>
-								<string>$nameCard</string>
-								<key>font</key>
-								<string>{F:42}</string>
-							</dict>
-						</array>
+						<key>properties</key>
+                        <dict>
+                            <key>@1.avatarUrl</key>
+                            <string>.$customInfo.avatar</string>
+                            <key>@2.text</key>
+                            <string>.$nameCard</string>
+                            <key>@2.font</key>
+                            <string>{F:42}</string>
+                        </dict>
 					</dict>
 					<key>itemSize</key>
 					<string>{165,221}</string>
@@ -210,7 +206,7 @@
 							<key>action</key>
 							<string>QuitGroup</string>
 							<key>params</key>
-							<string>@groupParams</string>
+							<string>@^groupParams</string>
 							<key>successTips</key>
 							<string>删除成功</string>
 						</dict>
