@@ -118,14 +118,17 @@ usage: [tag][key]
 
     2.2 Tag (_**@see PBVariableMapper**_)  
        
-    Tag           | Map to               | e.g.
+    Tag          | Map to               | e.g.
 	:------------ | :------------------- | ------------
 	 $            | root view data       | $records
 	 .            | target view          | .frame.size
 	 .$           | target view data     | .$name
-	 @            | active controller    | @title
+	 @^           | active controller    | @^title
+	 @[alias].    | view with alias<sup>[1]</sup>      | @label.text
 	 >            | PBForm input text    | >birth
 	 >@           | PBForm input value   | >@birth
+	 
+	 > [1]: setting by [view setAlias:@"your_alias"]
 	
     2.2.1  User-defined Variable Tag
     
