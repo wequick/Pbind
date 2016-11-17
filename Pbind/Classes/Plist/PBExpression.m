@@ -84,7 +84,7 @@ static const int kDataTagUnset = 0xFF;
             if (*p == '[' || *p == '{') {
                 return nil; // constant tag for subscript
             }
-            if (*p == '@') {
+            if (*p == '^') {
                 _flags.mapToActiveController = 1;
                 p++;
             } else {
