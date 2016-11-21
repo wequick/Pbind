@@ -65,6 +65,12 @@
     XCTAssertEqual([[PBValueParser valueWithString:@":hello"] intValue], UITableViewCellStyleValue1);
 }
 
+- (void)testCanParseIndexPath {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:2];
+    NSIndexPath *value = [PBValueParser valueWithString:@"[2-1]"]; // section-row
+    XCTAssertTrue([indexPath isEqual:value]);
+}
+
 - (void)testCanParseCGSize {
     CGSize size = PBSizeMake(1, 2);
     XCTAssertTrue(CGSizeEqualToSize([[PBValueParser valueWithString:@"{1,2}"] CGSizeValue], size));
