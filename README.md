@@ -60,6 +60,7 @@ usage: [tag][key]
 	 ##           | CGColor                  | ##FF00FF
 	 @            | Subscript                | @[1,2,3]; @{title:1}
 	 :            | Enum                     | :left = NSTextAlignmentLeft
+	 [            | NSIndexPath[section-row] | [0-1]
 	 {{           | Rect                     | {{0,0},{1080,44}
 	 {            | Size\|Point\|EdgeInsets  | {1080,44} \| {0,2,0,2}
 	 {F:          | Font               	     | {F:MicrosoftYaHei,bold,14}<br>{F:itailc,14}<br>{F:14}
