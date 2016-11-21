@@ -10,7 +10,7 @@
 
 @interface PBMessageInterceptor : NSObject
 
-@property (nonatomic, strong) id receiver;
-@property (nonatomic, strong) id middleMan;
+@property (nonatomic, weak) id receiver;
+@property (nonatomic, weak) id middleMan;
 
 @end
