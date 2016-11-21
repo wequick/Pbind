@@ -470,6 +470,8 @@
         return [_delegateInterceptor.receiver tableView:tableView heightForHeaderInSection:section];
     }
     
+    [self initRowMapper];
+    
     if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
         CGFloat height = [aSection heightForData:_data];
