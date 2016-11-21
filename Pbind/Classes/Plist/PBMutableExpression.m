@@ -210,6 +210,24 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     }
 }
 
+- (void)unbind:(id)target forKeyPath:(NSString *)keyPath
+{
+    if (_properties != nil) {
+        target = [target valueForKey:keyPath];
+        [_properties unbind:target forKeyPath:nil];
+        return;
+    }
+    
+    if (_expressions != nil) {
+        for (PBExpression *exp in _expressions) {
+            [exp unbind:target forKeyPath:keyPath];
+        }
+        return;
+    }
+    
+    return [super unbind:target forKeyPath:keyPath];
+}
+
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     if (_format != nil) {

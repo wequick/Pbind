@@ -41,4 +41,11 @@
  */
 - (NSString *)description;
 
+/**
+ Unobserve keyed-value of the target.
+
+ @param target the observed target
+ */
+- (void)unbind:(id)target forKeyPath:(NSString *)keyPath;
+
 @end

@@ -111,6 +111,11 @@
 
 - (void)pb_setValue:(id)value forKeyPath:(NSString *)keyPath;
 
+/**
+ Unbind all the observers from the view.
+ */
+- (void)pb_unbind;
+
 @end
 
 @interface UIView (PBAdditionProperties)

@@ -132,6 +132,16 @@
     }
 }
 
+- (void)unbind:(id)target forKeyPath:(NSString *)keyPath
+{
+    if (_expressions == nil) return;
+    
+    for (NSString *key in _expressions) {
+        PBExpression *exp = [_expressions objectForKey:key];
+        [exp unbind:target forKeyPath:keyPath];
+    }
+}
+
 - (NSInteger)count
 {
     return [_constants count] + [_expressions count];

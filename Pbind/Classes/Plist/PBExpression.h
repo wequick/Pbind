@@ -94,8 +94,8 @@
     NSString *_alias;
     
     NSString *_bindingKeyPath;  // the owner's keyPath binding with `_variable'
-    id _bindingOwner;
-    id _bindingData;
+    __unsafe_unretained id _bindingOwner;
+    __unsafe_unretained id _bindingData;
 }
 
 + (instancetype)expressionWithString:(NSString *)aString;
@@ -124,5 +124,12 @@
  The expression text, for debugger output.
  */
 - (NSString *)stringValue;
+
+/**
+ Unobserve the target.
+
+ @param target the observed target
+ */
+- (void)unbind:(id)target forKeyPath:(NSString *)keyPath;
 
 @end

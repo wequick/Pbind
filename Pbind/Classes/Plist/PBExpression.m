@@ -577,16 +577,22 @@ static const int kDataTagUnset = 0xFF;
 }
 
 - (void)viewWillRemoveFromSuperview:(NSNotification *)notification {
-    if ([_bindingOwner isEqual:notification.object]) {
-        [_bindingData removeObserver:self forKeyPath:_variable];
-        if (_flags.duplexBinding) {
-            [_bindingOwner removeObserver:self forKeyPath:_bindingKeyPath];
-        }
-        
-        _bindingKeyPath = nil;
-        _bindingOwner = nil;
-        _bindingData = nil;
+    [self unbind:notification.object forKeyPath:nil];
+}
+
+- (void)unbind:(id)target forKeyPath:(NSString *)keyPath {
+    if (![_bindingOwner isEqual:target]) {
+        return;
     }
+    
+    [_bindingData removeObserver:self forKeyPath:_variable];
+    if (_flags.duplexBinding) {
+        [_bindingOwner removeObserver:self forKeyPath:_bindingKeyPath];
+    }
+    
+    _bindingKeyPath = nil;
+    _bindingOwner = nil;
+    _bindingData = nil;
 }
 
 #pragma mark - Debug

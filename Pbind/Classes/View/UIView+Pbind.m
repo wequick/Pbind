@@ -456,6 +456,21 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [view pb_repullData];
 }
 
+- (void)pb_unbind
+{
+    NSDictionary *expressions = [self PBDynamicProperties];
+    if (expressions != nil) {
+        for (NSString *key in expressions) {
+            PBExpression *expression = [expressions objectForKey:key];
+            [expression unbind:self forKeyPath:key];
+        }
+    }
+    
+    for (UIView *subview in self.subviews) {
+        [subview pb_unbind];
+    }
+}
+
 - (void)_pb_resetMappersForView:(UIView *)view {
     if ([view respondsToSelector:@selector(pb_resetMappers)]) {
         [(id) view pb_resetMappers];

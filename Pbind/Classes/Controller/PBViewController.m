@@ -31,4 +31,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)dealloc {
+    [self.view pb_unbind];
+}
+
 @end
