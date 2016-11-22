@@ -354,36 +354,36 @@ static const int kDataTagUnset = 0xFF;
     }
     
     if (_flags.negative) {
-        CGFloat temp = -[value floatValue];
-        value = [NSNumber numberWithFloat:temp];
+        double temp = -[value doubleValue];
+        value = [NSNumber numberWithDouble:temp];
     }
     
     // Arithmetic operators
     if (_flags.plus) {
-        CGFloat temp = [value floatValue] + [_rvalue floatValue];
-        return [NSNumber numberWithFloat:temp];
+        double temp = [value doubleValue] + [_rvalue doubleValue];
+        return [NSNumber numberWithDouble:temp];
     }
     
     if (_flags.minus) {
-        CGFloat temp = [value floatValue];
+        double temp = [value doubleValue];
         if (_rvalue != nil) {
-            temp -= [_rvalue floatValue];
+            temp -= [_rvalue doubleValue];
         }
-        return [NSNumber numberWithFloat:temp];
+        return [NSNumber numberWithDouble:temp];
     }
     
     if (_flags.times) {
-        CGFloat temp = [value floatValue] * [_rvalue floatValue];
-        return [NSNumber numberWithFloat:temp];
+        double temp = [value doubleValue] * [_rvalue doubleValue];
+        return [NSNumber numberWithDouble:temp];
     }
     
     if (_flags.divide) {
-        CGFloat denominator = [_rvalue floatValue];
-        CGFloat temp = [value floatValue];
+        double denominator = [_rvalue doubleValue];
+        double temp = [value doubleValue];
         if (denominator != 0) {
             temp /= denominator;
         }
-        return [NSNumber numberWithFloat:temp];
+        return [NSNumber numberWithDouble:temp];
     }
     
     // Comparision operators
