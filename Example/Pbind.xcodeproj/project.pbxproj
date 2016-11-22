@@ -595,6 +595,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(CONFIGURATION_BUILD_DIR)/**",
+					"$(CONFIGURATION_BUILD_DIR)/Pbind",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
@@ -620,6 +621,7 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(CONFIGURATION_BUILD_DIR)/**",
+					"$(CONFIGURATION_BUILD_DIR)/Pbind",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
