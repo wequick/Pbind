@@ -106,6 +106,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     _dataSourceInterceptor = nil;
     _delegateInterceptor = nil;
     _pbCollectionViewFlags.deallocing = 1;
+    
+    _itemMapper = nil;
 }
 
 - (void)setItem:(NSDictionary *)item {

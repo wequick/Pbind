@@ -202,4 +202,12 @@
     [view pb_mapData:data];
 }
 
+- (void)dealloc
+{
+    if (_properties != nil) {
+        [_properties unbind:self forKeyPath:nil];
+        _properties = nil;
+    }
+}
+
 @end

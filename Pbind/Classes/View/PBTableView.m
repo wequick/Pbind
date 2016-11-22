@@ -403,6 +403,12 @@
     _dataSourceInterceptor = nil;
     _delegateInterceptor = nil;
     _pbTableViewFlags.deallocing = 1;
+    
+    _row = nil;
+    _rows = nil;
+    _sections = nil;
+    self.tableHeaderView = nil;
+    self.tableFooterView = nil;
 }
 
 - (PBRowMapper *)rowWithDictionary:(NSDictionary *)dictionary indexPath:(NSIndexPath *)indexPath
