@@ -11,8 +11,9 @@ rvm:
 podfile: Example/Podfile
 before_install:
   - sw_vers # Show osx versions
+  - gen cleanup cocoapods
   - gem uninstall cocoapods
-  - gem install cocoapods --pre# Since Travis is not always on latest version
+  - gem install cocoapods --pre
 #  - pod repo update MBProgressHUD # The Travis repo are TOO old?
   - pod install --project-directory=Example
 script:
