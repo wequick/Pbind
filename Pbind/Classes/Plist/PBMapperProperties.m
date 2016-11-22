@@ -91,8 +91,8 @@
 
 - (void)initPropertiesForOwner:(id)owner
 {
-    [owner setPBConstantProperties:_constants];
-    [owner setPBDynamicProperties:_expressions];
+    [owner setPb_constants:_constants];
+    [owner setPb_expressions:_expressions];
 }
 
 - (void)initDataForOwner:(id)owner

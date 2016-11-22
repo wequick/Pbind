@@ -32,8 +32,8 @@
 
 @interface UIView (Pbind) <PBViewLoadingDelegate, PBViewMappingDelegate>
 
-@property (nonatomic, strong) NSDictionary *PBConstantProperties;
-@property (nonatomic, strong) NSDictionary *PBDynamicProperties;
+@property (nonatomic, strong) NSDictionary *pb_constants;
+@property (nonatomic, strong) NSDictionary *pb_expressions;
 
 @property (nonatomic, strong) NSString *plist;
 

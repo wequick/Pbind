@@ -324,7 +324,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_initData
 {
-    NSDictionary *properties = [self PBConstantProperties];
+    NSDictionary *properties = [self pb_constants];
     for (NSString *key in properties) {
         id value = [properties objectForKey:key];
         value = [PBValueParser valueWithString:value];
@@ -356,7 +356,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_bindData
 {
-    NSDictionary *properties = [self PBDynamicProperties];
+    NSDictionary *properties = [self pb_expressions];
     for (NSString *key in properties) {
         PBExpression *exp = [properties objectForKey:key];
         [exp bindData:nil toTarget:self forKeyPath:key inContext:self];
@@ -365,7 +365,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_mapData:(id)data
 {
-    NSDictionary *properties = [self PBDynamicProperties];
+    NSDictionary *properties = [self pb_expressions];
     for (NSString *key in properties) {
         if ([self mappableForKeyPath:key]) {
             PBExpression *exp = [properties objectForKey:key];
@@ -392,7 +392,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_mapData:(id)data forKey:(NSString *)key
 {
-    PBExpression *exp = [[self PBDynamicProperties] objectForKey:key];
+    PBExpression *exp = [[self pb_expressions] objectForKey:key];
     if (exp == nil) {
         return;
     }
@@ -417,6 +417,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_reloadPlist
 {
+    [self pb_unbind];
     [self pb_reloadPlistForView:self];
 }
 
@@ -442,23 +443,27 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_reloadClient
 {
+    [self pb_unbind];
     [self pb_reloadClientForView:self];
 }
 
-- (void)pb_reloadClientForView:(UIView *)view {
-    if (view.pb_clientMappers == nil) {
-        for (UIView *subview in view.subviews) {
-            [self pb_reloadClientForView:subview];
-        }
-        return;
+- (BOOL)pb_reloadClientForView:(UIView *)view {
+    if (view.pb_clientMappers != nil) {
+        [view pb_repullData];
+        return YES;
     }
     
-    [view pb_repullData];
+    for (UIView *subview in view.subviews) {
+        if ([self pb_reloadClientForView:subview]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)pb_unbind
 {
-    NSDictionary *expressions = [self PBDynamicProperties];
+    NSDictionary *expressions = [self pb_expressions];
     if (expressions != nil) {
         for (NSString *key in expressions) {
             PBExpression *expression = [expressions objectForKey:key];
@@ -713,23 +718,23 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         return;
     }
     
-    NSMutableDictionary *dynamicProperties;
-    if (self.PBDynamicProperties == nil) {
-        dynamicProperties = [[NSMutableDictionary alloc] init];
-        self.PBDynamicProperties = dynamicProperties;
+    NSMutableDictionary *expressions;
+    if (self.pb_expressions == nil) {
+        expressions = [[NSMutableDictionary alloc] init];
+        self.pb_expressions = expressions;
     } else {
-        dynamicProperties = [NSMutableDictionary dictionaryWithDictionary:self.PBDynamicProperties];
+        expressions = [NSMutableDictionary dictionaryWithDictionary:self.pb_expressions];
     }
-    [dynamicProperties setObject:aExpression forKey:keyPath];
+    [expressions setObject:aExpression forKey:keyPath];
     [self setValue:@(YES) forAdditionKey:@"pb_expressible"];
 }
 
 - (BOOL)hasExpressionForKeyPath:(NSString *)keyPath
 {
-    if (self.PBDynamicProperties == nil) {
+    if (self.pb_expressions == nil) {
         return NO;
     }
-    return [[self.PBDynamicProperties allKeys] containsObject:keyPath];
+    return [[self.pb_expressions allKeys] containsObject:keyPath];
 }
 
 - (UIViewController *)supercontroller
@@ -831,20 +836,20 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return [self valueForAdditionKey:@"pb_unmappableKeys"];
 }
 
-- (void)setPBConstantProperties:(NSDictionary *)properties {
-    [self setValue:properties forAdditionKey:@"pb_constantProperties"];
+- (void)setPb_constants:(NSDictionary *)constants {
+    [self setValue:constants forAdditionKey:@"pb_constants"];
 }
 
-- (NSDictionary *)PBConstantProperties {
-    return [self valueForAdditionKey:@"pb_constantProperties"];
+- (NSDictionary *)pb_constants {
+    return [self valueForAdditionKey:@"pb_constants"];
 }
 
-- (void)setPBDynamicProperties:(NSDictionary *)properties {
-    [self setValue:properties forAdditionKey:@"pb_dynamicProperties"];
+- (void)setPb_expressions:(NSDictionary *)expressions {
+    [self setValue:expressions forAdditionKey:@"pb_expressions"];
 }
 
-- (NSDictionary *)PBDynamicProperties {
-    return [self valueForAdditionKey:@"pb_dynamicProperties"];
+- (NSDictionary *)pb_expressions {
+    return [self valueForAdditionKey:@"pb_expressions"];
 }
 
 - (void)set_pbPlistURL:(NSURL *)value {
