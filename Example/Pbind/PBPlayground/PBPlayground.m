@@ -6,13 +6,104 @@
 //  Copyright © 2016年 galenlin. All rights reserved.
 //
 
+#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+
 #import "PBPlayground.h"
 #import "SGDirWatchdog.h"
 #import <Pbind/Pbind.h>
 
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
+
+typedef void(^file_handler)(const char *parent, const char *current, const char *name);
+
+int walk_dir(const char *path, int depth, file_handler handler) {
+    DIR *d;
+    struct dirent *file;
+    struct stat sb;
+    char subdir[256];
+    
+    if (!(d = opendir(path))) {
+        NSLog(@"error opendir %s!", path);
+        return -1;
+    }
+    
+    while ((file = readdir(d)) != NULL) {
+        const char *name = file->d_name;
+        if (*name == '.') {
+            continue;
+        }
+        
+        sprintf(subdir, "%s/%s", path, name);
+        if (stat(subdir, &sb) < 0) {
+            continue;
+        }
+        
+        if (S_ISDIR(sb.st_mode)) {
+            walk_dir(subdir, depth + 1, handler);
+            continue;
+        }
+        
+        handler(path, subdir, name);
+    }
+    
+    closedir(d);
+    
+    return 0;
+}
+
+UIViewController *topcontroller(UIViewController *controller)
+{
+    UIViewController *presentedController = [controller presentedViewController];
+    if (presentedController != nil) {
+        return topcontroller(controller);
+    }
+    
+    if ([controller isKindOfClass:[UINavigationController class]]) {
+        return topcontroller([(id)controller topViewController]);
+    }
+    
+    if ([controller isKindOfClass:[UITabBarController class]]) {
+        return topcontroller([(id)controller selectedViewController]);
+    }
+    
+    return controller;
+}
+
 @implementation PBPlayground
 
-static SGDirWatchdog *kWatchdog;
+static NSMutableDictionary<NSString *, SGDirWatchdog *> *kPlistWatchdogs;
+static NSMutableDictionary<NSString *, SGDirWatchdog *> *kJsonWatchdogs;
+
+static SGDirWatchdog *kIgnoreAPIWatchdog;
+static NSArray *kIgnoreAPIs;
+static NSString *kIgnoresFile;
+
+static dispatch_block_t onPlistUpdate = ^{
+    UIViewController *controller = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    controller = topcontroller(controller);
+    [controller.view pb_reloadPlist];
+};
+
+static dispatch_block_t onJsonUpdate = ^{
+    UIViewController *controller = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    controller = topcontroller(controller);
+    [controller.view pb_reloadClient];
+};
+
+static dispatch_block_t onIgnoresUpdate = ^{
+    if (![[NSFileManager defaultManager] fileExistsAtPath:kIgnoresFile]) {
+        return;
+    }
+    
+    NSString *content = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:kIgnoresFile] encoding:NSUTF8StringEncoding];
+    kIgnoreAPIs = [[content componentsSeparatedByString:@"\n"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT (SELF BEGINSWITH '//')"]];
+    onJsonUpdate();
+};
+
 
 + (void)load {
     [super load];
@@ -20,99 +111,126 @@ static SGDirWatchdog *kWatchdog;
 }
 
 + (void)applicationDidFinishLaunching:(id)note {
-    NSString *watchPath = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PBWatchPath"];
-    if (watchPath == nil) {
-        NSLog(@"PBPlayground: Please define PBWatchPath in Info.plist with value '$(SRCROOT)/[path-to-watch]'!");
+    [self watchPlist];
+    [self watchAPI];
+}
+
++ (void)watchPlist {
+    NSString *resPath = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PBResourcesPath"];
+    if (resPath == nil) {
+        NSLog(@"PBPlayground: Please define PBResourcesPath in Info.plist with value '$(SRCROOT)/[path-to-resources]'!");
         return;
     }
     
-    if (![[NSFileManager defaultManager] fileExistsAtPath:watchPath]) {
-        NSLog(@"PBPlayground: PBWatchPath is not exists! (%@)", watchPath);
+    if (![[NSFileManager defaultManager] fileExistsAtPath:resPath]) {
+        NSLog(@"PBPlayground: PBResourcesPath is not exists! (%@)", resPath);
         return;
     }
     
-    NSBundle *bundle = [NSBundle bundleWithPath:watchPath];
-    [Pbind addResourcesBundle:bundle];
+    NSMutableArray *resPaths = [[NSMutableArray alloc] init];
     
-    kWatchdog = [[SGDirWatchdog alloc] initWithPath:watchPath update:^{
-        UIViewController *controller = [[[UIApplication sharedApplication].delegate window] rootViewController];
-        controller = [self topcontroller:controller];
-        [controller.view pb_reloadPlist];
-//        NSLog(@"updated!!!");
-//        NSDate *modify = [self getLastModifyOfFilePath:watchPlist];
-//        
-//        if (![modify isEqualToDate:lastModify]) {
-//            NSLog(@"!!! Modified");
-//            [self updatePlist:watchPlist];
-//        }
-    }];
-    [kWatchdog start];
-}
-
-+ (UIViewController *)topcontroller:(UIViewController *)controller
-{
-    UIViewController *presentedController = [controller presentedViewController];
-    if (presentedController != nil) {
-        return [self topcontroller:presentedController];
-    }
-    
-    if ([controller isKindOfClass:[UINavigationController class]]) {
-        return [self topcontroller:[(id)controller topViewController]];
-    }
-    
-    if ([controller isKindOfClass:[UITabBarController class]]) {
-        return [self topcontroller:[(id)controller selectedViewController]];
-    }
-    
-    return controller;
-}
-
-+ (void)search {
-    NSString *baseDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    
-    NSFileManager *defFM = [NSFileManager defaultManager];
-    BOOL isDir = YES;
-    
-    NSArray *fileTypes = [[NSArray alloc] initWithObjects:@"plist", nil];
-    NSMutableArray *mediaFiles = [self searchfiles:baseDir ofTypes:fileTypes];
-    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *filePath = [docDir stringByAppendingPathComponent:@"playlist.plist"];
-    if(![defFM fileExistsAtPath:filePath isDirectory:&isDir]){
-        [defFM createFileAtPath:filePath contents:nil attributes:nil];
-    }
-    
-    NSMutableDictionary *playlistDict = [[NSMutableDictionary alloc]init];
-    for(NSString *path in mediaFiles){
-        NSLog(@"%@",path);
-        [playlistDict setValue:[NSNumber numberWithBool:YES] forKey:path];
-    }
-    
-    [playlistDict writeToFile:filePath atomically:YES];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshplaylist" object:nil];
-}
-
-+ (NSMutableArray*)searchfiles:(NSString*)basePath ofTypes:(NSArray*)fileTypes{
-    NSMutableArray *files = [[NSMutableArray alloc]init];
-    NSFileManager *defFM = [NSFileManager defaultManager];
-    NSError *error = nil;
-    NSArray *dirPath = [defFM contentsOfDirectoryAtPath:basePath error:&error];
-    for(NSString *path in dirPath){
-        BOOL isDir;
-        NSString *_path = [basePath stringByAppendingPathComponent:path];
-        if([defFM fileExistsAtPath:path isDirectory:&isDir] && isDir){
-            [files addObjectsFromArray:[self searchfiles:_path ofTypes:fileTypes]];
+    walk_dir([resPath UTF8String], 0, ^(const char *parent, const char *current, const char *name) {
+        size_t len = strlen(name);
+        if (len < 7) return;
+        
+        char *p = (char *)name + len - 6;
+        if (strcmp(p, ".plist") != 0) return;
+        
+        NSString *parentPath = [[NSString alloc] initWithUTF8String:parent];
+        if (![resPaths containsObject:parentPath]) {
+            [resPaths addObject:parentPath];
         }
+    });
+    
+    if (resPaths.count == 0) {
+        NSLog(@"PBPlayground: Could not found any *.plist!");
+        return;
     }
     
+    kPlistWatchdogs = [NSMutableDictionary dictionaryWithCapacity:resPaths.count];
     
-    NSArray *mediaFiles = [dirPath pathsMatchingExtensions:fileTypes];
-    for(NSString *fileName in mediaFiles){
-        NSString *_fileName = [basePath stringByAppendingPathComponent:fileName];
-        [files addObject:_fileName];
+    for (NSString *path in resPaths) {
+        [Pbind addResourcesBundle:[NSBundle bundleWithPath:path]];
+        
+        SGDirWatchdog *watchdog = [[SGDirWatchdog alloc] initWithPath:path update:onPlistUpdate];
+        [kPlistWatchdogs setValue:watchdog forKey:path];
+        [watchdog start];
+    }
+}
+
++ (void)watchAPI {
+    NSString *serverPath = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PBLocalhost"];
+    if (serverPath == nil) {
+        NSLog(@"PBPlayground: Please define PBLocalhost in Info.plist with value '$(SRCROOT)/[path-to-api]'!");
+        return;
     }
     
-    return files;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:serverPath]) {
+        NSLog(@"PBPlayground: PBLocalhost is not exists! (%@)", serverPath);
+        return;
+    }
+    
+    kIgnoreAPIWatchdog = [[SGDirWatchdog alloc] initWithPath:serverPath update:onIgnoresUpdate];
+    kIgnoresFile = [serverPath stringByAppendingPathComponent:@"ignore.h"];
+    onIgnoresUpdate();
+    [kIgnoreAPIWatchdog start];
+    
+    NSMutableArray *jsonPaths = [[NSMutableArray alloc] init];
+    
+    walk_dir([serverPath UTF8String], 0, ^(const char *parent, const char *current, const char *name) {
+        size_t len = strlen(name);
+        if (len < 6) return;
+        
+        char *p = (char *)name + len - 5;
+        if (strcmp(p, ".json") != 0) return;
+        
+        NSString *parentPath = [[NSString alloc] initWithUTF8String:parent];
+        if (![jsonPaths containsObject:parentPath]) {
+            [jsonPaths addObject:parentPath];
+        }
+    });
+    
+    if (jsonPaths.count == 0) {
+        NSLog(@"PBPlayground: Could not found any *.json!");
+        return;
+    }
+    
+    kJsonWatchdogs = [NSMutableDictionary dictionaryWithCapacity:jsonPaths.count];
+    
+    for (NSString *path in jsonPaths) {
+        SGDirWatchdog *watchdog = [[SGDirWatchdog alloc] initWithPath:path update:onJsonUpdate];
+        [kPlistWatchdogs setValue:watchdog forKey:path];
+        [watchdog start];
+    }
+
+    [PBClient registerDebugServer:^id(PBClient *client, PBRequest *request) {
+        NSString *action = request.action;
+        if ([action characterAtIndex:0] == '/') {
+            action = [action substringFromIndex:1]; // bypass '/'
+        }
+        
+        if (kIgnoreAPIs != nil && [kIgnoreAPIs containsObject:action]) {
+            return nil;
+        }
+        
+        NSString *jsonName = [NSString stringWithFormat:@"%@/%@.json", [[client class] description], action];
+        NSString *jsonPath = [serverPath stringByAppendingPathComponent:jsonName];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:jsonPath]) {
+            NSLog(@"PBPlayground: Missing '%@', ignores!", jsonName);
+            return nil;
+        }
+        NSData *jsonData = [NSData dataWithContentsOfFile:jsonPath];
+        NSError *error = nil;
+        id response = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        if (error != nil) {
+            NSLog(@"PBPlayground: Invalid '%@', ignores!", jsonName);
+            return nil;
+        }
+        
+        return response;
+    }];
 }
 
 @end
+
+#endif

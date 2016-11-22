@@ -5,6 +5,8 @@
 //  Copyright (c) 2011 Simon Grätzer.
 //
 
+#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+
 #import "SGDirWatchdog.h"
 #import <fcntl.h>
 #import <unistd.h>
@@ -156,3 +158,5 @@ static void KQCallback(CFFileDescriptorRef kqRef, CFOptionFlags callBackTypes, v
 }
 
 @end
+
+#endif

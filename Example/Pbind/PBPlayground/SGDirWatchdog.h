@@ -5,6 +5,8 @@
 //  Copyright (c) 2011 Simon Grätzer.
 //
 
+#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+
 #import <Foundation/Foundation.h>
 
 @interface SGDirWatchdog : NSObject
@@ -21,3 +23,5 @@
 - (void)stop;
 
 @end
+
+#endif
