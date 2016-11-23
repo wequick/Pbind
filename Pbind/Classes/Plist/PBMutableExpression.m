@@ -176,6 +176,12 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     }
 }
 
+- (void)dealloc
+{
+    _properties = nil;
+    _expressions = nil;
+}
+
 - (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context
 {
     if (_expressions != nil && (_flags.onewayBinding || _flags.duplexBinding)) {

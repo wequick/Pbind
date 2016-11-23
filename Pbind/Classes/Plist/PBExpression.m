@@ -238,8 +238,8 @@ static const int kDataTagUnset = 0xFF;
 
 - (void)dealloc
 {
-    if (_flags.duplexBinding) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:PBViewWillRemoveFromSuperviewNotification object:nil];
+    if (_bindingOwner != nil) {
+        [self unbind:_bindingOwner forKeyPath:nil];
     }
 }
 
