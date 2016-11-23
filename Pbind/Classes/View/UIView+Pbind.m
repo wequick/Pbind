@@ -15,7 +15,6 @@
 #import "PBArray.h"
 #import "PBSpellChecker.h"
 
-NSString *const PBViewWillRemoveFromSuperviewNotification = @"PBViewWillRemoveFromSuperview";
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
 NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
@@ -79,14 +78,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             self.pb_interrupted = NO;
             [self pb_repullData];
         }
-    }
-}
-
-- (void)willMoveToSuperview:(UIView *)newSuperview
-{
-    if (newSuperview == nil) {
-        // Notify for observers to unobserved
-        [[NSNotificationCenter defaultCenter] postNotificationName:PBViewWillRemoveFromSuperviewNotification object:self];
     }
 }
 
@@ -407,8 +398,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_loadData:(id)data
 {
-    [self pb_initData];
-    
     [self setData:data];
     [[self pb_mapper] mapData:self.rootData forView:self];
     

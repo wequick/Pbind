@@ -133,8 +133,6 @@ UIKIT_EXTERN NSString *const PBViewDidClickHrefNotification;
 UIKIT_EXTERN NSString *const PBViewHrefKey;
 UIKIT_EXTERN NSString *const PBViewHrefParamsKey;
 
-UIKIT_EXTERN NSString *const PBViewWillRemoveFromSuperviewNotification;
-
 UIKIT_STATIC_INLINE NSString *PBHrefEncode(NSString *href)
 {
     return (NSString *)
