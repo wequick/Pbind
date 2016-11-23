@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PBMapper.h"
+#import "PBLayoutMapper.h"
 
 //______________________________________________________________________________
 // PBRowMapperDelegate
@@ -60,6 +61,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) PBRowFloating floating;
 
 @property (nonatomic, strong) NSString *layout;
+@property (nonatomic, strong) PBLayoutMapper *layoutMapper;
 
 @property (nonatomic, assign) Class viewClass;
 

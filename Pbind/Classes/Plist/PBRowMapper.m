@@ -214,4 +214,14 @@ static const CGFloat kHeightUnset = -2;
     return self.height;
 }
 
+- (void)setLayout:(NSString *)layout {
+    if (_layout != nil && [_layout isEqualToString:layout]) {
+        return;
+    }
+    
+    _layout = layout;
+    NSDictionary *dict = PBPlist(layout);
+    _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
+}
+
 @end

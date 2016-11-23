@@ -7,10 +7,13 @@
 //
 
 #import "PBLayoutMapper.h"
+#import "PBRowMapper.h"
+#import "UIView+Pbind.h"
+#import "Pbind+API.h"
 
 @implementation PBLayoutMapper
 
-- (void)addtoParent:(UIView *)view {
+- (void)renderToView:(UIView *)view {
     NSInteger viewCount = self.views.count;
     if (viewCount == 0) {
         return;

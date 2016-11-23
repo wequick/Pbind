@@ -6,7 +6,7 @@
 //
 //
 
-#import <Pbind/Pbind.h>
+#import "PBMapper.h"
 
 @interface PBLayoutMapper : PBMapper
 
@@ -34,6 +34,6 @@
 
  @param view The parent view.
  */
-- (void)addtoParent:(UIView *)view;
+- (void)renderToView:(UIView *)view;
 
 @end

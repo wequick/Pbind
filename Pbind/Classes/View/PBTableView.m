@@ -671,10 +671,8 @@
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
     }
     
-    if (row.layout != nil) {
-        NSDictionary *dict = PBPlist(row.layout);
-        PBLayoutMapper *layout = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
-        [layout addtoParent:cell.contentView];
+    if (row.layoutMapper != nil) {
+        [row.layoutMapper renderToView:cell.contentView];
     }
     
     // Default to non-selection
