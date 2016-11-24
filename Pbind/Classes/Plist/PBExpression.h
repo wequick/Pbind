@@ -50,10 +50,9 @@
 {
     struct {
         // unary operators
-        unsigned int unaryNot:1;    // '!' before variable
+        unsigned int unaryNot:2;    // '!', '!!' before variable
         unsigned int negative:1;    // '-' before variable
         unsigned int animated:1;    // '~'
-        unsigned int opReserved0:1;
         
         // arithmetic operators
         unsigned int plus:1;        // '+'
@@ -61,22 +60,21 @@
         unsigned int times:1;       // '*'
         unsigned int divide:1;      // '/'
         
-        // comparision operators
-        unsigned int lesser:1;      // '<'
-        unsigned int greater:1;     // '>'
-        unsigned int equal:1;       // '='
-        unsigned int multiNot:1;    // '!' after variable
-        
         // conditional operators
         unsigned int test:1;        // '?'
         unsigned int unaryTest:1;   // '?:'
         
         // flags
-        unsigned int onewayBinding:1;   // '_'
-        unsigned int duplexBinding:1;   // '__'
+        unsigned int onewayBinding:1;   // '='
+        unsigned int duplexBinding:1;   // '=='
         
+        // comparision operators
+        unsigned int lesser:1;      // '<'
+        unsigned int greater:1;     // '>'
+        unsigned int equal:2;       // '=', '=='
+        unsigned int multiNot:1;    // '!' after variable
+
         // tags
-        unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
         unsigned int mapToData:1;               // '$'
         unsigned int mapToTarget:1;             // '.'
         unsigned int mapToTargetData:1;         // '.$'
@@ -84,7 +82,8 @@
         unsigned int mapToFormFieldValue:1;     // '>@'
         unsigned int mapToActiveController:1;   // '@^'
         unsigned int mapToAliasView:1;          // '@alias.'
-        unsigned int mapToReserved0:1;
+        
+        unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
     } _flags;
     
     NSString *_format;

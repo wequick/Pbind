@@ -72,7 +72,12 @@ static const int kDataTagUnset = 0xFF;
     
     // Unary operator
     switch (*p) {
-        case '!': _flags.unaryNot = 1; p++; break;
+        case '!':
+            _flags.unaryNot = 1; p++;
+            if (*p == '!') {
+                _flags.unaryNot = 2; p++;
+            }
+            break;
         case '-': _flags.negative = 1; p++; break;
         default: break;
     }
@@ -184,7 +189,7 @@ static const int kDataTagUnset = 0xFF;
             break;
         case '=': _flags.equal = 1; p++;
             if (*p == '=') {
-                // _flags.equal = 2;
+                _flags.equal = 2;
                 p++;
             }
             break;
@@ -349,6 +354,9 @@ static const int kDataTagUnset = 0xFF;
             temp = [value intValue] == 0;
         } else {
             temp = value == nil;
+        }
+        if (_flags.unaryNot == 2) {
+            temp = !temp;
         }
         value = [NSNumber numberWithBool:temp];
     }
@@ -613,7 +621,9 @@ static const int kDataTagUnset = 0xFF;
     }
     
     // Unary operators
-    if (_flags.unaryNot) {
+    if (_flags.unaryNot == 2) {
+        [s appendString:@"!!"];
+    } else if (_flags.unaryNot == 1) {
         [s appendString:@"!"];
     }
     if (_flags.negative) {
@@ -670,9 +680,12 @@ static const int kDataTagUnset = 0xFF;
         if (_flags.multiNot) {
             [s appendString:@"!"];
         }
-        if (_flags.equal) {
+        if (_flags.equal == 2) {
+            [s appendString:@"=="];
+        } else if (_flags.equal == 1) {
             [s appendString:@"="];
         }
+        
         if (_flags.plus) {
             [s appendString:@"+"];
         }
