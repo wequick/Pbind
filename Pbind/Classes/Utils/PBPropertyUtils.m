@@ -1,41 +1,49 @@
 //
-//  PBSpellChecker.m
+//  PBPropertyUtils.m
 //  Pods
 //
 //  Created by Galen Lin on 2016/10/28.
 //
 //
 
-#import "PBSpellChecker.h"
+#import "PBPropertyUtils.h"
 #import <objc/runtime.h>
 
-@implementation PBSpellChecker
+@implementation PBPropertyUtils
 
-+ (instancetype)defaultSpellChecker {
-    static PBSpellChecker *o;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        o = [[self alloc] init];
-    });
-    return o;
-}
-
-- (BOOL)isSimilarString:(const char *)str1 toString:(const char *)str2 {
-    NSInteger len1 = strlen(str1);
-    NSInteger len2 = strlen(str2);
-    NSInteger len = MIN(len1, len2);
-    NSInteger i = 0;
-    char *p1 = (char *)str1;
-    char *p2 = (char *)str2;
-    while (i++ < len) {
-        if (*p1++ != *p2++) {
-            break;
-        }
++ (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object
+{
+    if (value == nil) {
+        value = [self safeNilValueForKey:key ofObject:object];
     }
-    return ((i << 1) >= MAX(len1, len2));
+    
+    @try {
+        [object setValue:value forKey:key];
+    } @catch (NSException *exception) {
+        [self printAvailableKeysForKey:key withValue:value ofObject:object];
+    }
 }
 
-- (void)checkKeysLikeKey:(NSString *)key withValue:(id)value ofObject:(id)object {
++ (id)safeNilValueForKey:(NSString *)key ofObject:(id)object {
+    objc_property_t property = class_getProperty([object class], [key UTF8String]);
+    if (property == nil) {
+        return nil;
+    }
+    
+    const char *attrs = property_getAttributes(property);
+    if (attrs[1] == '@') {
+        // NSObject accepts nil value.
+        return nil;
+    }
+    
+    // Non-object type DO NOT accepts nil value.
+    // consider that the nil value can only be set by a `PBExpression'
+    // which is generally map to an atomic type(BOOL, int, char and etc) other than a NSObject.
+    // Hereby, return a `zero' NSNumber which would be automatically unwrap to the related-type.
+    return [NSNumber numberWithInt:0];
+}
+
++ (void)printAvailableKeysForKey:(NSString *)key withValue:(id)value ofObject:(id)object {
     NSMutableString *tips = [[NSMutableString alloc] init];
     [tips appendFormat:@"The key '%@' is not defined in class '%@'!", key, [[object class] description]];
     
@@ -51,7 +59,7 @@
     NSLog(@"Pbind: %@", tips);
 }
 
-- (void)collectSimilarKeys:(NSMutableArray *)outKeys
++ (void)collectSimilarKeys:(NSMutableArray *)outKeys
                    likeKey:(const char *)keyStr
                  valueType:(Class)valueType
                 objectType:(Class)objectType
@@ -65,6 +73,7 @@
         
         Class propertyType = nil;
         NSString* propertyAttributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+        // attributes format refer to: https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
         NSArray* splitPropertyAttributes = [propertyAttributes componentsSeparatedByString:@"\""];
         if ([splitPropertyAttributes count] >= 2)
         {
@@ -109,4 +118,20 @@
     
     [self collectSimilarKeys:outKeys likeKey:keyStr valueType:valueType objectType:objectType];
 }
+
++ (BOOL)isSimilarString:(const char *)str1 toString:(const char *)str2 {
+    NSInteger len1 = strlen(str1);
+    NSInteger len2 = strlen(str2);
+    NSInteger len = MIN(len1, len2);
+    NSInteger i = 0;
+    char *p1 = (char *)str1;
+    char *p2 = (char *)str2;
+    while (i++ < len) {
+        if (*p1++ != *p2++) {
+            break;
+        }
+    }
+    return ((i << 1) >= MAX(len1, len2));
+}
+
 @end

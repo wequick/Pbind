@@ -13,7 +13,7 @@
 #import "PBMutableExpression.h"
 #import "PBClientMapper.h"
 #import "PBArray.h"
-#import "PBSpellChecker.h"
+#import "PBPropertyUtils.h"
 
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
@@ -634,10 +634,10 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     if ([key length] > 1 && [key characterAtIndex:0] == '+') {
         [self setValue:value forAdditionKey:[key substringFromIndex:1]];
     } else {
+        id target = self;
         NSArray *keys = [key componentsSeparatedByString:@"."];
         NSUInteger N = keys.count;
         if (N > 1) {
-            id target = self;
             int i = 0;
             for (; i < N - 1; i++) {
                 key = keys[i];
@@ -649,19 +649,10 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
                 }
             }
             key = keys[i];
-            
-            @try {
-                [target setValue:value forKey:key];
-            } @catch (NSException *exception) {
-                [[PBSpellChecker defaultSpellChecker] checkKeysLikeKey:key withValue:value ofObject:target];
-            }
-        } else {
-            @try {
-                [super setValue:value forKey:key];
-            } @catch (NSException *exception) {
-                [[PBSpellChecker defaultSpellChecker] checkKeysLikeKey:key withValue:value ofObject:self];
-            }
         }
+        
+        // Safely set value for key
+        [PBPropertyUtils setValue:value forKey:key toObject:target];
     }
 }
 
