@@ -113,6 +113,7 @@
 - (void)testCanParseComparisionOperators {
     NSArray *list = @[@1, @2];
     [self shouldParse:@"$count=2" toValue:@(YES) withData:list];
+    [self shouldParse:@"$count==2" toValue:@(YES) withData:list];
     [self shouldParse:@"$count!=2" toValue:@(NO) withData:list];
     [self shouldParse:@"$count>=2" toValue:@(YES) withData:list];
     [self shouldParse:@"$count<=2" toValue:@(YES) withData:list];
@@ -121,6 +122,12 @@
     [self shouldParse:@"$count<3" toValue:@(YES) withData:list];
     [self shouldParse:@"$count>2" toValue:@(NO) withData:list];
     [self shouldParse:@"$count<2" toValue:@(NO) withData:list];
+}
+
+- (void)testCanParseLogicOperators {
+    id data = nil;
+    [self shouldParse:@"!$" toValue:@(YES) withData:data];
+    [self shouldParse:@"!!$" toValue:@(NO) withData:data];
 }
 
 #pragma mark -
