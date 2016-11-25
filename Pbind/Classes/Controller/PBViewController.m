@@ -32,6 +32,9 @@
 }
 
 - (void)dealloc {
+    if (![self isViewLoaded]) {
+        return;
+    }
     [self.view pb_unbind];
 }
 
