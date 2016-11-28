@@ -593,6 +593,10 @@ static const int kDataTagUnset = 0xFF;
         return;
     }
     
+    // Free the property first
+    [_bindingData setValue:nil forKeyPath:_variable];
+    
+    // Unobserve the property
     [_bindingData removeObserver:self forKeyPath:_variable];
     if (_flags.duplexBinding) {
         [_bindingOwner removeObserver:self forKeyPath:_bindingKeyPath];
