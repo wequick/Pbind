@@ -217,6 +217,9 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     // Notify loading start
     [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:self];
     
+    // Unbind
+    [self pb_unbind];
+    
     self.pb_preparation = preparation;
     self.pb_transformation = transformation;
     NSInteger N = self.pb_clients.count;
@@ -432,7 +435,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_reloadClient
 {
-    [self pb_unbind];
     [self pb_reloadClientForView:self];
 }
 
