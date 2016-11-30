@@ -126,8 +126,14 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             [self _endPullup];
         }
     } else {
+        if (!self.pb_needsReload) {
+            return;
+        }
+        
         [super reloadData];
         dispatch_async(dispatch_get_main_queue(), ^{
+            self.pb_needsReload = NO;
+            
             if (self.autoResize) {
                 CGSize size = self.collectionViewLayout.collectionViewContentSize;
                 self.contentSize = size;
@@ -140,7 +146,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             }
             
             // Select the item with index path.
-            
             BOOL needsSelectedItem = (_selectedIndexPath != nil && [self dataAtIndexPath:_selectedIndexPath] != nil);
             if (!needsSelectedItem) {
                 return;
@@ -156,6 +161,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             [self collectionView:self didSelectItemAtIndexPath:_selectedIndexPath];
         });
     }
+}
+
+- (void)pb_reset {
+    [super pb_reset];
+    _selectedData = nil;
+    _selectedIndexPath = nil;
 }
 
 #pragma mark - UICollectionViewDelegate

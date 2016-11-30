@@ -261,6 +261,10 @@
             [self _endPullup];
         }
     } else {
+        if (!self.pb_needsReload) {
+            return;
+        }
+        
         if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
             PBScrollView *headerView = (id) self.tableHeaderView;
             [headerView reloadData];
@@ -278,6 +282,9 @@
         }
         
         [super reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.pb_needsReload = NO;
+        });
     }
 }
 

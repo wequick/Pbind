@@ -43,7 +43,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 @dynamic client;
 @dynamic clients;
 @dynamic data;
-@dynamic needsLoad;
 
 #pragma mark -
 #pragma mark - Override methods
@@ -236,6 +235,8 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     // Load request parallel
     for (NSInteger i = 0; i < N; i++) {
         PBClient *client = [self.pb_clients objectAtIndex:i];
+        [client cancel];
+
         PBClientMapper *mapper = [self.pb_clientMappers objectAtIndex:i];
         [mapper updateWithData:self.data andView:self];
         
@@ -273,8 +274,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
                 userInfo = @{PBViewHasHandledLoadErrorKey:@(handledError)};
             }
             
-            [client cancel];
-            
             id data = response.data;
             if (transformation) {
                 data = transformation(data, response.error);
@@ -283,6 +282,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
                 self.pb_preparation = nil;
                 self.pb_transformation = nil;
                 self.data[i] = data;
+                self.pb_needsReload = YES;
                 [self _pb_mapData:self.rootData];
                 [self layoutIfNeeded];
             }
@@ -297,6 +297,8 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 }
 
 - (void)_pb_initData {
+    self.pb_needsReload = YES;
+    
     PBMapper *mapper = [self pb_mapper];
     if (mapper == nil) {
         [self pb_initData];
@@ -343,7 +345,9 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         }
         
         [self pb_mapData:nil];
-    } else if ([self respondsToSelector:@selector(reloadData)]) {
+    }
+    
+    if ([self respondsToSelector:@selector(reloadData)]) {
         [(id)self reloadData];
     }
 }
@@ -454,16 +458,30 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_unbind
 {
-    NSDictionary *expressions = [self pb_expressions];
+    [self _pb_unbindView:self];
+    [self pb_reset];
+}
+
+- (void)pb_reset
+{
+    self.data = nil;
+    self.pb_needsReload = YES;
+    for (UIView *subview in self.subviews) {
+        [subview pb_reset];
+    }
+}
+
+- (void)_pb_unbindView:(UIView *)view {
+    NSDictionary *expressions = [view pb_expressions];
     if (expressions != nil) {
         for (NSString *key in expressions) {
             PBExpression *expression = [expressions objectForKey:key];
-            [expression unbind:self forKeyPath:key];
+            [expression unbind:view forKeyPath:key];
         }
     }
     
-    for (UIView *subview in self.subviews) {
-        [subview pb_unbind];
+    for (UIView *subview in view.subviews) {
+        [self _pb_unbindView:subview];
     }
 }
 
@@ -680,17 +698,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         return YES;
     }
     return ![self.pb_unmappableKeys containsObject:keyPath];
-}
-
-- (void)setNeedsLoad:(BOOL)needsLoad
-{
-    if (needsLoad) {
-        if (self.data == nil && self.client != nil) {
-            [self pb_pullData];
-        } else {
-            [self pb_loadData:self.data];
-        }
-    }
 }
 
 - (void)setExpression:(NSString *)expression forKeyPath:(NSString *)keyPath
@@ -931,6 +938,16 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 }
 
 - (void)setData:(id)value {
+    // If the `data' changed, then we needs to be reload
+    id data = self.data;
+    if (data == nil) {
+        if (value != nil) {
+            self.pb_needsReload = YES;
+        }
+    } else if (![data isEqual:value]) {
+        self.pb_needsReload = YES;
+    }
+    
     [self setValue:value forAdditionKey:@"data"];
 }
 
@@ -1008,6 +1025,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (NSString *)alias {
     return [self valueForAdditionKey:@"alias"];
+}
+
+- (void)setPb_needsReload:(BOOL)value {
+    [self setValue:[NSNumber numberWithBool:value] forAdditionKey:@"pb_needsReload"];
+}
+
+- (BOOL)pb_needsReload {
+    return [[self valueForAdditionKey:@"pb_needsReload"] boolValue];
 }
 
 @end

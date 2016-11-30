@@ -49,7 +49,7 @@
 @property (nonatomic, strong, readonly, getter=rootData) id rootData;
 @property (nonatomic, strong) id data;
 @property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
-@property (nonatomic, assign) BOOL needsLoad;
+@property (nonatomic, assign) BOOL pb_needsReload;
 
 @property (nonatomic, assign, readonly) BOOL pb_loading;
 @property (nonatomic, assign) BOOL pb_interrupted;
@@ -115,6 +115,11 @@
  Unbind all the observers from the view.
  */
 - (void)pb_unbind;
+
+/**
+ Reset all the temporary data after `pb_unbind'
+ */
+- (void)pb_reset;
 
 @end
 
