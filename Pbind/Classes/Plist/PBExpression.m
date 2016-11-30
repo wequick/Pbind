@@ -126,10 +126,10 @@ static const int kDataTagUnset = 0xFF;
         case '.':
             p++;
             if (*p == '$') {
-                _flags.mapToTargetData = 1;
+                _flags.mapToOwnerViewData = 1;
                 p++;
             } else {
-                _flags.mapToTarget = 1;
+                _flags.mapToOwnerView = 1;
             }
             break;
         case '>':
@@ -270,10 +270,10 @@ static const int kDataTagUnset = 0xFF;
         }
         
         return [self _dataSourceWithData:data atIndex:dataIndex];
-    } else if (_flags.mapToTarget) {
-        return target;
-    } else if (_flags.mapToTargetData) {
-        return [self _dataSourceWithData:[target data] atIndex:0];
+    } else if (_flags.mapToOwnerView) {
+        return context;
+    } else if (_flags.mapToOwnerViewData) {
+        return [self _dataSourceWithData:[context data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
     } else if (_flags.mapToFormFieldText) {
@@ -537,6 +537,10 @@ static const int kDataTagUnset = 0xFF;
 
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context {
     id value = [self valueWithData:data keyPath:targetKeyPath target:target context:context];
+    [self setValue:value toTarget:target forKeyPath:targetKeyPath];
+}
+
+- (void)setValue:(id)value toTarget:(id)target forKeyPath:(NSString *)targetKeyPath {
     value = [self validatingValue:value forKeyPath:targetKeyPath];
     if ([target respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
         [target pb_setValue:value forKeyPath:targetKeyPath];
@@ -549,9 +553,6 @@ static const int kDataTagUnset = 0xFF;
 {
     id newValue = [change objectForKey:NSKeyValueChangeNewKey];
     if ([newValue isEqual:[NSNull null]]) {
-        if ([object isKindOfClass:[UIView class]]) {
-            return;
-        }
         newValue = nil;
     }
     id contextObject = (__bridge id)(context);
@@ -564,7 +565,6 @@ static const int kDataTagUnset = 0xFF;
             PBMutableExpression *parent = (id) self.parent;
             newValue = [parent valueByUpdatingObservedValue:newValue fromChild:self];
         }
-        newValue = [self validatingValue:newValue forKeyPath:contextKeyPath];
     } else {
         contextKeyPath = _variable;
     }
@@ -577,7 +577,7 @@ static const int kDataTagUnset = 0xFF;
     if (_flags.duplexBinding) {
         [contextObject removeObserver:self forKeyPath:contextKeyPath context:(__bridge void *)(object)];
     }
-    [contextObject setValue:newValue forKeyPath:contextKeyPath];
+    [self setValue:newValue toTarget:contextObject forKeyPath:contextKeyPath];
 //    NSLog(@"%@->%@, %@->%@", keyPath, contextKeyPath, [[object class] description], [[contextObject class] description]);
     if (_flags.duplexBinding) {
         [contextObject addObserver:self forKeyPath:contextKeyPath options:NSKeyValueObservingOptionNew context:(__bridge void *)(object)];
@@ -593,8 +593,11 @@ static const int kDataTagUnset = 0xFF;
         return;
     }
     
-    // Free the property first
-    [_bindingData setValue:nil forKeyPath:_variable];
+    // Free the property first if the data source is not from custom
+    BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != kDataTagUnset));
+    if (!isMapToCustomData) {
+        [_bindingData setValue:nil forKeyPath:_variable];
+    }
     
     // Unobserve the property
     [_bindingData removeObserver:self forKeyPath:_variable];
@@ -643,9 +646,9 @@ static const int kDataTagUnset = 0xFF;
         } else {
             [s appendString:@"$"];
         }
-    } else if (_flags.mapToTarget) {
+    } else if (_flags.mapToOwnerView) {
         [s appendString:@"."];
-    } else if (_flags.mapToTargetData) {
+    } else if (_flags.mapToOwnerViewData) {
         [s appendString:@".$"];
     } else if (_flags.mapToActiveController) {
         [s appendString:@"@"];

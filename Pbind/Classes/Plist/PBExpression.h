@@ -30,8 +30,8 @@
  
  * '$'      -> value for the key of the fetching data
  * '$[0-9]' -> value for the key of the fetching data's element at the index
- * '.'      -> value for the key of the target
- * '.$'     -> value for the key of the target data
+ * '.'      -> value for the key of the owner view
+ * '.$'     -> value for the key of the owner view data
  * '@^'     -> value for the key of the owner view controller
  * '@xx.'   -> value for the key of the alias view (by [view setAlias:@"xx"])
  * '>'      -> text for the owner form's key-named input
@@ -76,8 +76,8 @@
 
         // tags
         unsigned int mapToData:1;               // '$'
-        unsigned int mapToTarget:1;             // '.'
-        unsigned int mapToTargetData:1;         // '.$'
+        unsigned int mapToOwnerView:1;          // '.'
+        unsigned int mapToOwnerViewData:1;      // '.$'
         unsigned int mapToFormFieldText:1;      // '>'
         unsigned int mapToFormFieldValue:1;     // '>@'
         unsigned int mapToActiveController:1;   // '@^'
