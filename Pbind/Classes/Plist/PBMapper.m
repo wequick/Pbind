@@ -145,7 +145,11 @@
 - (void)initDataForView:(UIView *)view
 {
     // Init owner's properties
-    [_viewProperties initPropertiesForOwner:view];
+    if (![_viewProperties initPropertiesForOwner:view]) {
+        // TODO: avoid repeatly initializing.
+//        return;
+    }
+    
     // Init owner's tagged-subviews properties
     for (NSString *alias in _aliasProperties) {
         id subview = [view viewWithAlias:alias];
@@ -154,6 +158,7 @@
             [properties initPropertiesForOwner:subview];
         }
     }
+    
     // Init owner's subviews properties
     for (NSInteger index = 0; index < [_subviewProperties count]; index++) {
         if (index >= [[view subviews] count]) {
@@ -163,6 +168,7 @@
         PBMapperProperties *properties = [_subviewProperties objectAtIndex:index];
         [properties initPropertiesForOwner:subview];
     }
+    
     // Init owner's outlet view properties
     for (NSString *key in _outletProperties) {
         id subview = [view valueForKey:key];
@@ -183,12 +189,12 @@
 
 - (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
 {
-    [_properties mapData:data toOwner:self withTarget:self context:view];
+    [_properties mapData:data toTarget:self withContext:view];
 }
 
 - (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view
 {
-    [_properties mapData:data toOwner:self forKeyPath:key withTarget:self context:view];
+    [_properties mapData:data toTarget:self forKeyPath:key withContext:view];
 }
 
 - (void)mapData:(id)data forView:(UIView *)view
@@ -205,7 +211,7 @@
 - (void)dealloc
 {
     if (_properties != nil) {
-        [_properties unbind:self forKeyPath:nil];
+        [_properties unbind:self];
         _properties = nil;
     }
 }

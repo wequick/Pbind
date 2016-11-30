@@ -220,7 +220,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 {
     if (_properties != nil) {
         target = [target valueForKey:keyPath];
-        [_properties unbind:target forKeyPath:nil];
+        [_properties unbind:target];
         return;
     }
     
@@ -267,7 +267,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             [target setValue:value forKeyPath:keyPath];
         }
         
-        [_properties mapData:data toOwner:value withTarget:target context:context];
+        [_properties mapData:data toTarget:value withContext:context];
         return value;
     } else if ((_flags.onewayBinding || _flags.duplexBinding) && _variable == nil) {
         if (![self initMutableVariableWithData:data keyPath:keyPath target:target context:context]) {

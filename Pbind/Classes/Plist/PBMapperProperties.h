@@ -23,11 +23,12 @@
 
 + (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary;
 
-- (void)initPropertiesForOwner:(id)owner; // UIView
+- (BOOL)initPropertiesForOwner:(id)owner; // UIView
 
 - (void)initDataForOwner:(id)owner;
-- (void)mapData:(id)data toOwner:(id)owner withTarget:(id)target context:(UIView *)context;
-- (void)mapData:(id)data toOwner:(id)owner forKeyPath:(NSString *)keyPath withTarget:(id)target context:(UIView *)context;
+
+- (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context;
 
 - (BOOL)isExpressiveForKey:(NSString *)key;
 
@@ -46,6 +47,6 @@
 
  @param target the observed target
  */
-- (void)unbind:(id)target forKeyPath:(NSString *)keyPath;
+- (void)unbind:(id)target;
 
 @end

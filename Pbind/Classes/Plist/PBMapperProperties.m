@@ -89,10 +89,15 @@
     return [[_expressions allKeys] containsObject:key];
 }
 
-- (void)initPropertiesForOwner:(id)owner
+- (BOOL)initPropertiesForOwner:(id)owner
 {
+    if ([[owner pb_constants] isEqual:_constants]) {
+        return NO;
+    }
+    
     [owner setPb_constants:_constants];
     [owner setPb_expressions:_expressions];
+    return YES;
 }
 
 - (void)initDataForOwner:(id)owner
@@ -102,43 +107,38 @@
     }
 }
 
-- (void)mapData:(id)data toOwner:(id)owner withTarget:(id)target context:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context
 {
-    [self mapData:data toOwner:owner forKeyPath:nil withTarget:target context:context];
+    [self mapData:data toTarget:target forKeyPath:nil withContext:context];
 }
 
-- (void)mapData:(id)data toOwner:(id)owner forKeyPath:(NSString *)keyPath withTarget:(id)target context:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context
 {
     if (keyPath == nil) {
+        // Map all the expressions
         for (NSString *key in _expressions) {
             PBExpression *exp = _expressions[key];
-            id value = [exp valueWithData:data keyPath:key target:target context:context];
-            if (value != nil) {
-                [owner setValue:value forKeyPath:key];
-            }
-            [exp bindData:data toTarget:owner forKeyPath:key inContext:context];
+            [exp mapData:data toTarget:target forKeyPath:key inContext:context];
         }
-    } else {
-        PBExpression *exp = _expressions[keyPath];
-        if (exp == nil) {
-            return;
-        }
-        
-        id value = [exp valueWithData:data keyPath:keyPath target:target context:context];
-        if (value != nil) {
-            [owner setValue:value forKeyPath:keyPath];
-        }
-        [exp bindData:data toTarget:owner forKeyPath:keyPath inContext:context];
+        return;
     }
+    
+    // Map the specify expression
+    PBExpression *exp = _expressions[keyPath];
+    if (exp == nil) {
+        return;
+    }
+    
+    [exp mapData:data toTarget:target forKeyPath:keyPath inContext:context];
 }
 
-- (void)unbind:(id)target forKeyPath:(NSString *)keyPath
+- (void)unbind:(id)target
 {
     if (_expressions == nil) return;
     
     for (NSString *key in _expressions) {
         PBExpression *exp = [_expressions objectForKey:key];
-        [exp unbind:target forKeyPath:keyPath];
+        [exp unbind:target forKeyPath:key];
     }
 }
 
