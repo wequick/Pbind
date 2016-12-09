@@ -146,9 +146,23 @@ UIKIT_STATIC_INLINE UIEdgeInsets PBEdgeInsetsMake(CGFloat t, CGFloat l, CGFloat 
 UIKIT_STATIC_INLINE NSURL *PBResourceURL(NSString *resource, NSString *extension) {
     NSArray *preferredBundles = [Pbind allResourcesBundles];
     for (NSBundle *bundle in preferredBundles) {
-        NSURL *url = [bundle URLForResource:resource withExtension:extension];
-        if (url != nil) {
-            return url;
+        NSURL *url = [bundle bundleURL];
+        if ([url isFileURL]) {
+            // If the resource is in file system, while something recently added to the bundle,
+            // the bundle would not recognize it, which means:
+            //      [bundle URLForResource:resource withExtension:extension]
+            // return nil.
+            // So we had to manually check if the file exists and return the correct URL.
+            NSString *name = [NSString stringWithFormat:@"%@.%@", resource, extension];
+            NSString *path = [[bundle bundlePath] stringByAppendingPathComponent:name];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                return [NSURL URLWithString:name relativeToURL:url];
+            }
+        } else {
+            url = [bundle URLForResource:resource withExtension:extension];
+            if (url != nil) {
+                return url;
+            }
         }
     }
     return nil;
