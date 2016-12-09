@@ -37,10 +37,12 @@
     }
     
     // Non-object type DO NOT accepts nil value.
-    // consider that the nil value can only be set by a `PBExpression'
-    // which is generally map to an atomic type(BOOL, int, char and etc) other than a NSObject.
-    // Hereby, return a `zero' NSNumber which would be automatically unwrap to the related-type.
-    return [NSNumber numberWithInt:0];
+    // As simply, we can set the value to `[NSNumber numberWithInt:0]',
+    // but sometimes the default value for the key may not be zero,
+    // as UILabel.numberOfLines should takes 1. So, we creating a
+    // temporaty object with the related class and return it's initial value.
+    id tempObject = [[[object class] alloc] init];
+    return [tempObject valueForKey:key];
 }
 
 + (void)printAvailableKeysForKey:(NSString *)key withValue:(id)value ofObject:(id)object {
