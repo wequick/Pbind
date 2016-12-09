@@ -278,14 +278,16 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             if (transformation) {
                 data = transformation(data, response.error);
             }
-            if (data) {
-                self.pb_preparation = nil;
-                self.pb_transformation = nil;
-                self.data[i] = data;
-                self.pb_needsReload = YES;
-                [self _pb_mapData:self.rootData];
-                [self layoutIfNeeded];
+            if (data == nil) {
+                data = [NSNull null];
             }
+            
+            self.pb_preparation = nil;
+            self.pb_transformation = nil;
+            self.data[i] = data;
+            self.pb_needsReload = YES;
+            [self _pb_mapData:self.rootData];
+            [self layoutIfNeeded];
             
             self.pb_loadingCount--;
             if (self.pb_loadingCount == 0) {
