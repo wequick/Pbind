@@ -91,13 +91,19 @@
 
 - (BOOL)initPropertiesForOwner:(id)owner
 {
-    if ([[owner pb_constants] isEqual:_constants]) {
-        return NO;
+    BOOL changed = NO;
+    
+    if (![[owner pb_constants] isEqual:_constants]) {
+        [owner setPb_constants:_constants];
+        changed = YES;
     }
     
-    [owner setPb_constants:_constants];
-    [owner setPb_expressions:_expressions];
-    return YES;
+    if (![[owner pb_expressions] isEqual:_expressions]) {
+        [owner setPb_expressions:_expressions];
+        changed = YES;
+    }
+    
+    return changed;
 }
 
 - (void)initDataForOwner:(id)owner

@@ -826,6 +826,27 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 }
 
 - (void)setPb_constants:(NSDictionary *)constants {
+    NSDictionary *orgConstants = self.pb_constants;
+    if (orgConstants != nil) {
+        // Check if any key has been removed.
+        NSArray *orgKeys = [orgConstants allKeys];
+        NSArray *newKeys = [constants allKeys];
+        NSArray *removedKeys;
+        if (constants == nil || newKeys.count == 0) {
+            removedKeys = orgKeys;
+        } else {
+            NSPredicate *pd = [NSPredicate predicateWithFormat:@"NOT SELF IN %@", [constants allKeys]];
+            removedKeys = [[orgConstants allKeys] filteredArrayUsingPredicate:pd];
+        }
+        
+        if (removedKeys.count > 0) {
+            // Clear the value for the key removed.
+            for (NSString *key in removedKeys) {
+                [self pb_setValue:nil forKeyPath:key];
+            }
+        }
+    }
+    
     [self setValue:constants forAdditionKey:@"pb_constants"];
 }
 
@@ -834,6 +855,29 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 }
 
 - (void)setPb_expressions:(NSDictionary *)expressions {
+    NSDictionary *orgExpressions = self.pb_expressions;
+    if (orgExpressions != nil) {
+        // Check if any key has been removed.
+        NSArray *orgKeys = [orgExpressions allKeys];
+        NSArray *newKeys = [expressions allKeys];
+        NSArray *removedKeys;
+        if (expressions == nil || newKeys.count == 0) {
+            removedKeys = orgKeys;
+        } else {
+            NSPredicate *pd = [NSPredicate predicateWithFormat:@"NOT SELF IN %@", [expressions allKeys]];
+            removedKeys = [[orgExpressions allKeys] filteredArrayUsingPredicate:pd];
+        }
+        
+        if (removedKeys.count > 0) {
+            // Clear the value for the key removed.
+            for (NSString *key in removedKeys) {
+                PBExpression *expression = [orgExpressions objectForKey:key];
+                [expression unbind:self forKeyPath:key];
+                [self pb_setValue:nil forKeyPath:key];
+            }
+        }
+    }
+    
     [self setValue:expressions forAdditionKey:@"pb_expressions"];
 }
 

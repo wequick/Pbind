@@ -144,10 +144,16 @@
 
 - (void)initDataForView:(UIView *)view
 {
-    // Init owner's properties
-    if (![_viewProperties initPropertiesForOwner:view]) {
-        // TODO: avoid repeatly initializing.
-//        return;
+    if (_viewProperties == nil) {
+        // Reset the view properties
+        [view setPb_constants:nil];
+        [view setPb_expressions:nil];
+    } else {
+        // Init owner's properties
+        if (![_viewProperties initPropertiesForOwner:view]) {
+            // TODO: avoid repeatly initializing.
+            //        return;
+        }
     }
     
     // Init owner's tagged-subviews properties
