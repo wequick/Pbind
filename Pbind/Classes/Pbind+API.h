@@ -34,6 +34,20 @@
  */
 + (NSArray<NSBundle *> *)allResourcesBundles;
 
+/**
+ Reload all the views who are using the `plist`.
+
+ @param plistPath the path of the plist
+ */
++ (void)reloadViewsOnPlistUpdate:(NSString *)plist;
+
+/**
+ Reload all the views who are using the API(`action`).
+
+ @param action the action of the API
+ */
++ (void)reloadViewsOnAPIUpdate:(NSString *)action;
+
 @end
 
 /**
@@ -174,4 +188,38 @@ UIKIT_STATIC_INLINE NSDictionary *PBPlist(NSString *plistName) {
         return nil;
     }
     return [NSDictionary dictionaryWithContentsOfURL:url];
+}
+
+/**
+ Look up the visible controller from the given controller
+
+ @param controller current controller
+
+ @return the visible controller
+ */
+UIKIT_STATIC_INLINE UIViewController *PBVisibleController(UIViewController *controller) {
+    UIViewController *presentedController = [controller presentedViewController];
+    if (presentedController != nil) {
+        return PBVisibleController(presentedController);
+    }
+    
+    if ([controller isKindOfClass:[UINavigationController class]]) {
+        return PBVisibleController([(id)controller topViewController]);
+    }
+    
+    if ([controller isKindOfClass:[UITabBarController class]]) {
+        return PBVisibleController([(id)controller selectedViewController]);
+    }
+    
+    return controller;
+}
+
+/**
+ Look up the visible controller for the application
+
+ @return the top visible controller
+ */
+UIKIT_STATIC_INLINE UIViewController *PBTopController() {
+    UIViewController *rootController = [[UIApplication sharedApplication].delegate window].rootViewController;
+    return PBVisibleController(rootController);
 }

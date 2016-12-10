@@ -7,6 +7,7 @@
 //
 
 #import "Pbind+API.h"
+#import "UIView+Pbind.h"
 
 @implementation Pbind : NSObject
 
@@ -43,6 +44,18 @@ static NSMutableArray *kResourcesBundles = nil;
         [kResourcesBundles addObject:[NSBundle mainBundle]];
     }
     return kResourcesBundles;
+}
+
++ (void)reloadViewsOnPlistUpdate:(NSString *)plist {
+    // TODO: reload the specify views that using the plist.
+    UIViewController *controller = PBTopController();
+    [controller.view pb_reloadPlist];
+}
+
++ (void)reloadViewsOnAPIUpdate:(NSString *)action {
+    // TODO: reload the specify views that using the API.
+    UIViewController *controller = PBTopController();
+    [controller.view pb_reloadClient];
 }
 
 @end

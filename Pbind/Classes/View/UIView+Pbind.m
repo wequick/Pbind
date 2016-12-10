@@ -7,13 +7,14 @@
 //
 
 #import "UIView+Pbind.h"
-#import "Pbind.h"
+#import "Pbind+API.h"
 #import "PBClient.h"
 #import "PBMapper.h"
 #import "PBMutableExpression.h"
 #import "PBClientMapper.h"
 #import "PBArray.h"
 #import "PBPropertyUtils.h"
+#import "PBValueParser.h"
 
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
@@ -733,31 +734,13 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     id controller = self;
     while ((controller = [controller nextResponder]) != nil) {
         if ([controller isKindOfClass:[UIViewController class]]) {
-            return [self topcontroller:controller];
+            return PBVisibleController(controller);
         }
         
         if ([controller isKindOfClass:[UIWindow class]]) {
-            return [self topcontroller:[(id)controller rootViewController]];
+            return PBVisibleController([(id)controller rootViewController]);
         }
     }
-    return controller;
-}
-
-- (UIViewController *)topcontroller:(UIViewController *)controller
-{
-    UIViewController *presentedController = [controller presentedViewController];
-    if (presentedController != nil) {
-        return [self topcontroller:presentedController];
-    }
-    
-    if ([controller isKindOfClass:[UINavigationController class]]) {
-        return [self topcontroller:[(id)controller topViewController]];
-    }
-    
-    if ([controller isKindOfClass:[UITabBarController class]]) {
-        return [self topcontroller:[(id)controller selectedViewController]];
-    }
-    
     return controller;
 }
 
