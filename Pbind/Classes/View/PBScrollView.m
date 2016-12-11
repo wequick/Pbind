@@ -145,24 +145,24 @@
 
 - (void)setRow:(NSDictionary *)row {
     if (_row != nil && _rowViews != nil) {
-        // Reset
-        for (UIView *view in _rowViews) {
-            [view removeFromSuperview];
-        }
-        _rowViews = nil;
+        [self removeAllViews];
     }
     _row = row;
 }
 
 - (void)setRows:(NSArray *)rows {
     if (_rows != nil && _rowViews != nil) {
-        // Reset
-        for (UIView *view in _rowViews) {
-            [view removeFromSuperview];
-        }
-        _rowViews = nil;
+        [self removeAllViews];
     }
     _rows = rows;
+}
+
+- (void)removeAllViews {
+    for (UIView *view in _rowViews) {
+        [view removeFromSuperview];
+    }
+    _rowViews = nil;
+    [self render:nil];
 }
 
 - (void)initRowViewsIfNeeded
@@ -219,8 +219,6 @@
 }
 
 - (void)render:(NSIndexSet *)indexes {
-    if (_rowViews == nil) return;
-    
     id data = self.rootData;
     
     if (self.horizontal) {
