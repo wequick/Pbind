@@ -61,7 +61,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     } else {
         if (self.plist != nil) {
             if (self._pbPlistURL == nil) {
-                self._pbPlistURL = [self pb_URLForResource:self.plist withExtension:@"plist"];
+                self._pbPlistURL = PBResourceURL(self.plist, @"plist");
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
                    dispatch_sync(dispatch_get_main_queue(), ^{
                        [self _pb_initData];
@@ -79,18 +79,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             [self pb_repullData];
         }
     }
-}
-
-- (NSURL *)pb_URLForResource:(NSString *)resource withExtension:(NSString *)extension
-{
-    NSArray *preferredBundles = [Pbind allResourcesBundles];
-    for (NSBundle *bundle in preferredBundles) {
-        NSURL *url = [bundle URLForResource:resource withExtension:extension];
-        if (url != nil) {
-            return url;
-        }
-    }
-    return nil;
 }
 
 - (NSArray *)pb_clientMappers
@@ -429,7 +417,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     }
     
     // Reset the plist mapper
-    view._pbPlistURL = [view pb_URLForResource:view.plist withExtension:@"plist"];
+    view._pbPlistURL = PBResourceURL(view.plist, @"plist");
     view.PB_internalMapper = nil;
     PBMapper *mapper = [view pb_mapper];
     
