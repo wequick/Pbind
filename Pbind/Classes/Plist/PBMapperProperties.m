@@ -31,7 +31,9 @@
                 || [key isEqualToString:@"row"]
                 || [key isEqualToString:@"item"]
                 || [key isEqualToString:@"emptyRow"]
-                || [key isEqualToString:@"footer"]) { // ignores the action mapper cause it have done by self.
+                || [key isEqualToString:@"footer"]
+                || [key isEqualToString:@"action"]
+                || [key rangeOfString:@"next."].location == 0) { // ignores the action mapper cause it have done by self.
                 [properties setConstant:value forKey:key];
                 continue;
             }
@@ -109,7 +111,7 @@
 - (void)initDataForOwner:(id)owner
 {
     for (NSString *key in _constants) {
-        [owner setValue:_constants[key] forKey:key];
+        [owner setValue:_constants[key] forKeyPath:key];
     }
 }
 

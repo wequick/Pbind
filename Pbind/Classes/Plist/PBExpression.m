@@ -350,8 +350,10 @@ static const int kDataTagUnset = 0xFF;
     // Unary operators
     if (_flags.unaryNot) {
         BOOL temp;
-        if ([value respondsToSelector:@selector(intValue)]) {
+        if ([value isKindOfClass:[NSNumber class]]) {
             temp = [value intValue] == 0;
+        } else if ([value isKindOfClass:[NSString class]]) {
+            temp = value == nil || [value length] == 0 || [value isEqualToString:@"0"];
         } else {
             temp = value == nil;
         }

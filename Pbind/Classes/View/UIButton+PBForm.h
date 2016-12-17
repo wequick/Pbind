@@ -11,10 +11,6 @@
 
 @interface UIButton (PBForm) <PBInput, PBInputDelegate>
 
-@property (nonatomic, strong) NSString *type; // accepts ACTIONs(submit, present, push, popdown), radio
-@property (nonatomic, strong) NSString *action; // for present/push/popdown. action is the class name of the controller which confirms to protocol `PRTextInput'
-@property (nonatomic, strong) NSDictionary *actionProperties; // setValuesForKeysWithDictionary to `action controller'
-
 @property (nonatomic, strong) NSString *text;
 @property (nonatomic, strong) NSString *placeholder;
 @property (nonatomic, strong) UIColor *placeholderColor;

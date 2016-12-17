@@ -446,6 +446,12 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             return value;
         }
         
+        if (value == nil) {
+            if (_formatFlags.testEmpty) {
+                return nil;
+            }
+            value = [NSNull null];
+        }
         [_formatedArguments replaceObjectAtIndex:index withObject:value];
         return [self formatedValueWithArguments:_formatedArguments];
     }

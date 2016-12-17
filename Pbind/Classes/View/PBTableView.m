@@ -740,7 +740,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    PBViewClickHref(cell, cell.href);
+    
+#pragma mark - Depreciated href
+    NSString *href = cell.href;
+    if (href != nil) {
+        PBViewClickHref(cell, href);
+    }
+    
+    NSDictionary *action = cell.action;
+    if (action != nil) {
+        [PBAction dispatchActionForView:cell];
+    }
+    
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
         [_delegateInterceptor.receiver tableView:tableView didSelectRowAtIndexPath:indexPath];
     }

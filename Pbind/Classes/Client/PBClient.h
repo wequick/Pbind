@@ -29,7 +29,7 @@
 
 + (Class)requestClass; // default is PBRequest.
 + (instancetype)clientWithName:(NSString *)clientName;
-+ (void)registerAlias:(NSDictionary *)alias; // alias -> real
++ (void)registerAlias:(NSString *)alias; // alias -> real
 
 /**
  Register a debug server which used for instant run.
@@ -95,3 +95,9 @@ FOUNDATION_EXPORT NSInteger const PBClientCacheForever;
 FOUNDATION_EXPORT NSString *const PBClientWillLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBClientDidLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBResponseKey;
+
+#define pbclient(__alias__) \
+compatibility_alias _PBClient PBClient; \
++ (void) load { \
+  [self registerAlias:__alias__]; \
+}

@@ -25,11 +25,25 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
 
 + (instancetype)clientWithName:(NSString *)clientName
 {
-    NSString *realName = [kAliasNames objectForKey:clientName];
-    if (realName == nil) {
-        realName = clientName;
+    if (clientName == nil) {
+        if (kAliasNames == nil) {
+            return nil;
+        }
+        
+        clientName = [kAliasNames objectForKey:@""];
+        if (clientName == nil) {
+            return nil;
+        }
+    } else {
+        if (kAliasNames != nil) {
+            NSString *realName = [kAliasNames objectForKey:clientName];
+            if (realName != nil) {
+                clientName = realName;
+            }
+        }
     }
-    Class clientClazz = NSClassFromString(realName);
+    
+    Class clientClazz = NSClassFromString(clientName);
     if (clientClazz == nil) {
         return nil;
     }
@@ -37,13 +51,12 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
     return [[clientClazz alloc] init];
 }
 
-+ (void)registerAlias:(NSDictionary *)alias
++ (void)registerAlias:(NSString *)alias
 {
     if (kAliasNames == nil) {
-        kAliasNames = [NSMutableDictionary dictionaryWithDictionary:alias];
-    } else {
-        [kAliasNames addEntriesFromDictionary:alias];
+        kAliasNames = [[NSMutableDictionary alloc] init];
     }
+    [kAliasNames setObject:[[self class] description] forKey:alias];
 }
 
 + (void)registerDebugServer:(id (^)(PBClient *, PBRequest *))server {

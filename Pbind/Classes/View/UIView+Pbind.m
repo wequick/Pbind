@@ -15,6 +15,7 @@
 #import "PBArray.h"
 #import "PBPropertyUtils.h"
 #import "PBValueParser.h"
+#import "PBViewController.h"
 
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
@@ -61,6 +62,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     } else {
         if (self.plist != nil) {
             if (self._pbPlistURL == nil) {
+                [self pb_setInitialData:self.data];
                 self._pbPlistURL = PBResourceURL(self.plist, @"plist");
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
                    dispatch_sync(dispatch_get_main_queue(), ^{
@@ -405,6 +407,10 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 - (void)pb_reloadPlist
 {
     [self pb_unbind];
+    
+    // Re-init data if there is
+    [self setData:[self pb_initialData]];
+    
     [self pb_reloadPlistForView:self];
 }
 
@@ -477,6 +483,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 }
 
 - (void)_pb_resetMappersForView:(UIView *)view {
+    view.actionMapper = nil;
     if ([view respondsToSelector:@selector(pb_resetMappers)]) {
         [(id) view pb_resetMappers];
     }
@@ -930,6 +937,34 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return [self valueForAdditionKey:@"actions"];
 }
 
+- (void)setAction:(NSDictionary *)value {
+    [self setValue:value forAdditionKey:@"action"];
+}
+
+- (NSDictionary *)action {
+    return [self valueForAdditionKey:@"action"];
+}
+
+- (PBActionMapper *)actionMapper {
+    PBActionMapper *mapper = [self valueForAdditionKey:@"actionMapper"];
+    if (mapper != nil) {
+        return mapper;
+    }
+    
+    NSDictionary *action = [self action];
+    if (action == nil) {
+        return nil;
+    }
+    
+    mapper = [PBActionMapper mapperWithDictionary:action owner:nil];
+    [self setActionMapper:mapper];
+    return mapper;
+}
+
+- (void)setActionMapper:(PBActionMapper *)actionMapper {
+    [self setValue:actionMapper forAdditionKey:@"actionMapper"];
+}
+
 - (void)setClient:(NSString *)value {
     [self setValue:value forAdditionKey:@"client"];
 }
@@ -970,6 +1005,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (id)data {
     return [self valueForAdditionKey:@"data"];
+}
+
+- (void)pb_setInitialData:(id)value {
+    [self setValue:value forAdditionKey:@"initialData"];
+}
+
+- (id)pb_initialData {
+    return [self valueForAdditionKey:@"initialData"];
 }
 
 - (void)setHref:(NSString *)value {

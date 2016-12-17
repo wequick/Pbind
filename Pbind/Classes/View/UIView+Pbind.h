@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PBClient.h"
+#import "PBActionMapper.h"
 
 //______________________________________________________________________________
 
@@ -36,6 +37,9 @@
 @property (nonatomic, strong) NSDictionary *pb_expressions;
 
 @property (nonatomic, strong) NSString *plist;
+
+@property (nonatomic, strong) NSDictionary *action;
+@property (nonatomic, strong) PBActionMapper *actionMapper;
 
 @property (nonatomic, strong) NSArray *clients;
 @property (nonatomic, strong) NSDictionary *actions;

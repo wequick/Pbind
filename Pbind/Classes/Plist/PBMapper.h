@@ -35,6 +35,8 @@
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
 
 - (id)initWithDictionary:(NSDictionary *)dictionary;
+- (void)setPropertiesWithDictionary:(NSDictionary *)dictionary;
+
 - (void)initDataForView:(UIView *)view;
 - (void)mapData:(id)data forView:(UIView *)view;
 
