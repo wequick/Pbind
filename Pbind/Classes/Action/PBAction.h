@@ -32,7 +32,7 @@
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) id target;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) PBDictionary *params;
+@property (nonatomic, strong) NSDictionary *params;
 @property (nonatomic, strong) UIView *context;
 
 @property (nonatomic, assign) BOOL disabled;

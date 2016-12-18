@@ -11,7 +11,7 @@
 @implementation PBActionMapper
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
-    self.next = [[PBDictionary alloc] init];
+    self.next = [[NSMutableDictionary alloc] init];
     
     [super setPropertiesWithDictionary:dictionary];
     

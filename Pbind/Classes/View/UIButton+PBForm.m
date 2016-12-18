@@ -13,6 +13,14 @@
 
 @implementation UIButton (PBForm)
 
+- (void)setType:(NSString *)type {
+    [self setValue:type forAdditionKey:@"type"];
+}
+
+- (NSString *)type {
+    return [self valueForAdditionKey:@"type"];
+}
+
 - (void)setName:(NSString *)value {
     [self setValue:value forAdditionKey:@"name"];
 }
@@ -60,10 +68,6 @@
 
 - (NSString *)text {
     return [self titleForState:UIControlStateNormal];
-}
-
-- (NSString *)type {
-    return [self valueForAdditionKey:@"type"];
 }
 
 - (id)value {

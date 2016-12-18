@@ -8,14 +8,14 @@
 
 #import "PBTriggerAction.h"
 
-typedef void (*PBTriggerVoidFunc)(id target, SEL sel, ...);
-typedef BOOL (*PBTriggerNonvoidFunc)(id target, SEL sel, ...);
+//typedef void (*PBTriggerVoidFunc)(id target, SEL sel, ...);
+//typedef BOOL (*PBTriggerNonvoidFunc)(id target, SEL sel, ...);
 
 #define PBTARG(__i__) self.params[@"arg" # __i__]
 
 #define PBTriggerNonVoid(_TARGET_, _ACTION_, _ARG_COUNT_, _RETTYPE_, _RET_, _STATE_RET_) \
 _RETTYPE_ _RET_; \
-_RETTYPE_ (*func)(id target, SEL sel, ...) = imp; \
+_RETTYPE_ (*func)(id target, SEL sel, ...) = (_RETTYPE_ (*)(id, SEL, ...)) imp; \
 switch (_ARG_COUNT_) { \
     default: \
     case 0: ret = func(_TARGET_, _ACTION_); break; \
@@ -28,7 +28,7 @@ switch (_ARG_COUNT_) { \
 self.state.data = _STATE_RET_
 
 #define PBTriggerVoid(_TARGET_, _ACTION_, _ARG_COUNT_) \
-void (*func)(id target, SEL sel, ...) = imp; \
+void (*func)(id target, SEL sel, ...) = (void (*)(id, SEL, ...)) imp; \
 switch (_ARG_COUNT_) { \
 default: \
 case 0: func(_TARGET_, _ACTION_); break; \
@@ -57,11 +57,9 @@ case 5: func(_TARGET_, _ACTION_, PBTARG(0), PBTARG(1), PBTARG(2), PBTARG(3), PBT
         return;
     }
     
-    BOOL hasReturnValue = [self.params[@"return"] boolValue];
-    
     int argCount = 0;
     const char *name = [self.name UTF8String];
-    char *p = name;
+    char *p = (char *)name;
     while (*p != '\0') {
         if (*p == ':') {
             argCount++;
