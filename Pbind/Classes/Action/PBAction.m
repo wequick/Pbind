@@ -62,6 +62,10 @@ static NSMutableDictionary *kActionClasses;
     [self dispatchActionWithActionMapper:mapper context:lastAction.context from:lastAction];
 }
 
++ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context {
+    [self dispatchActionWithActionMapper:mapper context:context from:nil];
+}
+
 + (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper
                                context:(UIView *)context
                                   from:(PBAction *)lastAction

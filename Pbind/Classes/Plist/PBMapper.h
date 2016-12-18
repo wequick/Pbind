@@ -26,6 +26,7 @@
 {
     PBMapperProperties *_properties; // for self
     PBMapperProperties *_viewProperties; // for view
+    PBMapperProperties *_navProperties;// for view super controller's navigationItem
     NSMutableArray *_subviewProperties; // for view's subview
     NSMutableDictionary *_aliasProperties; // for view's aliased subview
     NSMutableDictionary *_outletProperties;// for view's outlet subview

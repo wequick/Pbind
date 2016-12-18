@@ -26,8 +26,8 @@
 + (void)registerTypes:(NSArray *)types;
 
 + (void)dispatchActionForView:(UIView *)view;
-
 + (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper from:(PBAction *)lastAction;
++ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context;
 
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) id target;

@@ -191,6 +191,42 @@ UIKIT_STATIC_INLINE NSDictionary *PBPlist(NSString *plistName) {
 }
 
 /**
+ Find the image with name in any resources bundles.
+
+ @param imageName the image name
+ @return the first found image
+ */
+UIKIT_STATIC_INLINE UIImage *PBImage(NSString *imageName) {
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
+    UIImage *image = nil;
+    for (NSBundle *bundle in preferredBundles) {
+        image = [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
+        if (image != nil) {
+            break;
+        }
+    }
+    return image;
+}
+
+/**
+ Get the localized string for key in any resources bundles.
+
+ @param key the key in the string table
+ @return the first found localized string for the key
+ */
+UIKIT_STATIC_INLINE NSString *PBLocalizedString(NSString *key) {
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
+    NSString *localeString = nil;
+    for (NSBundle *bundle in preferredBundles) {
+        localeString = [bundle localizedStringForKey:key value:nil table:nil];
+        if (localeString != nil) {
+            break;
+        }
+    }
+    return localeString;
+}
+
+/**
  Look up the visible controller from the given controller
 
  @param controller current controller

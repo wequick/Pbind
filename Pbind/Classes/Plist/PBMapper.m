@@ -108,6 +108,12 @@
         }
     }
     
+    NSDictionary *navProperties = [dictionary objectForKey:@"nav"];
+    if (navProperties != nil) {
+        _navProperties = [PBMapperProperties propertiesWithDictionary:navProperties];
+        [selfProperties removeObjectForKey:@"nav"];
+    }
+    
     _properties = [PBMapperProperties propertiesWithDictionary:selfProperties];
     [_properties initDataForOwner:self];
 }
@@ -130,6 +136,11 @@
             // TODO: avoid repeatly initializing.
             //        return;
         }
+    }
+    
+    // Init navigation item
+    if (_navProperties != nil) {
+        [_navProperties initDataForOwner:view.supercontroller.navigationItem];
     }
     
     // Init owner's tagged-subviews properties
@@ -188,6 +199,11 @@
     /* for view */
     /*----------*/
     [view pb_mapData:data];
+    
+    /* for navigation */
+    if (_navProperties != nil) {
+        [_navProperties mapData:view.rootData toTarget:view.supercontroller.navigationItem withContext:view];
+    }
 }
 
 - (void)dealloc

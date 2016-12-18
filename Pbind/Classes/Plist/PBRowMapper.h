@@ -78,4 +78,6 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 - (CGFloat)heightForData:(id)data rowDataSource:(id<PBRowDataSource>)dataSource atIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)heightForData:(id)data;
 
+- (UIView *)createView;
+
 @end

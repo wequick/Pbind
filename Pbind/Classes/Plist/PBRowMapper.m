@@ -224,4 +224,12 @@ static const CGFloat kHeightUnset = -2;
     _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
 }
 
+- (UIView *)createView {
+    UIView *view = [[self.viewClass alloc] init];
+    if (self.layoutMapper != nil) {
+        [self.layoutMapper renderToView:view];
+    }
+    return view;
+}
+
 @end
