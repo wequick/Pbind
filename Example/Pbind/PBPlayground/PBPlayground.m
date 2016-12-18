@@ -59,7 +59,7 @@ UIViewController *topcontroller(UIViewController *controller)
 {
     UIViewController *presentedController = [controller presentedViewController];
     if (presentedController != nil) {
-        return topcontroller(controller);
+        return topcontroller(presentedController);
     }
     
     if ([controller isKindOfClass:[UINavigationController class]]) {

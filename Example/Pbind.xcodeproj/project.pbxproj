@@ -34,6 +34,7 @@
 		F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500DA1D87ABCC0038A3E5 /* PbindAdapter.m */; };
 		F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */; };
 		F89500E11D87B0C20038A3E5 /* PBValueParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */; };
+		F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A839531E02A73A0014F259 /* PBCustomUIAction.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		0FDAE7C21C76D694B2FD3681 /* Pods_Pbind_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pbind_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D00B557B589B6EFFFCB852E /* Pods_Pbind_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pbind_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2627027C9C8652FB25A397AA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		55A1CBB835E651FB9CBFC89D /* Pods-Pbind_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* Pbind_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pbind_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -71,7 +73,6 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		C9A6AD796B424285D2184205 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F255872ABDC8B50205417D02 /* Pods-Pbind_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.release.xcconfig"; sourceTree = "<group>"; };
-		F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
 		F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBGroupMembers.plist; sourceTree = "<group>"; };
 		F84E74EB1D93717E00E97022 /* SGDirWatchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGDirWatchdog.h; sourceTree = "<group>"; };
@@ -92,6 +93,8 @@
 		F89500DD1D87AC0E0038A3E5 /* PBCreateGroupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCreateGroupController.h; sourceTree = "<group>"; };
 		F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCreateGroupController.m; sourceTree = "<group>"; };
 		F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBValueParserTests.m; sourceTree = "<group>"; };
+		F8A839521E02A73A0014F259 /* PBCustomUIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCustomUIAction.h; sourceTree = "<group>"; };
+		F8A839531E02A73A0014F259 /* PBCustomUIAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCustomUIAction.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				F255872ABDC8B50205417D02 /* Pods-Pbind_Example.release.xcconfig */,
-				F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */,
+				55A1CBB835E651FB9CBFC89D /* Pods-Pbind_Example.debug.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -251,6 +254,8 @@
 			children = (
 				F89500D41D87ABC00038A3E5 /* PBExampleClient.h */,
 				F89500D51D87ABC00038A3E5 /* PBExampleClient.m */,
+				F8A839521E02A73A0014F259 /* PBCustomUIAction.h */,
+				F8A839531E02A73A0014F259 /* PBCustomUIAction.m */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -326,6 +331,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = galenlin;
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						DevelopmentTeam = EAV3F88MTX;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -432,6 +440,7 @@
 				6003F59E195388D20070C39A /* PBAppDelegate.m in Sources */,
 				F89500DB1D87ABCC0038A3E5 /* UIImageView+PBExample.m in Sources */,
 				F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */,
+				F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */,
 				F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */,
 				6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */,
 				F84E74F01D93724D00E97022 /* PBPlayground.m in Sources */,
@@ -496,6 +505,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_TESTABILITY = YES;
@@ -536,6 +546,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -555,10 +566,12 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */;
+			baseConfigurationReference = 55A1CBB835E651FB9CBFC89D /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = EAV3F88MTX;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pbind/Pbind-Prefix.pch";
 				INFOPLIST_FILE = "Pbind/Pbind-Info.plist";
@@ -575,6 +588,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = EAV3F88MTX;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Pbind/Pbind-Prefix.pch";
 				INFOPLIST_FILE = "Pbind/Pbind-Info.plist";
@@ -587,9 +602,9 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -613,9 +628,9 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F7F3AB41D12DE1A81E664CF7 /* Pods-Pbind_Example.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",

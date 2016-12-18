@@ -8,7 +8,7 @@
 
 #import "PBGroupInfoController.h"
 
-@interface PBGroupInfoController ()
+@interface PBGroupInfoController () <UINavigationControllerDelegate>
 
 @property (nonatomic, strong) NSDictionary *groupParams;
 
@@ -27,7 +27,12 @@
     _groupId = @"111";
     _groupParams = @{@"group": @"@TGS"};
     [self.tableView setPlist:@"PBExample"];
+//    self.navigationController.delegate = self;
 }
+
+//- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+//    NSLog(@"xxxx %@", viewController);
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -40,11 +45,16 @@
 }
 
 - (void)clearChat:(id)sender {
-    
+    NSLog(@"!! clearChat");
 }
 
 - (void)quitGroup:(id)sender {
     
+}
+
+- (BOOL)editNicknameForGroup:(id)sender params:(NSDictionary *)params {
+    NSLog(@"%@, %@", sender, params);
+    return YES;
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {

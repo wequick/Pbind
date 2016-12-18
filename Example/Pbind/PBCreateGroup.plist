@@ -69,10 +69,28 @@
 				<dict>
 					<key>title</key>
 					<string>创建</string>
-					<key>type</key>
-					<string>submit</string>
 					<key>backgroundColor</key>
 					<string>#ff00ff</string>
+					<key>action</key>
+					<dict>
+						<key>type</key>
+						<string>pop</string>
+						<key>params</key>
+						<dict>
+							<key>title</key>
+							<string>new</string>
+						</dict>
+						<key>next.done</key>
+						<dict>
+							<key>type</key>
+							<string>toast</string>
+							<key>params</key>
+							<dict>
+								<key>message</key>
+								<string>Done!</string>
+							</dict>
+						</dict>
+					</dict>
 				</dict>
 			</dict>
 		</array>

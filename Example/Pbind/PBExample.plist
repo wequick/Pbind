@@ -47,14 +47,14 @@
 						<key>clazz</key>
 						<string>PBExampleGroupMemberAvatarCell</string>
 						<key>properties</key>
-                        <dict>
-                            <key>@1.avatarUrl</key>
-                            <string>.$customInfo.avatar</string>
-                            <key>@2.text</key>
-                            <string>.$nameCard</string>
-                            <key>@2.font</key>
-                            <string>{F:42}</string>
-                        </dict>
+						<dict>
+							<key>@1.avatarUrl</key>
+							<string>.$customInfo.avatar</string>
+							<key>@2.text</key>
+							<string>.$nameCard</string>
+							<key>@2.font</key>
+							<string>{F:42}</string>
+						</dict>
 					</dict>
 					<key>itemSize</key>
 					<string>{165,221}</string>
@@ -81,16 +81,21 @@
 							<string>#fff</string>
 							<key>accessoryType</key>
 							<string>:&gt;</string>
-							<key>href</key>
-							<string>push://PBTableViewController</string>
-							<key>hrefParams</key>
+							<key>action</key>
 							<dict>
-								<key>title</key>
-								<string>%(%@ ( %@ )),$groupName,$memberNum</string>
-								<key>plist</key>
-								<string>PBGroupMembers</string>
-								<key>data</key>
-								<string>$1.fullList</string>
+								<key>type</key>
+								<string>push</string>
+								<key>target</key>
+								<string>PBTableViewController</string>
+								<key>params</key>
+								<dict>
+									<key>title</key>
+									<string>%(%@ ( %@ )),$groupName,$memberNum</string>
+									<key>plist</key>
+									<string>PBGroupMembers</string>
+									<key>data</key>
+									<string>$1.fullList</string>
+								</dict>
 							</dict>
 						</dict>
 					</dict>
@@ -129,8 +134,22 @@
 							<string>群组公告</string>
 							<key>detailTextLabel.text</key>
 							<string>$notification</string>
-							<key>href</key>
-							<string>%!(action://alert?title=%@&amp;btns=确定),$notification</string>
+							<key>action</key>
+							<dict>
+								<key>type</key>
+								<string>alert</string>
+								<key>disabled</key>
+								<string>!$notification</string>
+								<key>params</key>
+								<dict>
+									<key>title</key>
+									<string>$notification</string>
+									<key>buttons</key>
+									<array>
+										<string>确定</string>
+									</array>
+								</dict>
+							</dict>
 						</dict>
 					</dict>
 				</array>
@@ -151,8 +170,24 @@
 							<string>我的群昵称</string>
 							<key>detailTextLabel.text</key>
 							<string>$1.nickname</string>
-							<key>href</key>
-							<string>%(ctl://editNicknameForGroup?nickname=%@),$1.nickname</string>
+							<key>action</key>
+							<dict>
+								<key>type</key>
+								<string>trigger</string>
+								<key>target</key>
+								<string>@^</string>
+								<key>name</key>
+								<string>editNicknameForGroup:params:</string>
+								<key>params</key>
+								<dict>
+									<key>arg0</key>
+									<string>.</string>
+									<key>arg1</key>
+									<string>$1.nickname</string>
+									<key>ret</key>
+									<string>BOOL</string>
+								</dict>
+							</dict>
 						</dict>
 					</dict>
 				</array>
@@ -169,8 +204,15 @@
 							<string>#fff</string>
 							<key>textLabel.text</key>
 							<string>清空聊天记录</string>
-							<key>href</key>
-							<string>ctl://clearChat</string>
+							<key>action</key>
+							<dict>
+								<key>type</key>
+								<string>trigger</string>
+								<key>target</key>
+								<string>@^</string>
+								<key>name</key>
+								<string>clearChat:</string>
+							</dict>
 						</dict>
 					</dict>
 				</array>
@@ -195,20 +237,40 @@
 					<integer>5</integer>
 					<key>title</key>
 					<string>删除并退出</string>
-					<key>href</key>
-					<string>action://alert?title=确定删除并退出群吗？&amp;btns=取消|确定</string>
-					<key>actions</key>
+					<key>action</key>
 					<dict>
-						<key>1</key>
+						<key>type</key>
+						<string>sheet</string>
+						<key>params</key>
 						<dict>
-							<key>clazz</key>
+							<key>title</key>
+							<string>确定删除并退出群吗？</string>
+							<key>buttons</key>
+							<array>
+								<string>取消</string>
+								<string>确定</string>
+							</array>
+						</dict>
+						<key>next.1</key>
+						<dict>
+							<key>type</key>
+							<string>delete</string>
+							<key>target</key>
 							<string>im</string>
-							<key>action</key>
+							<key>name</key>
 							<string>QuitGroup</string>
 							<key>params</key>
 							<string>@^groupParams</string>
-							<key>successTips</key>
-							<string>删除成功</string>
+							<key>next.success</key>
+							<dict>
+								<key>type</key>
+								<string>toast</string>
+								<key>params</key>
+								<dict>
+									<key>message</key>
+									<string>删除成功</string>
+								</dict>
+							</dict>
 						</dict>
 					</dict>
 				</dict>

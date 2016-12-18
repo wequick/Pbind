@@ -32,6 +32,11 @@
 				<string>.$customInfo.avatar</string>
 				<key>textLabel.text</key>
 				<string>.$nameCard</string>
+				<key>action</key>
+				<dict>
+					<key>type</key>
+					<string>dismiss</string>
+				</dict>
 			</dict>
 		</dict>
 	</dict>

@@ -10,6 +10,7 @@
 
 @implementation PBExampleClient
 
+@pbclient(@"im")
 - (void)loadRequest:(PBRequest *)request success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSString *action = request.action;

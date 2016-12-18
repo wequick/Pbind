@@ -21,9 +21,6 @@
     // 标注图宽度，用于Plist配置自动换算尺寸
     [Pbind setSketchWidth:1080];
     
-    // Client别名
-    [PBClient registerAlias:@{@"im": @"PBExampleClient"}];
-    
     // MBProgressHUD
     [[UIActivityIndicatorView appearanceWhenContainedIn:[MBProgressHUD class], nil] setColor:[UIColor whiteColor]];
     
@@ -61,7 +58,7 @@
 
 + (void)clientWillLoadRequest:(NSNotification *)note {
     UIWindow *window = [[UIApplication sharedApplication].delegate window];
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:window animated:NO];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:window animated:YES];
     hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8f];
     hud.mode = MBProgressHUDModeIndeterminate;
 //    hud.backgroundView.color = [UIColor colorWithWhite:0 alpha:.5f];
