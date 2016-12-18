@@ -12,6 +12,7 @@
 #import "PBExpression.h"
 #import "UIView+Pbind.h"
 #import "PBTextView.h"
+#import "Pbind+API.h"
 
 @implementation PBScrollView
 
@@ -124,19 +125,7 @@
 }
 
 - (UIView *)viewWithRow:(PBRowMapper *)row {
-    UIView *view;
-    NSBundle *bundle = [NSBundle bundleForClass:row.viewClass];
-    NSString *nibPath = [bundle pathForResource:row.nib ofType:@"nib"];
-    if (nibPath != nil && [[NSFileManager defaultManager] fileExistsAtPath:nibPath]) {
-        // Load controller from nib
-        view = [[bundle loadNibNamed:row.nib owner:self options:nil] firstObject];
-    } else {
-//        if ([row.nib rangeOfString:@"UI"].location != 0) {
-//            NSLog(@"Missing nib %@ in bundle with identifier %@ (path=%@)", row.nib, [bundle bundleIdentifier], nibPath);
-//        }
-        view = [[row.viewClass alloc] init];
-    }
-    [row initDataForView:view];
+    UIView *view = [row createView];
     if ([view respondsToSelector:@selector(setResizingDelegate:)]) {
         [(id)view setResizingDelegate:self];
     }

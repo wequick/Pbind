@@ -225,10 +225,35 @@ static const CGFloat kHeightUnset = -2;
 }
 
 - (UIView *)createView {
-    UIView *view = [[self.viewClass alloc] init];
-    if (self.layoutMapper != nil) {
-        [self.layoutMapper renderToView:view];
+    UIView *view = nil;
+    
+    // Try to instantiate from nib.
+    if (self.nib != nil) {
+        UINib *nib = PBNib(self.nib);
+        if (nib != nil) {
+            NSArray *views = [nib instantiateWithOwner:nil options:nil];
+            if (views.count > 0) {
+                for (id object in views) {
+                    if ([object isKindOfClass:[UIView class]]) {
+                        view = object;
+                        break;
+                    }
+                }
+            }
+        }
     }
+    
+    // Create from the view class.
+    if (view == nil) {
+        view = [[self.viewClass alloc] init];
+        if (self.layoutMapper != nil) {
+            [self.layoutMapper renderToView:view];
+        }
+    }
+    
+    // Init view
+    [self initDataForView:view];
+    
     return view;
 }
 

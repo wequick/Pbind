@@ -636,16 +636,7 @@
         return nil;
     }
     
-    // TODO: Add a patch bundle
-    NSArray *bundles = @[[NSBundle bundleForClass:row.viewClass],
-                         [NSBundle bundleForClass:self.supercontroller.class],
-                         /* patch bundle */];
-    for (NSBundle *bundle in bundles) {
-        if ([bundle pathForResource:row.nib ofType:@"nib"] != nil) {
-            return [UINib nibWithNibName:row.nib bundle:bundle];
-        }
-    }
-    return nil;
+    return PBNib(row.nib);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

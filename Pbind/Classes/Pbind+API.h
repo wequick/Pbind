@@ -197,6 +197,10 @@ UIKIT_STATIC_INLINE NSDictionary *PBPlist(NSString *plistName) {
  @return the first found image
  */
 UIKIT_STATIC_INLINE UIImage *PBImage(NSString *imageName) {
+    if (imageName == nil) {
+        return nil;
+    }
+    
     NSArray *preferredBundles = [Pbind allResourcesBundles];
     UIImage *image = nil;
     for (NSBundle *bundle in preferredBundles) {
@@ -211,10 +215,14 @@ UIKIT_STATIC_INLINE UIImage *PBImage(NSString *imageName) {
 /**
  Get the localized string for key in any resources bundles.
 
- @param key the key in the string table
+ @param key the key in the default string table: `Localizable.strings`
  @return the first found localized string for the key
  */
 UIKIT_STATIC_INLINE NSString *PBLocalizedString(NSString *key) {
+    if (key == nil) {
+        return nil;
+    }
+    
     NSArray *preferredBundles = [Pbind allResourcesBundles];
     NSString *localeString = nil;
     for (NSBundle *bundle in preferredBundles) {
@@ -224,6 +232,22 @@ UIKIT_STATIC_INLINE NSString *PBLocalizedString(NSString *key) {
         }
     }
     return localeString;
+}
+
+UIKIT_STATIC_INLINE UINib *PBNib(NSString *nibName) {
+    if (nibName == nil) {
+        return nil;
+    }
+    
+    NSArray *preferredBundles = [Pbind allResourcesBundles];
+    UINib *nib = nil;
+    for (NSBundle *bundle in preferredBundles) {
+        if ([bundle pathForResource:nibName ofType:@"nib"] != nil) {
+            nib = [UINib nibWithNibName:nibName bundle:bundle];
+            break;
+        }
+    }
+    return nib;
 }
 
 /**
