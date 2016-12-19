@@ -119,18 +119,6 @@
     }
 }
 
-- (void)setContentSize:(CGSize)contentSize {
-    [super setContentSize:contentSize];
-    NSLog(@"size: %.2f, %.2f", contentSize.width, contentSize.height);
-}
-
-- (CGSize)sizeThatFits:(CGSize)size {
-    
-    CGSize newSize = [super sizeThatFits:size];
-    NSLog(@"newSize: %.2f, %.2f", newSize.width, newSize.height);
-    return newSize;
-}
-
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
