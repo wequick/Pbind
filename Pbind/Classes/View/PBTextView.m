@@ -28,6 +28,7 @@
 
 - (void)config {
     self.delegate = self;
+    self.type = @"text";
 }
 
 - (id)value {
