@@ -1,0 +1,260 @@
+<h2><a href="/doc/pbaction#action组件" id=action组件 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action组件</h2>
+<p>Action组件由 <code>PBAction</code> 实现，用于定义交互行为标准，实现交互可配置化。</p>
+
+<p>基础参数列表：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>type</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">行为类型</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>disabled</strong></td>
+<td style="text-align: left">BOOL</td>
+<td style="text-align: left">是否禁用，默认NO，通常配置为表达式进行开关</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>params</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">附加参数</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.*</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，* 由不同Action决定</td>
+</tr>
+</tbody></table>
+<h2><a href="/doc/pbaction#pbnavigationaction" id=pbnavigationaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBNavigationAction</h2>
+<p>导航交互，用于配置界面跳转。接收 <strong>type</strong>：</p>
+<h3><a href="/doc/pbaction#push" id=push aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>push</h3>
+<p>弹出界面，附加配置：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>target</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">弹出ViewController类名</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>params</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">弹出ViewController初始化属性集</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.done</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，弹出结束后触发</td>
+</tr>
+</tbody></table>
+<h3><a href="/doc/pbaction#pop" id=pop aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>pop</h3>
+<p>退出界面，附加配置：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>target</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">返回ViewController类名，不填则返回上一个界面</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>params</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">返回ViewController更新属性集</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.done</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，弹出结束后触发</td>
+</tr>
+</tbody></table>
+<h3><a href="/doc/pbaction#present" id=present aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>present</h3>
+<p>弹出模式界面，配置同 <strong>push</strong>。</p>
+<h3><a href="/doc/pbaction#dismiss" id=dismiss aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>dismiss</h3>
+<p>退出模式界面，除不接收 <strong>target</strong> 参数外，配置同 <strong>pop</strong>。</p>
+<h2><a href="/doc/pbaction#pbalertaction" id=pbalertaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBAlertAction</h2>
+<p>弹窗交互，用于配置 <code>UIAlertController</code>。接收 <strong>type</strong>：</p>
+<h3><a href="/doc/pbaction#alert" id=alert aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>alert</h3>
+<p>确认对话框，对应 <code>UIAlertControllerStyleAlert</code>，接收的 <strong>params</strong> 配置：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>title</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">弹窗标题</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>message</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">弹窗内容</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>buttons</strong></td>
+<td style="text-align: left">Array</td>
+<td style="text-align: left">按钮文本数组</td>
+</tr>
+</tbody></table>
+
+<p><strong>next</strong> 配置：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>next.[0-N]</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，点击第 i 个按钮后触发</td>
+</tr>
+</tbody></table>
+<h3><a href="/doc/pbaction#sheet" id=sheet aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>sheet</h3>
+<p>底部清单弹窗，对应 <code>UIAlertControllerStyleActionSheet</code>，参数同 <strong>alert</strong>。</p>
+<h2><a href="/doc/pbaction#pbclientaction" id=pbclientaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBClientAction</h2>
+<p>数据交互，用于配置请求，接收的 <strong>type</strong> 遵循 <code>RESTFul</code> 规范，包括：</p>
+<h3><a href="/doc/pbaction#get/post/put/patch/delete/head" id=get/post/put/patch/delete/head aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>get/post/put/patch/delete/head</h3>
+<p>附加参数：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>target</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">Client的类名或别名</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>name</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">请求API</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>params</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">请求参数</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.success</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，请求成功后触发</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.failure</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，请求失败后触发</td>
+</tr>
+</tbody></table>
+<h2><a href="/doc/pbaction#pbtriggeraction" id=pbtriggeraction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBTriggerAction</h2>
+<p>事件交互，用于配置触发事件。接收 <strong>type</strong>：</p>
+<h3><a href="/doc/pbaction#trigger" id=trigger aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>trigger</h3>
+<p>方法触发器，支持触发指定对象任意的 Objective-C 方法（限制5个参数以内）。</p>
+
+<p>附加参数：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>target</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">对象表达式，参见<a href="/doc/cheatsheet#数据源标签" name="wq-redirect" data-redirect="/doc/cheatsheet#数据源标签">数据源标签</a></td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>name</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">方法名(NSStringFromSelector)</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>next.done</strong></td>
+<td style="text-align: left">Dictionary</td>
+<td style="text-align: left">下个行为，执行完成触发</td>
+</tr>
+</tbody></table>
+
+<p><strong>params</strong> 接收参数：</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">参数</th>
+<th style="text-align: left">类型</th>
+<th style="text-align: left">描述</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>arg[0-4]</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">第 i 个参数</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>ret</strong></td>
+<td style="text-align: left">String</td>
+<td style="text-align: left">方法返回值类型，void类型无需设置</td>
+</tr>
+</tbody></table>
+<h2><a href="/doc/pbaction#自定义action" id=自定义action aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义Action</h2>
+<p>在 <strong>type</strong> 不冲突的前提下，你可以定义自己的 <code>Action</code>。以下示例定义一个类型为 <code>toast</code> 的 <code>Action</code>。</p>
+
+<p>创建一个类继承至 <code>PBAction</code>，命名如 <code>PBMyCustomAction</code>，在 <code>.m</code> 文件中实现 <code>run</code> 方法：</p>
+<div class="highlight highlight-source-objc"><pre><span class="k">@implementation</span> <span class="nc">PBMyCustomAction</span>
+
+<span class="p">@</span><span class="n">pbaction</span><span class="p">(</span><span class="s">@&quot;toast&quot;</span><span class="p">)</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">run</span> <span class="p">{</span>
+    <span class="n">MBProgressHUD</span> <span class="o">*</span><span class="n">hud</span> <span class="o">=</span> <span class="p">[</span><span class="n">MBProgressHUD</span> <span class="nl">showHUDAddedTo</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">supercontroller</span><span class="p">.</span><span class="n">view</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span><span class="p">];</span>
+    <span class="n">hud</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">MBProgressHUDModeText</span><span class="p">;</span>
+    <span class="n">hud</span><span class="p">.</span><span class="n">bezelView</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="nl">colorWithWhite</span><span class="p">:</span><span class="mi">0</span> <span class="nl">alpha</span><span class="p">:</span><span class="mf">.8f</span><span class="p">];</span>
+    <span class="n">hud</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">textColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
+    <span class="n">hud</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="s">@&quot;message&quot;</span><span class="p">];</span>
+    <span class="n">hud</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">textColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">hud</span> <span class="nl">hideAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nl">afterDelay</span><span class="p">:</span><span class="mf">1.f</span><span class="p">];</span>
+    <span class="n">dispatch_after</span><span class="p">(</span><span class="n">dispatch_time</span><span class="p">(</span><span class="n">DISPATCH_TIME_NOW</span><span class="p">,</span> <span class="p">(</span><span class="kt">int64_t</span><span class="p">)(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">NSEC_PER_SEC</span><span class="p">)),</span> <span class="n">dispatch_get_main_queue</span><span class="p">(),</span> <span class="o">^</span><span class="p">{</span>
+        <span class="p">[</span><span class="nb">self</span> <span class="nl">dispatchNext</span><span class="p">:</span><span class="s">@&quot;done&quot;</span><span class="p">];</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="k">@end</span>
+</pre></div>
+<p>注意这里的几个细节：</p>
+
+<ol>
+<li>使用 <code>@pbaction</code> 修饰符来注册Action类型为 <code>toast</code> (多个类型使用 <code>@pbactions</code>，如 <code>@pbactions(@&quot;get&quot;, @&quot;post&quot;))</code>)</li>
+<li>通过 <code>self.params</code> 来读取用户配置</li>
+<li>通过 <code>[self dispatchNext:@&quot;done&quot;]</code> 来触发用户配置的 <code>next.done</code> 行为</li>
+</ol>
+
+<p>现在，你可以使用plist来配置这个行为：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>action</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Hello Toast with Pbind Action!</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>并可配置 <code>next.done</code> 来链接下一个行为：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>action</span></td><td><span>Dictionary</span></td><td><span class="sub">(3 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Hello Toast with Pbind Action!</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>next.done</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="3"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Toast Done!</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>

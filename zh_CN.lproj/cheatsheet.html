@@ -1,0 +1,436 @@
+<h2><a href="/doc/cheatsheet#key配置" id=key配置 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Key配置</h2><div class="highlight highlight-source-text"><pre>格式: [tag][key]
+</pre></div>
+<table><thead>
+<tr>
+<th style="text-align: left">标签</th>
+<th style="text-align: left">指向</th>
+<th style="text-align: left">描述</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"></td>
+<td style="text-align: left">已定义属性</td>
+<td style="text-align: left">@property或setter</td>
+<td>hidden</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>+</strong></td>
+<td style="text-align: left">未定义属性</td>
+<td style="text-align: left">用于UIView扩展</td>
+<td>+mykey</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>!</strong></td>
+<td style="text-align: left">事件</td>
+<td style="text-align: left">用于UIControl</td>
+<td>!change (UIControlEventValueChanged)<br/>!click (UIControlEventTouchUpInside)</td>
+</tr>
+</tbody></table>
+<h2><a href="/doc/cheatsheet#value配置" id=value配置 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Value配置</h2><h3><a href="/doc/cheatsheet#常量" id=常量 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>常量</h3>
+<table><thead>
+<tr>
+<th style="text-align: left">标签</th>
+<th style="text-align: left">转换对象</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>#</strong></td>
+<td style="text-align: left">UIColor</td>
+<td>#FF00FF</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>##</strong></td>
+<td style="text-align: left">CGColor</td>
+<td>##FF00FF</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>@</strong></td>
+<td style="text-align: left">Subscript</td>
+<td>@[1,2,3]; @{title:1}</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:</strong></td>
+<td style="text-align: left">Enum</td>
+<td>:left = NSTextAlignmentLeft</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>[</strong></td>
+<td style="text-align: left">NSIndexPath[section-row]</td>
+<td>[0-1]</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>{{</strong></td>
+<td style="text-align: left">Rect</td>
+<td>{{0,0},{1080,44}}</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>{</strong></td>
+<td style="text-align: left">Size/Point/EdgeInsets</td>
+<td>{1080,44} / {0,2,0,2}</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>{F:</strong></td>
+<td style="text-align: left">Font</td>
+<td>{F:MicrosoftYaHei,bold,14}<br>{F:itailc,14}<br>{F:14}</td>
+</tr>
+</tbody></table>
+
+<p>由于KVC的自动拆封箱特性，数据结构可被 <code>NSValue</code> 完成自动转换，因此：</p>
+
+<ul>
+<li>{0,0} 可以配置到 CGSize, CGPoint, NSRange 类型的属性上</li>
+<li>{{0,0},{1080,44}} 或 {0,2,0,2} 可以配置到 CGRect, UIEdgeInsets 类型的属性上</li>
+</ul>
+
+<p>为更方便地进行UI配置，所有 <code>Rect</code>, <code>Size</code>, <code>Point</code>, <code>EdgeInsets</code> 与 <code>Font</code> 的数值可以直接填写UI提供的切图尺寸，Pbind会自动根据设备屏幕大小与切图基准宽度的比例来换算到合适的尺寸。</p>
+
+<p>您可以通过：</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">[</span><span class="n">Pbind</span> <span class="nl">setSketchWidth</span><span class="p">:</span><span class="n">YOUR_SKETCH_WIDTH</span><span class="p">];</span>
+</pre></div>
+<p>来设置你的切图基准宽度，如果没有设置，默认值是1080.</p>
+<h4><a href="/doc/cheatsheet#枚举常量" id=枚举常量 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>枚举常量</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">配置</th>
+<th style="text-align: left">对应</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>:left</strong></td>
+<td style="text-align: left">NSTextAlignmentLeft</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:right</strong></td>
+<td style="text-align: left">NSTextAlignmentRight</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:center</strong></td>
+<td style="text-align: left">NSTextAlignmentCenter</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:/</strong></td>
+<td style="text-align: left">UITableViewCellAccessoryCheckmark</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:i</strong></td>
+<td style="text-align: left">UITableViewCellAccessoryDetailButton</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:&gt;</strong></td>
+<td style="text-align: left">UITableViewCellAccessoryDisclosureIndicator</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:value1</strong></td>
+<td style="text-align: left">UITableViewCellStyleValue1</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:value2</strong></td>
+<td style="text-align: left">UITableViewCellStyleValue2</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>:subtitle</strong></td>
+<td style="text-align: left">UITableViewCellStyleSubtitle</td>
+</tr>
+</tbody></table>
+<h5><a href="/doc/cheatsheet#自定义枚举常量" id=自定义枚举常量 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义枚举常量</h5><div class="highlight highlight-source-objc"><pre><span class="cm">/* 示例</span>
+<span class="cm"> *  - plist: :your_enum1</span>
+<span class="cm"> *  - output: 1</span>
+<span class="cm"> *  - plist: :your_enum2</span>
+<span class="cm"> *  - output: 2</span>
+<span class="cm"> */</span>
+<span class="p">[</span><span class="n">PBValueParser</span> <span class="nl">registerEnums</span><span class="p">:</span><span class="l">@{</span><span class="s">@&quot;{your_enum1}&quot;</span><span class="o">:</span> <span class="mi">@1</span><span class="p">,</span>
+                               <span class="s">@&quot;{your_enum2}&quot;</span><span class="o">:</span> <span class="mi">@2</span><span class="l">}</span><span class="p">];</span>
+</pre></div><h3><a href="/doc/cheatsheet#变量" id=变量 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>变量</h3><div class="highlight highlight-source-text"><pre>格式: [flag][unary-operator][tag][variable][operator][rvalue][:][rvalueOfNot]
+示例:  =     !               $    title
+</pre></div><h4><a href="/doc/cheatsheet#绑定符" id=绑定符 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>绑定符</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">符号</th>
+<th style="text-align: left">描述</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>=</strong></td>
+<td style="text-align: left">单向绑定 (数据  -&gt; 视图)</td>
+<td>=$selected</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>==</strong></td>
+<td style="text-align: left">双向绑定 (数据 &lt;-&gt; 视图)</td>
+<td>==$tabIndex</td>
+</tr>
+</tbody></table>
+<h4><a href="/doc/cheatsheet#动画符" id=动画符 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>动画符</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">符号</th>
+<th style="text-align: left">描述</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>~</strong></td>
+<td style="text-align: left">使用动画过渡来设置数值</td>
+<td>~$contentSize</td>
+</tr>
+</tbody></table>
+<h4><a href="/doc/cheatsheet#数据源标签" id=数据源标签 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>数据源标签</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">标签</th>
+<th style="text-align: left">指向</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>$</strong></td>
+<td style="text-align: left">根视图数据</td>
+<td>$records</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>.</strong></td>
+<td style="text-align: left">源视图(表达式所在视图)</td>
+<td>.frame.size</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>.$</strong></td>
+<td style="text-align: left">源视图数据</td>
+<td>.$name</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>@^</strong></td>
+<td style="text-align: left">当前Controller</td>
+<td>@^title</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>@[alias].</strong></td>
+<td style="text-align: left">别名视图</td>
+<td>@label.text</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&gt;</strong></td>
+<td style="text-align: left">PBForm表单输入文本</td>
+<td>&gt;birth</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&gt;@</strong></td>
+<td style="text-align: left">PBForm表单输入数据</td>
+<td>&gt;@birth</td>
+</tr>
+</tbody></table>
+
+<p>其中，视图的别名可通过</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">[</span><span class="n">view</span> <span class="nl">setAlias</span><span class="p">:</span><span class="s">@&quot;your_alias&quot;</span><span class="p">];</span>
+</pre></div>
+<p>来进行设置。</p>
+<h5><a href="/doc/cheatsheet#自定义数据源" id=自定义数据源 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义数据源</h5>
+<p>自定义数据源允许配置一个字符，例如你定义了 <code>D</code> 字符，那么可以使用 <code>$D.</code> 标签来映射你的数据。</p>
+<div class="highlight highlight-source-objc"><pre><span class="cm">/* 示例</span>
+<span class="cm"> *  - plist: $D.userInfo</span>
+<span class="cm"> *  - mapto: [[NSUserDefaults standardDefaults] valueForKey:@&quot;userInfo&quot;]</span>
+<span class="cm"> */</span>
+<span class="p">[</span><span class="n">PBVariableMapper</span> <span class="nl">registerTag</span><span class="p">:</span><span class="sc">&#39;D&#39;</span> <span class="nl">withMapper</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">data</span><span class="p">,</span> <span class="kt">id</span> <span class="n">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">NSUserDefaults</span> <span class="n">standardDefaults</span><span class="p">];</span>
+<span class="p">}];</span>
+</pre></div><h4><a href="/doc/cheatsheet#运算符" id=运算符 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>运算符</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">符号</th>
+<th style="text-align: left">描述</th>
+<th>返回值类型</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>!</strong></td>
+<td style="text-align: left">逻辑非</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>!$success</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>!!</strong></td>
+<td style="text-align: left">双重否定</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>!!$list</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>-</strong></td>
+<td style="text-align: left">负数/减法</td>
+<td><em><strong>double</strong></em></td>
+<td>-$height; $count-1</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;</strong></td>
+<td style="text-align: left">小于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count&lt;2</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&gt;</strong></td>
+<td style="text-align: left">大于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count&gt;7</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>=</strong> or <strong>==</strong></td>
+<td style="text-align: left">等于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count=3; $count==3</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>!=</strong></td>
+<td style="text-align: left">不等于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count!=2</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;=</strong></td>
+<td style="text-align: left">小于等于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count&lt;=7</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&gt;=</strong></td>
+<td style="text-align: left">大于等于</td>
+<td><em><strong>BOOL</strong></em></td>
+<td>$count&gt;=3</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>+</strong></td>
+<td style="text-align: left">加法</td>
+<td><em><strong>double</strong></em></td>
+<td>$count+2</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>*</strong></td>
+<td style="text-align: left">乘法</td>
+<td><em><strong>double</strong></em></td>
+<td>$count*7</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>/</strong></td>
+<td style="text-align: left">除法</td>
+<td><em><strong>double</strong></em></td>
+<td>$count/3</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>?:</strong></td>
+<td style="text-align: left">测试</td>
+<td><em><strong>NSString</strong></em></td>
+<td>$value?:2; $flag?1:2</td>
+</tr>
+</tbody></table>
+<h3><a href="/doc/cheatsheet#组合变量" id=组合变量 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>组合变量</h3><div class="highlight highlight-source-text"><pre>格式: %[tag:option]( format ),$arg1,$arg2,...
+</pre></div><h4><a href="/doc/cheatsheet#组合标签" id=组合标签 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>组合标签</h4>
+<table><thead>
+<tr>
+<th style="text-align: left">标签</th>
+<th style="text-align: left">描述</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"></td>
+<td style="text-align: left">字符串格式化</td>
+<td>%(goods:%@, money:%.2f),$title,$money</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>!</strong></td>
+<td style="text-align: left">断言格式化(变量全非空时返回)</td>
+<td>%!(goods:%@, money:%.2f),$title,$money</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>JS</strong></td>
+<td style="text-align: left">Javascript脚本运算</td>
+<td>%JS(&#39;goods:&#39; + $1 + &#39;, money:&#39; + $2),$title,$money</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>AT</strong></td>
+<td style="text-align: left">attributed string</td>
+<td>%AT(Hello &#124;%@),$who;#fff-{F:13}&#124;{F:14}</td>
+</tr>
+</tbody></table>
+<h5><a href="/doc/cheatsheet#javascript脚本运算" id=javascript脚本运算 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Javascript脚本运算</h5>
+<p>Pbind 使用 JavascriptCore 来对 javascript 脚本进行求值运算.</p>
+
+<p>配置 <code>%JS( scripts ),$arg1,$arg2</code>, Pbind 将会把变量数组传递到JS脚本的 <code>$1</code>, <code>$2</code> ... <code>$N</code> 变量。</p>
+
+<p>你可以通过 <code>%JS:type</code> 来配置返回值类型，包括：</p>
+
+<ul>
+<li>bool</li>
+<li>int32</li>
+<li>date</li>
+<li>rect</li>
+<li>size</li>
+</ul>
+
+<p>等等，如果没有设置类型，将使用 <code>[JSValue toObject]</code> 来完成自动转换。更多类型转换的细节可以查看官方的 <code>JSValue</code> 文档。</p>
+<h5><a href="/doc/cheatsheet#自定义组合标签" id=自定义组合标签 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义组合标签</h5><div class="highlight highlight-source-objc"><pre><span class="cm">/* 示例 字符串转数组</span>
+<span class="cm"> *  - plist: %S2A(/),$str</span>
+<span class="cm"> *  - input: str=&quot;a/b/c&quot;</span>
+<span class="cm"> *  - output: @[@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;]</span>
+<span class="cm"> */</span>
+<span class="p">[</span><span class="n">PBVariableEvaluator</span> <span class="nl">registerTag</span><span class="p">:</span><span class="s">@&quot;S2A&quot;</span> <span class="nl">withFormatterer</span><span class="p">:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="n">format</span><span class="p">,</span> <span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">value</span> <span class="nl">componentsSeparatedByString</span><span class="p">:</span><span class="n">format</span><span class="p">];</span>
+<span class="p">}];</span>
+</pre></div><h5><a href="/doc/cheatsheet#字符串格式化" id=字符串格式化 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>字符串格式化</h5>
+<p>字符串格式化基于 <code>[NSString stringWithFormat:]</code>，并做了一些扩展，来支持更多的数据类型格式化。</p>
+
+<table><thead>
+<tr>
+<th style="text-align: left">标签</th>
+<th style="text-align: left">描述</th>
+<th>参数类型</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: left"><strong>#</strong></td>
+<td style="text-align: left">数值格式化</td>
+<td><em><strong>NSNumber</strong></em></td>
+<td>%(%#.2f),$number</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>J</strong></td>
+<td style="text-align: left">JSON格式化</td>
+<td><em><strong>NSDictionary, NSArray</strong></em></td>
+<td>%(%J),$dict</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;t&gt;</strong></td>
+<td style="text-align: left">日期格式化</td>
+<td><em><strong>NSDate, NSNumber</strong></em></td>
+<td>%(%&lt;t:yyyy-MM-dd&gt;),$date</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;T&gt;</strong></td>
+<td style="text-align: left">日期模板格式化</td>
+<td><em><strong>NSDate, NSNumber</strong></em></td>
+<td>%(%&lt;T:MMMy&gt;),$date</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;UE&gt;</strong></td>
+<td style="text-align: left">URL编码</td>
+<td><em><strong>NSString</strong></em></td>
+<td>%(%&lt;UE&gt;),$param</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>&lt;UEJ&gt;</strong></td>
+<td style="text-align: left">JSON URL编码</td>
+<td><em><strong>NSDictionary, NSArray</strong></em></td>
+<td>%(%&lt;UEJ&gt;),$dict</td>
+</tr>
+</tbody></table>
+<h5><a href="/doc/cheatsheet#自定义字符串格式化标签" id=自定义字符串格式化标签 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义字符串格式化标签</h5><div class="highlight highlight-source-objc"><pre><span class="cm">/* 示例 数组格式化</span>
+<span class="cm"> *  - plist: %(%&lt;A2S:/&gt;),$arr</span>
+<span class="cm"> *  - input: arr=@[@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;]</span>
+<span class="cm"> *  - output: &quot;a/b/c&quot;</span>
+<span class="cm"> */</span>
+<span class="p">[</span><span class="n">PBStringFormatter</span> <span class="nl">registerTag</span><span class="p">:</span><span class="s">@&quot;A2S&quot;</span> <span class="nl">withFormatterer</span><span class="p">:</span><span class="o">^</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="n">format</span><span class="p">,</span> <span class="kt">id</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">value</span> <span class="nl">componentsJoinedByString</span><span class="p">:</span><span class="n">format</span><span class="p">];</span>
+<span class="p">}];</span>
+</pre></div>
