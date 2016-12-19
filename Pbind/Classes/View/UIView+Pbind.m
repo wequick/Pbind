@@ -674,6 +674,28 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     }
 }
 
+- (id)pb_valueForKeyPath:(NSString *)key
+{
+    id target = self;
+    NSArray *keys = [key componentsSeparatedByString:@"."];
+    NSUInteger N = keys.count;
+    if (N > 1) {
+        int i = 0;
+        for (; i < N - 1; i++) {
+            key = keys[i];
+            if ([key characterAtIndex:0] == '@') {
+                key = [key substringFromIndex:1];
+                target = [target viewWithAlias:key];
+            } else {
+                target = [target valueForKey:key];
+            }
+        }
+        key = keys[i];
+    }
+    
+    return [target valueForKey:key];
+}
+
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath
 {
     if (self.pb_unmappableKeys == nil) {

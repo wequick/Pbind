@@ -571,7 +571,12 @@ static const int kDataTagUnset = 0xFF;
         contextKeyPath = _variable;
     }
     
-    id oldValue = [contextObject valueForKeyPath:contextKeyPath];
+    id oldValue;
+    if ([contextObject respondsToSelector:@selector(pb_valueForKeyPath:)]) {
+        oldValue = [contextObject pb_valueForKeyPath:contextKeyPath];
+    } else {
+        oldValue = [contextObject valueForKeyPath:contextKeyPath];
+    }
     if ([oldValue isEqual:newValue]) {
         return;
     }

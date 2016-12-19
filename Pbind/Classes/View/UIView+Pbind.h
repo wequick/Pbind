@@ -114,6 +114,7 @@
 - (UIView *)viewWithAlias:(NSString *)alias;
 
 - (void)pb_setValue:(id)value forKeyPath:(NSString *)keyPath;
+- (id)pb_valueForKeyPath:(NSString *)keyPath;
 
 /**
  Unbind all the observers from the view.
