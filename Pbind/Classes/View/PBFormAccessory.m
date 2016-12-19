@@ -58,6 +58,7 @@
     _nextItem = nextItem;
     _defaultItems = [toolbar items];
     _doneButtonIndex = [[toolbar items] count] - 1;
+    _toggledIndex = -1;
 }
 
 - (void)didMoveToWindow {

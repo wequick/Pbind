@@ -61,8 +61,6 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
         unsigned int isWaitingForKeyboardShow:1;
         unsigned int isWaitingForAutomaticAdjustOffset:1;
         unsigned int hasScrollToInput:1;
-        unsigned int needsReloadAccessoryView:1;
-        
         unsigned int needsInitParams:1;
     } _formFlags;
     PBClient *_submitClient;

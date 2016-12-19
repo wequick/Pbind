@@ -100,7 +100,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self initAccessory];
     [self initIndicator];
     [self observeInputNotifications];
-    _formFlags.needsReloadAccessoryView = 1;
 }
 
 - (void)didMoveToWindow {
@@ -598,12 +597,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [input setInputAccessoryView:_accessory];
     _presentingInput = input;
     
-    if (_formFlags.needsReloadAccessoryView) {
-        // If the input presented by user tapped, reset accessory's toggle index
+    NSInteger inputIndex = [_availableKeyboardInputs indexOfObject:input];
+    if (_accessory.toggledIndex != inputIndex) {
         [self initAvailableKeyboardInputs];
-        NSInteger index = [_availableKeyboardInputs indexOfObject:input];
-        [_accessory setToggledIndex:index];
-        _formFlags.needsReloadAccessoryView = 0;
+        [_accessory setToggledIndex:inputIndex];
     }
     [_accessory reloadData];
     [input reloadInputViews];
@@ -693,16 +690,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
 
     UIView *view = [super hitTest:point withEvent:event];
-    if (_presentedInput == nil || ![_presentingInput isEqual:view]) {
-        if ([view conformsToProtocol:@protocol(PBInput)]) {
-            id<PBInput> input = (id)view;
-            if (input.type != nil) {
-                _formFlags.needsReloadAccessoryView = 1;
-            }
-        }
-    }
-    
-    // FIXME: Hack to large button click area, any better way?
+    // Hit the cell and redirect to the PBInput.
+    // FIXME: Any better way?
     UITableViewCell *cell = nil;
     if ([view isKindOfClass:[UITableViewCell class]] /* iOS8 */) {
         cell = (id)view;
