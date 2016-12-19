@@ -574,7 +574,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     CGPoint offset = [self contentOffset];
     UIEdgeInsets insets = [self contentInset];
     CGFloat maxY = self.contentSize.height + insets.top + insets.bottom - self.bounds.size.height;
-    maxY = MAX(maxY, 0);
+    maxY = MAX(maxY, -insets.top);
     if (offset.y > maxY) {
         offset.y = maxY;
         [self animateAsKeyboardWithAnimations:^{
