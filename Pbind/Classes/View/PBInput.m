@@ -196,6 +196,8 @@ static NSMutableDictionary *kInitializations = nil;
     if (self.onReset != nil) {
         self.onReset(self);
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self];
 }
 
 - (NSString *)__stringByFormattingString:(NSString *)text {
