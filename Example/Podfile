@@ -1,7 +1,0 @@
-use_frameworks!
-
-target 'Pbind_Example' do
-  pod 'Pbind', :path => '../'
-  pod 'SDWebImage', '3.8.2'
-  pod 'MBProgressHUD', '1.0.0'
-end
