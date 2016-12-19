@@ -29,6 +29,8 @@
 - (void)config {
     self.delegate = self;
     self.type = @"text";
+    self.font = [PBInput new].font;
+    self.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 - (id)value {
@@ -60,39 +62,17 @@
 
 - (void)initPlaceholder {
     if (_placeholderLabel == nil) {
+        PBInput *tempInput = [PBInput new];
+        tempInput.placeholder = @"temp";
+        UIColor *placeholderColor = tempInput.placeholderColor;
+        
         _placeholderLabel = [[UILabel alloc] init];
         [_placeholderLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
-//        [_placeholderLabel setFont:self.font];
-        [_placeholderLabel setTextColor:[UIColor lightGrayColor]];
+        [_placeholderLabel setTextColor:placeholderColor];
         [_placeholderLabel setNumberOfLines:0];
         [_placeholderLabel setTextAlignment:NSTextAlignmentLeft];
         [self addSubview:_placeholderLabel];
-        
-//        CGRect labelRect = self.bounds;
-//        UIView *placeholderWrapperView = [[UIView alloc] initWithFrame:labelRect];
-//        [placeholderWrapperView setUserInteractionEnabled:NO];
-//        [placeholderWrapperView setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
-//        [self addSubview:placeholderWrapperView];
-//        
-//        CGRect caretRect = [self caretRectForPosition:self.beginningOfDocument];
-//        labelRect.origin = caretRect.origin;
-//        labelRect.size.width -= labelRect.origin.x * 2;
-//        _placeholderLabel = [[UILabel alloc] initWithFrame:labelRect];
-//        [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
-//        [_placeholderLabel setFont:self.font];
-//        [_placeholderLabel setTextColor:[UIColor lightGrayColor]];
-//        [_placeholderLabel setNumberOfLines:0];
-//        [_placeholderLabel setTextAlignment:NSTextAlignmentLeft];
-//        [placeholderWrapperView addSubview:_placeholderLabel];
-//        // Autolayout
-//        [_placeholderLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-//        NSArray *formats = @[@"H:|-(x)-[pl]-(x)-|", @"V:|-(y)-[pl]"];
-//        NSDictionary *views = @{@"pl":_placeholderLabel};
-//        NSDictionary *metrics = @{@"x":@(labelRect.origin.x), @"y":@(labelRect.origin.y), @"w":@(labelRect.size.width)};
-//        [formats enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//            [placeholderWrapperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:obj options:0 metrics:metrics views:views]];
-//        }];
     }
 }
 
@@ -116,7 +96,7 @@
         _placeholderLabel.font = self.font;
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:caretRect.origin.x]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:caretRect.origin.x]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:caretRect.origin.y]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     }
 }
 

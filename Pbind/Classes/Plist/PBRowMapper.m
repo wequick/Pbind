@@ -20,49 +20,43 @@ static const CGFloat kHeightUnset = -2;
 
 @implementation PBRowMapper
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
-    if (self = [super initWithDictionary:dictionary]) {
-        if ([dictionary objectForKey:@"estimatedHeight"] == nil) {
-            _estimatedHeight = UITableViewAutomaticDimension;
-        }
-        
-        NSString *heightString = [dictionary objectForKey:@"height"];
-        if (heightString == nil) {
-            _height = kHeightUnset; // default as automatic
-        } else {
-            _pbFlags.heightExpressive = [_properties isExpressiveForKey:@"height"];
-            if (!_pbFlags.heightExpressive) {
-                NSArray *components = nil;
-                if ([heightString isKindOfClass:[NSString class]]) {
-                    components = [heightString componentsSeparatedByString:@"@"];
-                }
-                if (components.count == 2) {
-                    _height = PBValue2([components[0] floatValue], [components[1] floatValue]);
-                } else {
-                    if (_height == UITableViewAutomaticDimension) {
-                        if (_estimatedHeight <= 0) {
-                            _estimatedHeight = 44.f; // initialize default estimated height
-                        }
-                    } else if (_height > 0) {
-                        _height = PBValue(_height);
-                    }
-                }
+- (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
+    _estimatedHeight = UITableViewAutomaticDimension;
+    _height = UITableViewAutomaticDimension;
+    
+    [super setPropertiesWithDictionary:dictionary];
+    
+    NSString *heightString = [dictionary objectForKey:@"height"];
+    if (heightString != nil) {
+        _pbFlags.heightExpressive = [_properties isExpressiveForKey:@"height"];
+        if (!_pbFlags.heightExpressive) {
+            NSArray *components = nil;
+            if ([heightString isKindOfClass:[NSString class]]) {
+                components = [heightString componentsSeparatedByString:@"@"];
             }
-        }
-        
-        _pbFlags.hiddenExpressive = [_properties isExpressiveForKey:@"hidden"];
-        
-        if (_clazz == nil) {
-            if (_style == 0) {
-                _clazz = @"UITableViewCell";
-                _viewClass = [UITableViewCell class];
+            if (components.count == 2) {
+                _height = PBValue2([components[0] floatValue], [components[1] floatValue]);
             } else {
-                _clazz = @"PBTableViewCell";
-                _viewClass = [PBTableViewCell class];
+                if (_height == UITableViewAutomaticDimension) {
+                    if (_estimatedHeight <= 0) {
+                        _estimatedHeight = 44.f; // initialize default estimated height
+                    }
+                } else if (_height > 0) {
+                    _height = PBValue(_height);
+                }
             }
         }
     }
-    return self;
+    
+    if (_clazz == nil) {
+        if (_style == 0) {
+            _clazz = @"UITableViewCell";
+            _viewClass = [UITableViewCell class];
+        } else {
+            _clazz = @"PBTableViewCell";
+            _viewClass = [PBTableViewCell class];
+        }
+    }
 }
 
 - (void)setClazz:(NSString *)clazz {

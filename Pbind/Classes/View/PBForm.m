@@ -90,7 +90,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)config {
     [super config];
-    [self setIndicating:PBFormIndicatingMaskInputInvalid];
+    [self setIndicating:PBFormIndicatingMaskInputFocus | PBFormIndicatingMaskInputInvalid];
 }
 
 - (void)didInitRowViews {
@@ -315,6 +315,17 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         _initialData = data;
     }
     [super setData:data];
+}
+
+- (void)pb_reset {
+    [super pb_reset];
+    
+    [self endEditing:YES];
+    _inputs = nil;
+    _availableKeyboardInputs = nil;
+    _presentedInput = nil;
+    _presentingInput = nil;
+    _accessory.toggledIndex = -1;
 }
 
 #pragma mark - 
@@ -597,10 +608,16 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [input setInputAccessoryView:_accessory];
     _presentingInput = input;
     
-    NSInteger inputIndex = [_availableKeyboardInputs indexOfObject:input];
-    if (_accessory.toggledIndex != inputIndex) {
+    if (_availableKeyboardInputs == nil) {
         [self initAvailableKeyboardInputs];
+        NSInteger inputIndex = [_availableKeyboardInputs indexOfObject:input];
         [_accessory setToggledIndex:inputIndex];
+    } else {
+        NSInteger inputIndex = [_availableKeyboardInputs indexOfObject:input];
+        if (inputIndex != _accessory.toggledIndex) {
+            [self initAvailableKeyboardInputs];
+            [_accessory setToggledIndex:inputIndex];
+        }
     }
     [_accessory reloadData];
     [input reloadInputViews];
@@ -850,9 +867,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_indicator.alpha != 0) {
-        _indicator.alpha = 0;
-    }
     [super scrollViewDidScroll:scrollView];
 }
 

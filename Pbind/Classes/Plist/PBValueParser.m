@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "PBValueParser.h"
+#import "PBForm.h"
 #import "Pbind+API.h"
 
 static NSMutableDictionary *kEnums = nil;
@@ -99,6 +100,16 @@ static NSMutableDictionary *kEnums = nil;
         } else if ([aString isEqualToString:@"@"] ||
                  [aString isEqualToString:@"share"]) {
             enumValue = UIBarButtonSystemItemAction;
+        } else if ([aString isEqualToString:@"done"]) {
+            enumValue = UIBarButtonSystemItemDone;
+        } else if ([aString isEqualToString:@"edit"]) {
+            enumValue = UIBarButtonSystemItemEdit;
+        }
+        // PBFormIndicating
+        else if ([aString isEqualToString:@"focus"]) {
+            enumValue = PBFormIndicatingMaskInputFocus;
+        } else if ([aString isEqualToString:@"invalid"]) {
+            enumValue = PBFormIndicatingMaskInputInvalid;
         } else if ([aString isEqualToString:@"done"]) {
             enumValue = UIBarButtonSystemItemDone;
         } else if ([aString isEqualToString:@"edit"]) {

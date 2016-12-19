@@ -274,16 +274,20 @@ static NSMutableDictionary *kInitializations = nil;
 
 - (CGRect)textRectForBounds:(CGRect)bounds {
     CGRect rect = [super textRectForBounds:bounds];
-    if (self.borderStyle != UITextBorderStyleRoundedRect && self.textAlignment == NSTextAlignmentLeft) {
-        rect.origin.x += PBTextViewLeftMargin();
-    }
-    return rect;
+    return [self rectByAdjustingRect:rect];
 }
 
 - (CGRect)editingRectForBounds:(CGRect)bounds {
     CGRect rect = [super editingRectForBounds:bounds];
-    if (self.borderStyle != UITextBorderStyleRoundedRect && self.textAlignment == NSTextAlignmentLeft) {
-        rect.origin.x += PBTextViewLeftMargin();
+    return [self rectByAdjustingRect:rect];
+}
+
+- (CGRect)rectByAdjustingRect:(CGRect)rect {
+    if (self.borderStyle != UITextBorderStyleRoundedRect &&
+        (self.textAlignment == NSTextAlignmentLeft || self.textAlignment == NSTextAlignmentNatural)) {
+        CGFloat margin = PBTextViewLeftMargin();
+        rect.origin.x += margin;
+        rect.size.width -= margin;
     }
     return rect;
 }

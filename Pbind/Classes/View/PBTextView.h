@@ -27,7 +27,7 @@ UIKIT_STATIC_INLINE CGFloat PBTextViewLeftMargin()
     static CGFloat kTextViewLeftMargin = 0;
     if (kTextViewLeftMargin == 0) {
         UITextView *tempTextView = [[UITextView alloc] init];
-        kTextViewLeftMargin = [tempTextView caretRectForPosition:[UITextPosition new]].origin.x;
+        kTextViewLeftMargin = [tempTextView caretRectForPosition:tempTextView.beginningOfDocument].origin.x;
     }
     return kTextViewLeftMargin;
 }
