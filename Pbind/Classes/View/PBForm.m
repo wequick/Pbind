@@ -93,21 +93,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self setIndicating:PBFormIndicatingMaskInputInvalid];
 }
 
-//- (void)willMoveToWindow:(UIWindow *)newWindow {
-//    [super willMoveToWindow:newWindow];
-//    NSLog(@"self.window=%p, newWindow=%p", self.window, newWindow);
-//    if (newWindow != nil) {
-//        [self initInputs];
-//        [self initAccessory];
-//        [self initIndicator];
-//        [self observeInputNotifications];
-//        _formFlags.needsReloadAccessoryView = 1;
-//        _formFlags.isWaitingForAutomaticAdjustOffset = (_pbesentedInput != nil); // push to A -> back to [owner controller], system calls automatic adjust offset (automaticallyAdjustsScrollViewInsets), wait for it to ensure scrolling to correct content offset
-//    } else {
-//        [self unobserveInputNotifications];
-//    }
-//}
-
 - (void)didInitRowViews {
     [super didInitRowViews];
     
