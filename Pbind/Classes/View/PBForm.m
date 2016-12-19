@@ -67,8 +67,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     PBFormAccessory *_accessory;
     UILabel         *_indicator;
     
-    UIView<PBInput> *_pbesentedInput;
-    UIView<PBInput> *_pbesentingInput;
+    UIView<PBInput> *_presentedInput;
+    UIView<PBInput> *_presentingInput;
     
     CGFloat          _keyboardHeight;
     CGFloat          _offsetYForPresentingInput;
@@ -160,8 +160,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _inputs = nil;
     _indicator = nil;
     _accessory = nil;
-    _pbesentedInput = nil;
-    _pbesentingInput = nil;
+    _presentedInput = nil;
+    _presentingInput = nil;
     _delegateInterceptor = nil;
     _formDelegate = nil;
 }
@@ -577,7 +577,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
     _keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     if (!_formFlags.isWaitingForKeyboardShow && !_formFlags.hasScrollToInput) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
-        [self scrollToInput:_pbesentingInput animated:YES];
+        [self scrollToInput:_presentingInput animated:YES];
     }
 }
 
@@ -611,7 +611,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
     
     [input setInputAccessoryView:_accessory];
-    _pbesentingInput = input;
+    _presentingInput = input;
     
     if (_formFlags.needsReloadAccessoryView) {
         // If the input presented by user tapped, reset accessory's toggle index
@@ -641,7 +641,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         if (_keyboardHeight > kMinKeyboardHeightToScroll) { // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking on scrolling
             if (!_formFlags.hasScrollToInput) {
                 _formFlags.hasScrollToInput = YES;
-                [self scrollToInput:_pbesentingInput animated:YES];
+                [self scrollToInput:_presentingInput animated:YES];
             }
         }
     });
@@ -650,7 +650,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)inputDidChange:(NSNotification *)notification
 {
     id input = notification.object;
-    if (![_pbesentingInput isEqual:input]) {
+    if (![_presentingInput isEqual:input]) {
         return;
     }
     
@@ -670,14 +670,14 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)inputDidEnd:(NSNotification *)notification
 {
     id input = notification.object;
-    if (![_pbesentingInput isEqual:input]) {
+    if (![_presentingInput isEqual:input]) {
         return;
     }
     
-    _pbesentingInput = nil;
-    _pbesentedInput = input;
+    _presentingInput = nil;
+    _presentedInput = input;
     if ([self.formDelegate respondsToSelector:@selector(form:didEndEditingOnInput:)]) {
-        [self.formDelegate form:self didEndEditingOnInput:(id)_pbesentedInput];
+        [self.formDelegate form:self didEndEditingOnInput:(id)_presentedInput];
     }
     
     // Update the observed values
@@ -708,7 +708,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
 
     UIView *view = [super hitTest:point withEvent:event];
-    if (_pbesentedInput == nil || ![_pbesentingInput isEqual:view]) {
+    if (_presentedInput == nil || ![_presentingInput isEqual:view]) {
         if ([view conformsToProtocol:@protocol(PBInput)]) {
             id<PBInput> input = (id)view;
             if (input.type != nil) {
@@ -756,7 +756,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
      * end editing
      */
     if (![view canBecomeFirstResponder] && ![view isKindOfClass:[UIControl class]]) {
-        if (_pbesentingInput != nil && ![view isDescendantOfView:_pbesentedInput]) {
+        if (_presentingInput != nil && ![view isDescendantOfView:_presentedInput]) {
             [self endEditing:YES];
             return ret;
         }
@@ -771,8 +771,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self animateAsKeyboardWithAnimations:^{
         [_indicator setFrame:CGRectZero];
         [_indicator setText:nil];
-        if ([_pbesentingInput isKindOfClass:[PBInput class]]) {
-            [(PBInput *)_pbesentingInput setSelected:NO];
+        if ([_presentingInput isKindOfClass:[PBInput class]]) {
+            [(PBInput *)_presentingInput setSelected:NO];
         }
     } completion:nil];
     _keyboardHeight = 0;
@@ -832,13 +832,13 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)accessoryClearButtonItemClick:(id)sender
 {
-    if ([_pbesentingInput respondsToSelector:@selector(reset)]) {
-        [_pbesentingInput reset];
+    if ([_presentingInput respondsToSelector:@selector(reset)]) {
+        [_presentingInput reset];
     } else {
-        [_pbesentingInput setValue:nil];
+        [_presentingInput setValue:nil];
     }
-    if ([_pbesentingInput isKindOfClass:[UIControl class]]) {
-        [(UIControl *)_pbesentingInput sendActionsForControlEvents:UIControlEventEditingChanged];
+    if ([_presentingInput isKindOfClass:[UIControl class]]) {
+        [(UIControl *)_presentingInput sendActionsForControlEvents:UIControlEventEditingChanged];
     }
 }
 
@@ -846,14 +846,14 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)setContentSize:(CGSize)contentSize
 {
-    if (_pbesentingInput != nil) {
+    if (_presentingInput != nil) {
         CGPoint offset = [self contentOffset];
         
         [super setContentSize:contentSize];
         
         [self setContentOffset:offset];
         // Re-scroll the presenting input to the center rect after content size changed
-        [self scrollToInput:_pbesentingInput animated:YES];
+        [self scrollToInput:_presentingInput animated:YES];
     } else {
         [super setContentSize:contentSize];
     }
@@ -865,7 +865,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         if (!_formFlags.hasScrollToInput) {
             _formFlags.hasScrollToInput = YES;
             // Re-scroll the presenting input to the center rect after owner controller re-showed
-            [self scrollToInput:_pbesentingInput animated:YES];
+            [self scrollToInput:_presentingInput animated:YES];
         } else {
             [super setContentOffset:contentOffset];
         }
@@ -883,14 +883,14 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if (_pbesentedInput != nil) {
+    if (_presentedInput != nil) {
         [self endEditing:YES];
     }
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    if (_pbesentingInput != nil) {
+    if (_presentingInput != nil) {
         [self setContentOffset:CGPointMake(self.contentOffset.x, _offsetYForPresentingInput) animated:YES];
     }
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
@@ -941,8 +941,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         [self setContentOffset:offset];
         _indicator.layer.cornerRadius = cornerRadius;
         [_indicator setFrame:indicatorRect];
-        if ([_pbesentedInput isKindOfClass:[PBInput class]]) {
-            [(PBInput *)_pbesentedInput setSelected:NO];
+        if ([_presentedInput isKindOfClass:[PBInput class]]) {
+            [(PBInput *)_presentedInput setSelected:NO];
         }
         if ([input isKindOfClass:[PBInput class]]) {
             [(PBInput *)input setSelected:YES];
