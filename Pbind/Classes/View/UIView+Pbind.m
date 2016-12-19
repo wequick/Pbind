@@ -820,10 +820,8 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         }
         
         if (removedKeys.count > 0) {
-            // Clear the value for the key removed.
-            for (NSString *key in removedKeys) {
-                [self pb_setValue:nil forKeyPath:key];
-            }
+            // Reset the default value for the key removed.
+            [self setDefaultValueForKeys:removedKeys];
         }
     }
     
@@ -832,6 +830,14 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (NSDictionary *)pb_constants {
     return [self valueForAdditionKey:@"pb_constants"];
+}
+
+- (void)setDefaultValueForKeys:(NSArray *)keys {
+    UIView *temp = [[[self class] alloc] init];
+    for (NSString *key in keys) {
+        id defaultValue = [temp valueForKeyPath:key];
+        [self pb_setValue:defaultValue forKeyPath:key];
+    }
 }
 
 - (void)setPb_expressions:(NSDictionary *)expressions {
@@ -853,8 +859,8 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
             for (NSString *key in removedKeys) {
                 PBExpression *expression = [orgExpressions objectForKey:key];
                 [expression unbind:self forKeyPath:key];
-                [self pb_setValue:nil forKeyPath:key];
             }
+            [self setDefaultValueForKeys:removedKeys];
         }
     }
     
