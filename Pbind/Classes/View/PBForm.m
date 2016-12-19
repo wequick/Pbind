@@ -121,32 +121,18 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _accessory.dataSource = self;
 }
 
-- (void)initIndicator {
-    if (_indicator != nil) {
-        [self bringSubviewToFront:_indicator];
-        return;
-    }
-    // Input indicator
-    _indicator = [[UILabel alloc] init];
-    _indicator.backgroundColor = [UIColor clearColor];
-    _indicator.layer.borderWidth = .5;
-    _indicator.layer.borderColor = [self tintColor].CGColor;
-    _indicator.textColor = [UIColor redColor];
-    _indicator.textAlignment = NSTextAlignmentCenter;
-    _indicator.userInteractionEnabled = NO;
-    _indicator.alpha = 0;
-    [self addSubview:_indicator];
-}
-
 - (void)dealloc
 {
-    _availableKeyboardInputs = nil;
+    for (id input in _inputs) {
+        [self unobserveFrameForInput:input];
+    }
     _inputs = nil;
     _indicator = nil;
     _accessory = nil;
     _presentedInput = nil;
     _presentingInput = nil;
     _delegateInterceptor = nil;
+    _availableKeyboardInputs = nil;
     _formDelegate = nil;
 }
 
@@ -191,6 +177,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _inputValues = [PBDictionary dictionaryWithCapacity:_inputs.count];
     for (id<PBInput> input in _inputs) {
         [self updateObservedTextsAndValuesForInput:input];
+        [self observeFrameForInput:input];
     }
     
     // Init submit input
@@ -275,6 +262,51 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     return nil;
 }
 
+#pragma mark - Indicator
+
+- (void)initIndicator {
+    if (_indicator != nil) {
+        [self bringSubviewToFront:_indicator];
+        return;
+    }
+    // Input indicator
+    _indicator = [[UILabel alloc] init];
+    _indicator.backgroundColor = [UIColor clearColor];
+    _indicator.layer.borderWidth = .5;
+    _indicator.layer.borderColor = [self tintColor].CGColor;
+    _indicator.textColor = [UIColor redColor];
+    _indicator.textAlignment = NSTextAlignmentCenter;
+    _indicator.userInteractionEnabled = NO;
+    _indicator.alpha = 0;
+    [self addSubview:_indicator];
+}
+
+- (void)observeFrameForInput:(id)input {
+    if (_indicating & PBFormIndicatingMaskInputFocus) {
+        if ([input respondsToSelector:@selector(contentSize)]) {
+            [input addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:nil];
+        }
+    }
+}
+
+- (void)unobserveFrameForInput:(id)input {
+    if (_indicating & PBFormIndicatingMaskInputFocus) {
+        if ([input respondsToSelector:@selector(contentSize)]) {
+            [input removeObserver:self forKeyPath:@"contentSize"];
+        }
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"contentSize"]) {
+        if (_presentingInput == object && _indicator.alpha == 1) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self scrollToInput:object animated:YES];
+            });
+        }
+    }
+}
+
 #pragma mark -
 #pragma mark - Properties
 
@@ -321,6 +353,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [super pb_reset];
     
     [self endEditing:YES];
+    
+    for (id input in _inputs) {
+        [self unobserveFrameForInput:input];
+    }
     _inputs = nil;
     _availableKeyboardInputs = nil;
     _presentedInput = nil;
@@ -590,6 +626,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         [self animateAsKeyboardWithAnimations:^{
             [self setContentOffset:offset];
         } completion:nil];
+    } else if (offset.y != _offsetYForPresentingInput) {
+        // Sometimes while we are scrolling to the first input, the UIScrollView seems to automatically re-adjust the content offset, we needs to reset this to the correct offset for the presenting input.
+        offset.y = _offsetYForPresentingInput;
+        [self animateAsKeyboardWithAnimations:^{
+            [self setContentOffset:offset];
+        } completion:nil];
     }
 }
 
@@ -843,8 +885,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         [super setContentSize:contentSize];
         
         [self setContentOffset:offset];
-        // Re-scroll the presenting input to the center rect after content size changed
-        [self scrollToInput:_presentingInput animated:YES];
     } else {
         [super setContentSize:contentSize];
     }
@@ -896,11 +936,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)scrollToInput:(UIView<PBInput> *)input animated:(BOOL)animated completion:(void (^)(BOOL finish))completion
 {
     /*
-     * Center the presenting input to tableView's visible rect
+     * Center the presenting input to form's visible rect
      */
     CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - _keyboardHeight;
-    CGRect tableViewRect = [self convertRect:self.bounds toView:self.window];
-    CGFloat visibleCenterY = (keyboardY - tableViewRect.origin.y) / 2;
+    CGRect formRect = [self convertRect:self.bounds toView:self.window];
+    CGFloat visibleCenterY = (keyboardY - formRect.origin.y) / 2;
     CGRect inputRect = [input convertRect:input.bounds toView:self];
     CGPoint offset = [self contentOffset];
     UIEdgeInsets insets = [self contentInset];

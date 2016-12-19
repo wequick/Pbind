@@ -13,6 +13,7 @@
 
 @synthesize type, name, value, required, requiredTips;
 @synthesize maxlength, maxchars, pattern, validators;
+@synthesize acceptsClearOnAccessory;
 
 - (id)init {
     if (self = [super init]) {
@@ -31,6 +32,7 @@
     self.type = @"text";
     self.font = [PBInput new].font;
     self.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    self.acceptsClearOnAccessory = YES;
 }
 
 - (id)value {
@@ -47,6 +49,7 @@
 
 - (void)reset {
     self.text = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
 }
 
 - (void)setText:(NSString *)text {
@@ -69,10 +72,13 @@
         _placeholderLabel = [[UILabel alloc] init];
         [_placeholderLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
+        [_placeholderLabel setFont:self.font];
         [_placeholderLabel setTextColor:placeholderColor];
         [_placeholderLabel setNumberOfLines:0];
         [_placeholderLabel setTextAlignment:NSTextAlignmentLeft];
         [self addSubview:_placeholderLabel];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
     }
 }
 
@@ -88,16 +94,41 @@
     _placeholderColor = placeholderColor;
 }
 
+- (void)setFont:(UIFont *)font {
+    [super setFont:font];
+    if (_placeholderLabel != nil) {
+        [_placeholderLabel setFont:font];
+    }
+}
+
 - (void)updateConstraints {
-    [super updateConstraints];
-    
+    // Update placeholder label left and right margin by caret rect.
     if (_placeholderLabel != nil) {
         CGRect caretRect = [self caretRectForPosition:self.beginningOfDocument];
-        _placeholderLabel.font = self.font;
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:caretRect.origin.x]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:caretRect.origin.x]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+        if (_placeholderLeftMarginConstraint == nil) {
+            _placeholderLeftMarginConstraint = [NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:caretRect.origin.x];
+            [self addConstraint:_placeholderLeftMarginConstraint];
+        } else {
+            _placeholderLeftMarginConstraint.constant = caretRect.origin.x;
+        }
+        
+        if (_placeholderRightMarginConstraint == nil) {
+            _placeholderRightMarginConstraint = [NSLayoutConstraint constraintWithItem:_placeholderLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:caretRect.origin.x];
+        } else {
+            _placeholderRightMarginConstraint.constant = caretRect.origin.x;
+        }
     }
+    
+    // Update height
+    CGSize size = [self sizeThatFits:CGSizeMake(self.bounds.size.width, FLT_MAX)];
+    if (_heightConstraint == nil) {
+        _heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:size.height];
+        [self addConstraint:_heightConstraint];
+    } else {
+        _heightConstraint.constant = size.height;
+    }
+    
+    [super updateConstraints];
 }
 
 #pragma mark - UITextViewDelegate

@@ -93,6 +93,7 @@ static NSMutableDictionary *kInitializations = nil;
     [self addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
     _type = @"text";
+    self.acceptsClearOnAccessory = YES;
 }
 
 - (void)drawRect:(CGRect)rect {

@@ -8,11 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "PBInput.h"
+#import "PBViewResizingDelegate.h"
 
 @interface PBTextView : UITextView <PBInput, PBTextInputValidator, UITextViewDelegate>
 {
     UILabel *_placeholderLabel;
     NSString *_originalText;
+    NSLayoutConstraint *_placeholderLeftMarginConstraint;
+    NSLayoutConstraint *_placeholderRightMarginConstraint;
+    NSLayoutConstraint *_heightConstraint;
 }
 
 @property (nonatomic, strong) NSString *placeholder;

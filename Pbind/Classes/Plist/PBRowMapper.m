@@ -118,8 +118,9 @@ static const CGFloat kHeightUnset = -2;
             }
         }
         
-        if (/*[[[UIDevice currentDevice] systemVersion] floatValue] < 8.f && */[view isKindOfClass:[UITableViewCell class]]) {
-            height = [[(UITableViewCell *)view contentView] systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height + .5f;
+        if ([view respondsToSelector:@selector(contentView)]) {
+            UIView *contentView = [view contentView];
+            height = [contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height + .5f;
         } else {
             height = [view systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
         }
