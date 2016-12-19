@@ -6,8 +6,8 @@
 //  Copyright (c) 2015年 galen. All rights reserved.
 //
 
-#import "PBRequest.h"
+#import "_PBRequest.h"
 
-@implementation PBRequest
+@implementation _PBRequest
 
 @end

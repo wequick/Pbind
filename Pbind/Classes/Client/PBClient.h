@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PBResponse.h"
-#import "PBRequest.h"
+#import "_PBRequest.h"
 #import "PBClientMapper.h"
 
 //______________________________________________________________________________

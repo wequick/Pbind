@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PBRequest : NSObject
+@interface _PBRequest : NSObject
 
 @property (nonatomic, strong) NSString *action; // Interface action.
 @property (nonatomic, strong) NSString *method; // Interface action.
@@ -23,3 +23,5 @@
 @property (nonatomic, assign) BOOL requiresMutableResponse;
 
 @end
+
+@compatibility_alias PBRequest _PBRequest;
