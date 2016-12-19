@@ -19,6 +19,10 @@
         return;
     }
     
+    if ([view isKindOfClass:[UITableViewCell class]] || [view isKindOfClass:[UICollectionViewCell class]]) {
+        view = [(id)view contentView];
+    }
+    
     NSMutableDictionary *views = [NSMutableDictionary dictionaryWithCapacity:viewCount];
     NSMutableArray *originalViews = [NSMutableArray arrayWithCapacity:viewCount];
     
