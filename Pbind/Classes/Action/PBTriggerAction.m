@@ -25,7 +25,7 @@ switch (_ARG_COUNT_) { \
     case 4: ret = func(_TARGET_, _ACTION_, PBTARG(0), PBTARG(1), PBTARG(2), PBTARG(3)); break; \
     case 5: ret = func(_TARGET_, _ACTION_, PBTARG(0), PBTARG(1), PBTARG(2), PBTARG(3), PBTARG(4)); break; \
 } \
-self.state.data = _STATE_RET_
+state.data = _STATE_RET_
 
 #define PBTriggerVoid(_TARGET_, _ACTION_, _ARG_COUNT_) \
 void (*func)(id target, SEL sel, ...) = (void (*)(id, SEL, ...)) imp; \
@@ -42,7 +42,7 @@ case 5: func(_TARGET_, _ACTION_, PBTARG(0), PBTARG(1), PBTARG(2), PBTARG(3), PBT
 @implementation PBTriggerAction
 
 @pbaction(@"trigger")
-- (void)run {
+- (void)run:(PBActionState *)state {
     if (self.target == nil || self.name == nil) {
         return;
     }

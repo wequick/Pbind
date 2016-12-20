@@ -14,6 +14,7 @@
 #import "PBArray.h"
 #import "PBLayoutMapper.h"
 #import "PBViewResizingDelegate.h"
+#import "PBActionStore.h"
 
 @interface PBTableView () <PBViewResizingDelegate>
 
@@ -740,7 +741,7 @@
     
     NSDictionary *action = cell.action;
     if (action != nil) {
-        [PBAction dispatchActionForView:cell];
+        [[PBActionStore defaultStore] dispatchActionForView:cell];
     }
     
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {

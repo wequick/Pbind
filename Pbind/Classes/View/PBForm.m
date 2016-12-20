@@ -179,14 +179,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         [self updateObservedTextsAndValuesForInput:input];
         [self observeFrameForInput:input];
     }
-    
-    // Init submit input
-    if (_submitInput != nil) {
-        if ([_submitInput isKindOfClass:[UIControl class]]) {
-            UIControl *submitControl = (id)_submitInput;
-            [submitControl addTarget:self action:@selector(onSubmit:) forControlEvents:UIControlEventTouchUpInside];
-        }
-    }
 }
 
 - (void)initAvailableKeyboardInputs {
@@ -242,8 +234,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             id<PBInput> input = (id)subview;
             if (input.name != nil) {
                 [_inputs addObject:subview];
-            } else if ([input isKindOfClass:[UIButton class]] && [[(UIButton *)input type] isEqualToString:@"submit"]) {
-                _submitInput = (id)subview;
             }
         }
         
@@ -419,13 +409,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
 }
 
-- (void)submit
+- (NSDictionary *)verifiedParamsForSubmit
 {
-    PBClient *client = [self submitClient];
-    if (client == nil) {
-        return;
-    }
-    
     [self endEditing:YES];
     
     // Validate inputs
@@ -450,7 +435,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
                 }];
             }
         }];
-        return;
+        return nil;
     }
     
     // Build up params
@@ -458,42 +443,14 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     // User validating
     if ([self.formDelegate respondsToSelector:@selector(formShouldSubmit:parameters:)]) {
         if (![self.formDelegate formShouldSubmit:self parameters:params]) {
-            return;
+            return nil;
         }
-    }
-    if (self.clientParams != nil) {
-        NSMutableDictionary *aParams = [NSMutableDictionary dictionaryWithDictionary:params];
-        [aParams setValuesForKeysWithDictionary:self.clientParams];
-        params = aParams;
     }
     if (self.mode == PBFormModeUpdate && [params count] == 0) {
-        return;
+        return nil;
     }
-    // Post action
-    Class requestClass = [[client class] requestClass];
-    PBRequest *request = [[requestClass alloc] init];
-    request.action = _submitClientAction;
-    request.params = params;
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBFormWillSubmitNotification object:self];
-    if ([self.formDelegate respondsToSelector:@selector(formWillSubmit:)]) {
-        [self.formDelegate formWillSubmit:self];
-    }
-    [client _loadRequest:request mapper:nil notifys:NO complection:^(PBResponse *response) {
-        // Forward to delegate
-        BOOL handledError = NO;
-        if ([self.formDelegate respondsToSelector:@selector(form:didSubmit:handledError:)]) {
-            [self.formDelegate form:self didSubmit:response handledError:&handledError];
-        }
-        // Send notification
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
-        [userInfo setObject:@(handledError) forKey:PBFormHasHandledSubmitErrorKey];
-        if (response != nil) {
-            [userInfo setObject:response forKey:PBResponseKey];
-        }
-        [[NSNotificationCenter defaultCenter] postNotificationName:PBFormDidSubmitNotification
-                                                            object:self
-                                                          userInfo:userInfo];
-    }];
+    
+    return params;
 }
 
 - (NSDictionary *)params {
@@ -562,10 +519,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
     }
     return params;
-}
-
-- (void)onSubmit:(id)sender {
-    [self submit];
 }
 
 - (PBClient *)submitClient {

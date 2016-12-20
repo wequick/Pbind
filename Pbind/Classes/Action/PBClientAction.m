@@ -25,7 +25,7 @@
            @"patch",
            @"delete",
            @"head")
-- (void)run {
+- (void)run:(PBActionState *)state {
     PBClient *client = [PBClient clientWithName:self.target];
     if (client == nil) {
         return;
@@ -33,15 +33,15 @@
     
     PBRequest *request = [[PBRequest alloc] init];
     request.method = [self.type uppercaseString];
-    request.params = self.params;
+    request.params = [state mergedParams:self.params];
     request.action = self.name;
     
     [client _loadRequest:request mapper:nil notifys:YES complection:^(PBResponse *response) {
         if (response.error != nil) {
-            self.state.error = response.error;
+            state.error = response.error;
             [self dispatchNext:@"failure"];
         } else {
-            self.state.data = response.data;
+            state.data = response.data;
             [self dispatchNext:@"success"];
         }
     }];

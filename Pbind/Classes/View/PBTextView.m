@@ -36,6 +36,9 @@
 }
 
 - (id)value {
+    if (self.text.length == 0) {
+        return nil;
+    }
     return self.text;
 }
 

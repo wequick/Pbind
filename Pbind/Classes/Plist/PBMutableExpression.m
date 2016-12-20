@@ -252,7 +252,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             id value = [exp valueWithData:data target:target context:context];
             if (value == nil) {
                 if (_formatFlags.testEmpty) {
-                    return nil;
+                    value = [NSNull null];
                 }
                 value = @"";
             }

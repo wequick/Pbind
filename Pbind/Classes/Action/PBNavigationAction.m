@@ -24,12 +24,12 @@ static NSString *const kUserInfoTargetControllerKey = @"target";
 static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
 
 @pbactions(@"push", @"pop", @"present", @"dismiss")
-- (void)run {
-    if (self.context == nil) {
+- (void)run:(PBActionState *)state {
+    if (state.context == nil) {
         return;
     }
     
-    UIViewController *controller = [self.context supercontroller];
+    UIViewController *controller = [state.context supercontroller];
     if (controller == nil) {
         return;
     }
@@ -99,7 +99,7 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
         // the current context would be deallocated while it's parent controller pop,
         // so replace it with an active one or set to nil.
         // FIXME: Be careful to use the context.
-        self.context = newContext;
+        state.context = newContext;
     } else if ([self.type isEqualToString:@"present"]) {
         UIViewController *nextController = [self targetController];
         if (nextController == nil) {

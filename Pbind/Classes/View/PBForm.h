@@ -79,7 +79,6 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 
 @property (nonatomic, strong, readonly) NSDictionary *params;
 @property (nonatomic, strong, readonly) NSDictionary *submitParams; // params to submit
-@property (nonatomic, strong, readonly) id<PBInput> submitInput;
 
 @property (nonatomic, assign) PBFormValidateState validateState;
 @property (readonly, getter=isInvalid) BOOL invalid;
@@ -91,7 +90,9 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 
 - (id<PBInput>)inputForName:(NSString *)name;
 - (BOOL)isInvalidForName:(NSString *)name;
-- (void)submit;
+
+
+- (NSDictionary *)verifiedParamsForSubmit;
 - (void)reset;
 
 @end

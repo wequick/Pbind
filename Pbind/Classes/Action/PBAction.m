@@ -9,6 +9,7 @@
 #import "PBAction.h"
 #import "PBActionMapper.h"
 #import "UIView+Pbind.h"
+#import "PBActionStore.h"
 
 @implementation PBAction
 
@@ -49,66 +50,6 @@ static NSMutableDictionary *kActionClasses;
     return [[actionClass alloc] init];
 }
 
-+ (void)dispatchActionForView:(UIView *)view {
-    PBActionMapper *mapper = [view actionMapper];
-    if (mapper == nil) {
-        return;
-    }
-    
-    [self dispatchActionWithActionMapper:mapper context:view from:nil];
-}
-
-+ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper from:(PBAction *)lastAction {
-    [self dispatchActionWithActionMapper:mapper context:lastAction.context from:lastAction];
-}
-
-+ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context {
-    [self dispatchActionWithActionMapper:mapper context:context from:nil];
-}
-
-+ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper
-                               context:(UIView *)context
-                                  from:(PBAction *)lastAction
-{
-    [mapper updateWithData:context.rootData andView:context];
-    
-    PBAction *action = [self actionForType:mapper.type];
-    if (action == nil) {
-        return;
-    }
-    
-    action.type = mapper.type;
-    action.disabled = mapper.disabled;
-    action.target = mapper.target;
-    action.name = mapper.name;
-    action.params = mapper.params;
-    action.nextMappers = mapper.nextMappers;
-    action.context = context;
-    action.lastAction = lastAction;
-    [action dispatch];
-}
-
-- (instancetype)init {
-    if (self = [super init]) {
-        self.state = [[PBActionState alloc] init];
-    }
-    return self;
-}
-
-- (void)dispatch {
-    if (self.disabled) {
-        return;
-    }
-    
-    if (self.lastAction != nil) {
-        if (![self shouldRunAfterAction:self.lastAction]) {
-            return;
-        }
-    }
-    
-    [self run];
-}
-
 - (BOOL)haveNext:(NSString *)key {
     if (self.nextMappers == nil) {
         return NO;
@@ -126,7 +67,7 @@ static NSMutableDictionary *kActionClasses;
         return;
     }
     
-    [[self class] dispatchActionWithActionMapper:mapper context:self.context from:self];
+    [self.store dispatchActionWithActionMapper:mapper];
 }
 
 #pragma mark - Default delegate
@@ -135,7 +76,7 @@ static NSMutableDictionary *kActionClasses;
     return YES;
 }
 
-- (void)run {
+- (void)run:(PBActionState *)state {
     
 }
 

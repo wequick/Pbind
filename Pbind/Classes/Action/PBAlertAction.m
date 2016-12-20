@@ -12,10 +12,21 @@
 @implementation PBAlertAction
 
 @pbactions(@"alert", @"sheet")
-- (void)run {
+- (void)run:(PBActionState *)state {
+    UIViewController *controller = [state.context supercontroller];
+    if (controller == nil) {
+        return;
+    }
+    
     NSString *title = self.params[@"title"];
     NSString *message = self.params[@"message"];
     NSArray *buttons = self.params[@"buttons"];
+    if (title != nil && ![title isKindOfClass:[NSString class]]) {
+        title = [title description];
+    }
+    if (message != nil && ![message isKindOfClass:[NSString class]]) {
+        message = [message description];
+    }
     
     UIAlertControllerStyle alertStyle = [self.type isEqualToString:@"alert"] ? UIAlertControllerStyleAlert : UIAlertControllerStyleActionSheet;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:alertStyle];
@@ -23,10 +34,10 @@
     for (NSInteger index = 0; index < buttons.count; index++) {
         NSString *buttonTitle = buttons[index];
         void (^ handler)(UIAlertAction *action) = nil;
-        PBActionMapper *mapper = [self.nextMappers objectForKey:[NSString stringWithFormat:@"%i", (int)index]];
-        if (mapper != nil) {
+        NSString *nextActionKey = [NSString stringWithFormat:@"%i", (int)index];
+        if ([self haveNext:nextActionKey]) {
             handler = ^(UIAlertAction *action) {
-                [PBAction dispatchActionWithActionMapper:mapper from:self];
+                [self dispatchNext:nextActionKey];
             };
         }
         
@@ -36,9 +47,8 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.context.supercontroller presentViewController:alert animated:YES completion:nil];
+        [controller presentViewController:alert animated:YES completion:nil];
     });
-    
 }
 
 @end

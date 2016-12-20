@@ -11,6 +11,7 @@
 #import "PBRowMapper.h"
 #import "Pbind+API.h"
 #import "PBValueParser.h"
+#import "PBActionStore.h"
 
 @interface PBBarButtonItem : UIBarButtonItem
 
@@ -70,7 +71,7 @@
 - (void)pb_handleAction:(PBBarButtonItem *)item {
     // FIXME: Using the private API of `_view'
     UIView *context = [self valueForKey:@"view"];
-    [PBAction dispatchActionWithActionMapper:self.actionMapper context:context];
+    [[PBActionStore defaultStore] dispatchActionWithActionMapper:self.actionMapper context:context];
 }
 
 @end

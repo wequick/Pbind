@@ -9,7 +9,7 @@
 #import "UIButton+PBForm.h"
 #import "PBForm.h"
 #import "UIView+Pbind.h"
-#import "PBAction.h"
+#import "PBActionStore.h"
 
 @implementation UIButton (PBForm)
 
@@ -149,7 +149,7 @@
 }
 
 - (void)handleAction:(id)sender {
-    [PBAction dispatchActionForView:sender];
+    [[PBActionStore defaultStore] dispatchActionForView:self];
 }
 
 - (void)textInput:(id<PBTextInput>)textInput didInputText:(NSString *)text value:(id)value {

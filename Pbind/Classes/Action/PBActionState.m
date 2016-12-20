@@ -10,4 +10,18 @@
 
 @implementation PBActionState
 
+- (NSDictionary *)mergedParams:(NSDictionary *)params {
+    if (self.params == nil) {
+        return params;
+    }
+    
+    if (params == nil) {
+        return self.params;
+    }
+    
+    NSMutableDictionary *mergedParams = [NSMutableDictionary dictionaryWithDictionary:self.params];
+    [mergedParams addEntriesFromDictionary:params];
+    return mergedParams;
+}
+
 @end

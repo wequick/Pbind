@@ -12,11 +12,12 @@
 #import "PBActionMapper.h"
 
 @class PBAction;
+@class PBActionStore;
 
 @protocol PBAction <NSObject>
 
 - (BOOL)shouldRunAfterAction:(PBAction *)action;
-- (void)run;
+- (void)run:(PBActionState *)state;
 
 @end
 
@@ -24,23 +25,18 @@
 
 + (void)registerType:(NSString *)type;
 + (void)registerTypes:(NSArray *)types;
-
-+ (void)dispatchActionForView:(UIView *)view;
-+ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper from:(PBAction *)lastAction;
-+ (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context;
++ (PBAction *)actionForType:(NSString *)type;
 
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) id target;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSDictionary *params;
-@property (nonatomic, strong) UIView *context;
 
 @property (nonatomic, assign) BOOL disabled;
 
-@property (nonatomic, strong) PBActionState *state;
-
-@property (nonatomic, strong) PBAction *lastAction;
 @property (nonatomic, strong) NSDictionary *nextMappers;
+
+@property (nonatomic, weak) PBActionStore *store;
 
 - (BOOL)haveNext:(NSString *)key;
 - (void)dispatchNext:(NSString *)key;
