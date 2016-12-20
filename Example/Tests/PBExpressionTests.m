@@ -30,10 +30,14 @@
 }
 
 - (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target {
+    [self shouldParse:source toValue:result withData:data target:target context:nil];
+}
+
+- (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target context:(UIView *)context {
     PBExpression *exp = [PBMutableExpression expressionWithString:source];
     XCTAssert([source isEqualToString:[exp stringValue]]);
     
-    id value = [exp valueWithData:data target:target];
+    id value = [exp valueWithData:data target:target context:context];
     XCTAssert((result == nil && value == nil) || [result isEqual:value]);
 }
 
@@ -43,22 +47,23 @@
              withData:@{@"hello": @"Pbind"}];
 }
 
-- (void)testCanParseViewData {
-    UIView *view = [[UIView alloc] init];
-    view.data = @{@"hello": @"Pbind"};
+- (void)testCanParseContextData {
+    UIView *context = [[UIView alloc] init];
+    context.data = @{@"hello": @"Pbind"};
     
     [self shouldParse:@".$hello"
               toValue:@"Pbind"
              withData:nil
-              target:view];
+              target:nil
+              context:context];
 }
 
-- (void)testCanParseViewProperties {
+- (void)testCanParseContextProperties {
     PBExpression *exp = [PBExpression expressionWithString:@".frame"];
     
     CGRect frame = CGRectMake(1, 2, 3, 4);
-    UIView *view = [[UIView alloc] initWithFrame:frame];
-    id value = [exp valueWithData:nil target:view];
+    UIView *context = [[UIView alloc] initWithFrame:frame];
+    id value = [exp valueWithData:nil target:nil context:context];
     
     XCTAssert([[exp stringValue] isEqualToString:@".frame"]);
     XCTAssert(CGRectEqualToRect(frame, [value CGRectValue]));

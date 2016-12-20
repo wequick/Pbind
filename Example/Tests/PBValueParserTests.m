@@ -58,6 +58,20 @@
     XCTAssertEqual([[PBValueParser valueWithString:@":value1"] intValue], UITableViewCellStyleValue1);
     XCTAssertEqual([[PBValueParser valueWithString:@":value2"] intValue], UITableViewCellStyleValue2);
     XCTAssertEqual([[PBValueParser valueWithString:@":subtitle"] intValue], UITableViewCellStyleSubtitle);
+    // Cell height
+    XCTAssertEqual([[PBValueParser valueWithString:@":auto"] intValue], UITableViewAutomaticDimension);
+    // UIBarButtonItem
+    XCTAssertEqual([[PBValueParser valueWithString:@":+"] intValue], UIBarButtonSystemItemAdd);
+    XCTAssertEqual([[PBValueParser valueWithString:@":add"] intValue], UIBarButtonSystemItemAdd);
+    XCTAssertEqual([[PBValueParser valueWithString:@":@"] intValue], UIBarButtonSystemItemAction);
+    XCTAssertEqual([[PBValueParser valueWithString:@":share"] intValue], UIBarButtonSystemItemAction);
+    XCTAssertEqual([[PBValueParser valueWithString:@":done"] intValue], UIBarButtonSystemItemDone);
+    XCTAssertEqual([[PBValueParser valueWithString:@":edit"] intValue], UIBarButtonSystemItemEdit);
+    // PBFormIndicating
+    XCTAssertEqual([[PBValueParser valueWithString:@":focus"] intValue], PBFormIndicatingMaskInputFocus);
+    XCTAssertEqual([[PBValueParser valueWithString:@":invalid"] intValue], PBFormIndicatingMaskInputInvalid);
+    XCTAssertEqual([[PBValueParser valueWithString:@":done"] intValue], UIBarButtonSystemItemDone);
+    XCTAssertEqual([[PBValueParser valueWithString:@":edit"] intValue], UIBarButtonSystemItemEdit);
 }
 
 - (void)testCanDefineEnum {
