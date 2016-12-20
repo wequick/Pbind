@@ -1095,7 +1095,6 @@
                 "c": {
                   "$": {
                     "pbclient": 769,
-                    "test": 543,
                     "tour-add-hero": 727,
                     "tour-cell-layout": 283,
                     "tour-detail-and-route": 2011
@@ -1115,7 +1114,6 @@
                                           "_": {
                                             "n": {
                                               "$": {
-                                                "test": 498,
                                                 "tour-add-hero": 2050,
                                                 "tour-detail-and-route": 1966
                                               }
@@ -1161,7 +1159,6 @@
                       "_": {
                         "l": {
                           "$": {
-                            "test": 175,
                             "tour-detail-and-route": 652
                           }
                         }
@@ -1283,8 +1280,6 @@
                                           "$": {
                                             "pbaction": 193,
                                             "quickstart": 2090,
-                                            "test": 38,
-                                            "test3": 86,
                                             "tour-add-hero": 187,
                                             "tour-cell-layout": 140,
                                             "tour-databinding": 1166,
@@ -1512,8 +1507,6 @@
                 "o": {
                   "$": {
                     "pbclient": 1013,
-                    "test": 170,
-                    "test3": 413,
                     "tour-add-hero": 124,
                     "tour-cell-layout": 26,
                     "tour-detail-and-route": 647
@@ -1524,7 +1517,6 @@
                         "s": {
                           "$": {
                             "pbclient": 556,
-                            "test3": 413,
                             "tour-add-hero": 2427,
                             "tour-cell-layout": 1506,
                             "tour-databinding": 908,
@@ -1743,8 +1735,6 @@
                       "_": {
                         "t": {
                           "$": {
-                            "test": 150,
-                            "test3": 501,
                             "tour-add-hero": 1690,
                             "tour-cell-layout": 1003,
                             "tour-detail-and-route": 1618
@@ -1981,7 +1971,6 @@
                                 "t": {
                                   "$": {
                                     "pbclient": 29,
-                                    "test3": 354,
                                     "tour-cell-layout": 1497,
                                     "tour-databinding": 899,
                                     "tour-detail-and-route": 3333
@@ -3020,8 +3009,6 @@
                                         "s": {
                                           "$": {
                                             "quickstart": 2120,
-                                            "test": 68,
-                                            "test3": 134,
                                             "tour-add-hero": 1006,
                                             "tour-cell-layout": 904,
                                             "tour-databinding": 1057,
@@ -3264,7 +3251,6 @@
                     "cheatsheet": 2293,
                     "pbaction": 2344,
                     "quickstart": 2351,
-                    "test": 320,
                     "tour-add-hero": 1785,
                     "tour-cell-layout": 1091,
                     "tour-databinding": 415,
@@ -3367,7 +3353,6 @@
                       "$": {
                         "cheatsheet": 402,
                         "pbaction": 985,
-                        "test": 314,
                         "tour-add-hero": 258,
                         "tour-detail-and-route": 505
                       },
@@ -3603,8 +3588,6 @@
                     "cheatsheet": 3945,
                     "pbaction": 105,
                     "quickstart": 2062,
-                    "test": 10,
-                    "test3": 29,
                     "tour-add-hero": 159,
                     "tour-cell-layout": 112,
                     "tour-databinding": 442,
@@ -4672,7 +4655,6 @@
                 },
                 "l": {
                   "$": {
-                    "test": 182,
                     "tour-cell-layout": 31,
                     "tour-detail-and-route": 659
                   },
@@ -5420,7 +5402,6 @@
                           "_": {
                             "s": {
                               "$": {
-                                "test3": 202,
                                 "tour-cell-layout": 4252,
                                 "tour-databinding": 1076,
                                 "tour-detail-and-route": 3237
@@ -5441,7 +5422,6 @@
                     "z": {
                       "$": {
                         "quickstart": 2241,
-                        "test3": 325,
                         "tour-add-hero": 297,
                         "tour-cell-layout": 249,
                         "tour-databinding": 1197,
@@ -6550,8 +6530,6 @@
                             "cheatsheet": 3726,
                             "pbaction": 113,
                             "quickstart": 2250,
-                            "test": 160,
-                            "test3": 339,
                             "tour-add-hero": 306,
                             "tour-cell-layout": 258,
                             "tour-databinding": 470,
@@ -9166,7 +9144,6 @@
                     "pbaction": 1433,
                     "pbclient": 1048,
                     "quickstart": 489,
-                    "test": 338,
                     "tour-add-hero": 129,
                     "tour-cell-layout": 211,
                     "tour-databinding": 301,
@@ -10324,8 +10301,6 @@
                 "t": {
                   "$": {
                     "quickstart": 2082,
-                    "test": 30,
-                    "test3": 73,
                     "tour-add-hero": 179,
                     "tour-cell-layout": 132,
                     "tour-databinding": 2314,
@@ -10337,15 +10312,12 @@
             "w": {
               "$": {
                 "cheatsheet": 490,
-                "test": 113,
-                "test3": 440,
                 "tour-cell-layout": 928,
                 "tour-detail-and-route": 1581
               },
               "_": {
                 "s": {
                   "$": {
-                    "test": 194,
                     "tour-add-hero": 1615,
                     "tour-detail-and-route": 1662
                   }
@@ -10565,8 +10537,6 @@
                         "cheatsheet": 197,
                         "pbaction": 3284,
                         "quickstart": 2068,
-                        "test": 16,
-                        "test3": 40,
                         "tour-add-hero": 165,
                         "tour-cell-layout": 118,
                         "tour-databinding": 448,
@@ -10666,8 +10636,6 @@
                 "cheatsheet": 7,
                 "pbaction": 3273,
                 "quickstart": 2057,
-                "test": 5,
-                "test3": 19,
                 "tour-add-hero": 154,
                 "tour-cell-layout": 107,
                 "tour-databinding": 437,
@@ -11776,7 +11744,6 @@
                           "$": {
                             "pbaction": 7,
                             "pbclient": 1857,
-                            "test3": 383,
                             "tour-add-hero": 2511,
                             "tour-cell-layout": 4364,
                             "tour-databinding": 1232,
@@ -12164,8 +12131,6 @@
                       "$": {
                         "pbaction": 1058,
                         "quickstart": 2175,
-                        "test": 202,
-                        "test3": 218,
                         "tour-add-hero": 495,
                         "tour-cell-layout": 370,
                         "tour-databinding": 1131,
@@ -12790,8 +12755,6 @@
                   "$": {
                     "pbaction": 3325,
                     "quickstart": 2107,
-                    "test": 55,
-                    "test3": 108,
                     "tour-add-hero": 204,
                     "tour-cell-layout": 157,
                     "tour-databinding": 1143,
@@ -12802,8 +12765,6 @@
                       "$": {
                         "pbaction": 3325,
                         "quickstart": 2227,
-                        "test": 99,
-                        "test3": 175,
                         "tour-add-hero": 204,
                         "tour-cell-layout": 157,
                         "tour-databinding": 1183,
