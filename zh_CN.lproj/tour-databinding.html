@@ -1,0 +1,82 @@
+<h2><a href="/Pbind/doc/tour-databinding#数据绑定" id=数据绑定 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>数据绑定</h2><h3><a href="/Pbind/doc/tour-databinding#内存数据模拟" id=内存数据模拟 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>内存数据模拟</h3>
+<p>在 <code>ViewController.m</code> 的 <code>viewDidLoad</code> 中添加模拟数据：</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+    <span class="c1">// Do any additional setup after loading the view, typically from a nib.</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">setPlist</span><span class="p">:</span><span class="s">@&quot;main&quot;</span><span class="p">];</span>
+
+    <span class="kt">id</span> <span class="n">data</span> <span class="o">=</span> <span class="l">@{</span><span class="s">@&quot;name&quot;</span><span class="o">:</span> <span class="s">@&quot;My Pbind&quot;</span><span class="l">}</span><span class="p">;</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">setData</span><span class="p">:</span><span class="n">data</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+<p>在 <code>main.tableview.plist</code> 里 对 <code>text</code> 属性配置数据绑定：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>text</span></td><td><span>String</span></td><td><span>%(Hello %@!),$name</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>这个表达式是字符串格式化，将被解析为：</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">[</span><span class="n">PBString</span> <span class="nl">stringWithFormat</span><span class="p">:</span><span class="s">@&quot;Hello %@!&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">controller</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">data</span> <span class="nl">valueForKey</span><span class="p">:</span><span class="s">@&quot;name&quot;</span><span class="p">]]</span>
+<span class="c1">//              %           (Hello %@!), $name</span>
+</pre></div>
+<p>重新运行程序，你将可以看到UILabel的文本显示为：“Hello My Pbind!”。</p>
+
+<p>有关格式化表达式的细节，可以查看<a href="/Pbind/doc/cheatsheet#字符串格式化" name="wq-redirect" data-redirect="doc/cheatsheet#字符串格式化">字符串格式化</a>。</p>
+<h3><a href="/Pbind/doc/tour-databinding#本地json数据模拟" id=本地json数据模拟 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>本地JSON数据模拟</h3>
+<p>上节我们通过 <code>pbind watch</code> 添加了 <code>PBLocalhost</code> 文件夹，现在我们来添加一些json文件模拟服务端返回。</p>
+
+<p>在工程目录下调用命令：</p>
+<div class="highlight highlight-source-text"><pre>pbind mock PBClient heroes
+</pre></div>
+<p>将会在工程的 <code>PBLocalhost</code> 目录下生成 <code>PBClient/heroes.json</code> 文件。我们为其添加一个字段：</p>
+<div class="highlight highlight-source-json"><pre><span class="p">{</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mock Pbind&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<p>再在 <code>main.tableview.plist</code> 的 <code>properties</code> 节点下添加 <code>clients</code> 配置：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>clients</span></td><td><span>Array</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>PBClient</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>action</span></td><td><span>String</span></td><td><span>heroes</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>Client 是 Pbind 的一个基础组件，用来拉取数据。<code>PBClient</code> 是基类，你可以在此基础上封装适合自己业务的 <code>HTTPClient</code>，<code>DatabaseClient</code> 等等。</p>
+
+<p>我们设计成 <code>clients</code> 数组的原因是一个View可能对应多个API，通过数组形式的配置能够起到并发请求的作用。</p>
+
+<p>通过上面的配置，在 <strong>模拟器调试</strong> 模式下，Pbind将优先读取 <code>PBLocalhost/PBClient/heroes.json</code> 文件来返回数据。</p>
+
+<p>现在，我们可以把内存模拟数据关闭：</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+    <span class="c1">// Do any additional setup after loading the view, typically from a nib.</span>
+    <span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">setPlist</span><span class="p">:</span><span class="s">@&quot;main&quot;</span><span class="p">];</span>
+
+<span class="c1">//    id data = @{@&quot;name&quot;: @&quot;My Pbind&quot;};</span>
+<span class="c1">//    [self.view setData:data];</span>
+<span class="p">}</span>
+</pre></div>
+<p>重新运行程序，我们将看到：“Hello Mock Pbind!”。</p>
+
+<p>试着修改 <code>heroes.json</code> 并保存：</p>
+<div class="highlight highlight-source-json"><pre><span class="p">{</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mock Pbind, Good&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<p>界面将即时刷新：“Hello Mock Pbind, Good!”</p>
+<h2><a href="/Pbind/doc/tour-databinding#总结与下一步" id=总结与下一步 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>总结与下一步</h2>
+<p>最后的工程目录结构看起来是这样的(节选)：</p>
+<div class="highlight highlight-source-text"><pre>├── HeroTour
+│   ├── AppDelegate.h
+│   ├── AppDelegate.m
+│   ├── Info.plist
+│   ├── ViewController.h
+│   ├── ViewController.m
+│   ├── main.m
+│   └── main.tableview.plist
+└── PBLocalhost
+    ├── ignore.h
+    └── PBClient
+        └── heroes.json
+</pre></div>
+<p>完整的 <code>main.tableview.plist</code>：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="0"><td><span class="button collapse-button"></span><span>Root</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>clients</span></td><td><span>Array</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="3"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>PBClient</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>action</span></td><td><span>String</span></td><td><span>name</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>headers</span></td><td><span>Array</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="3"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>Dictionary</span></td><td><span class="sub">(4 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>height</span></td><td><span>String</span></td><td><span>100</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{100,0,0,0}</span></td></tr><tr class="collapsible" data-level="4"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(4 items)</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>text</span></td><td><span>String</span></td><td><span>%(Hello %@!),$name</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>textColor</span></td><td><span>String</span></td><td><span>#fff</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>backgroundColor</span></td><td><span>String</span></td><td><span>#333</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>textAlignment</span></td><td><span>String</span></td><td><span>:center</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>通过本节我们掌握了Pbind开发的数据绑定功能：</p>
+
+<ol>
+<li>通过Plist来配置数据映射表达式</li>
+<li>通过JSON文件来模拟数据并实时响应变更</li>
+</ol>
+
+<p><a href="/Pbind/doc/tour-cell-layout" name="wq-redirect" data-redirect="doc/tour-cell-layout">下一步</a>我们将通过配置单元格布局来做一个英雄列表。</p>
