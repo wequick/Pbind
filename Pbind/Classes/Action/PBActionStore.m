@@ -17,9 +17,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance = [[PBActionStore alloc] init];
-        [PBVariableMapper registerTag:'#' withMapper:^id(id data, id target, UIView *context) {
-            return instance.state;
-        }];
     });
     return instance;
 }
