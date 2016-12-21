@@ -71,8 +71,15 @@ static NSMutableDictionary *kEnums = nil;
     if (initial == ':') {
         aString = [aString substringFromIndex:1];
         int enumValue = 0;
+        if ([aString isEqualToString:@"nil"]) {
+            return nil;
+        } else if ([aString isEqualToString:@"null"]) {
+            return [NSNull null];
+        } else if ([aString isEqualToString:@"none"]) {
+            // 0
+        }
         // Text alignment
-        if ([aString isEqualToString:@"left"]) {
+        else if ([aString isEqualToString:@"left"]) {
             enumValue = NSTextAlignmentLeft;
         } else if ([aString isEqualToString:@"right"]) {
             enumValue = NSTextAlignmentRight;

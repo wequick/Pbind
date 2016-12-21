@@ -14,8 +14,8 @@
 #import "PBTextView.h"
 #import "NSString+PBInput.h"
 
-#define PBINPUT_TYPESTRING(_type_) kPRInputTypeString_##_type_
-#define PBINPUT_TYPENUMBER(_type_) kPRInputTypeNumber_##_type_
+#define PBINPUT_TYPESTRING(_type_) kInputTypeString_##_type_
+#define PBINPUT_TYPENUMBER(_type_) kInputTypeNumber_##_type_
 #define DEF_PRINPUT_TYPE(_type_, _value_) \
 static NSString *const PBINPUT_TYPESTRING(_type_) = @#_type_; \
 static const NSInteger PBINPUT_TYPENUMBER(_type_) = _value_;
@@ -36,19 +36,19 @@ DEF_PRINPUT_TYPE(month      , 11)
 DEF_PRINPUT_TYPE(select     , 12)
 DEF_PRINPUT_TYPE(custom     , 31)
 // format
-static NSString *const kPRInputFormatNumber = @"%lld";
-static NSString *const kPRInputFormatDecimal = @"%.1lf";
-static NSString *const kPRInputFormatDateTime = @"yyyy-MM-dd HH:mm";
-static NSString *const kPRInputFormatDate = @"yyyy-MM-dd";
-static NSString *const kPRInputFormatTime = @"HH:mm";
-static NSString *const kPRInputFormatMonth = @"yyyy-MM";
-static NSString *const kPRInputFlagSharp = @"#";
-static const char kPRInputCharSharp = '#';
+static NSString *const kInputFormatNumber = @"%lld";
+static NSString *const kInputFormatDecimal = @"%.1lf";
+static NSString *const kInputFormatDateTime = @"yyyy-MM-dd HH:mm";
+static NSString *const kInputFormatDate = @"yyyy-MM-dd";
+static NSString *const kInputFormatTime = @"HH:mm";
+static NSString *const kInputFormatMonth = @"yyyy-MM";
+static NSString *const kInputFlagSharp = @"#";
+static const char      kInputCharSharp = '#';
 // pattern
-static NSString *const kPRInputPatternNumber = @"[0-9]";
-static NSString *const kPRInputPatternDecimal = @"[0-9\\.]";
+static NSString *const kInputPatternNumber = @"[0-9]";
+static NSString *const kInputPatternDecimal = @"[0-9\\.]";
 // key path
-static NSString *const kPRInputKeyPathPlaceholderTextColor = @"_placeholderLabel.textColor";
+static NSString *const kInputKeyPathPlaceholderTextColor = @"_placeholderLabel.textColor";
 
 //______________________________________________________________________________
 
@@ -137,7 +137,7 @@ static NSMutableDictionary *kInitializations = nil;
 - (void)setFormat:(NSString *)format
 {
     _format = format;
-    BOOL hasSharpChar = [format rangeOfString:kPRInputFlagSharp].length != 0;
+    BOOL hasSharpChar = [format rangeOfString:kInputFlagSharp].length != 0;
     BOOL hasFormatChar = [format rangeOfString:@"%"].length != 0;
     _inputFlag.usingSharpFormat = (hasSharpChar && !hasFormatChar);
 }
@@ -210,7 +210,7 @@ static NSMutableDictionary *kInitializations = nil;
             NSString *aChar;
             NSRange charRange = NSMakeRange(iFmt++, 1);
             NSString *flag = [_format substringWithRange:charRange];
-            if ([flag isEqualToString:kPRInputFlagSharp]) {
+            if ([flag isEqualToString:kInputFlagSharp]) {
                 charRange.location = iSrc++;
                 aChar = [text substringWithRange:charRange];
             } else {
@@ -234,12 +234,12 @@ static NSMutableDictionary *kInitializations = nil;
 
 - (void)setPlaceholderColor:(UIColor *)placeholderColor
 {
-    [self setValue:placeholderColor forKeyPath:kPRInputKeyPathPlaceholderTextColor];
+    [self setValue:placeholderColor forKeyPath:kInputKeyPathPlaceholderTextColor];
 }
 
 - (UIColor *)placeholderColor
 {
-    return [self valueForKeyPath:kPRInputKeyPathPlaceholderTextColor];
+    return [self valueForKeyPath:kInputKeyPathPlaceholderTextColor];
 }
 
 - (void)setSelected:(BOOL)selected
@@ -550,7 +550,7 @@ else PBINPUT_IFTYPE(_type_, _code_)
     PBINPUT_ELIFTYPE(password   , _inputFlag.isTextInput = YES;[self setSecureTextEntry:YES];)
     PBINPUT_ELIFTYPE(number     , {
         [self setKeyboardType:UIKeyboardTypeNumberPad];
-        [self setPattern:kPRInputPatternNumber];
+        [self setPattern:kInputPatternNumber];
         if (_min != nil) {
             _minValue = [NSNumber numberWithLongLong:[_min longLongValue]];
         }
@@ -560,7 +560,7 @@ else PBINPUT_IFTYPE(_type_, _code_)
     })
     PBINPUT_ELIFTYPE(decimal    , {
         [self setKeyboardType:UIKeyboardTypeDecimalPad];
-        [self setPattern:kPRInputPatternDecimal];
+        [self setPattern:kInputPatternDecimal];
         if (_min != nil) {
             _minValue = [NSNumber numberWithDouble:[_min doubleValue]];
         }
@@ -571,10 +571,10 @@ else PBINPUT_IFTYPE(_type_, _code_)
     PBINPUT_ELIFTYPE(phone      , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypePhonePad];)
     PBINPUT_ELIFTYPE(url        , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypeURL];)
     PBINPUT_ELIFTYPE(email      , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypeEmailAddress];)
-    PBINPUT_ELIFTYPE(date       , pickerMode = UIDatePickerModeDate; dateFormat = kPRInputFormatDate;)
-    PBINPUT_ELIFTYPE(time       , pickerMode = UIDatePickerModeTime; dateFormat = kPRInputFormatTime;)
-    PBINPUT_ELIFTYPE(datetime   , pickerMode = UIDatePickerModeDateAndTime; dateFormat = kPRInputFormatDateTime;)
-    PBINPUT_ELIFTYPE(month      , pickerMode = PBDatePickerModeMonth; dateFormat = kPRInputFormatMonth;)
+    PBINPUT_ELIFTYPE(date       , pickerMode = UIDatePickerModeDate; dateFormat = kInputFormatDate;)
+    PBINPUT_ELIFTYPE(time       , pickerMode = UIDatePickerModeTime; dateFormat = kInputFormatTime;)
+    PBINPUT_ELIFTYPE(datetime   , pickerMode = UIDatePickerModeDateAndTime; dateFormat = kInputFormatDateTime;)
+    PBINPUT_ELIFTYPE(month      , pickerMode = PBDatePickerModeMonth; dateFormat = kInputFormatMonth;)
     PBINPUT_ELIFTYPE(select     , {
         if (self.selector != nil) {
             UIView *view;
@@ -718,13 +718,13 @@ else PBINPUT_IFTYPE(_type_, _code_)
     NSInteger index = 0;
     for (; index < range.length; index++) {
         char flag = [self.format characterAtIndex:location+index];
-        if (flag == kPRInputCharSharp) {
+        if (flag == kInputCharSharp) {
             length++;
         }
     }
     for (index = location - 1; index > 0; index--) {
         char flag = [self.format characterAtIndex:index];
-        if (flag != kPRInputCharSharp) {
+        if (flag != kInputCharSharp) {
             location--;
         }
     }

@@ -20,9 +20,3 @@
 - (void)setHref:(NSString *)href;
 
 @end
-
-UIKIT_EXTERN NSString *const PBPopdownCoverWillShowNotification;
-UIKIT_EXTERN NSString *const PBPopdownCoverDidShowNotification;
-UIKIT_EXTERN NSString *const PBPopdownCoverWillHideNotification;
-UIKIT_EXTERN NSString *const PBPopdownCoverDidHideNotification;
-UIKIT_EXTERN NSString *const PBPopdownCoverViewKey;

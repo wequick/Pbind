@@ -329,6 +329,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     return _invalidInputNames != nil && [_invalidInputNames containsObject:name];
 }
 
+- (BOOL)isErrorInput:(id<PBInput>)input {
+    return [_inputErrorTips objectForKey:[input name]] != nil;
+}
+
 - (BOOL)isChanged {
     if (_initialParams == nil) {
         return NO;
@@ -670,8 +674,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (self.validating & PBFormValidatingChanged) {
         valid = [self validateInput:input forState:PBFormValidatingChanged];
         if (!valid) {
+            _indicator.layer.borderColor = [UIColor redColor].CGColor;
             return;
         }
+        _indicator.layer.borderColor = [self tintColor].CGColor;
     }
     
     // Update the observed values
@@ -948,7 +954,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             [(PBInput *)input setSelected:YES];
         }
         
-        if ([self isInvalidForName:[input name]]) {
+        if ([self isErrorInput:input]) {
             _indicator.layer.borderColor = [UIColor redColor].CGColor;
         }
     };
