@@ -56,9 +56,15 @@ static NSMutableDictionary *kEnums = nil;
     if (initial == '#') {
         const char *str = [aString UTF8String];
         if (*(str + 1) == '#') {
-            return (id) [[self colorWithUTF8String:str + 2] CGColor];
+            UIColor *color = [self colorWithUTF8String:str + 2];
+            if (color != nil) {
+                return (id) [color CGColor];
+            }
         } else {
-            return [self colorWithUTF8String:str + 1];
+            UIColor *color =  [self colorWithUTF8String:str + 1];
+            if (color != nil) {
+                return color;
+            }
         }
     }
     // Enum
@@ -110,10 +116,10 @@ static NSMutableDictionary *kEnums = nil;
             enumValue = PBFormIndicatingMaskInputFocus;
         } else if ([aString isEqualToString:@"invalid"]) {
             enumValue = PBFormIndicatingMaskInputInvalid;
-        } else if ([aString isEqualToString:@"done"]) {
-            enumValue = UIBarButtonSystemItemDone;
-        } else if ([aString isEqualToString:@"edit"]) {
-            enumValue = UIBarButtonSystemItemEdit;
+        }
+        // PBFormValidating
+        else if ([aString isEqualToString:@"changed"]) {
+            enumValue = PBFormValidatingChanged;
         }
         // User defined enums
         else {
