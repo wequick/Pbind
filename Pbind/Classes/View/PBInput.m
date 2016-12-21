@@ -447,6 +447,17 @@ static NSMutableDictionary *kInitializations = nil;
 
 - (BOOL)textFieldShouldReturn:(nonnull UITextField *)textField {
     // Add this for AOP
+    if (_originalText != nil && ![_originalText isEqualToString:textField.text]) {
+        // Re-check for auto-correction inputs (Chinese, etc.)
+        NSString *temp = [_originalText copy];
+        [self textFieldDidChange:textField];
+        if (![temp isEqualToString:_originalText]) {
+            // Allow changing
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self];
+            });
+        }
+    }
     return YES;
 }
 
