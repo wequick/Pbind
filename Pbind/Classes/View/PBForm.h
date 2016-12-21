@@ -12,12 +12,12 @@
 
 //______________________________________________________________________________
 
-typedef NS_OPTIONS(NSUInteger, PBFormValidateState)
+typedef NS_OPTIONS(NSUInteger, PBFormValidating)
 {
-    PBFormValidateStateInitialized = 0,
-    PBFormValidateStateSubmitting = 1, // on form submitting
-    PBFormValidateStateEndEditing = 1 << 1, // on text end editing
-    PBFormValidateStateChanged = 1 << 2, // on text changed
+    PBFormValidatingInitialized = 0,
+    PBFormValidatingSubmitting = 1, // on form submitting
+    PBFormValidatingEndEditing = 1 << 1, // on text end editing
+    PBFormValidatingChanged = 1 << 2, // on text changed
 };
 
 typedef NS_OPTIONS(NSUInteger, PBFormIndicating)
@@ -46,8 +46,8 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 - (void)formWillReset:(PBForm *)form;
 - (void)form:(PBForm *)form didReset:(PBResponse *)response;
 // Validate
-- (BOOL)form:(PBForm *)form validateInput:(id<PBInput>)input tips:(NSString * __autoreleasing*)tips forState:(PBFormValidateState)state;
-- (void)form:(PBForm *)form didValidateInput:(id<PBInput>)input passed:(BOOL)passed tips:(NSString *)tips forState:(PBFormValidateState)state;
+- (BOOL)form:(PBForm *)form validateInput:(id<PBInput>)input tips:(NSString * __autoreleasing*)tips forState:(PBFormValidating)state;
+- (void)form:(PBForm *)form didValidateInput:(id<PBInput>)input passed:(BOOL)passed tips:(NSString *)tips forState:(PBFormValidating)state;
 - (void)form:(PBForm *)form didEndEditingOnInput:(id<PBInput>)input;
 - (void)formDidInvalidChanged:(PBForm *)form;
 @end
@@ -57,7 +57,7 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 @interface PBForm : PBScrollView
 {
     struct {
-        unsigned int validateState:4;
+        unsigned int validating:4;
         unsigned int isWaitingForKeyboardShow:1;
         unsigned int isWaitingForAutomaticAdjustOffset:1;
         unsigned int hasScrollToInput:1;
@@ -67,7 +67,6 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
     NSString *_submitClientAction;
     PBClient *_resetClient;
     NSString *_resetClientAction;
-    NSMutableArray *_invalidInputNames;
     NSDictionary *_initialParams;
     id _initialData;
     NSMutableDictionary *_radioGroups;
@@ -80,9 +79,9 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 @property (nonatomic, strong, readonly) NSDictionary *params;
 @property (nonatomic, strong, readonly) NSDictionary *submitParams; // params to submit
 
-@property (nonatomic, assign) PBFormValidateState validateState;
 @property (readonly, getter=isInvalid) BOOL invalid;
 
+@property (nonatomic, assign) PBFormValidating validating;
 @property (nonatomic, assign) PBFormIndicating indicating;
 
 @property (nonatomic, assign) PBFormMode mode;
@@ -90,7 +89,6 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 
 - (id<PBInput>)inputForName:(NSString *)name;
 - (BOOL)isInvalidForName:(NSString *)name;
-
 
 - (NSDictionary *)verifiedParamsForSubmit;
 - (void)reset;
@@ -104,7 +102,7 @@ FOUNDATION_EXPORT NSString *const PBFormDidResetNotification;
 FOUNDATION_EXPORT NSString *const PBFormDidValidateNotification;
 
 FOUNDATION_EXPORT NSString *const PBFormValidateInputKey;
-FOUNDATION_EXPORT NSString *const PBFormValidateStateKey;
+FOUNDATION_EXPORT NSString *const PBFormValidatingKey;
 FOUNDATION_EXPORT NSString *const PBFormValidatePassedKey;
 FOUNDATION_EXPORT NSString *const PBFormValidateTipsKey;
 

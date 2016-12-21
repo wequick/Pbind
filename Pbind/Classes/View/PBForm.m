@@ -38,7 +38,7 @@ NSString *const PBFormDidResetNotification = @"PBFormDidReset";
 NSString *const PBFormDidValidateNotification = @"PBFormDidValidate";
 
 NSString *const PBFormValidateInputKey = @"PBFormValidateInput";
-NSString *const PBFormValidateStateKey = @"PBFormValidateState";
+NSString *const PBFormValidatingKey = @"PBFormValidating";
 NSString *const PBFormValidatePassedKey = @"PBFormValidatePassed";
 NSString *const PBFormValidateTipsKey = @"PBFormValidateTips";
 
@@ -75,6 +75,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     
     PBDictionary    *_inputTexts;
     PBDictionary    *_inputValues;
+    PBDictionary    *_inputErrorTips;
+    NSMutableArray  *_invalidInputNames;
 }
 
 @end
@@ -175,6 +177,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     // Init input texts and values for observable
     _inputTexts = [PBDictionary dictionaryWithCapacity:_inputs.count];
     _inputValues = [PBDictionary dictionaryWithCapacity:_inputs.count];
+    _inputErrorTips = [PBDictionary dictionaryWithCapacity:_inputs.count];
     for (id<PBInput> input in _inputs) {
         [self updateObservedTextsAndValuesForInput:input];
         [self observeFrameForInput:input];
@@ -300,20 +303,16 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 #pragma mark -
 #pragma mark - Properties
 
-- (void)setValidateState:(PBFormValidateState)validateState {
-    _formFlags.validateState = validateState;
+- (void)setValidating:(PBFormValidating)validating {
+    _formFlags.validating = validating;
 }
 
-- (PBFormValidateState)validateState {
-    return _formFlags.validateState;
-}
-
-- (BOOL)isInvalid {
-    return [_invalidInputNames count] != 0;
+- (PBFormValidating)validating {
+    return _formFlags.validating;
 }
 
 - (BOOL)isInvalidForName:(NSString *)name {
-    return [_invalidInputNames containsObject:name];
+    return _invalidInputNames != nil && [_invalidInputNames containsObject:name];
 }
 
 - (BOOL)isChanged {
@@ -352,6 +351,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _presentedInput = nil;
     _presentingInput = nil;
     _accessory.toggledIndex = -1;
+    _initialParams = nil;
 }
 
 #pragma mark - 
@@ -411,32 +411,32 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (NSDictionary *)verifiedParamsForSubmit
 {
-    [self endEditing:YES];
-    
     // Validate inputs
     id<PBInput> invalidInput = nil;
     for (id<PBInput> input in _inputs) {
-        if (![self validateInput:input forState:PBFormValidateStateSubmitting]) {
+        if (![self validateInput:input forState:PBFormValidatingSubmitting]) {
             invalidInput = input;
             break;
         }
     }
     if (invalidInput != nil) {
-        [self scrollToInput:(id)invalidInput animated:YES completion:^(BOOL finish) {
-            // Blink
-            if (self.indicating & PBFormIndicatingMaskInputInvalid) {
-                _indicator.layer.borderColor = [UIColor redColor].CGColor;
-                _indicator.alpha = 0;
-                [UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionRepeat animations:^{
-                    [UIView setAnimationRepeatCount:2];
-                    _indicator.alpha = 1;
-                } completion:^(BOOL finished) {
-//                    _indicator.alpha = 0;
-                }];
-            }
-        }];
+        if (_presentingInput == invalidInput) {
+            _indicator.layer.borderColor = [UIColor redColor].CGColor;
+            _indicator.alpha = 0;
+            [UIView animateWithDuration:.3 delay:0 options:UIViewAnimationOptionRepeat animations:^{
+                [UIView setAnimationRepeatCount:2];
+                _indicator.alpha = 1;
+            } completion:nil];
+        } else if ([(id)invalidInput canBecomeFirstResponder]) {
+            [(id)invalidInput becomeFirstResponder];
+        } else {
+            [self endEditing:YES];
+            [self scrollToInput:invalidInput animated:YES];
+        }
         return nil;
     }
+    
+    [self endEditing:YES];
     
     // Build up params
     NSDictionary *params = [self submitParams];
@@ -650,8 +650,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     
     // Validate
     BOOL valid = YES;
-    if (self.validateState & PBFormValidateStateChanged) {
-        valid = [self validateInput:input forState:PBFormValidateStateChanged];
+    if (self.validating & PBFormValidatingChanged) {
+        valid = [self validateInput:input forState:PBFormValidatingChanged];
         if (!valid) {
             return;
         }
@@ -732,11 +732,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     /* Lazy init form params
      */
     if (_formFlags.needsInitParams) {
+        _formFlags.needsInitParams = 0;
         _initialParams = [self params];
         for (id<PBInput> input in _inputs) {
-            [self validateInput:input forState:PBFormValidateStateInitialized];
+            [self validateInput:input forState:PBFormValidatingInitialized];
         }
-        _formFlags.needsInitParams = 0;
     }
     /* If hit at a unresponsive view outside presenting input,
      * end editing
@@ -888,6 +888,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)scrollToInput:(UIView<PBInput> *)input animated:(BOOL)animated completion:(void (^)(BOOL finish))completion
 {
+    [self scrollToInput:input animated:animated animation:nil completion:completion];
+}
+
+- (void)scrollToInput:(UIView<PBInput> *)input animated:(BOOL)animated animation:(void (^)(void))animation completion:(void (^)(BOOL finish))completion
+{
     /*
      * Center the presenting input to form's visible rect
      */
@@ -918,7 +923,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         indicatorRect = [input convertRect:indicatorRect toView:self];
     }
     _offsetYForPresentingInput = offset.y;
-    dispatch_block_t animation = ^{
+    dispatch_block_t animations = ^{
         [self setContentOffset:offset];
         _indicator.layer.cornerRadius = cornerRadius;
         [_indicator setFrame:indicatorRect];
@@ -928,9 +933,13 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         if ([input isKindOfClass:[PBInput class]]) {
             [(PBInput *)input setSelected:YES];
         }
+        
+        if ([self isInvalidForName:[input name]]) {
+            _indicator.layer.borderColor = [UIColor redColor].CGColor;
+        }
     };
     if (animated) {
-        [self animateAsKeyboardWithAnimations:animation completion:completion];
+        [self animateAsKeyboardWithAnimations:animations completion:completion];
     } else {
         animation();
         if (completion) {
@@ -943,7 +952,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [UIView animateWithDuration:kKeyboardDuration delay:0 options:kKeyboardAnimationOptions animations:animations completion:completion];
 }
 
-- (BOOL)validateInput:(id<PBInput>)input forState:(PBFormValidateState)state {
+- (BOOL)validateInput:(id<PBInput>)input forState:(PBFormValidating)state {
     if ([self __isInvisibleOfInput:(id)input]) {
         // FIXME: avoid cheing this each time
         return YES;
@@ -1005,30 +1014,43 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     return YES;
 }
 
-- (void)onValidateInput:(id<PBInput>)input passed:(BOOL)passed tips:(NSString *)tips forState:(PBFormValidateState)state {
+- (void)onValidateInput:(id<PBInput>)input passed:(BOOL)passed tips:(NSString *)tips forState:(PBFormValidating)state {
     // Determine form invalid or not
-    BOOL previousInvalid = [self isInvalid];
+    BOOL invalid = NO;
+    NSString *name = [input name];
     if (!passed) {
+        invalid = YES;
+        
         if (_invalidInputNames == nil) {
             _invalidInputNames = [[NSMutableArray alloc] init];
         }
         if (![_invalidInputNames containsObject:[input name]]) {
             [_invalidInputNames addObject:[input name]];
         }
+        
+        if (state != PBFormValidatingInitialized) {
+            [_inputErrorTips setObject:tips forKey:name];
+        }
     } else {
         if (_invalidInputNames != nil) {
             [_invalidInputNames removeObject:[input name]];
+            if (_invalidInputNames.count == 0) {
+                invalid = YES;
+            }
         }
+        
+        [_inputErrorTips removeObjectForKey:name];
     }
-    BOOL currentInvalid = [self isInvalid];
-    if (previousInvalid != currentInvalid) {
+    
+    if (_invalid != invalid) {
+        _invalid = invalid;
         if ([self.formDelegate respondsToSelector:@selector(formDidInvalidChanged:)]) {
             [self.formDelegate formDidInvalidChanged:self];
         }
     }
     // Send validate notification
     NSDictionary *baseInfo = @{PBFormValidateInputKey:input,
-                               PBFormValidateStateKey:@(state),
+                               PBFormValidatingKey:@(state),
                                PBFormValidatePassedKey:@(passed)};
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:baseInfo];
     if (tips != nil) {
@@ -1064,6 +1086,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (PBDictionary *)inputValues {
     return _inputValues;
+}
+
+- (PBDictionary *)inputErrorTips {
+    return _inputErrorTips;
 }
 
 @end
