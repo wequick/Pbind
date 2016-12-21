@@ -477,7 +477,6 @@ static NSMutableDictionary *kInitializations = nil;
         textField.text = _originalText;
         return;
     }
-    _originalText = textField.text;
     
     // Format text
     if (_inputFlag.usingSharpFormat) {
@@ -486,15 +485,17 @@ static NSMutableDictionary *kInitializations = nil;
             NSInteger maxLength = [self.format length];
             if ([textField.text length] > maxLength) {
                 textField.text = [textField.text substringToIndex:maxLength];
+                _originalText = textField.text;
                 _replacingString = nil;
+                [value setString:textField.text];
                 return;
             }
             
             NSString *replacingString = _replacingString;
             NSRange replacingRange = _replacingRange;
-            if (_pbeviousMarkedTextRange != nil) {
+            if (_previousMarkedTextRange != nil) {
                 // Autocomplete
-                UITextRange *replacingTextRange = _pbeviousMarkedTextRange;
+                UITextRange *replacingTextRange = _previousMarkedTextRange;
                 if (replacingString == nil) {
                     replacingRange.location = [textField offsetFromPosition:textField.beginningOfDocument toPosition:replacingTextRange.start];
                     replacingRange.length = 0;
@@ -502,13 +503,29 @@ static NSMutableDictionary *kInitializations = nil;
                 replacingString = [textField textInRange:replacingTextRange];
             }
             if (replacingString == nil) {
-                return;
+                const char *str1 = [_originalText UTF8String];
+                const char *str2 = [textField.text UTF8String];
+                char *p1 = (char *)str1;
+                char *p2 = (char *)str2;
+                int pos = 0;
+                while (*p1++ == *p2++) {
+                    pos++;
+                    if (*p1 == '\0' || *p2 == '\0') {
+                        break;
+                    }
+                }
+                
+                replacingRange = NSMakeRange(pos, strlen(str1) - pos);
+                replacingString = [[NSString alloc] initWithUTF8String:p2-1];
             }
             [self formatTextField:textField afterChangeCharactersInRange:replacingRange replacementString:replacingString];
             _replacingString = nil;
         }
-        _pbeviousMarkedTextRange = textField.markedTextRange;
+        
+        _previousMarkedTextRange = textField.markedTextRange;
     }
+    
+    _originalText = textField.text;
     
     // Update value
     [self __updateValueByTextOnChanged:textField.text];

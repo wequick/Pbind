@@ -72,7 +72,7 @@
     NSString *_originalText;
     NSString *_replacingString;
     NSRange _replacingRange;
-    UITextRange *_pbeviousMarkedTextRange;
+    UITextRange *_previousMarkedTextRange;
     NSMutableArray *_accessoryItems;
     NSMutableDictionary *_accessoryItemClickHandlers;
     id _minValue;
