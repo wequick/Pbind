@@ -119,12 +119,19 @@
 /**
  Unbind all the observers from the view.
  */
-- (void)pb_unbind;
+- (void)pb_unbindAll;
+
+/**
+ The mappers for the view, default is nil.
+ 
+ @discussion if there were, will unbind them in `pb_unbind' method.
+ */
+- (NSArray *)pb_mappersForBinding;
 
 /**
  Reset all the temporary data after `pb_unbind'
  */
-- (void)pb_reset;
+- (void)pb_didUnbind;
 
 @end
 

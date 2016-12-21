@@ -35,7 +35,7 @@
     if (![self isViewLoaded]) {
         return;
     }
-    [self.view pb_unbind];
+    [self.view pb_unbindAll];
 }
 
 @end

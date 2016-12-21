@@ -208,7 +208,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:self];
     
     // Unbind
-    [self pb_unbind];
+    [self pb_unbindAll];
     
     self.pb_preparation = preparation;
     self.pb_transformation = transformation;
@@ -406,7 +406,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (void)pb_reloadPlist
 {
-    [self pb_unbind];
+    [self pb_unbindAll];
     
     // Re-init data if there is
     [self setData:[self pb_initialData]];
@@ -453,29 +453,63 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return NO;
 }
 
-- (void)pb_unbind
+- (void)pb_unbindAll
 {
     [self _pb_unbindView:self];
-    [self pb_reset];
+    [self _pb_didUnbindView:self];
+}
+
+- (void)pb_unbind
+{
+    NSDictionary *expressions = [self pb_expressions];
+    if (expressions != nil) {
+        for (NSString *key in expressions) {
+            PBExpression *expression = [expressions objectForKey:key];
+            [expression unbind:self forKeyPath:key];
+        }
+    }
+    
+    NSArray *mappers = [self pb_mappersForBinding];
+    if (mappers != nil) {
+        for (PBMapper *mapper in mappers) {
+            [mapper unbind];
+        }
+    }
+}
+
+- (void)pb_didUnbind
+{
+    
+}
+
+- (NSArray *)pb_mappersForBinding {
+    return nil;
+}
+
+- (void)_pb_didUnbindView:(UIView *)view {
+    [view pb_didUnbind];
+    for (UIView *subview in view.subviews) {
+        [self _pb_didUnbindView:subview];
+    }
+}
+
+- (void)_pb_resetView:(UIView *)view {
+    [view pb_reset];
+    for (UIView *subview in view.subviews) {
+        [self _pb_resetView:subview];
+    }
 }
 
 - (void)pb_reset
 {
     self.data = nil;
-    self.pb_needsReload = YES;
-    for (UIView *subview in self.subviews) {
-        [subview pb_reset];
+    if ([self respondsToSelector:@selector(reloadData)]) {
+        self.pb_needsReload = YES;
     }
 }
 
 - (void)_pb_unbindView:(UIView *)view {
-    NSDictionary *expressions = [view pb_expressions];
-    if (expressions != nil) {
-        for (NSString *key in expressions) {
-            PBExpression *expression = [expressions objectForKey:key];
-            [expression unbind:view forKeyPath:key];
-        }
-    }
+    [view pb_unbind];
     
     for (UIView *subview in view.subviews) {
         [self _pb_unbindView:subview];

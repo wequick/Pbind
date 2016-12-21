@@ -45,6 +45,10 @@
             PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:customViewInfo owner:nil];
             UIView *customView = [mapper createView];
             self = [super initWithCustomView:customView];
+            
+            // Initilize constants and expressions for the view.
+            // FIXME: the context was not ready now, maybe we should do it later.
+            [mapper initDataForView:customView];
             break;
         }
         

@@ -102,6 +102,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self initAccessory];
     [self initIndicator];
     [self observeInputNotifications];
+    
+    // Validate all the inputs to initialize the `invalid' states.
+    for (id<PBInput> input in _inputs) {
+        [self validateInput:input forState:PBFormValidatingInitialized];
+    }
 }
 
 - (void)didMoveToWindow {
@@ -123,6 +128,13 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _accessory.dataSource = self;
 }
 
+- (void)pb_resetMappers {
+    [super pb_resetMappers];
+    _inputTexts = nil;
+    _inputValues = nil;
+    _inputErrorTips = nil;
+}
+
 - (void)dealloc
 {
     for (id input in _inputs) {
@@ -136,6 +148,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _delegateInterceptor = nil;
     _availableKeyboardInputs = nil;
     _formDelegate = nil;
+    
+    [self pb_resetMappers];
 }
 
 - (void)observeInputNotifications {
@@ -338,8 +352,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [super setData:data];
 }
 
-- (void)pb_reset {
-    [super pb_reset];
+- (void)pb_didUnbind {
+    [super pb_didUnbind];
     
     [self endEditing:YES];
     
@@ -352,6 +366,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _presentingInput = nil;
     _accessory.toggledIndex = -1;
     _initialParams = nil;
+    _inputTexts = nil;
+    _inputValues = nil;
+    _inputErrorTips = nil;
 }
 
 #pragma mark - 
@@ -734,9 +751,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (_formFlags.needsInitParams) {
         _formFlags.needsInitParams = 0;
         _initialParams = [self params];
-        for (id<PBInput> input in _inputs) {
-            [self validateInput:input forState:PBFormValidatingInitialized];
-        }
     }
     /* If hit at a unresponsive view outside presenting input,
      * end editing
@@ -1016,11 +1030,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)onValidateInput:(id<PBInput>)input passed:(BOOL)passed tips:(NSString *)tips forState:(PBFormValidating)state {
     // Determine form invalid or not
-    BOOL invalid = NO;
+    BOOL invalid = YES;
     NSString *name = [input name];
     if (!passed) {
-        invalid = YES;
-        
         if (_invalidInputNames == nil) {
             _invalidInputNames = [[NSMutableArray alloc] init];
         }
@@ -1035,15 +1047,20 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         if (_invalidInputNames != nil) {
             [_invalidInputNames removeObject:[input name]];
             if (_invalidInputNames.count == 0) {
-                invalid = YES;
+                invalid = NO;
             }
+        } else {
+            invalid = NO;
         }
         
         [_inputErrorTips removeObjectForKey:name];
     }
     
     if (_invalid != invalid) {
+        [self willChangeValueForKey:@"invalid"];
         _invalid = invalid;
+        [self didChangeValueForKey:@"invalid"];
+        
         if ([self.formDelegate respondsToSelector:@selector(formDidInvalidChanged:)]) {
             [self.formDelegate formDidInvalidChanged:self];
         }

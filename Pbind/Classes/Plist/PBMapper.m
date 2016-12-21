@@ -206,6 +206,13 @@
     }
 }
 
+- (void)unbind {
+    if (_properties == nil) {
+        return;
+    }
+    [_properties unbind:self];
+}
+
 - (void)dealloc
 {
     if (_properties != nil) {

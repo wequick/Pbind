@@ -246,9 +246,6 @@ static const CGFloat kHeightUnset = -2;
         }
     }
     
-    // Init view
-    [self initDataForView:view];
-    
     return view;
 }
 

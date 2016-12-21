@@ -163,8 +163,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
 }
 
-- (void)pb_reset {
-    [super pb_reset];
+- (void)pb_didUnbind {
+    [super pb_didUnbind];
     _selectedData = nil;
     _selectedIndexPath = nil;
 }

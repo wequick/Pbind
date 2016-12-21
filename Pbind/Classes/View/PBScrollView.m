@@ -111,9 +111,15 @@
     }
 }
 
-- (void)dealloc
-{
-    _pbFlags.deallocing = 1;
+- (NSArray *)pb_mappersForBinding {
+    if (_rowMapper != nil) {
+        return @[_rowMapper];
+    }
+    
+    return _rowMappers;
+}
+
+- (void)pb_resetMappers {
     _rowMapper = nil;
     if (_rowMappers != nil) {
         for (PBRowMapper *mapper in _rowMappers) {
@@ -121,6 +127,12 @@
         }
         _rowMappers = nil;
     }
+}
+
+- (void)dealloc
+{
+    _pbFlags.deallocing = 1;
+    [self pb_resetMappers];
     _rowViews = nil;
 }
 
@@ -183,6 +195,7 @@
                 UIView *view = [self viewWithRow:_rowMapper];
                 [view setData:data];
                 [self addSubview:view];
+                [_rowMapper initDataForView:view];
                 [_rowViews addObject:view];
             }
             
@@ -201,6 +214,7 @@
         for (PBRowMapper *row in _rowMappers) {
             UIView *view = [self viewWithRow:row];
             [self addSubview:view];
+            [row initDataForView:view];
             [_rowViews addObject:view];
         }
         [self didInitRowViews];
