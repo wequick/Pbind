@@ -90,7 +90,9 @@
 
 - (void)removeObjectForKey:(id)aKey
 {
+    [self willChangeValueForKey:aKey];
     [_dictionary removeObjectForKey:aKey];
+    [self didChangeValueForKey:aKey];
 }
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
