@@ -64,7 +64,7 @@
     NSMutableDictionary *selfProperties = [NSMutableDictionary dictionaryWithDictionary:dictionary];
     
     NSDictionary *outletProperties = nil;
-    NSMutableDictionary *taggedProperties = nil;
+    NSMutableDictionary *aliasProperties = nil;
     NSDictionary *properties = [dictionary objectForKey:@"properties"];
     if (properties != nil) {
         // Filter outlet properties who's key starts with '.'
@@ -74,6 +74,20 @@
             
             NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
             [temp removeObjectsForKeys:outletKeys];
+            properties = temp;
+        }
+        
+        // Filter alias properties who's key starts with '@' and doesn't follow any '.' subkeys.
+        NSArray *aliasKeys = [[properties allKeys] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF BEGINSWITH[c] '@' AND NOT SELF CONTAINS '.'"]];
+        if (aliasKeys.count > 0) {
+            aliasProperties = [NSMutableDictionary dictionaryWithCapacity:aliasKeys.count];
+            for (NSString *key in aliasKeys) {
+                id value = [properties objectForKey:key];
+                [aliasProperties setObject:value forKey:[key substringFromIndex:1]];
+            }
+            
+            NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:properties];
+            [temp removeObjectsForKeys:aliasKeys];
             properties = temp;
         }
         
@@ -91,10 +105,10 @@
         [selfProperties removeObjectForKey:@"subproperties"];
     }
     
-    if (taggedProperties != nil) {
-        _aliasProperties = [NSMutableDictionary dictionaryWithCapacity:taggedProperties.count];
-        for (NSString *tag in taggedProperties) {
-            PBMapperProperties *p = [PBMapperProperties propertiesWithDictionary:taggedProperties[tag]];
+    if (aliasProperties != nil) {
+        _aliasProperties = [NSMutableDictionary dictionaryWithCapacity:aliasProperties.count];
+        for (NSString *tag in aliasProperties) {
+            PBMapperProperties *p = [PBMapperProperties propertiesWithDictionary:aliasProperties[tag]];
             [_aliasProperties setObject:p forKey:tag];
         }
     }
