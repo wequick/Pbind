@@ -72,6 +72,15 @@
 
 - (void)setObject:(id)obj forKey:(id<NSCopying>)key
 {
+    id oldObj = [_dictionary objectForKey:key];
+    if (obj == nil) {
+        if (oldObj == nil) {
+            return;
+        }
+    } else if ([obj isEqual:oldObj]) {
+        return;
+    }
+    
     NSString *keyPath = (id) key;
     [self willChangeValueForKey:keyPath];
     [_dictionary setObject:obj forKeyedSubscript:key];
@@ -90,6 +99,10 @@
 
 - (void)removeObjectForKey:(id)aKey
 {
+    if ([_dictionary objectForKey:aKey] == nil) {
+        return;
+    }
+    
     [self willChangeValueForKey:aKey];
     [_dictionary removeObjectForKey:aKey];
     [self didChangeValueForKey:aKey];
