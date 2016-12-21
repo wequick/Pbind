@@ -510,7 +510,7 @@
     CGFloat newHeight = [mapper heightForView:view withData:self.data];
     if (height != newHeight) {
         [textView setMappable:NO forKeyPath:@"text"];
-        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:NO];
+        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:YES];
         [textView scrollRangeToVisible:NSMakeRange(0, 1)];
         [textView setMappable:YES forKeyPath:@"text"];
     }
