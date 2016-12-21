@@ -727,6 +727,11 @@ else PBINPUT_IFTYPE(_type_, _code_)
     NSInteger location = range.location;
     NSInteger length = 0;
     NSInteger index = 0;
+    
+    if (value == nil) {
+        value = [[NSMutableString alloc] init];
+    }
+    
     for (; index < range.length; index++) {
         char flag = [self.format characterAtIndex:location+index];
         if (flag == kInputCharSharp) {
@@ -739,15 +744,19 @@ else PBINPUT_IFTYPE(_type_, _code_)
             location--;
         }
     }
-    if (value == nil) {
-        value = [[NSMutableString alloc] init];
-    }
+    
     if (length == 0) {
         if (location >= [value length]) {
             if ([string length] == 0) {
-                // Delete
-                NSRange deleteRange = NSMakeRange(location - 1, length + 1);
-                [value deleteCharactersInRange:deleteRange];
+                if (location == 0) {
+                    // ??? If the text is empty -> Delete -> Append, go to this.
+                    [value setString:textField.text];
+                    return;
+                } else {
+                    // Delete
+                    NSRange deleteRange = NSMakeRange(location - 1, length + 1);
+                    [value deleteCharactersInRange:deleteRange];
+                }
             } else {
                 // Append
                 [value appendString:string];
