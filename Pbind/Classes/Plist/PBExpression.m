@@ -15,6 +15,7 @@
 #import "PBDictionary.h"
 #import "PBMutableExpression.h"
 #import "PBArray.h"
+#import "PBActionStore.h"
 
 static const int kDataTagUnset = 0xFF;
 
@@ -22,6 +23,7 @@ static const int kDataTagUnset = 0xFF;
 
 - (PBDictionary *)inputTexts;
 - (PBDictionary *)inputValues;
+- (PBDictionary *)inputErrorTips;
 
 @end
 
@@ -92,6 +94,9 @@ static const int kDataTagUnset = 0xFF;
             if (*p == '^') {
                 _flags.mapToActiveController = 1;
                 p++;
+            } else if (*p == '>') {
+                _flags.mapToForm = 1;
+                p++;
             } else {
                 p2 = temp = (char *)malloc(len - (p - str));
                 while (*p != '\0' && *p != '.') {
@@ -134,11 +139,26 @@ static const int kDataTagUnset = 0xFF;
             break;
         case '>':
             p++;
-            if (*p == '@') {
+            if (*p == '$') {
                 _flags.mapToFormFieldValue = 1;
+                p++;
+            } else if (*p == '!') {
+                _flags.mapToFormFieldError = 1;
                 p++;
             } else {
                 _flags.mapToFormFieldText = 1;
+            }
+            break;
+        case '#':
+            p++;
+            if (*p == '.') {
+                _flags.mapToActionState = 1;
+                p++;
+            } else if (*p == '$') {
+                _flags.mapToActionStateData = 1;
+                p++;
+            } else {
+                return nil;
             }
             break;
         default:
@@ -270,12 +290,19 @@ static const int kDataTagUnset = 0xFF;
         }
         
         return [self _dataSourceWithData:data atIndex:dataIndex];
+    } else if (_flags.mapToActionState) {
+        return [PBActionStore defaultStore].state;
+    } else if (_flags.mapToActionStateData) {
+        return [PBActionStore defaultStore].state.data;
     } else if (_flags.mapToOwnerView) {
         return context;
     } else if (_flags.mapToOwnerViewData) {
         return [self _dataSourceWithData:[context data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
+    } else if (_flags.mapToForm) {
+        PBForm *form = [context superviewWithClass:[PBForm class]];
+        return form;
     } else if (_flags.mapToFormFieldText) {
         PBForm *form = [context superviewWithClass:[PBForm class]];
         if (form == nil) {
@@ -288,6 +315,12 @@ static const int kDataTagUnset = 0xFF;
             return nil;
         }
         return [form inputValues];
+    } else if (_flags.mapToFormFieldError) {
+        PBForm *form = [context superviewWithClass:[PBForm class]];
+        if (form == nil) {
+            return nil;
+        }
+        return [form inputErrorTips];
     } else if (_flags.mapToAliasView) {
         UIView *rootView = [context supercontroller].view;
         if (rootView == nil) {
@@ -603,7 +636,11 @@ static const int kDataTagUnset = 0xFF;
     // Free the property first if the data source is not from custom
     BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != kDataTagUnset));
     if (!isMapToCustomData) {
-        [_bindingData setValue:nil forKeyPath:_variable];
+        if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
+            [_bindingData pb_setValue:nil forKeyPath:_variable];
+        } else {
+            [_bindingData setValue:nil forKeyPath:_variable];
+        }
     }
     
     // Unobserve the property
@@ -658,13 +695,21 @@ static const int kDataTagUnset = 0xFF;
     } else if (_flags.mapToOwnerViewData) {
         [s appendString:@".$"];
     } else if (_flags.mapToActiveController) {
-        [s appendString:@"@"];
+        [s appendString:@"@^"];
+    } else if (_flags.mapToForm) {
+        [s appendString:@"@>"];
     } else if (_flags.mapToFormFieldText) {
         [s appendString:@">"];
     } else if (_flags.mapToFormFieldValue) {
-        [s appendString:@">@"];
+        [s appendString:@">$"];
+    } else if (_flags.mapToFormFieldError) {
+        [s appendString:@">!"];
     } else if (_flags.mapToAliasView) {
         [s appendFormat:@"@%@.", _alias];
+    } else if (_flags.mapToActionState) {
+        [s appendString:@"#."];
+    } else if (_flags.mapToActionStateData) {
+        [s appendString:@"#$"];
     }
     
     if (_variable == nil) {

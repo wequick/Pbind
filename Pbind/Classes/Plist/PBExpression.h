@@ -34,8 +34,12 @@
  * '.$'     -> value for the key of the owner view data
  * '@^'     -> value for the key of the owner view controller
  * '@xx.'   -> value for the key of the alias view (by [view setAlias:@"xx"])
+ * '@>'     -> value for the key of the owner form
  * '>'      -> text for the owner form's key-named input
- * '>@'     -> value for the owner form's key-named input
+ * '>$'     -> value for the owner form's key-named input
+ * '>!'     -> error of the owner form's key-named input
+ * '#.'     -> the action state of the default action store
+ * '#$'     -> the action state data of the default action store
  
  The [multi op] is optional, supports:
  
@@ -72,16 +76,24 @@
         unsigned int lesser:1;      // '<'
         unsigned int greater:1;     // '>'
         unsigned int equal:2;       // '=', '=='
+        
         unsigned int multiNot:1;    // '!' after variable
 
         // tags
         unsigned int mapToData:1;               // '$'
         unsigned int mapToOwnerView:1;          // '.'
         unsigned int mapToOwnerViewData:1;      // '.$'
+        
         unsigned int mapToFormFieldText:1;      // '>'
-        unsigned int mapToFormFieldValue:1;     // '>@'
+        unsigned int mapToFormFieldValue:1;     // '>$'
+        unsigned int mapToFormFieldError:1;     // '>!'
+        unsigned int mapToForm:1;               // '@>'
+        
         unsigned int mapToActiveController:1;   // '@^'
         unsigned int mapToAliasView:1;          // '@alias.'
+        
+        unsigned int mapToActionState:1;        // '#.'
+        unsigned int mapToActionStateData:1;    // '#$' <==> '#.data'
         
         unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
     } _flags;
