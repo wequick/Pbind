@@ -45,12 +45,12 @@
 
 - (void)reset {
     self.text = nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
 }
 
 - (void)setText:(NSString *)text {
     [super setText:text];
     value = text;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
     
     if (![text isEqual:[NSNull null]] && text.length != 0) {
         if (!_placeholderLabel.hidden) {
