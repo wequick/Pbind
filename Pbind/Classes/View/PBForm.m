@@ -675,9 +675,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         valid = [self validateInput:input forState:PBFormValidatingChanged];
         if (!valid) {
             _indicator.layer.borderColor = [UIColor redColor].CGColor;
-            return;
+        } else {
+            _indicator.layer.borderColor = [self tintColor].CGColor;
         }
-        _indicator.layer.borderColor = [self tintColor].CGColor;
     }
     
     // Update the observed values
@@ -710,7 +710,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)updateObservedTextsAndValuesForInput:(id<PBInput>)input {
     NSString *name = [input name];
-    id value = [input value];
+    id value = nil;
+    if (![self isErrorInput:input]) {
+        value = [input value];
+    }
     NSString *text = [input respondsToSelector:@selector(text)] ? [input text] : value;
     _inputTexts[name] = text;
     _inputValues[name] = value;

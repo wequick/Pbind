@@ -384,6 +384,10 @@
     NSInteger index = NSNotFound;
     NSInteger temp = 0;
     for (; temp < [_rowViews count]; temp++) {
+        PBRowMapper *mapper = [self rowMapperAtIndex:temp];
+        if (mapper.hidden) {
+            continue;
+        }
         UIView *view = [_rowViews objectAtIndex:temp];
         CGRect rect = [view convertRect:view.bounds toView:self];
 //        NSLog(@"%@ - %@", NSStringFromCGRect(rect), NSStringFromCGPoint(point));
@@ -494,6 +498,9 @@
     }
     
     PBRowMapper *mapper = [self rowMapperAtIndex:row];
+    if (mapper.hidden) {
+        return;
+    }
     if (mapper.height != -1) { // TODO: define magic number
         return;
     }

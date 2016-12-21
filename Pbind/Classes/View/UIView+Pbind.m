@@ -748,10 +748,33 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (BOOL)mappableForKeyPath:(NSString *)keyPath
 {
-    if (self.pb_unmappableKeys == nil) {
-        return YES;
+    id target = self;
+    NSString *key = keyPath;
+    NSArray *keys = [key componentsSeparatedByString:@"."];
+    NSUInteger N = keys.count;
+    if (N > 1) {
+        int i = 0;
+        for (; i < N - 1; i++) {
+            key = keys[i];
+            if ([key characterAtIndex:0] == '@') {
+                key = [key substringFromIndex:1];
+                target = [target viewWithAlias:key];
+            } else {
+                id temp = [target valueForKey:key];
+                if (![temp isKindOfClass:[UIView class]]) {
+                    break;
+                }
+                target = temp;
+            }
+        }
+        key = keys[i];
+        while (i < N - 1) {
+            key = [key stringByAppendingFormat:@".%@", keys[i]];
+        }
     }
-    return ![self.pb_unmappableKeys containsObject:keyPath];
+    
+    NSArray *unmappableKeys = [target pb_unmappableKeys];
+    return ![unmappableKeys containsObject:key];
 }
 
 - (void)setExpression:(NSString *)expression forKeyPath:(NSString *)keyPath

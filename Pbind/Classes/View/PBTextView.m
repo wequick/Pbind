@@ -35,18 +35,11 @@
     self.acceptsClearOnAccessory = YES;
 }
 
-- (id)value {
-    if (self.text.length == 0) {
-        return nil;
-    }
-    return self.text;
-}
-
 - (void)setValue:(id)aValue {
     if ([aValue isEqual:[NSNull null]]) {
-        self.text = nil;
+        value = nil;
     } else {
-        self.text = aValue;
+        value = aValue;
     }
 }
 
@@ -57,6 +50,8 @@
 
 - (void)setText:(NSString *)text {
     [super setText:text];
+    value = text;
+    
     if (![text isEqual:[NSNull null]] && text.length != 0) {
         if (!_placeholderLabel.hidden) {
             _placeholderLabel.hidden = YES;
