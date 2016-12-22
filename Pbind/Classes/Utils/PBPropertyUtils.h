@@ -10,6 +10,6 @@
 
 @interface PBPropertyUtils : NSObject
 
-+ (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object;
++ (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object failure:(void (^)(void))failure;
 
 @end

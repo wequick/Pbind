@@ -704,7 +704,24 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         }
         
         // Safely set value for key
-        [PBPropertyUtils setValue:value forKey:key toObject:target];
+        [PBPropertyUtils setValue:value forKey:key toObject:target failure:^{
+            // Remove the unavailable key from constants and expressions
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF != %@", key];
+            NSArray *properties = @[@"pb_constants", @"pb_expressions"];
+            for (NSString *property in properties) {
+                NSDictionary *value = [self valueForAdditionKey:property];
+                if (value == nil) {
+                    continue;
+                }
+                
+                NSArray *keys = [value allKeys];
+                NSArray *availableKeys = [keys filteredArrayUsingPredicate:predicate];
+                if (keys.count != availableKeys.count) {
+                    value = [value dictionaryWithValuesForKeys:availableKeys];
+                    [self setValue:value forAdditionKey:property];
+                }
+            }
+        }];
     }
 }
 

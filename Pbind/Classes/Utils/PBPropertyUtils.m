@@ -11,7 +11,7 @@
 
 @implementation PBPropertyUtils
 
-+ (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object
++ (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object failure:(void (^)(void))failure
 {
     if (value == nil) {
         value = [self safeNilValueForKey:key ofObject:object];
@@ -21,6 +21,9 @@
         [object setValue:value forKey:key];
     } @catch (NSException *exception) {
         [self printAvailableKeysForKey:key withValue:value ofObject:object];
+        if (failure) {
+            failure();
+        }
     }
 }
 
