@@ -81,7 +81,7 @@
     struct {
         unsigned int pickerMode:3;
         unsigned int hidesCursor:1;
-        unsigned int type:5;
+        unsigned int type:4;
         unsigned int isTextInput:1;
         unsigned int usingSharpFormat:1;
         unsigned int initValueOnRest:1;
@@ -91,21 +91,21 @@
 
 + (void)registerType:(NSString *)type withInitialization:(void (^)(PBInput *input))initialization;
 
-@property (nonatomic, strong) NSString *type; // accepts TEXTs(text, password, number, decimal, phone, url, email), PICKERs(date, time, datetime, month, select)
+@property (nonatomic, strong) NSString *type; // accepts TEXTs(text, password, number, decimal, phone, url, email), PICKERs(date, time, datetime, month, select). If the type is select, then should follows with `options` or `selector`.
 @property (nonatomic, strong) NSString *min; // minimum value. translate to `NSInteger' for number input, `CGfloat' for decimal input, `NSDate' for date inputs(e.g. '2015-2-1', '2015-2')
 @property (nonatomic, strong) NSString *max; // maximum value. translate to `NSInteger' for number input, `CGfloat' for decimal input, `NSDate' for date inputs(e.g. '2015-2-1', '2015-2')
 @property (nonatomic, assign) NSInteger step; // step value. map to `minuteInterval' for time input
 
 @property (nonatomic, strong) NSString *unit; // default is nil. if set, place a `UILabel' with unit as `rightView' for editable inputs
 @property (nonatomic, strong) UIColor *unitColor;
-@property (nonatomic, strong) NSArray<NSDictionary<NSString *, id> *> *options; // for select input
+@property (nonatomic, strong) NSArray<NSDictionary<NSString *, id> *> *options; // for select input, as [{text:'a', value:0}, {text:'b', value:1}]
 
 @property (nonatomic, assign) NSString *format; // default is nil. string format for text inputs, supports '#' expression (e.g. "66667777" & "## ## ## ##" = "66 66 77 77")
 
 @property (nonatomic, strong) UIColor *placeholderColor;
 @property (nonatomic, strong) UIColor *selectedTextColor; // default is view's tintColor
 
-@property (nonatomic, strong) NSString *selector; // for select input. selector is the class name for the view which is a subclass of `PRInputView'
+@property (nonatomic, strong) NSString *selector; // for select input. selector is the class name for the view which is a subclass of `PBInputView'
 
 @property (nonatomic, assign) BOOL hidesCursor; //
 
@@ -118,3 +118,17 @@
 - (void)addAccessoryItem:(UIBarButtonItem *)item withClickHandler:(void (^)(UIBarButtonItem *sender, PBInput *input))handler;
 
 @end
+
+UIKIT_EXTERN NSString *const PBInputTypeText;
+UIKIT_EXTERN NSString *const PBInputTypePassword;
+UIKIT_EXTERN NSString *const PBInputTypeNumber;
+UIKIT_EXTERN NSString *const PBInputTypeDecimal;
+UIKIT_EXTERN NSString *const PBInputTypePhone;
+UIKIT_EXTERN NSString *const PBInputTypeUrl;
+UIKIT_EXTERN NSString *const PBInputTypeEmail;
+UIKIT_EXTERN NSString *const PBInputTypeDate;
+UIKIT_EXTERN NSString *const PBInputTypeTime;
+UIKIT_EXTERN NSString *const PBInputTypeDateAndTime;
+UIKIT_EXTERN NSString *const PBInputTypeMonth;
+UIKIT_EXTERN NSString *const PBInputTypeSelect;
+UIKIT_EXTERN NSString *const PBInputTypeCustom;

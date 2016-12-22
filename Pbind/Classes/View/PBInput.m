@@ -14,31 +14,40 @@
 #import "PBTextView.h"
 #import "NSString+PBInput.h"
 
-#define PBINPUT_TYPESTRING(_type_) kInputTypeString_##_type_
-#define PBINPUT_TYPENUMBER(_type_) kInputTypeNumber_##_type_
-#define DEF_PBINPUT_TYPE(_type_, _value_) \
-static NSString *const PBINPUT_TYPESTRING(_type_) = @#_type_; \
-static const NSInteger PBINPUT_TYPENUMBER(_type_) = _value_;
-
 //______________________________________________________________________________
 // input type
-DEF_PBINPUT_TYPE(text       , 1)
-DEF_PBINPUT_TYPE(password   , 2)
-DEF_PBINPUT_TYPE(number     , 3)
-DEF_PBINPUT_TYPE(decimal    , 4)
-DEF_PBINPUT_TYPE(phone      , 5)
-DEF_PBINPUT_TYPE(url        , 6)
-DEF_PBINPUT_TYPE(email      , 7)
-DEF_PBINPUT_TYPE(date       , 8)
-DEF_PBINPUT_TYPE(time       , 9)
-DEF_PBINPUT_TYPE(datetime   , 10)
-DEF_PBINPUT_TYPE(month      , 11)
-DEF_PBINPUT_TYPE(select     , 12)
-DEF_PBINPUT_TYPE(custom     , 31)
+NSString *const PBInputTypeText = @"text";
+NSString *const PBInputTypePassword = @"password";
+NSString *const PBInputTypeNumber = @"number";
+NSString *const PBInputTypeDecimal = @"decimal";
+NSString *const PBInputTypePhone = @"phone";
+NSString *const PBInputTypeUrl = @"url";
+NSString *const PBInputTypeEmail = @"email";
+NSString *const PBInputTypeDate = @"date";
+NSString *const PBInputTypeTime = @"time";
+NSString *const PBInputTypeDateAndTime = @"datetime";
+NSString *const PBInputTypeMonth = @"month";
+NSString *const PBInputTypeSelect = @"select";
+NSString *const PBInputTypeCustom = @"custom";
+static const NSInteger kInputTypeUnknown = 0;
+static const NSInteger kInputTypeText = 1;
+static const NSInteger kInputTypePassword = 2;
+static const NSInteger kInputTypeNumber = 3;
+static const NSInteger kInputTypeDecimal = 4;
+static const NSInteger kInputTypePhone = 5;
+static const NSInteger kInputTypeUrl = 6;
+static const NSInteger kInputTypeEmail = 7;
+static const NSInteger kInputTypeDate = 8;
+static const NSInteger kInputTypeTime = 9;
+static const NSInteger kInputTypeDateAndTime = 10;
+static const NSInteger kInputTypeMonth = 11;
+static const NSInteger kInputTypeSelect = 12;
+static const NSInteger kInputTypeCustom = 0xf;
+
 // format
 static NSString *const kInputFormatNumber = @"%lld";
 static NSString *const kInputFormatDecimal = @"%.1lf";
-static NSString *const kInputFormatDateTime = @"yyyy-MM-dd HH:mm";
+static NSString *const kInputFormatDateAndTime = @"yyyy-MM-dd HH:mm";
 static NSString *const kInputFormatDate = @"yyyy-MM-dd";
 static NSString *const kInputFormatTime = @"HH:mm";
 static NSString *const kInputFormatMonth = @"yyyy-MM";
@@ -92,7 +101,7 @@ static NSMutableDictionary *kInitializations = nil;
     [self addTarget:self action:@selector(textFieldDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
     [self addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     
-    _type = @"text";
+    _type = PBInputTypeText;
     self.acceptsClearOnAccessory = YES;
 }
 
@@ -393,13 +402,13 @@ static NSMutableDictionary *kInitializations = nil;
     }
     
     // Limits value range
-    if (_inputFlag.type == PBINPUT_TYPENUMBER(number)) {
+    if (_inputFlag.type == kInputTypeNumber) {
         NSString *newString = [self.text stringByAppendingString:string];
         NSInteger newValue = [newString integerValue];
         if (_maxValue != nil && newValue > [_maxValue integerValue]) {
             return NO;
         }
-    } else if (_inputFlag.type == PBINPUT_TYPENUMBER(decimal)) {
+    } else if (_inputFlag.type == kInputTypeDecimal) {
         NSString *newString = [self.text stringByAppendingString:string];
         CGFloat newValue = [newString floatValue];
         if (_maxValue != nil && newValue > [_maxValue floatValue]) {
@@ -420,7 +429,7 @@ static NSMutableDictionary *kInitializations = nil;
         }
     } else {
         // Update value by text (endEditing)
-        if (_inputFlag.type == PBINPUT_TYPENUMBER(number)) {
+        if (_inputFlag.type == kInputTypeNumber) {
             long long number = [textField.text longLongValue];
             if (number != 0) {
                 NSString *format = self.format ?: kInputFormatNumber;
@@ -429,7 +438,7 @@ static NSMutableDictionary *kInitializations = nil;
             } else {
                 value = nil;
             }
-        } else if (_inputFlag.type == PBINPUT_TYPENUMBER(decimal)) {
+        } else if (_inputFlag.type == kInputTypeDecimal) {
             double decimal = [textField.text doubleValue];
             if (decimal != 0) {
                 NSString *format = self.format ?: kInputFormatDecimal;
@@ -555,16 +564,24 @@ static NSMutableDictionary *kInitializations = nil;
 
 #pragma mark - Other
 
-#define PBINPUT_IFTYPE(_type_, _code_) \
-if ([self.type isEqualToString:PBINPUT_TYPESTRING(_type_)]) { \
-    _inputFlag.type = PBINPUT_TYPENUMBER(_type_); \
-    _code_ \
-}
-#define PBINPUT_ELIFTYPE(_type_, _code_) \
-else PBINPUT_IFTYPE(_type_, _code_)
-#define PBINPUT_ENDIFTYPE(_code_) else { \
-    _inputFlag.type = PBINPUT_TYPENUMBER(custom); \
-    _code_ \
+#define TryReturn(_type_) \
+if ([type isEqualToString:PBInputType##_type_]) return kInputType##_type_
+
+- (NSInteger)inputTypeForString:(NSString *)type {
+    TryReturn(Text);
+    TryReturn(Password);
+    TryReturn(Number);
+    TryReturn(Decimal);
+    TryReturn(Phone);
+    TryReturn(Url);
+    TryReturn(Email);
+    TryReturn(Date);
+    TryReturn(Time);
+    TryReturn(DateAndTime);
+    TryReturn(Month);
+    TryReturn(Select);
+    TryReturn(Custom);
+    return kInputTypeUnknown;
 }
 
 - (void)initValues
@@ -577,65 +594,101 @@ else PBINPUT_IFTYPE(_type_, _code_)
     NSString *dateFormat = nil;
     unsigned int pickerMode = 0;
     
-    PBINPUT_IFTYPE  (text       , _inputFlag.isTextInput = YES;)
-    PBINPUT_ELIFTYPE(password   , _inputFlag.isTextInput = YES;[self setSecureTextEntry:YES];)
-    PBINPUT_ELIFTYPE(number     , {
-        [self setKeyboardType:UIKeyboardTypeNumberPad];
-        [self setPattern:kInputPatternNumber];
-        if (_min != nil) {
-            _minValue = [NSNumber numberWithLongLong:[_min longLongValue]];
-        }
-        if (_max != nil) {
-            _maxValue = [NSNumber numberWithLongLong:[_max longLongValue]];
-        }
-    })
-    PBINPUT_ELIFTYPE(decimal    , {
-        [self setKeyboardType:UIKeyboardTypeDecimalPad];
-        [self setPattern:kInputPatternDecimal];
-        if (_min != nil) {
-            _minValue = [NSNumber numberWithDouble:[_min doubleValue]];
-        }
-        if (_max != nil) {
-            _maxValue = [NSNumber numberWithDouble:[_max doubleValue]];
-        }
-    })
-    PBINPUT_ELIFTYPE(phone      , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypePhonePad];)
-    PBINPUT_ELIFTYPE(url        , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypeURL];)
-    PBINPUT_ELIFTYPE(email      , _inputFlag.isTextInput = YES;[self setKeyboardType:UIKeyboardTypeEmailAddress];)
-    PBINPUT_ELIFTYPE(date       , pickerMode = UIDatePickerModeDate; dateFormat = kInputFormatDate;)
-    PBINPUT_ELIFTYPE(time       , pickerMode = UIDatePickerModeTime; dateFormat = kInputFormatTime;)
-    PBINPUT_ELIFTYPE(datetime   , pickerMode = UIDatePickerModeDateAndTime; dateFormat = kInputFormatDateTime;)
-    PBINPUT_ELIFTYPE(month      , pickerMode = PBDatePickerModeMonth; dateFormat = kInputFormatMonth;)
-    PBINPUT_ELIFTYPE(select     , {
-        if (self.selector != nil) {
-            UIView *view;
-            Class clazz = NSClassFromString(self.selector);
-            if ([clazz instancesRespondToSelector:@selector(sharedInput)]) {
-                view = [clazz sharedInput];
+    _inputFlag.type = [self inputTypeForString:self.type];
+    
+    switch (_inputFlag.type) {
+        case kInputTypeText:
+            _inputFlag.isTextInput = YES;
+            break;
+        case kInputTypePassword:
+            _inputFlag.isTextInput = YES;
+            self.secureTextEntry = YES;
+            break;
+        case kInputTypeNumber:
+            [self setKeyboardType:UIKeyboardTypeNumberPad];
+            [self setPattern:kInputPatternNumber];
+            if (_min != nil) {
+                _minValue = [NSNumber numberWithLongLong:[_min longLongValue]];
+            }
+            if (_max != nil) {
+                _maxValue = [NSNumber numberWithLongLong:[_max longLongValue]];
+            }
+            break;
+        case kInputTypeDecimal:
+            [self setKeyboardType:UIKeyboardTypeDecimalPad];
+            [self setPattern:kInputPatternDecimal];
+            if (_min != nil) {
+                _minValue = [NSNumber numberWithDouble:[_min doubleValue]];
+            }
+            if (_max != nil) {
+                _maxValue = [NSNumber numberWithDouble:[_max doubleValue]];
+            }
+            break;
+        case kInputTypePhone:
+            _inputFlag.isTextInput = YES;
+            [self setKeyboardType:UIKeyboardTypePhonePad];
+            break;
+        case kInputTypeUrl:
+            _inputFlag.isTextInput = YES;
+            [self setKeyboardType:UIKeyboardTypeURL];
+            break;
+        case kInputTypeEmail:
+            _inputFlag.isTextInput = YES;
+            [self setKeyboardType:UIKeyboardTypeEmailAddress];
+            break;
+        case kInputTypeDate:
+            pickerMode = UIDatePickerModeDate;
+            dateFormat = kInputFormatDate;
+            break;
+        case kInputTypeTime:
+            pickerMode = UIDatePickerModeTime;
+            dateFormat = kInputFormatTime;
+            break;
+        case kInputTypeDateAndTime:
+            pickerMode = UIDatePickerModeDateAndTime;
+            dateFormat = kInputFormatDateAndTime;
+            break;
+        case kInputTypeMonth:
+            pickerMode = PBDatePickerModeMonth;
+            dateFormat = kInputFormatMonth;
+            break;
+        case kInputTypeSelect:
+            if (self.selector != nil) {
+                UIView *view;
+                Class clazz = NSClassFromString(self.selector);
+                if ([clazz instancesRespondToSelector:@selector(sharedInput)]) {
+                    view = [clazz sharedInput];
+                } else {
+                    view = [[clazz alloc] init];
+                }
+                if ([view conformsToProtocol:@protocol(PBTextInput)]) {
+                    [(id<PBTextInput>)view setInputDelegate:self];
+                }
+                [self setInputView:view];
+                [self setHidesCursor:YES];
+                [self setSelectedTextColor:[self tintColor]];
+            } else if (self.options != nil) {
+                PBOptionPicker *picker = [PBOptionPicker sharedOptionPicker];
+                [self setInputView:picker];
+                [self setHidesCursor:YES];
+                [self setSelectedTextColor:[self tintColor]];
             } else {
-                view = [[clazz alloc] init];
+                NSLog(@"Pbind: the 'select' input requires 'options' or 'selector'.");
             }
-            if ([view conformsToProtocol:@protocol(PBTextInput)]) {
-                [(id<PBTextInput>)view setInputDelegate:self];
+            self.acceptsClearOnAccessory = !self.required;
+            _inputFlag.initValueOnRest = self.required;
+            break;
+        case kInputTypeCustom: {
+                void (^initialization)(PBInput *) = [kInitializations objectForKey:self.type];
+                if (initialization != nil) {
+                    initialization(self);
+                }
             }
-            [self setInputView:view];
-            [self setHidesCursor:YES];
-            [self setSelectedTextColor:[self respondsToSelector:@selector(tintColor)] ? [self tintColor] : [UIColor blackColor]];
-        } else if (self.options != nil) {
-            PBOptionPicker *picker = [PBOptionPicker sharedOptionPicker];
-            [self setInputView:picker];
-            [self setHidesCursor:YES];
-            [self setSelectedTextColor:[self respondsToSelector:@selector(tintColor)] ? [self tintColor] : [UIColor blackColor]];
-        }
-        self.acceptsClearOnAccessory = !self.required;
-        _inputFlag.initValueOnRest = self.required;
-    })
-    PBINPUT_ENDIFTYPE   ({
-        void (^initialization)(PBInput *) = [kInitializations objectForKey:self.type];
-        if (initialization != nil) {
-            initialization(self);
-        }
-    })
+            break;
+        default:
+            NSLog(@"Pbind: Unknown input type: '%@'.", self.type);
+            break;
+    }
     
     // Initialize min & max value
     if (dateFormat != nil) {
@@ -684,13 +737,13 @@ else PBINPUT_IFTYPE(_type_, _code_)
 }
 
 - (void)__initText {
-    if (_inputFlag.type == PBINPUT_TYPENUMBER(number)) {
+    if (_inputFlag.type == kInputTypeNumber) {
         long long num = [value longLongValue];
         if (num != 0) {
             NSString *format = [self format] ?: kInputFormatNumber;
             [super setText:[NSString stringWithFormat:format, num]];
         }
-    } else if (_inputFlag.type == PBINPUT_TYPENUMBER(decimal)) {
+    } else if (_inputFlag.type == kInputTypeDecimal) {
         double num = [value doubleValue];
         if (num != 0) {
             NSString *format = [self format] ?: kInputFormatDecimal;
