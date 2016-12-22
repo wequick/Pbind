@@ -16,25 +16,25 @@
 
 #define PBINPUT_TYPESTRING(_type_) kInputTypeString_##_type_
 #define PBINPUT_TYPENUMBER(_type_) kInputTypeNumber_##_type_
-#define DEF_PRINPUT_TYPE(_type_, _value_) \
+#define DEF_PBINPUT_TYPE(_type_, _value_) \
 static NSString *const PBINPUT_TYPESTRING(_type_) = @#_type_; \
 static const NSInteger PBINPUT_TYPENUMBER(_type_) = _value_;
 
 //______________________________________________________________________________
 // input type
-DEF_PRINPUT_TYPE(text       , 1)
-DEF_PRINPUT_TYPE(password   , 2)
-DEF_PRINPUT_TYPE(number     , 3)
-DEF_PRINPUT_TYPE(decimal    , 4)
-DEF_PRINPUT_TYPE(phone      , 5)
-DEF_PRINPUT_TYPE(url        , 6)
-DEF_PRINPUT_TYPE(email      , 7)
-DEF_PRINPUT_TYPE(date       , 8)
-DEF_PRINPUT_TYPE(time       , 9)
-DEF_PRINPUT_TYPE(datetime   , 10)
-DEF_PRINPUT_TYPE(month      , 11)
-DEF_PRINPUT_TYPE(select     , 12)
-DEF_PRINPUT_TYPE(custom     , 31)
+DEF_PBINPUT_TYPE(text       , 1)
+DEF_PBINPUT_TYPE(password   , 2)
+DEF_PBINPUT_TYPE(number     , 3)
+DEF_PBINPUT_TYPE(decimal    , 4)
+DEF_PBINPUT_TYPE(phone      , 5)
+DEF_PBINPUT_TYPE(url        , 6)
+DEF_PBINPUT_TYPE(email      , 7)
+DEF_PBINPUT_TYPE(date       , 8)
+DEF_PBINPUT_TYPE(time       , 9)
+DEF_PBINPUT_TYPE(datetime   , 10)
+DEF_PBINPUT_TYPE(month      , 11)
+DEF_PBINPUT_TYPE(select     , 12)
+DEF_PBINPUT_TYPE(custom     , 31)
 // format
 static NSString *const kInputFormatNumber = @"%lld";
 static NSString *const kInputFormatDecimal = @"%.1lf";
@@ -423,7 +423,8 @@ static NSMutableDictionary *kInitializations = nil;
         if (_inputFlag.type == PBINPUT_TYPENUMBER(number)) {
             long long number = [textField.text longLongValue];
             if (number != 0) {
-                textField.text = [NSString stringWithFormat:self.format, number];
+                NSString *format = self.format ?: kInputFormatNumber;
+                textField.text = [NSString stringWithFormat:format, number];
                 value = [NSNumber numberWithLongLong:number];
             } else {
                 value = nil;
@@ -431,6 +432,7 @@ static NSMutableDictionary *kInitializations = nil;
         } else if (_inputFlag.type == PBINPUT_TYPENUMBER(decimal)) {
             double decimal = [textField.text doubleValue];
             if (decimal != 0) {
+                NSString *format = self.format ?: kInputFormatDecimal;
                 textField.text = [NSString stringWithFormat:self.format, decimal];
                 value = [NSNumber numberWithDouble:decimal];
             } else {
@@ -574,6 +576,7 @@ else PBINPUT_IFTYPE(_type_, _code_)
     // Initialize input view
     NSString *dateFormat = nil;
     unsigned int pickerMode = 0;
+    
     PBINPUT_IFTYPE  (text       , _inputFlag.isTextInput = YES;)
     PBINPUT_ELIFTYPE(password   , _inputFlag.isTextInput = YES;[self setSecureTextEntry:YES];)
     PBINPUT_ELIFTYPE(number     , {
@@ -684,13 +687,13 @@ else PBINPUT_IFTYPE(_type_, _code_)
     if (_inputFlag.type == PBINPUT_TYPENUMBER(number)) {
         long long num = [value longLongValue];
         if (num != 0) {
-            NSString *format = [self format] ?: @"%lld";
+            NSString *format = [self format] ?: kInputFormatNumber;
             [super setText:[NSString stringWithFormat:format, num]];
         }
     } else if (_inputFlag.type == PBINPUT_TYPENUMBER(decimal)) {
         double num = [value doubleValue];
         if (num != 0) {
-            NSString *format = [self format] ?: @"%.1lf";
+            NSString *format = [self format] ?: kInputFormatDecimal;
             [super setText:[NSString stringWithFormat:format, num]];
         }
     } else if ([self.inputView respondsToSelector:@selector(textForValue:)]) {
