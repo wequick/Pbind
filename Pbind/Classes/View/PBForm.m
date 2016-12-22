@@ -1010,7 +1010,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
                 if (pattern.length != 0) {
                     NSString *text = value;
                     if (![text isKindOfClass:[NSString class]]) {
-                        text = [value stringValue];
+                        if ([value respondsToSelector:@selector(stringValue)]) {
+                            text = [value stringValue];
+                        } else {
+                            text = [value description];
+                        }
                     }
                     NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
                     if (![test evaluateWithObject:text]){
