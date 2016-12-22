@@ -79,7 +79,13 @@
     }
     
     for (NSString *format in self.constraints) {
-        [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:views]];
+        @try {
+            NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:views];
+            [view addConstraints:constraints];
+        } @catch (NSException *exception) {
+            NSLog(@"Pbind: %@", exception);
+            continue;
+        }
     }
 }
 
