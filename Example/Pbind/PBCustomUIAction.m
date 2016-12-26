@@ -12,8 +12,8 @@
 @implementation PBCustomUIAction
 
 @pbaction(@"toast")
-- (void)run {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.context.supercontroller.view animated:YES];
+- (void)run:(PBActionState *)state {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:state.context.supercontroller.view animated:YES];
     hud.mode = MBProgressHUDModeText;
     hud.bezelView.backgroundColor = [UIColor colorWithWhite:0 alpha:.8f];
     hud.label.textColor = [UIColor whiteColor];
