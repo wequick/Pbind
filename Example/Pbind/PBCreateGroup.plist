@@ -4,13 +4,13 @@
 <dict>
 	<key>properties</key>
 	<dict>
-		<key>action</key>
-		<string>client://im/CreateGroup</string>
 		<key>rows</key>
 		<array>
 			<dict>
 				<key>clazz</key>
 				<string>PBInput</string>
+				<key>margin</key>
+				<string>{48,48,0,48}</string>
 				<key>properties</key>
 				<dict>
 					<key>name</key>
@@ -23,7 +23,9 @@
 				<key>clazz</key>
 				<string>UILabel</string>
 				<key>height</key>
-				<string>=&gt;@groupName?20:0</string>
+				<string>=&gt;$groupName?20:0</string>
+				<key>margin</key>
+				<string>{0,48,0,48}</string>
 				<key>properties</key>
 				<dict>
 					<key>text</key>
@@ -33,6 +35,8 @@
 			<dict>
 				<key>clazz</key>
 				<string>PBInput</string>
+				<key>margin</key>
+				<string>{48,48,48,48}</string>
 				<key>properties</key>
 				<dict>
 					<key>name</key>
