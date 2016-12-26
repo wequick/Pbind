@@ -405,12 +405,34 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 //- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
 
-//#pragma mark - Editing
+#pragma mark - Editing
 
 // Allows customization of the editingStyle for a particular cell located at 'indexPath'. If not implemented, all editable cells will have UITableViewCellEditingStyleDelete set for them when the table has editing property set to YES.
 //- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
 //- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
-//- (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED; // supercedes -tableView:titleForDeleteConfirmationButtonForRowAtIndexPath: if return value is non-nil
+- (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView<PBRowMapping> *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.actionMappers == nil) {
+        return nil;
+    }
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSMutableArray *rowActions = [[NSMutableArray alloc] initWithCapacity:row.actionMappers.count];
+    for (PBRowActionMapper *actionMapper in row.actionMappers) {
+        [actionMapper updateWithData:tableView.rootData andView:cell];
+        UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+            tableView.editingIndexPath = indexPath;
+            [[PBActionStore defaultStore] dispatchActionWithActionMapper:actionMapper context:cell];
+            tableView.editingIndexPath = nil;
+        }];
+        if (actionMapper.backgroundColor != nil) {
+            rowAction.backgroundColor = actionMapper.backgroundColor;
+        }
+        [rowActions addObject:rowAction];
+    }
+    
+    return rowActions;
+}// supercedes -tableView:titleForDeleteConfirmationButtonForRowAtIndexPath: if return value is non-nil
 
 // Controls whether the background is indented while editing.  If not implemented, the default is YES.  This is unrelated to the indentation level below.  This method only applies to grouped style table views.
 //- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath;

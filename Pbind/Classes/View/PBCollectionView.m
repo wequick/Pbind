@@ -20,6 +20,7 @@
 
 @synthesize listKey, page, pagingParams, needsLoadMore;
 @synthesize row, rows, sections, rowDataSource, rowDelegate;
+@synthesize selectedIndexPath, editingIndexPath;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     _flowLayout = [[UICollectionViewFlowLayout alloc] init];
@@ -142,19 +143,19 @@
         }
         
         // Select the item with index path.
-        BOOL needsSelectedItem = (_selectedIndexPath != nil && [rowDataSource dataAtIndexPath:_selectedIndexPath] != nil);
+        BOOL needsSelectedItem = (selectedIndexPath != nil && [rowDataSource dataAtIndexPath:selectedIndexPath] != nil);
         if (!needsSelectedItem) {
             return;
         }
         
         NSArray *selectedIndexPaths = [self indexPathsForSelectedItems];
-        BOOL hasSelectedItem = (selectedIndexPaths != nil && [selectedIndexPaths containsObject:_selectedIndexPath]);
+        BOOL hasSelectedItem = (selectedIndexPaths != nil && [selectedIndexPaths containsObject:selectedIndexPath]);
         if (hasSelectedItem) {
             return;
         }
         
-        [self selectItemAtIndexPath:_selectedIndexPath animated:NO scrollPosition:0];
-        [rowDelegate collectionView:self didSelectItemAtIndexPath:_selectedIndexPath];
+        [self selectItemAtIndexPath:selectedIndexPath animated:NO scrollPosition:0];
+        [rowDelegate collectionView:self didSelectItemAtIndexPath:selectedIndexPath];
     });
 }
 
@@ -163,7 +164,7 @@
     
     [rowDataSource reset];
     _selectedData = nil;
-    _selectedIndexPath = nil;
+    selectedIndexPath = nil;
 }
 
 #pragma mark - Properties
@@ -188,7 +189,7 @@
 
 - (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath animated:(BOOL)animated {
     if ([self.rowDataSource dataAtIndexPath:selectedIndexPath] == nil) {
-        _selectedIndexPath = selectedIndexPath;
+        selectedIndexPath = selectedIndexPath;
         return;
     }
     
@@ -196,7 +197,7 @@
     if (selectedIndexPaths.count > 0) {
         NSIndexPath *indexPath = [selectedIndexPaths firstObject];
         if (indexPath.section == selectedIndexPath.section && indexPath.item == selectedIndexPath.item) {
-            _selectedIndexPath = selectedIndexPath;
+            selectedIndexPath = selectedIndexPath;
             return;
         }
     }

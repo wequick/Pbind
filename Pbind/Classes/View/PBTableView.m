@@ -26,6 +26,7 @@
 
 @synthesize listKey, page, pagingParams, needsLoadMore;
 @synthesize row, rows, sections, rowDataSource, rowDelegate;
+@synthesize selectedIndexPath, editingIndexPath;
 
 - (void)awakeFromNib
 {

@@ -39,5 +39,6 @@
 #pragma mark - for PBRowAction
 
 - (void)addRowData:(id)data;
+- (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

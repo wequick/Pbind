@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PBMapper.h"
 #import "PBLayoutMapper.h"
+#import "PBRowActionMapper.h"
 
 @class PBRowDataSource;
 
@@ -61,6 +62,23 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) Class viewClass;
 
 @property (nonatomic, assign) id<PBRowMapperDelegate> delegate;
+
+/**
+ The delete action to be triggered on click the delete button of editing UITableViewCell.
+ */
+@property (nonatomic, strong) NSDictionary *deleteAction;
+
+/**
+ The actions(UITableViewRowAction) for UITableViewCell.
+ */
+@property (nonatomic, strong) NSArray<NSDictionary *> *actions;
+
+/**
+ The action mappers which map to UITableViewRowAction for editing UITableViewCell.
+ 
+ @discussion If the `actions' were specified, use it, otherwise use `deleteAction' if there was.
+ */
+@property (nonatomic, strong) NSArray<PBRowActionMapper *> *actionMappers;
 
 /**
  Whether the height is defined by an expression.

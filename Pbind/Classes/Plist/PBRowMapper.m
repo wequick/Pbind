@@ -20,6 +20,11 @@ static const CGFloat kHeightUnset = -2;
 @end
 
 @implementation PBRowMapper
+{
+    NSMutableArray<PBRowActionMapper *> *_actionMappers;
+}
+
+@synthesize actionMappers = _actionMappers;
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
     _estimatedHeight = UITableViewAutomaticDimension;
@@ -218,6 +223,43 @@ static const CGFloat kHeightUnset = -2;
     _layout = layout;
     NSDictionary *dict = PBPlist(layout);
     _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
+}
+
+- (void)setDeleteAction:(NSDictionary *)deleteAction {
+    if (_actionMappers != nil && [_deleteAction isEqualToDictionary:deleteAction]) {
+        return;
+    }
+    
+    _deleteAction = deleteAction;
+    _actions = nil;
+    
+    PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:deleteAction owner:nil];
+    actionMapper.title = actionMapper.title ?: PBLocalizedString(@"Delete");
+    if (_actionMappers == nil) {
+        _actionMappers = [[NSMutableArray alloc] initWithCapacity:1];
+    } else {
+        [_actionMappers removeAllObjects];
+    }
+    [_actionMappers addObject:actionMapper];
+}
+
+- (void)setActions:(NSArray<NSDictionary *> *)actions {
+    if (_actionMappers != nil && [_actions isEqualToArray:actions]) {
+        return;
+    }
+    
+    _actions = actions;
+    _deleteAction = nil;
+    
+    if (_actionMappers == nil) {
+        _actionMappers = [[NSMutableArray alloc] initWithCapacity:actions.count];
+    } else {
+        [_actionMappers removeAllObjects];
+    }
+    for (NSDictionary *info in actions) {
+        PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:info owner:nil];
+        [_actionMappers addObject:actionMapper];
+    }
 }
 
 - (UIView *)createView {

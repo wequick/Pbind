@@ -23,4 +23,11 @@
 @property (nonatomic, strong) NSArray *rows; // array with PBRowMapper for body cells
 @property (nonatomic, strong) NSArray *sections; // array with PBSectionMapper for body cells
 
+/**
+ The index path selected by user.
+ */
+@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+
+@property (nonatomic, strong) NSIndexPath *editingIndexPath;
+
 @end

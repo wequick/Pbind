@@ -52,11 +52,6 @@
  */
 @property (nonatomic, strong) id deselectedData;
 
-/**
- The index path selected by user.
- */
-@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
-
 @property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 @end

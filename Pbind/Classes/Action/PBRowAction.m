@@ -14,18 +14,30 @@
 
 @implementation PBRowAction
 
-@pbactions(@"addrow")
+@pbactions(@"addRow", @"deleteRow")
 - (void)run:(PBActionState *)state {
-    if (state.context == nil || state.data == nil) {
+    if (state.context == nil) {
         return;
     }
     
-    if (![state.context conformsToProtocol:@protocol(PBRowMapping)]) {
+    UIView<PBRowMapping> *mappingView = (id) state.context.supercontroller.view;
+    if (![mappingView conformsToProtocol:@protocol(PBRowMapping)]) {
         return;
     }
     
-    UIView<PBRowMapping> *mappingView = (id) state.context;
-    [mappingView.rowDataSource addRowData:state.data];
+    if ([self.type isEqualToString:@"addRow"]) {
+        if (state.data == nil) {
+            return;
+        }
+        
+        [mappingView.rowDataSource addRowData:state.data];
+    } else if ([self.type isEqualToString:@"deleteRow"]) {
+        NSIndexPath *indexPath = mappingView.editingIndexPath ?: state.params[@"indexPath"];
+        if (indexPath == nil) {
+            return;
+        }
+        [mappingView.rowDataSource deleteRowDataAtIndexPath:indexPath];
+    }
 }
 
 @end

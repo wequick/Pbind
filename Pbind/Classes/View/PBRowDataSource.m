@@ -266,15 +266,17 @@
 
 #pragma mark - PBRowAction
 
-- (void)processRowData:(id)data withHandler:(void (^)(NSMutableArray *list, id newData))handler {
+- (void)processRowData:(id)data atIndexPath:(NSIndexPath *)indexPath withHandler:(void (^)(NSMutableArray *list, id newData, NSUInteger index))handler {
+    // TODO: Parse PBSection
+    NSUInteger index = indexPath.row;
     id list = self.owner.data;
     if ([list isKindOfClass:[NSArray class]]) {
         if ([list isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray *mutableList = list;
-            handler(mutableList, data);
+            handler(mutableList, data, index);
         } else {
             NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-            handler(mutableList, data);
+            handler(mutableList, data, index);
             self.owner.data = list;
         }
         return;
@@ -286,10 +288,10 @@
         list = [array list];
         if ([list isKindOfClass:[NSArray class]]) {
             if ([list isKindOfClass:[NSMutableArray class]]) {
-                handler(list, data);
+                handler(list, data, index);
             } else {
                 NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-                handler(mutableList, data);
+                handler(mutableList, data, index);
                 array[array.listElementIndex] = mutableList;
             }
             return;
@@ -307,10 +309,10 @@
     }
     
     if ([list isKindOfClass:[NSMutableArray class]]) {
-        handler(list, data);
+        handler(list, data, index);
     } else {
         NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-        handler(mutableList, data);
+        handler(mutableList, data, index);
         
         if ([listContainer isKindOfClass:[NSMutableDictionary class]]) {
             [(NSMutableDictionary *)listContainer setObject:mutableList forKey:self.owner.listKey];
@@ -328,13 +330,28 @@
 }
 
 - (void)addRowData:(id)data {
-    // Find a mutable array to insert the data at zero index.
-    [self processRowData:data withHandler:^(NSMutableArray *list, id newData) {
-        [list insertObject:newData atIndex:0];
+    NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self insertRowData:data atIndexPath:topIndexPath];
+}
+
+- (void)insertRowData:(id)data atIndexPath:(NSIndexPath *)indexPath {
+    // Process data
+    [self processRowData:data atIndexPath:nil withHandler:^(NSMutableArray *list, id newData, NSUInteger index) {
+        [list insertObject:newData atIndex:index];
     }];
     
-    NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [(UITableView *)self.owner insertRowsAtIndexPaths:@[topIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    // Reload view
+    [(UITableView *)self.owner insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath {
+    // Process data
+    [self processRowData:nil atIndexPath:indexPath withHandler:^(NSMutableArray *list, id newData, NSUInteger index) {
+        [list removeObjectAtIndex:index];
+    }];
+    
+    // Reload view
+    [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 //- (void)removeRowData
@@ -449,18 +466,23 @@
     if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver tableView:tableView canEditRowAtIndexPath:indexPath];
     }
+    
+    PBRowMapper *row = [self rowAtIndexPath:indexPath];
+    if (row.actionMappers != nil) {
+        return YES;
+    }
     return NO;
 }
 
 #pragma mark - Moving/reordering
 
 // Allows the reorder accessory view to optionally be shown for a particular row. By default, the reorder control will be shown only if the datasource implements -tableView:moveRowAtIndexPath:toIndexPath:
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.receiver respondsToSelector:_cmd]) {
-        return [self.receiver tableView:tableView canMoveRowAtIndexPath:indexPath];
-    }
-    return NO;
-}
+//- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if ([self.receiver respondsToSelector:_cmd]) {
+//        return [self.receiver tableView:tableView canMoveRowAtIndexPath:indexPath];
+//    }
+//    return NO;
+//}
 
 #pragma mark - Index
 
@@ -498,23 +520,23 @@
     return 0;
 }// tell table which section corresponds to section title/index (e.g. "B",1))
 
-#pragma mark - Data manipulation - insert and delete support
-
-// After a row has the minus or plus button invoked (based on the UITableViewCellEditingStyle for the cell), the dataSource must commit the change
-// Not called for edit actions using UITableViewRowAction - the action's handler will be invoked instead
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.receiver respondsToSelector:_cmd]) {
-        [self.receiver tableView:tableView commitEditingStyle:editingStyle forRowAtIndexPath:indexPath];
-    }
-}
-
-#pragma mark - Data manipulation - reorder / moving support
-
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
-    if ([self.receiver respondsToSelector:_cmd]) {
-        [self.receiver tableView:tableView moveRowAtIndexPath:sourceIndexPath toIndexPath:destinationIndexPath];
-    }
-}
+//#pragma mark - Data manipulation - insert and delete support
+//
+//// After a row has the minus or plus button invoked (based on the UITableViewCellEditingStyle for the cell), the dataSource must commit the change
+//// Not called for edit actions using UITableViewRowAction - the action's handler will be invoked instead
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if ([self.receiver respondsToSelector:_cmd]) {
+//        [self.receiver tableView:tableView commitEditingStyle:editingStyle forRowAtIndexPath:indexPath];
+//    }
+//}
+//
+//#pragma mark - Data manipulation - reorder / moving support
+//
+//- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+//    if ([self.receiver respondsToSelector:_cmd]) {
+//        [self.receiver tableView:tableView moveRowAtIndexPath:sourceIndexPath toIndexPath:destinationIndexPath];
+//    }
+//}
 
 #pragma mark - UICollectionView
 
