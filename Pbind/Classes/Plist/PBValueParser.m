@@ -257,7 +257,7 @@ static float readcolor(char **str, int len) {
             a = readcolor(&p, 2);
             break;
         default:
-            NSLog(@"PBValueParser: Invalid color format '%s'", str);
+//            NSLog(@"PBValueParser: Invalid color format '%s'", str);
             return nil;
     }
     
