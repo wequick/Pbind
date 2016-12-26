@@ -88,6 +88,7 @@
 - (void)pb_initData; // Init constant properties
 - (void)pb_mapData:(id)data; // Init dynamic properties by data
 - (void)pb_mapData:(id)data forKey:(NSString *)key;
+- (BOOL)pb_canPullData;
 - (void)pb_pullData;
 - (void)pb_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id data, NSError *error))transformation;
 - (void)pb_repullData; // repull with previous `preparation' and `transformation'

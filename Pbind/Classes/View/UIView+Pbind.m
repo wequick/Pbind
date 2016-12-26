@@ -178,25 +178,15 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [self pb_pullDataWithPreparation:nil transformation:nil];
 }
 
+- (BOOL)pb_canPullData
+{
+    return (!self.pb_loading && self.pb_clientMappers != nil && self.pb_clients != nil);
+}
+
 - (void)pb_pullDataWithPreparation:(void (^)(void))preparation
                     transformation:(id (^)(id, NSError *))transformation
 {
-    
-//}
-//
-//- (void)pb_pullDataWithPreparation:(void (^)(void))preparation
-//                    transformation:(id (^)(id, NSError *))transformation
-//                       complection:(void (^)(void))complection
-//{
-    if (self.pb_loading) {
-        return;
-    }
-    
-    if (self.pb_clientMappers == nil) {
-        return;
-    }
-    
-    if (self.pb_clients == nil) {
+    if (![self pb_canPullData]) {
         return;
     }
     
@@ -431,6 +421,9 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     [self _pb_resetMappersForView:view];
     
     [mapper initDataForView:view];
+    if ([view respondsToSelector:@selector(reloadData)]) {
+        view.pb_needsReload = YES;
+    }
     [mapper mapData:view.rootData forView:view];
 }
 
