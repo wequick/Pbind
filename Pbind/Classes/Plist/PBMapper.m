@@ -132,12 +132,6 @@
     [_properties initDataForOwner:self];
 }
 
-- (void)setValue:(id)value forUndefinedKey:(NSString *)key
-{
-    // Ignore
-    NSLog(@"%@ undefinedKey: %@", [[self class] description], key);
-}
-
 - (void)initDataForView:(UIView *)view
 {
     if (_viewProperties == nil) {
