@@ -153,6 +153,7 @@ static NSMutableDictionary *kInitializations = nil;
 
 - (id)value
 {
+    // TODO: fix number crash
     if (_inputFlag.usingSharpFormat && value != nil) {
         return [NSString stringWithString:value];
     }
@@ -376,46 +377,58 @@ static NSMutableDictionary *kInitializations = nil;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if (_replacingString == nil) { // Save to format text at `textFieldDidChange:'
-        _replacingRange = range;
-        _replacingString = string;
-    }
+    BOOL shouldChange = YES;
     
-    if ([string isEqualToString:@""]) { // Backspace
-        return YES;
-    }
+    do {
+        if ([string isEqualToString:@""]) { // Backspace
+            break;
+        }
+        
+        // Limits length
+        if (maxchars != 0 && [textField.text charaterLength] == maxchars) {
+            shouldChange = NO;
+            break;
+        }
+        if (maxlength != 0 && [textField.text length] == maxlength) {
+            shouldChange = NO;
+            break;
+        }
+        
+        // Validates pattern
+        if (pattern != nil) {
+            NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
+            if (![test evaluateWithObject:string]){
+                shouldChange = NO;
+                break;
+            }
+        }
+        
+        // Limits value range
+        if (_inputFlag.type == kInputTypeNumber) {
+            NSString *newString = [self.text stringByAppendingString:string];
+            NSInteger newValue = [newString integerValue];
+            if (_maxValue != nil && newValue > [_maxValue integerValue]) {
+                shouldChange = NO;
+                break;
+            }
+        } else if (_inputFlag.type == kInputTypeDecimal) {
+            NSString *newString = [self.text stringByAppendingString:string];
+            CGFloat newValue = [newString floatValue];
+            if (_maxValue != nil && newValue > [_maxValue floatValue]) {
+                shouldChange = NO;
+                break;
+            }
+        }
+    } while (false);
     
-    // Limits length
-    if (maxchars != 0 && [textField.text charaterLength] == maxchars) {
-        return NO;
-    }
-    if (maxlength != 0 && [textField.text length] == maxlength) {
-        return NO;
-    }
-    
-    // Validates pattern
-    if (pattern != nil) {
-        NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
-        if (![test evaluateWithObject:string]){
-            return NO;
+    if (shouldChange) {
+        if (_replacingString == nil) { // Save to format text at `textFieldDidChange:'
+            _replacingRange = range;
+            _replacingString = string;
         }
     }
     
-    // Limits value range
-    if (_inputFlag.type == kInputTypeNumber) {
-        NSString *newString = [self.text stringByAppendingString:string];
-        NSInteger newValue = [newString integerValue];
-        if (_maxValue != nil && newValue > [_maxValue integerValue]) {
-            return NO;
-        }
-    } else if (_inputFlag.type == kInputTypeDecimal) {
-        NSString *newString = [self.text stringByAppendingString:string];
-        CGFloat newValue = [newString floatValue];
-        if (_maxValue != nil && newValue > [_maxValue floatValue]) {
-            return NO;
-        }
-    }
-    return YES;
+    return shouldChange;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -427,7 +440,7 @@ static NSMutableDictionary *kInitializations = nil;
             PBOptionPicker *picker = (id)self.inputView;
             [picker removeTarget:self action:@selector(optionPickerValueChanged:) forControlEvents:UIControlEventValueChanged];
         }
-    } else {
+    } else if (!_inputFlag.usingSharpFormat) {
         // Update value by text (endEditing)
         if (_inputFlag.type == kInputTypeNumber) {
             long long number = [textField.text longLongValue];
@@ -442,7 +455,7 @@ static NSMutableDictionary *kInitializations = nil;
             double decimal = [textField.text doubleValue];
             if (decimal != 0) {
                 NSString *format = self.format ?: kInputFormatDecimal;
-                textField.text = [NSString stringWithFormat:self.format, decimal];
+                textField.text = [NSString stringWithFormat:format, decimal];
                 value = [NSNumber numberWithDouble:decimal];
             } else {
                 value = nil;
@@ -516,6 +529,12 @@ static NSMutableDictionary *kInitializations = nil;
             if (replacingString == nil) {
                 const char *str1 = [_originalText UTF8String];
                 const char *str2 = [textField.text UTF8String];
+                if (*str2 == '\0') {
+                    _originalText = textField.text;
+                    value = nil;
+                    return;
+                }
+                
                 char *p1 = (char *)str1;
                 char *p2 = (char *)str2;
                 int pos = 0;
@@ -567,7 +586,7 @@ static NSMutableDictionary *kInitializations = nil;
 #define TryReturn(_type_) \
 if ([type isEqualToString:PBInputType##_type_]) return kInputType##_type_
 
-- (NSInteger)inputTypeForString:(NSString *)type {
+- (unsigned int)inputTypeForString:(NSString *)type {
     TryReturn(Text);
     TryReturn(Password);
     TryReturn(Number);
