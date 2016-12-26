@@ -25,4 +25,20 @@
     return rowCount;
 }
 
+- (void)setItem:(id)item {
+    self.row = item;
+}
+
+- (id)item {
+    return self.row;
+}
+
+- (void)setItems:(NSArray *)items {
+    self.rows = items;
+}
+
+- (NSArray *)items {
+    return self.rows;
+}
+
 @end

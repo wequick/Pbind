@@ -24,7 +24,7 @@
 @property (nonatomic, assign) BOOL hidesLastSeparator;
 
 /**
- The mappers for each row of the section.
+ The mappers for each row(UITableViewCell) of the section.
  
  @discussion each element will be parsed from NSDictionay to PBRowMapper.
  */
@@ -36,7 +36,7 @@
 @property (nonatomic, strong) id data;
 
 /**
- The distinct row mapper for the section.
+ The distinct row(UITableViewCell) mapper for the section.
  
  @discussion the dictionary here will be parsed to a PBRowMapper.
  */
@@ -66,5 +66,42 @@
  - If emptyRow was specified and the data is empty, return 1
  */
 @property (nonatomic, assign, readonly) NSInteger rowCount;
+
+#pragma mark - UICollectionView
+
+/**
+ The distinct item(UICollectionViewCell) mapper for the section.
+ 
+ @discussion the dictionary here will be parsed to a PBRowMapper.
+ */
+@property (nonatomic, strong) id item;
+
+/**
+ The mappers for each item(UICollectionViewCell) of the section.
+ 
+ @discussion each element will be parsed from NSDictionay to PBRowMapper.
+ */
+@property (nonatomic, strong) NSArray *items;
+
+/**
+ The section inset.
+ 
+ @discussion this is set to following method in the UICollectionViewDelegateLayout delegate:
+ 
+ - collectionView:layout:insetForSectionAtIndex:
+ 
+ */
+@property (nonatomic, assign) UIEdgeInsets inset;
+
+/**
+ The minimum inter item spacing size.
+ 
+ @discussion this is set to following method in the UICollectionViewDelegateLayout delegate:
+ 
+ - width -> collectionView:layout:minimumInteritemSpacingForSectionAtIndex:
+ - height -> collectionView:layout:collectionViewLayoutminimumLineSpacingForSectionAtIndex:
+ 
+ */
+@property (nonatomic, assign) CGSize inner;
 
 @end
