@@ -342,6 +342,21 @@
 #pragma mark - UITableView
 #pragma mark - @required
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        return [self.receiver numberOfSectionsInTableView:tableView];
+    }
+    
+    if (self.sections != nil) {
+        return [self.sections count];
+    } else if (self.row != nil || self.rows != nil) {
+        if ([tableView.data isKindOfClass:[PBSection class]]) {
+            return [[(PBSection *)tableView.data sectionIndexTitles] count];
+        }
+    }
+    return 1;
+}
+
 - (NSInteger)tableView:(PBTableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.receiver respondsToSelector:_cmd]) {
         NSInteger rowCount = [self.receiver tableView:tableView numberOfRowsInSection:section];

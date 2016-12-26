@@ -206,21 +206,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 #pragma mark - UITableView
 #pragma mark - Display customization
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if ([self.receiver respondsToSelector:_cmd]) {
-        return [self.receiver numberOfSectionsInTableView:tableView];
-    }
-    
-    if (self.dataSource.sections != nil) {
-        return [self.dataSource.sections count];
-    } else if (self.dataSource.row != nil || self.dataSource.rows != nil) {
-        if ([tableView.data isKindOfClass:[PBSection class]]) {
-            return [[(PBSection *)tableView.data sectionIndexTitles] count];
-        }
-    }
-    return 1;
-}
-
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     // Hides last separator
     if (self.dataSource.sections.count > indexPath.section) {
