@@ -452,7 +452,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             [(id)invalidInput becomeFirstResponder];
         } else {
             [self endEditing:YES];
-            [self scrollToInput:invalidInput animated:YES];
+            [self scrollToInput:(id)invalidInput animated:YES];
         }
         return nil;
     }
