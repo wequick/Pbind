@@ -9,6 +9,7 @@
 #import "PBRowMapper.h"
 #import "Pbind+API.h"
 #import "PBTableViewCell.h"
+#import "PBRowDataSource.h"
 
 static const CGFloat kHeightUnset = -2;
 
@@ -183,7 +184,7 @@ static const CGFloat kHeightUnset = -2;
     return self.height;
 }
 
-- (CGFloat)heightForData:(id)data rowDataSource:(id<PBRowDataSource>)dataSource atIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)heightForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath
 {
     if (!_pbFlags.hiddenExpressive) {
         if (self.hidden) {

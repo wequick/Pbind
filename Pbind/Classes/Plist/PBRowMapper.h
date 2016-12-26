@@ -10,20 +10,14 @@
 #import "PBMapper.h"
 #import "PBLayoutMapper.h"
 
+@class PBRowDataSource;
+
 //______________________________________________________________________________
 // PBRowMapperDelegate
 @class PBRowMapper;
 @protocol PBRowMapperDelegate <NSObject>
 
 - (void)rowMapper:(PBRowMapper *)mapper didChangeValue:(id)value forKey:(NSString *)key;
-
-@end
-
-//______________________________________________________________________________
-
-@protocol PBRowDataSource <NSObject>
-
-- (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
@@ -52,6 +46,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, strong) NSString *id;
 @property (nonatomic, assign) CGFloat estimatedHeight;
 @property (nonatomic, assign) CGFloat height;
+@property (nonatomic, assign) CGSize size;
 @property (nonatomic, assign) BOOL hidden;
 @property (nonatomic, assign) UIEdgeInsets margin;
 @property (nonatomic, assign) UIEdgeInsets padding;
@@ -75,7 +70,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 - (BOOL)hiddenForView:(id)view withData:(id)data;
 - (CGFloat)heightForView:(id)view withData:(id)data;
 
-- (CGFloat)heightForData:(id)data rowDataSource:(id<PBRowDataSource>)dataSource atIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)heightForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath;
 - (CGFloat)heightForData:(id)data;
 
 - (UIView *)createView;
