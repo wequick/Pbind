@@ -10,6 +10,7 @@
 #import "PBValueParser.h"
 #import "PBMutableExpression.h"
 #import "UIView+Pbind.h"
+#import "PBPropertyUtils.h"
 
 @interface PBMapperProperties()
 {
@@ -111,7 +112,7 @@
 - (void)initDataForOwner:(id)owner
 {
     for (NSString *key in _constants) {
-        [owner setValue:_constants[key] forKeyPath:key];
+        [PBPropertyUtils setValue:_constants[key] forKeyPath:key toObject:owner failure:nil];
     }
 }
 
