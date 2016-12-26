@@ -14,7 +14,7 @@
 
 @pbaction(@"submit")
 - (void)run:(PBActionState *)state {
-    PBFormController *controller = [state.context supercontroller];
+    PBFormController *controller = (id) [state.context supercontroller];
     if (![controller isKindOfClass:[PBFormController class]]) {
         return;
     }
