@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PBResponse.h"
 
 @interface PBActionState : NSObject
 
@@ -14,6 +15,7 @@
 @property (nonatomic, weak) UIView *context;
 
 @property (nonatomic, strong) NSDictionary *params;
+@property (nonatomic, assign) PBResponseStatus status;
 @property (nonatomic, strong) id data;
 @property (nonatomic, strong) NSError *error;
 

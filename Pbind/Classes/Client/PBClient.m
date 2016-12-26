@@ -16,7 +16,7 @@ NSString *const PBResponseKey = @"PBResponseKey";
 @implementation PBClient
 
 static NSMutableDictionary *kAliasNames;
-static id (^kDebugServer)(PBClient *client, PBRequest *request);
+static PBResponse* (^kDebugServer)(PBClient *client, PBRequest *request);
 
 + (Class)requestClass
 {
@@ -113,10 +113,8 @@ static id (^kDebugServer)(PBClient *client, PBRequest *request);
     
     // Global debug response
     if (kDebugServer != nil) {
-        id data = kDebugServer(self, request);
-        if (data != nil) {
-            PBResponse *response = [[PBResponse alloc] init];
-            response.data = data;
+        PBResponse *response = kDebugServer(self, request);
+        if (response != nil) {
             response = [self transformingResponse:response withRequest:request];
             complection(response);
             return;

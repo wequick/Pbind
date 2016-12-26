@@ -32,6 +32,10 @@
         
         [mappingView.rowDataSource addRowData:state.data];
     } else if ([self.type isEqualToString:@"deleteRow"]) {
+        if (state.status != PBResponseStatusNoContent) {
+            return;
+        }
+        
         NSIndexPath *indexPath = mappingView.editingIndexPath ?: state.params[@"indexPath"];
         if (indexPath == nil) {
             return;

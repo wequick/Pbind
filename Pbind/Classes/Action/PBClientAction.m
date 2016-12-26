@@ -37,6 +37,7 @@
     request.action = self.name;
     
     [client _loadRequest:request mapper:nil notifys:YES complection:^(PBResponse *response) {
+        state.status = response.status;
         if (response.error != nil) {
             state.error = response.error;
             [self dispatchNext:@"failure"];

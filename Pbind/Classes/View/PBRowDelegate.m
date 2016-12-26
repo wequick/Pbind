@@ -423,7 +423,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
             tableView.editingIndexPath = indexPath;
             [[PBActionStore defaultStore] dispatchActionWithActionMapper:actionMapper context:cell];
-            tableView.editingIndexPath = nil;
         }];
         if (actionMapper.backgroundColor != nil) {
             rowAction.backgroundColor = actionMapper.backgroundColor;
