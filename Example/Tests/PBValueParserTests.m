@@ -45,8 +45,12 @@
 }
 
 - (void)testCanParseEnum {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    // Special constants
+    XCTAssertEqual([[PBValueParser valueWithString:@":none"] intValue], 0);
+    XCTAssertEqual([PBValueParser valueWithString:@":null"], [NSNull null]);
+    XCTAssertEqual([PBValueParser valueWithString:@":nil"], nil);
+    
+    // NSTextAlignment
     XCTAssertEqual([[PBValueParser valueWithString:@":left"] intValue], NSTextAlignmentLeft);
     XCTAssertEqual([[PBValueParser valueWithString:@":right"] intValue], NSTextAlignmentRight);
     XCTAssertEqual([[PBValueParser valueWithString:@":center"] intValue], NSTextAlignmentCenter);
