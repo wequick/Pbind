@@ -36,7 +36,7 @@
 
  @param server A block function that returns response data.
  */
-+ (void)registerDebugServer:(PBResponse* (^)(PBClient *client, PBRequest *request))server;
++ (void)registerDebugServer:(PBResponse *(^)(PBClient *client, PBRequest *request))server;
 
 @property (nonatomic, assign) NSInteger cacheCount; // default is PBClientCacheNever;
 @property (nonatomic, strong) NSMutableDictionary *readCacheCounts;
