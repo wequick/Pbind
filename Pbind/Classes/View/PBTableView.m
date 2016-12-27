@@ -233,13 +233,13 @@
         return;
     }
     
-    NSIndexPath *selectedIndexPath = [self indexPathForSelectedRow];
-    if (selectedIndexPath == nil) {
+    NSIndexPath *theSelectedIndexPath = [self indexPathForSelectedRow];
+    if (theSelectedIndexPath == nil) {
         return;
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self deselectRowAtIndexPath:selectedIndexPath animated:YES];
+        [self deselectRowAtIndexPath:theSelectedIndexPath animated:YES];
     });
 }
 

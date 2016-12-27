@@ -183,26 +183,27 @@
     _horizontal = horizontal;
 }
 
-- (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath {
-    [self setSelectedIndexPath:selectedIndexPath animated:NO];
+- (void)setSelectedIndexPath:(NSIndexPath *)theSelectedIndexPath {
+    [self setSelectedIndexPath:theSelectedIndexPath animated:NO];
 }
 
-- (void)setSelectedIndexPath:(NSIndexPath *)selectedIndexPath animated:(BOOL)animated {
-    if ([self.rowDataSource dataAtIndexPath:selectedIndexPath] == nil) {
-        selectedIndexPath = selectedIndexPath;
+- (void)setSelectedIndexPath:(NSIndexPath *)theSelectedIndexPath animated:(BOOL)animated {
+    if ([self.rowDataSource dataAtIndexPath:theSelectedIndexPath] == nil) {
+        selectedIndexPath = theSelectedIndexPath;
         return;
     }
     
     NSArray *selectedIndexPaths = [self indexPathsForSelectedItems];
     if (selectedIndexPaths.count > 0) {
         NSIndexPath *indexPath = [selectedIndexPaths firstObject];
-        if (indexPath.section == selectedIndexPath.section && indexPath.item == selectedIndexPath.item) {
-            selectedIndexPath = selectedIndexPath;
+        if (indexPath.section == theSelectedIndexPath.section && indexPath.item == theSelectedIndexPath.item) {
+            // Has selected, this may be triggered by the `didSelectItemAtIndexPath:' method.
+            selectedIndexPath = theSelectedIndexPath;
             return;
         }
     }
     
-    [self selectItemAtIndexPath:selectedIndexPath animated:animated scrollPosition:0];
+    [self selectItemAtIndexPath:theSelectedIndexPath animated:animated scrollPosition:0];
 }
 
 #pragma mark - Paging
