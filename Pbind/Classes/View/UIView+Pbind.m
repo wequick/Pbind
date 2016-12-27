@@ -133,7 +133,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
     for (NSString *key in self.actions) {
         PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key] owner:self];
-        [mapper initDataForView:self];
+        [mapper updateWithData:self.rootData andView:self];
         [mappers setObject:mapper forKey:key];
     }
     self._pbActionMappers = mappers;
