@@ -105,11 +105,22 @@
 
 <p><img src="/Pbind/img/tour-0-hello@2x.png" alt="hello-first"/></p>
 <h2><a href="/Pbind/doc/quickstart#step-4:-做一些即时修改" id=step-4:-做一些即时修改 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 4: 做一些即时修改</h2>
-<p>由于没有导航栏，view跟状态栏重叠了，我们通过 <code>margin</code> 来加一点上边距，让界面看起来舒服点：</p>
-<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>height</span></td><td><span>String</span></td><td><span>100</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{100,0,0,0}</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>由于没有导航栏，view跟状态栏重叠了，状态栏的高度为20，我们通过 <code>margin</code> 来加上这个上边距：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>height</span></td><td><span>String</span></td><td><span>100</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{20,0,0,0}</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
 <p><code>[Command + S]</code> 保存文件，界面将立即刷新：</p>
 
-<p><img src="/Pbind/img/tour-0-hello-margin@2x.png" alt="hello-margin"/></p>
+<p><img src="/Pbind/img/tour-0-hello-margin-20@2x.png" alt="hello-margin"/></p>
+
+<p>看起来似乎不大对劲，只向下偏移了一点？这是因为 Pbind 的默认基准宽度为1080，约为@3x尺寸，所以这里需要设置为60：</p>
+<div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{60,0,0,0}</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
+<p>这个特性是为了方便配置UI尺寸，您可以通过一次设置：</p>
+<div class="highlight highlight-source-objc"><pre><span class="p">[</span><span class="n">Pbind</span> <span class="nl">setSketchWidth</span><span class="p">:</span><span class="n">the_width</span><span class="p">];</span> <span class="c1">// UI设计师提供标注图的宽度</span>
+</pre></div>
+<p>从而可以直接配置标注图里的标注尺寸，Pbind将会为您自动完成设备分辨率适配。</p>
+
+<p>再次保存：</p>
+
+<p><img src="/Pbind/img/tour-0-hello-margin-60@2x.png" alt="hello-margin"/></p>
 
 <p>你可以试着改变文字的背景/前景色，来感受下即时刷新带来的畅快开发体验。</p>
 
