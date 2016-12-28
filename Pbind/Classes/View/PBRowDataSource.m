@@ -341,7 +341,14 @@
     }];
     
     // Reload view
-    [(UITableView *)self.owner insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if ([self.owner isKindOfClass:[UITableView class]]) {
+        [(UITableView *)self.owner insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        UICollectionView *collectionView = (id) self.owner;
+        [collectionView performBatchUpdates:^{
+            [collectionView insertItemsAtIndexPaths:@[indexPath]];
+        } completion:nil];
+    }
 }
 
 - (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath {
@@ -354,7 +361,10 @@
     if ([self.owner isKindOfClass:[UITableView class]]) {
         [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     } else {
-        [(UICollectionView *)self.owner deleteItemsAtIndexPaths:@[indexPath]];
+        UICollectionView *collectionView = (id) self.owner;
+        [collectionView performBatchUpdates:^{
+            [collectionView deleteItemsAtIndexPaths:@[indexPath]];
+        } completion:nil];
     }
 }
 
