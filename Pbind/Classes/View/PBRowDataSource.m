@@ -351,7 +351,11 @@
     }];
     
     // Reload view
-    [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if ([self.owner isKindOfClass:[UITableView class]]) {
+        [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [(UICollectionView *)self.owner deleteItemsAtIndexPaths:@[indexPath]];
+    }
 }
 
 //- (void)removeRowData
