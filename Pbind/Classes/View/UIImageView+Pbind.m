@@ -13,15 +13,7 @@
 @implementation UIImageView (Pbind)
 
 - (void)setImageName:(NSString *)imageName {
-    UIImage *image = nil;
-    NSArray *preferredBundles = [Pbind allResourcesBundles];
-    for (NSBundle *bundle in preferredBundles) {
-        image = [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
-        if (image != nil) {
-            break;
-        }
-    }
-    [self setImage:image];
+    [self setImage:PBImage(imageName)];
 }
 
 @end

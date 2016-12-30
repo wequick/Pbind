@@ -21,15 +21,6 @@
     return instance;
 }
 
-- (void)dispatchActionForView:(UIView *)view {
-    PBActionMapper *mapper = [view actionMapper];
-    if (mapper == nil) {
-        return;
-    }
-    
-    [self dispatchActionWithActionMapper:mapper context:view];
-}
-
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper {
     [self dispatchActionWithActionMapper:mapper context:nil];
 }

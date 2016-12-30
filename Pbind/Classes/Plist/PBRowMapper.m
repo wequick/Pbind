@@ -21,10 +21,10 @@ static const CGFloat kHeightUnset = -2;
 
 @implementation PBRowMapper
 {
-    NSMutableArray<PBRowActionMapper *> *_actionMappers;
+    NSMutableArray<PBRowActionMapper *> *_editActionMappers;
 }
 
-@synthesize actionMappers = _actionMappers;
+@synthesize editActionMappers = _editActionMappers;
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
     _estimatedHeight = UITableViewAutomaticDimension;
@@ -225,40 +225,36 @@ static const CGFloat kHeightUnset = -2;
     _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
 }
 
-- (void)setDeleteAction:(NSDictionary *)deleteAction {
-    if (_actionMappers != nil && [_deleteAction isEqualToDictionary:deleteAction]) {
-        return;
-    }
+- (void)setActions:(NSDictionary *)as {
     
-    _deleteAction = deleteAction;
-    _actions = nil;
+    NSDictionary *a;
     
-    PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:deleteAction owner:nil];
-    actionMapper.title = actionMapper.title ?: PBLocalizedString(@"Delete");
-    if (_actionMappers == nil) {
-        _actionMappers = [[NSMutableArray alloc] initWithCapacity:1];
+    a = as[@"willSelect"];
+    _willSelectActionMapper   = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    a = as[@"select"];
+    _selectActionMapper       = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    a = as[@"willDeselect"];
+    _willDeselectActionMapper = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    a = as[@"deselect"];
+    _deselectActionMapper     = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    
+    NSArray *edits = as[@"edits"];
+    if (edits != nil) {
+        _editActionMappers = [NSMutableArray arrayWithCapacity:edits.count];
+        for (a in edits) {
+            PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:a owner:nil];
+            [_editActionMappers addObject:actionMapper];
+        }
     } else {
-        [_actionMappers removeAllObjects];
-    }
-    [_actionMappers addObject:actionMapper];
-}
-
-- (void)setActions:(NSArray<NSDictionary *> *)actions {
-    if (_actionMappers != nil && [_actions isEqualToArray:actions]) {
-        return;
-    }
-    
-    _actions = actions;
-    _deleteAction = nil;
-    
-    if (_actionMappers == nil) {
-        _actionMappers = [[NSMutableArray alloc] initWithCapacity:actions.count];
-    } else {
-        [_actionMappers removeAllObjects];
-    }
-    for (NSDictionary *info in actions) {
-        PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:info owner:nil];
-        [_actionMappers addObject:actionMapper];
+        a = as[@"delete"];
+        if (a != nil) {
+            PBRowActionMapper *deleteActionMapper = [PBRowActionMapper mapperWithDictionary:a owner:nil];
+            deleteActionMapper.title = deleteActionMapper.title ?: PBLocalizedString(@"Delete");
+            _editActionMappers = [NSMutableArray arrayWithCapacity:1];
+            [_editActionMappers addObject:deleteActionMapper];
+        } else {
+            _editActionMappers = nil;
+        }
     }
 }
 
@@ -290,6 +286,32 @@ static const CGFloat kHeightUnset = -2;
     }
     
     return view;
+}
+
+- (void)unbind {
+    [super unbind];
+    
+    if (_layoutMapper != nil) {
+        [_layoutMapper unbind];
+    }
+    
+    if (_willSelectActionMapper != nil) {
+        [_willSelectActionMapper unbind];
+    }
+    if (_selectActionMapper != nil) {
+        [_selectActionMapper unbind];
+    }
+    if (_willDeselectActionMapper != nil) {
+        [_willDeselectActionMapper unbind];
+    }
+    if (_deselectActionMapper != nil) {
+        [_deselectActionMapper unbind];
+    }
+    if (_editActionMappers != nil) {
+        for (PBMapper *mapper in _editActionMappers) {
+            [mapper unbind];
+        }
+    }
 }
 
 @end

@@ -38,9 +38,6 @@
 
 @property (nonatomic, strong) NSString *plist;
 
-@property (nonatomic, strong) NSDictionary *action;
-@property (nonatomic, strong) PBActionMapper *actionMapper;
-
 @property (nonatomic, strong) NSArray *clients;
 @property (nonatomic, strong) NSDictionary *actions;
 
@@ -184,12 +181,5 @@ UIKIT_STATIC_INLINE id PBParameterDejson(NSString *json)
     NSString *decodedJson = PBHrefDecode(json);
     decodedJson = [decodedJson stringByReplacingOccurrencesOfString:@"<amp>" withString:@"&"];
     return [NSJSONSerialization JSONObjectWithData:[decodedJson dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
-}
-
-typedef void (*PBCallControllerFunc)(id, SEL, id);
-
-UIKIT_STATIC_INLINE void PBViewClickHref(UIView *view, NSString *href)
-{
-    [view pb_clickHref:href];
 }
 

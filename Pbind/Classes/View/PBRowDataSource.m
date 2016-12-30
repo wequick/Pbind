@@ -482,7 +482,7 @@
     }
     
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
-    if (row.actionMappers != nil) {
+    if (row.editActionMappers != nil) {
         return YES;
     }
     return NO;

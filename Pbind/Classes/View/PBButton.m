@@ -14,6 +14,7 @@
 @implementation PBButton
 {
     UIColor *_backgroundColor;
+    PBActionMapper *_actionMapper;
 }
 
 #pragma mark - PBInput
@@ -33,12 +34,12 @@
 }
 
 - (void)setAction:(NSDictionary *)action {
-    [super setAction:action];
+    _actionMapper = [PBActionMapper mapperWithDictionary:action owner:nil];
     [self addTarget:self action:@selector(handleAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)handleAction:(id)sender {
-    [[PBActionStore defaultStore] dispatchActionForView:self];
+    [[PBActionStore defaultStore] dispatchActionWithActionMapper:_actionMapper context:self];
 }
 
 #pragma mark - State changing

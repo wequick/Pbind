@@ -28,7 +28,7 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBTextView.h"
 #import "PBTableView.h"
 #import "PBTableViewController.h"
-#import "UIButton+PBForm.h"
+#import "PBButton.h"
 #import "PBVariableEvaluator.h"
 #import "PBMessageInterceptor.h"
 #import "PBOptionPicker.h"

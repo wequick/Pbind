@@ -18,7 +18,6 @@
 
 - (void)dispatchAction:(PBAction *)action;
 
-- (void)dispatchActionForView:(UIView *)view;
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper;
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context;
 

@@ -64,21 +64,30 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) id<PBRowMapperDelegate> delegate;
 
 /**
- The delete action to be triggered on click the delete button of editing UITableViewCell.
+ The actions for row, each value is a dictionary which parse as `PBActionMapper'.
+ 
+ @discussion accept keys:
+ 
+ - willSelect   : the cell willSelect action
+ - select       : the cell didSelect action
+ - willDeselect : the cell willDeselect action
+ - deselect     : the cell didDeselect action
+ - delete       : the editing(swipe-to-left) cell delete button action
+ - edits        : the editing(swipe-to-left) cell custom edit actions
  */
-@property (nonatomic, strong) NSDictionary *deleteAction;
+@property (nonatomic, strong) NSDictionary *actions;
 
-/**
- The actions(UITableViewRowAction) for UITableViewCell.
- */
-@property (nonatomic, strong) NSArray<NSDictionary *> *actions;
+@property (nonatomic, strong) PBActionMapper *willSelectActionMapper;
+@property (nonatomic, strong) PBActionMapper *selectActionMapper;
+@property (nonatomic, strong) PBActionMapper *willDeselectActionMapper;
+@property (nonatomic, strong) PBActionMapper *deselectActionMapper;
 
 /**
  The action mappers which map to UITableViewRowAction for editing UITableViewCell.
  
  @discussion If the `actions' were specified, use it, otherwise use `deleteAction' if there was.
  */
-@property (nonatomic, strong) NSArray<PBRowActionMapper *> *actionMappers;
+@property (nonatomic, strong) NSArray<PBRowActionMapper *> *editActionMappers;
 
 /**
  Whether the height is defined by an expression.

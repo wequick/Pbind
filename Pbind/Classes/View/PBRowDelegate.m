@@ -270,7 +270,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return 0;
     }
     
-    if ([self.receiver respondsToSelector:@selector(numberOfSectionsInTableView:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         return tableView.sectionHeaderHeight;
     }
     return 0;
@@ -382,43 +382,74 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 //- (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
 
 // Called before the user changes the selection. Return a new indexPath, or nil, to change the proposed selection.
-//- (nullable NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-//- (nullable NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
+- (nullable NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSIndexPath *newIndexPath = indexPath;
+    
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.willSelectActionMapper != nil) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willSelectActionMapper context:cell];
+    }
+    
+    if ([self.receiver respondsToSelector:_cmd]) {
+        newIndexPath = [self.receiver tableView:tableView willSelectRowAtIndexPath:indexPath];
+    }
+    
+    return newIndexPath;
+}
+
+- (nullable NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSIndexPath *newIndexPath = indexPath;
+    
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.willDeselectActionMapper != nil) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willDeselectActionMapper context:cell];
+    }
+    
+    if ([self.receiver respondsToSelector:_cmd]) {
+        newIndexPath = [self.receiver tableView:tableView willDeselectRowAtIndexPath:indexPath];
+    }
+    
+    return newIndexPath;
+}
+
 // Called after the user changes the selection.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-#pragma mark - Depreciated href
-    NSString *href = cell.href;
-    if (href != nil) {
-        PBViewClickHref(cell, href);
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.selectActionMapper != nil) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.selectActionMapper context:cell];
     }
     
-    NSDictionary *action = cell.action;
-    if (action != nil) {
-        [[PBActionStore defaultStore] dispatchActionForView:cell];
-    }
-    
-    if ([self.receiver respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver tableView:tableView didSelectRowAtIndexPath:indexPath];
     }
 }
-//- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.deselectActionMapper != nil) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.deselectActionMapper context:cell];
+    }
+    
+    if ([self.receiver respondsToSelector:_cmd]) {
+        [self.receiver tableView:tableView didSelectRowAtIndexPath:indexPath];
+    }
+}
 
 #pragma mark - Editing
 
-// Allows customization of the editingStyle for a particular cell located at 'indexPath'. If not implemented, all editable cells will have UITableViewCellEditingStyleDelete set for them when the table has editing property set to YES.
-//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
-//- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
 - (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView<PBRowMapping> *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
-    if (row.actionMappers == nil) {
+    if (row.editActionMappers == nil) {
         return nil;
     }
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    NSMutableArray *rowActions = [[NSMutableArray alloc] initWithCapacity:row.actionMappers.count];
-    for (PBRowActionMapper *actionMapper in row.actionMappers) {
+    NSMutableArray *editActions = [[NSMutableArray alloc] initWithCapacity:row.editActionMappers.count];
+    for (PBRowActionMapper *actionMapper in row.editActionMappers) {
         [actionMapper updateWithData:tableView.rootData andView:cell];
         UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
             tableView.editingIndexPath = indexPath;
@@ -427,10 +458,10 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         if (actionMapper.backgroundColor != nil) {
             rowAction.backgroundColor = actionMapper.backgroundColor;
         }
-        [rowActions addObject:rowAction];
+        [editActions addObject:rowAction];
     }
     
-    return rowActions;
+    return editActions;
 }// supercedes -tableView:titleForDeleteConfirmationButtonForRowAtIndexPath: if return value is non-nil
 
 // Controls whether the background is indented while editing.  If not implemented, the default is YES.  This is unrelated to the indentation level below.  This method only applies to grouped style table views.
@@ -470,7 +501,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {  // Called on iOS8+
     // Forward delegate
-    if ([self.receiver respondsToSelector:@selector(collectionView:willDisplayCell:forItemAtIndexPath:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
     }
     
@@ -478,20 +509,60 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     [item mapData:[collectionView data] forView:cell];
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    BOOL shouldSelect = YES;
+    
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.willSelectActionMapper != nil) {
+        UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willSelectActionMapper context:cell];
+    }
+    
+    if ([self.receiver respondsToSelector:_cmd]) {
+        shouldSelect = [self.receiver collectionView:collectionView shouldSelectItemAtIndexPath:indexPath];
+    }
+    
+    return shouldSelect;
+}
+
 - (void)collectionView:(PBCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-    PBViewClickHref(cell, cell.href);
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.selectActionMapper != nil) {
+        UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.selectActionMapper context:cell];
+    }
     
     collectionView.selectedData = [self.dataSource dataAtIndexPath:indexPath];
-    
     collectionView.selectedIndexPath = indexPath;
     
-    if ([self.receiver respondsToSelector:@selector(collectionView:didSelectItemAtIndexPath:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver collectionView:collectionView didSelectItemAtIndexPath:indexPath];
     }
 }
 
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    BOOL shouldDeselect = YES;
+    
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.willDeselectActionMapper != nil) {
+        UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willDeselectActionMapper context:cell];
+    }
+    
+    if ([self.receiver respondsToSelector:_cmd]) {
+        shouldDeselect = [self.receiver collectionView:collectionView shouldDeselectItemAtIndexPath:indexPath];
+    }
+    
+    return shouldDeselect;
+}
+
 - (void)collectionView:(PBCollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
+    if (row.deselectActionMapper != nil) {
+        UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.deselectActionMapper context:cell];
+    }
+    
     collectionView.deselectedData = [self.dataSource dataAtIndexPath:indexPath];
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -502,7 +573,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 #pragma mark - UICollectionViewDelegateLayout
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.receiver respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
     }
     
@@ -516,7 +587,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    if ([self.receiver respondsToSelector:@selector(collectionView:layout:insetForSectionAtIndex:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
     }
     
@@ -532,7 +603,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    if ([self.receiver respondsToSelector:@selector(collectionView:layout:minimumInteritemSpacingForSectionAtIndex:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver collectionView:collectionView layout:collectionViewLayout minimumInteritemSpacingForSectionAtIndex:section];
     }
     
@@ -548,7 +619,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    if ([self.receiver respondsToSelector:@selector(collectionView:layout:minimumLineSpacingForSectionAtIndex:)]) {
+    if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver collectionView:collectionView layout:collectionViewLayout minimumLineSpacingForSectionAtIndex:section];
     }
     
