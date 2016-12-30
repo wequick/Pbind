@@ -9,6 +9,7 @@
 #import "PBButton.h"
 #import "UIView+Pbind.h"
 #import "PBActionStore.h"
+#import "Pbind+API.h"
 
 @implementation PBButton
 {
@@ -18,6 +19,7 @@
 #pragma mark - PBInput
 
 @synthesize type, name, value, required, requiredTips;
+@synthesize text;
 
 - (void)reset {
     
@@ -59,6 +61,69 @@
     } else {
         [super setBackgroundColor:[_backgroundColor colorWithAlphaComponent:.2]];
     }
+}
+
+#pragma mark - PBInput
+
+- (void)setText:(NSString *)text {
+    [self setTitle:text forState:UIControlStateNormal];
+}
+
+- (NSString *)text {
+    return [self titleForState:UIControlStateNormal];
+}
+
+#pragma mark - Configurable state
+
+- (void)setTitle:(NSString *)title {
+    [self setTitle:title forState:UIControlStateNormal];
+}
+
+- (NSString *)title {
+    return [self titleForState:UIControlStateNormal];
+}
+
+- (void)setDisabledTitle:(NSString *)disabledTitle {
+    [self setTitle:disabledTitle forState:UIControlStateDisabled];
+}
+
+- (NSString *)disabledTitle {
+    return [self titleForState:UIControlStateDisabled];
+}
+
+- (void)setHighlightedTitle:(NSString *)highlightedTitle {
+    [self setTitle:highlightedTitle forState:UIControlStateHighlighted];
+}
+
+- (NSString *)highlightedTitle {
+    return [self titleForState:UIControlStateHighlighted];
+}
+
+- (void)setSelectedTitle:(NSString *)selectedTitle {
+    [self setTitle:selectedTitle forState:UIControlStateSelected];
+}
+
+- (NSString *)selectedTitle {
+    return [self titleForState:UIControlStateSelected];
+}
+
+- (void)setImage:(NSString *)image {
+    _image = image;
+    [self setImage:PBImage(image) forState:UIControlStateNormal];
+}
+
+- (void)setDisabledImage:(NSString *)disabledImage {
+    _disabledImage = disabledImage;
+    [self setImage:PBImage(disabledImage) forState:UIControlStateDisabled];
+}
+
+- (void)setHighlightedImage:(NSString *)highlightedImage {
+    [self setImage:PBImage(highlightedImage) forState:UIControlStateHighlighted];
+}
+
+- (void)setSelectedImage:(NSString *)selectedImage {
+    _selectedImage = selectedImage;
+    [self setImage:PBImage(selectedImage) forState:UIControlStateSelected];
 }
 
 @end
