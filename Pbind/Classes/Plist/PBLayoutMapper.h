@@ -25,9 +25,9 @@
 @property (nonatomic, strong) NSDictionary *metrics;
 
 /**
- The constraints for auto-layout. Using visual format language.
+ The format constraints for auto-layout. Using visual format language.
  */
-@property (nonatomic, strong) NSArray *constraints;
+@property (nonatomic, strong) NSArray *formats;
 
 /**
  Create all the subviews and add to the parent view.

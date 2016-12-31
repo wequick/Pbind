@@ -78,7 +78,7 @@
         metrics = temp;
     }
     
-    for (NSString *format in self.constraints) {
+    for (NSString *format in self.formats) {
         @try {
             NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:views];
             [view addConstraints:constraints];
