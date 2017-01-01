@@ -25,9 +25,22 @@
 @property (nonatomic, strong) NSDictionary *metrics;
 
 /**
- The format constraints for auto-layout. Using visual format language.
+ The official format constraints for auto-layout. Using visual format language.
  */
 @property (nonatomic, strong) NSArray *formats;
+
+/**
+ The Pbind-way format constraints for auto-layout.
+ 
+ @discussion Support constraints like Masonry but more convinent:
+ 
+ - Explicit format                  : icon.width=icon.height*2+20@1000
+ - Aspect ratio format              : R:icon=4:3
+ - Edge insets format               : E:inner={20,30,20,30}
+ - Merge center horizontally format : C:|-left-[/[label1-label2]/(==height)]-icon-|
+ - Merge center vertically format   : M:|-left-[/[label1-label2]/(==width)]-icon-|
+ */
+@property (nonatomic, strong) NSArray *constraints;
 
 /**
  Create all the subviews and add to the parent view.
