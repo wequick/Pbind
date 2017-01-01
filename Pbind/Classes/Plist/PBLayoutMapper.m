@@ -190,7 +190,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a '='.", str);
         free(temp);
         return;
     }
@@ -201,7 +201,7 @@
     free(temp);
     UIView *targetView = views[viewName];
     if (targetView == nil) {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
         return;
     }
     
@@ -209,7 +209,7 @@
     int height = 0;
     while (*p != ':' && *p != '\0') {
         if (*p < '0' || *p > '9') {
-            // TODO: ratio should be number
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", aspect ratio accepts only integer.", str);
             return;
         }
         width = width * 10 + *(p++) - '0';
@@ -218,7 +218,7 @@
         p++;
         while (*p != '\0') {
             if (*p < '0' || *p > '9') {
-                // TODO: ratio should be number
+                NSLog(@"Pbind: Failed to parse PVFL: \"%s\", aspect ratio accepts only integer.", str);
                 return;
             }
             height = height * 10 + *(p++) - '0';
@@ -247,7 +247,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a '='.", str);
         free(temp);
         return;
     }
@@ -259,16 +259,24 @@
         p++;
         outerView = parentView;
         innerView = views[viewName];
+        if (innerView == nil) {
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
+            return;
+        }
     } else {
         p++;
         outerView = views[viewName];
+        if (outerView == nil) {
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
+            return;
+        }
         
         p2 = temp = (char *) malloc(len + p - str);
         while (*p != '=' && *p != '\0') {
             *p2++ = *p++;
         }
         if (*p == '\0') {
-            //
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a '='.", str);
             free(temp);
             return;
         }
@@ -278,15 +286,14 @@
         viewName = [[NSString alloc] initWithUTF8String:temp];
         free(temp);
         innerView = views[viewName];
-    }
-    
-    if (outerView == nil || innerView == nil) {
-        //
-        return;
+        if (innerView == nil) {
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
+            return;
+        }
     }
     
     if (*p != '{') {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", edge insets should format as '{top,left,right,bottom}'.", str);
         return;
     }
     UIEdgeInsets inset = UIEdgeInsetsFromString([NSString stringWithUTF8String:p]);
@@ -339,7 +346,7 @@
         *pc++ = *p++;
     }
     if (*p == '\0') {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires '/' region for Merge-Center-Format.", str);
         free(containerFormatStr);
         return;
     }
@@ -352,7 +359,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        //
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires '/' region for Merge-Center-Format.", str);
         free(containerFormatStr);
         return;
     }
@@ -390,7 +397,7 @@
         NSString *viewName = [[NSString alloc] initWithUTF8String:name];
         free(name);
         if (views[viewName] == nil) {
-            // error
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
             return;
         }
         [innerViewNames addObject:viewName];
@@ -463,7 +470,7 @@
 
 - (void)addConstraintWithExplicitFormat:(const char *)str metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
     //
-    // firstItem.firstAttr = secondItem.secondAttr * multiplier + constant
+    // firstItem.firstAttr = secondItem.secondAttr * multiplier + constant @ priority
     //
     char *p = (char *) str;
     char *p2, *temp;
@@ -481,7 +488,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a '.' for Explicit-Format.", str);
         return;
     }
     p++;
@@ -490,7 +497,7 @@
     free(temp);
     firstItem = views[viewName];
     if (firstItem == nil) {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
         return;
     }
     
@@ -500,7 +507,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a relation for Explicit-Format, accepts '=|==|<=|>='.", str);
         free(temp);
         return;
     }
@@ -513,7 +520,7 @@
     } else if (*p == '<') {
         p++;
         if (*p != '=') {
-            // error
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", unkown relation \"%c\", only accepts '=|==|<=|>='.", str, *(p-1));
             free(temp);
             return;
         }
@@ -522,7 +529,7 @@
     } else if (*p == '>') {
         p++;
         if (*p != '=') {
-            // error
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", unkown relation \"%c\", only accepts '=|==|<=|>='.", str, *(p-1));
             free(temp);
             return;
         }
@@ -531,11 +538,12 @@
     }
     *p2 = '\0';
     firstAttr = [self layoutAttributeFromUTF8String:temp];
-    free(temp);
     if (firstAttr < 0) {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", unkown attribute \"%s\".", str, temp);
+        free(temp);
         return;
     }
+    free(temp);
     
     // secondItem
     p2 = temp = (char *) malloc(len + p - str);
@@ -543,7 +551,7 @@
         *p2++ = *p++;
     }
     if (*p == '\0') {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires a '.' for secondItem of Explicit-Format.", str);
         return;
     }
     p++;
@@ -552,7 +560,7 @@
     free(temp);
     secondItem = views[viewName];
     if (secondItem == nil) {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", undefined view \"%@\".", str, viewName);
         return;
     }
     
@@ -573,7 +581,7 @@
         *p2 = '\0';
         multiplier = strtof(temp2, &endStr);
         if (*endStr != '\0') {
-            // error
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", multiplier only accepts float but got a \"%s\".", str, temp2);
             free(temp2);
             free(temp);
             return;
@@ -592,7 +600,7 @@
         *p2 = '\0';
         constant = strtof(temp2, &endStr);
         if (*endStr != '\0') {
-            // error
+            NSLog(@"Pbind: Failed to parse PVFL: \"%s\", constant only accepts float but got a \"%s\".", str, temp2);
             free(temp2);
             free(temp);
             return;
@@ -607,7 +615,7 @@
         p++;
         while (*p != '\0') {
             if (*p < '0' || *p > '9') {
-                // error
+                NSLog(@"Pbind: Failed to parse PVFL: \"%s\", priority only accepts integer but got a '%c'.", str, *p);
                 free(temp);
                 return;
             }
@@ -617,11 +625,12 @@
     
     *p2 = '\0';
     secondAttr = [self layoutAttributeFromUTF8String:temp];
-    free(temp);
     if (secondAttr < 0) {
-        // error
+        NSLog(@"Pbind: Failed to parse PVFL: \"%s\", unkown attribute \"%s\".", str, temp);
+        free(temp);
         return;
     }
+    free(temp);
     
     if (multiplier == 0) {
         multiplier = 1;
