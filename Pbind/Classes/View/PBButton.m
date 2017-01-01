@@ -20,7 +20,6 @@
 #pragma mark - PBInput
 
 @synthesize type, name, value, required, requiredTips;
-@synthesize text;
 
 - (void)reset {
     

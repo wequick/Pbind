@@ -74,8 +74,6 @@
 - (UIViewController *)supercontroller;
 - (id)superviewWithClass:(Class)clazz;
 
-- (void)pb_clickHref:(NSString *)href;
-
 /**
  Reload the plist.
  

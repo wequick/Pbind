@@ -153,7 +153,6 @@
                              outMergedViews:(NSMutableSet *)outMergedViews {
     const char *str = [format UTF8String];
     char *p = (char *) str;
-    char *temp, *p2;
     size_t len = strlen(str) + 1;
     if (len < 3) {
         NSLog(@"Pbind: Too short for a PFVL.");
@@ -694,7 +693,7 @@
             if (*p++ == 'n') {
                 if (*p++ == 't') {
                     if (*p++ == 'e') {
-                        if (*p++ = 'r') {
+                        if (*p++ == 'r') {
                             if (*p++ == 'X') {
                                 return NSLayoutAttributeCenterX;
                             }
