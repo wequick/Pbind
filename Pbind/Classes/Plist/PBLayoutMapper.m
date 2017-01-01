@@ -12,21 +12,23 @@
 #import "Pbind+API.h"
 #import "PBValueParser.h"
 
+#pragma mark -
+#pragma mark - _PBMergedWrapperView
+
+@interface _PBMergedWrapperView : UIView
+
+@end
+
+@implementation _PBMergedWrapperView
+
+@end
+
+#pragma mark -
+#pragma mark - PBLayoutMapper
+
 @implementation PBLayoutMapper
 
-- (void)collectSubviewAliases:(NSMutableArray *)aliases ofView:(UIView *)view {
-    NSArray *subviews = view.subviews;
-    NSString *alias = view.alias;
-    if (alias != nil) {
-        [aliases addObject:alias];
-    }
-    for (UIView *subview in subviews) {
-        [self collectSubviewAliases:aliases ofView:subview];
-    }
-}
-
 - (void)renderToView:(UIView *)view {
-    NSLog(@"layout to %p", view);
     NSInteger viewCount = self.views.count;
     if (viewCount == 0) {
         return;
@@ -84,12 +86,8 @@
     
     // Remove the related constraints if needed.
     if (originalViews.count > 0) {
-        NSArray *constraints = view.constraints;
-        for (NSLayoutConstraint *constraint in constraints) {
-            if ([originalViews containsObject:constraint.firstItem]
-                || [originalViews containsObject:constraint.secondItem]) {
-                [view removeConstraint:constraint];
-            }
+        for (UIView *subview in originalViews) {
+            [self removeConstraintsOfSubview:subview fromParentView:view];
         }
     }
     
@@ -115,17 +113,44 @@
     }
     
     // PVFL (Pbind Visual Format Language)
+    NSInteger maxMergedViewsCount = views.count / 2; // one merged view requires two subviews as least.
+    NSMutableSet *mergedViews = [NSMutableSet setWithCapacity:maxMergedViewsCount];
+    for (NSString *key in views) {
+        UIView *container = [views[key] superview];
+        if (container != view && [container isKindOfClass:[_PBMergedWrapperView class]]) {
+            [mergedViews addObject:container];
+        }
+    }
+    NSMutableSet *newMergedViews = [NSMutableSet setWithCapacity:maxMergedViewsCount];
+    
     for (NSString *format in self.constraints) {
         @try {
-            [self addConstraintsWithPbindVisualFormat:format metrics:metrics views:views forParentView:view];
+            [self addConstraintsWithPbindVisualFormat:format metrics:metrics views:views forParentView:view mergedViews:mergedViews outMergedViews:newMergedViews];
         } @catch (NSException *exception) {
             NSLog(@"Pbind: %@", exception);
             continue;
         }
     }
+    
+    if (mergedViews.count > newMergedViews.count) {
+        // Something unmerged.
+        NSSet *removedMergingViews = [mergedViews filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", newMergedViews]];
+        for (UIView *container in removedMergingViews) {
+            [container removeFromSuperview];
+            NSArray *subviews = container.subviews;
+            for (UIView *subview in subviews) {
+                [view addSubview:subview];
+            }
+        }
+    }
 }
 
-- (void)addConstraintsWithPbindVisualFormat:(NSString *)format metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
+- (void)addConstraintsWithPbindVisualFormat:(NSString *)format
+                                    metrics:(NSDictionary *)metrics
+                                      views:(NSDictionary *)views
+                              forParentView:(UIView *)parentView
+                                mergedViews:(NSMutableSet *)mergedViews
+                             outMergedViews:(NSMutableSet *)outMergedViews {
     const char *str = [format UTF8String];
     char *p = (char *) str;
     char *temp, *p2;
@@ -146,7 +171,7 @@
             // Merge and align
             BOOL horizontal = (*p == 'C');
             p += 2;
-            [self addConstraintsWithMergeCenterFormat:p horizontal:horizontal metrics:metrics views:views forParentView:parentView];
+            [self addConstraintsWithMergeCenterFormat:p horizontal:horizontal metrics:metrics views:views forParentView:parentView mergedViews:mergedViews outMergedViews:outMergedViews];
         }
     } else {
         [self addConstraintWithExplicitFormat:p metrics:metrics views:views forParentView:parentView];
@@ -277,7 +302,13 @@
     [parentView addConstraint:constraint];
 }
 
-- (void)addConstraintsWithMergeCenterFormat:(const char *)str horizontal:(BOOL)horizontal metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
+- (void)addConstraintsWithMergeCenterFormat:(const char *)str
+                                 horizontal:(BOOL)horizontal
+                                    metrics:(NSDictionary *)metrics
+                                      views:(NSDictionary *)views
+                              forParentView:(UIView *)parentView
+                                mergedViews:(NSMutableSet *)mergedViews
+                             outMergedViews:(NSMutableSet *)outMergedViews {
     char *p = (char *) str;
     char *p2, *temp;
     size_t len = strlen(str) + 1;
@@ -356,44 +387,78 @@
             break;
         }
         
-        [innerViewNames addObject:[[NSString alloc] initWithUTF8String:name]];
+        NSString *viewName = [[NSString alloc] initWithUTF8String:name];
         free(name);
+        if (views[viewName] == nil) {
+            // error
+            return;
+        }
+        [innerViewNames addObject:viewName];
     }
     
     NSString *innerFormat = [NSString stringWithFormat:@"%c:|%s|", innerOrientation, temp];
     free(temp);
     
-    UIView *mergedContainerView = [[UIView alloc] init];
-    mergedContainerView.translatesAutoresizingMaskIntoConstraints = NO;
-    [parentView addSubview:mergedContainerView];
+    // Check if has merged
+    UIView *wrapperView = nil;
+    NSArray *addedNames = nil;
+    for (UIView *wrapper in mergedViews) {
+        NSArray *mergedNames = [[wrapper subviews] valueForKey:@"alias"];
+        addedNames = [mergedNames filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF IN %@", innerViewNames]];
+        if (addedNames.count > 0) {
+            wrapperView = wrapper;
+            // Remove constraints for later re-add
+            [self removeConstraintsOfSubview:wrapper fromParentView:parentView];
+            for (NSString *name in addedNames) {
+                UIView *view = views[name];
+                [self removeConstraintsOfSubview:view fromParentView:wrapper];
+            }
+            
+            // Check if something unmerged
+            NSArray *removedNames = [mergedNames filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", innerViewNames]];
+            if (removedNames.count > 0) {
+                // If unmerged, re-add the view to parent view
+                for (NSString *name in removedNames) {
+                    UIView *subview = views[name];
+                    if (subview != nil) {
+                        [subview removeFromSuperview];
+                        [parentView addSubview:subview];
+                    }
+                }
+            }
+            break;
+        }
+    }
+    if (wrapperView == nil) {
+        wrapperView = [[_PBMergedWrapperView alloc] init];
+        wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
+        [parentView addSubview:wrapperView];
+    }
     
-    for (NSString *viewName in innerViewNames) {
-        UIView *view = views[viewName];
-        if (view == nil) {
-            //
-            free(containerFormatStr);
-            return;
+    for (NSString *name in innerViewNames) {
+        UIView *view = views[name];
+        if (![addedNames containsObject:name]) {
+            [view removeFromSuperview];
+            [wrapperView addSubview:view];
         }
         
-        [view removeFromSuperview];
-        [mergedContainerView addSubview:view];
-        
         // Fill inner view
-        [mergedContainerView addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:innerStartPosAttribute relatedBy:NSLayoutRelationEqual toItem:mergedContainerView attribute:innerStartPosAttribute multiplier:1 constant:0]];
-        [mergedContainerView addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:innerEndPosAttribute relatedBy:NSLayoutRelationEqual toItem:mergedContainerView attribute:innerEndPosAttribute multiplier:1 constant:0]];
+        [wrapperView addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:innerStartPosAttribute relatedBy:NSLayoutRelationEqual toItem:wrapperView attribute:innerStartPosAttribute multiplier:1 constant:0]];
+        [wrapperView addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:innerEndPosAttribute relatedBy:NSLayoutRelationEqual toItem:wrapperView attribute:innerEndPosAttribute multiplier:1 constant:0]];
     }
+    [outMergedViews addObject:wrapperView];
     
     // Container outer margin
     NSString *containerFormat = [NSString stringWithFormat:@"%c:%s", outerOrientation, containerFormatStr];
     NSMutableDictionary *newViews = [NSMutableDictionary dictionaryWithDictionary:views];
-    newViews[mergedContainerViewName] = mergedContainerView;
+    newViews[mergedContainerViewName] = wrapperView;
     [parentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:containerFormat options:0 metrics:metrics views:newViews]];
     
     // Container outer alignment
-    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:mergedContainerView attribute:outerAlignmentAttribute relatedBy:NSLayoutRelationEqual toItem:parentView attribute:outerAlignmentAttribute multiplier:1 constant:0]];
+    [parentView addConstraint:[NSLayoutConstraint constraintWithItem:wrapperView attribute:outerAlignmentAttribute relatedBy:NSLayoutRelationEqual toItem:parentView attribute:outerAlignmentAttribute multiplier:1 constant:0]];
     
     // Inner view constraints
-    [mergedContainerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:innerFormat options:0 metrics:metrics views:views]];
+    [wrapperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:innerFormat options:0 metrics:metrics views:views]];
 }
 
 - (void)addConstraintWithExplicitFormat:(const char *)str metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
@@ -564,7 +629,6 @@
     if (priority == 0) {
         priority = UILayoutPriorityRequired;
     }
-    NSLog(@"-- * %.2f + %.2f @ %d", multiplier, constant, (int)priority);
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:firstItem attribute:firstAttr relatedBy:relation toItem:secondItem attribute:secondAttr multiplier:multiplier constant:constant];
     constraint.priority = priority;
     [parentView addConstraint:constraint];
@@ -633,6 +697,30 @@
         }
     }
     return -1;
+}
+
+#pragma mark - Helper
+
+- (void)collectSubviewAliases:(NSMutableArray *)aliases ofView:(UIView *)view {
+    NSString *alias = view.alias;
+    if (alias != nil) {
+        [aliases addObject:alias];
+    }
+    
+    // Recursively
+    NSArray *subviews = view.subviews;
+    for (UIView *subview in subviews) {
+        [self collectSubviewAliases:aliases ofView:subview];
+    }
+}
+
+- (void)removeConstraintsOfSubview:(UIView *)subview fromParentView:(UIView *)parentView {
+    NSArray *constraints = parentView.constraints;
+    for (NSLayoutConstraint *constraint in constraints) {
+        if (subview == constraint.firstItem || subview == constraint.secondItem) {
+            [parentView removeConstraint:constraint];
+        }
+    }
 }
 
 @end
