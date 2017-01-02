@@ -12,35 +12,75 @@
 #import "Pbind+API.h"
 #import "PBValueParser.h"
 #import "PBActionStore.h"
+#import "PBPropertyUtils.h"
 
-@interface PBBarButtonItem : UIBarButtonItem
+#pragma mark -
+#pragma mark - _PBBarButtonItemSpec
+
+@interface _PBBarButtonItemSpec : NSObject
+
+@property (nonatomic, assign) UIBarButtonSystemItem type;
+@property (nonatomic, assign) UIBarButtonItemStyle style;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *image;
+@property (nonatomic, strong) NSDictionary *action;
+@property (nonatomic, strong) NSDictionary *customView;
+
+@property (nonatomic, assign) BOOL hidden;
+@property (nonatomic, assign) BOOL enabled;
+
+@end
+
+@implementation _PBBarButtonItemSpec
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
+    if (self = [super init]) {
+        self.enabled = YES;
+        [PBPropertyUtils setValuesForKeysWithDictionary:dictionary toObject:self failure:nil];
+    }
+    return self;
+}
+
+@end
+
+#pragma mark -
+#pragma mark - _PBBarButtonItem
+
+@interface _PBBarButtonItem : UIBarButtonItem
 
 @property (nonatomic, strong) PBActionMapper *actionMapper;
 
 @end
 
-@implementation PBBarButtonItem
+@implementation _PBBarButtonItem
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
-    NSInteger type = [[PBValueParser valueWithString:dictionary[@"type"]] integerValue];
++ (instancetype)itemWithDictionary:(NSDictionary *)dictionary {
+    _PBBarButtonItemSpec *spec = [[_PBBarButtonItemSpec alloc] initWithDictionary:dictionary];
+    if (spec.hidden) {
+        return nil;
+    }
+    
+    return [[self alloc] initWithSpec:spec];
+}
+
+- (instancetype)initWithSpec:(_PBBarButtonItemSpec *)spec {
     do {
-        if (type != 0) {
-            self = [super initWithBarButtonSystemItem:type target:nil action:nil];
+        if (spec.type != 0) {
+            self = [super initWithBarButtonSystemItem:spec.type target:nil action:nil];
             break;
         }
         
-        NSInteger style = [[PBValueParser valueWithString:dictionary[@"style"]] integerValue];
-        NSString *imageName = dictionary[@"image"];
+        NSString *imageName = spec.image;
         UIImage *image = nil;
         if (imageName != nil) {
             image = PBImage(imageName);
         }
         if (image != nil) {
-            self = [super initWithImage:image style:style target:nil action:nil];
+            self = [super initWithImage:image style:spec.style target:nil action:nil];
             break;
         }
         
-        NSDictionary *customViewInfo = dictionary[@"customView"];
+        NSDictionary *customViewInfo = spec.customView;
         if (customViewInfo != nil) {
             PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:customViewInfo owner:nil];
             UIView *customView = [mapper createView];
@@ -52,27 +92,27 @@
             break;
         }
         
-        NSString *title = dictionary[@"title"];
-        self = [super initWithTitle:title style:style target:nil action:nil];
+        self = [super initWithTitle:spec.title style:spec.style target:nil action:nil];
     } while (false);
     
     if (self == nil) {
         return nil;
     }
     
-    NSDictionary *action = dictionary[@"action"];
-    if (action != nil) {
-        PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:action owner:nil];
+    if (spec.action != nil) {
+        PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:spec.action owner:nil];
         [self setActionMapper:mapper];
         [self setTarget:self];
-        [self setAction:@selector(pb_handleAction:)];
+        [self setAction:@selector(handleAction:)];
     } else {
         [self setActionMapper:nil];
     }
+    
+    self.enabled = spec.enabled;
     return self;
 }
 
-- (void)pb_handleAction:(PBBarButtonItem *)item {
+- (void)handleAction:(_PBBarButtonItem *)item {
     // FIXME: Using the private API of `_view'
     UIView *context = [self valueForKey:@"view"];
     [[PBActionStore defaultStore] dispatchActionWithActionMapper:self.actionMapper context:context];
@@ -80,9 +120,10 @@
 
 @end
 
-@implementation UINavigationItem (Pbind)
+#pragma mark -
+#pragma mark - UINavigationItem+Pbind
 
-static const NSString *kActionMapperKey;
+@implementation UINavigationItem (Pbind)
 
 - (void)setRight:(NSDictionary *)right {
     if (right == nil || right.count == 0) {
@@ -90,7 +131,7 @@ static const NSString *kActionMapperKey;
         return;
     }
     
-    self.rightBarButtonItem = [[PBBarButtonItem alloc] initWithDictionary:right];
+    self.rightBarButtonItem = [_PBBarButtonItem itemWithDictionary:right];
 }
 
 - (NSDictionary *)right {
@@ -105,7 +146,10 @@ static const NSString *kActionMapperKey;
     
     NSMutableArray *rightBarButtonItems = [NSMutableArray arrayWithCapacity:rights.count];
     for (NSDictionary *info in rights) {
-        PBBarButtonItem *item = [[PBBarButtonItem alloc] initWithDictionary:info];
+        _PBBarButtonItem *item = [_PBBarButtonItem itemWithDictionary:info];
+        if (item == nil) {
+            continue;
+        }
         [rightBarButtonItems addObject:item];
     }
     self.rightBarButtonItems = rightBarButtonItems;
@@ -117,7 +161,7 @@ static const NSString *kActionMapperKey;
         return;
     }
     
-    self.leftBarButtonItem = [[PBBarButtonItem alloc] initWithDictionary:left];
+    self.leftBarButtonItem = [_PBBarButtonItem itemWithDictionary:left];
 }
 
 - (NSDictionary *)left {
@@ -132,7 +176,10 @@ static const NSString *kActionMapperKey;
     
     NSMutableArray *leftBarButtonItems = [NSMutableArray arrayWithCapacity:lefts.count];
     for (NSDictionary *info in lefts) {
-        PBBarButtonItem *item = [[PBBarButtonItem alloc] initWithDictionary:info];
+        _PBBarButtonItem *item = [_PBBarButtonItem itemWithDictionary:info];
+        if (item == nil) {
+            continue;
+        }
         [leftBarButtonItems addObject:item];
     }
     self.leftBarButtonItems = leftBarButtonItems;

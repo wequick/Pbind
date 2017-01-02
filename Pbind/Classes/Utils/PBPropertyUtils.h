@@ -14,4 +14,6 @@
 
 + (void)setValue:(id)value forKeyPath:(NSString *)keyPath toObject:(id)object failure:(void (^)(void))failure;
 
++ (void)setValuesForKeysWithDictionary:(NSDictionary *)dictionary toObject:(id)object failure:(void (^)(void))failure;
+
 @end

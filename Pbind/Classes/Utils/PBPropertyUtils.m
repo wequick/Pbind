@@ -140,6 +140,12 @@
     }
 }
 
++ (void)setValuesForKeysWithDictionary:(NSDictionary *)dictionary toObject:(id)object failure:(void (^)(void))failure {
+    for (NSString *key in dictionary) {
+        [self setValue:dictionary[key] forKey:key toObject:object failure:failure];
+    }
+}
+
 + (id)safeNilValueForKey:(NSString *)key ofObject:(id)object {
     Class objectClass = [object class];
     objc_property_t property = class_getProperty(objectClass, [key UTF8String]);
