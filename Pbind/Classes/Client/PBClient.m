@@ -27,7 +27,9 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
 {
     if (clientName == nil) {
         if (kAliasNames == nil) {
-            return nil;
+            // If not set, return self for DEBUG.
+            NSLog(@"Pbind: Failed to find a registered client, use PBClient as default.");
+            return [[self alloc] init];
         }
         
         clientName = [kAliasNames objectForKey:@""];
