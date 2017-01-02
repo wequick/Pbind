@@ -33,22 +33,18 @@
 
 @interface UIView (Pbind) <PBViewLoadingDelegate, PBViewMappingDelegate>
 
-@property (nonatomic, strong) NSDictionary *pb_constants;
-@property (nonatomic, strong) NSDictionary *pb_expressions;
-
 @property (nonatomic, strong) NSString *plist;
-
 @property (nonatomic, strong) NSArray *clients;
-@property (nonatomic, strong) NSDictionary *actions;
 
-@property (nonatomic, strong) NSString *client;
-@property (nonatomic, strong) NSString *clientAction;
-@property (nonatomic, strong) NSDictionary *clientParams;
+/**
+ The alias name for the view.
+ 
+ @discussion you can use [view viewWithAlias:] to get the specify aliased subview.
+ */
+@property (nonatomic, strong) NSString *alias;
 
-@property (nonatomic, strong) NSString *href;
-@property (nonatomic, strong) NSDictionary *hrefParams;
-@property (nonatomic, strong, readonly, getter=rootData) id rootData;
 @property (nonatomic, strong) id data;
+@property (nonatomic, strong, readonly, getter=rootData) id rootData;
 @property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
 @property (nonatomic, assign) BOOL pb_needsReload;
 
@@ -58,12 +54,8 @@
 @property (nonatomic, assign) void (^pb_preparation)(void);
 @property (nonatomic, assign) id (^pb_transformation)(id data, NSError *error);
 
-/**
- The alias name for the view.
- 
- @discussion you can use [view viewWithAlias:] to get the specify aliased subview.
- */
-@property (nonatomic, strong) NSString *alias;
+@property (nonatomic, strong) NSDictionary *pb_constants;
+@property (nonatomic, strong) NSDictionary *pb_expressions;
 
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath;
 - (BOOL)mappableForKeyPath:(NSString *)keyPath;
@@ -141,43 +133,3 @@
 UIKIT_EXTERN NSString *const PBViewDidStartLoadNotification;
 UIKIT_EXTERN NSString *const PBViewDidFinishLoadNotification;
 UIKIT_EXTERN NSString *const PBViewHasHandledLoadErrorKey;
-
-UIKIT_EXTERN NSString *const PBViewDidClickHrefNotification;
-UIKIT_EXTERN NSString *const PBViewHrefKey;
-UIKIT_EXTERN NSString *const PBViewHrefParamsKey;
-
-UIKIT_STATIC_INLINE NSString *PBHrefEncode(NSString *href)
-{
-    return (NSString *)
-    CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                              (CFStringRef)href,
-                                                              (CFStringRef)@"!$&'()*+,-./:;=?@_~%#[]",
-                                                              NULL,
-                                                              kCFStringEncodingUTF8));
-}
-
-UIKIT_STATIC_INLINE NSString *PBHrefDecode(NSString *href)
-{
-    return (__bridge_transfer NSString *)
-    CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
-                                                            (__bridge CFStringRef)href,
-                                                            CFSTR(""),
-                                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-}
-
-UIKIT_STATIC_INLINE NSString *PBParameterJson(id object)
-{
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:object options:0 error:nil];
-    NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    json = PBHrefEncode(json);
-    json = [json stringByReplacingOccurrencesOfString:@"&" withString:@"<amp>"];
-    return json;
-}
-
-UIKIT_STATIC_INLINE id PBParameterDejson(NSString *json)
-{
-    NSString *decodedJson = PBHrefDecode(json);
-    decodedJson = [decodedJson stringByReplacingOccurrencesOfString:@"<amp>" withString:@"&"];
-    return [NSJSONSerialization JSONObjectWithData:[decodedJson dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
-}
-

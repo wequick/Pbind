@@ -21,10 +21,6 @@ NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotificatio
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
 NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
-NSString *const PBViewDidClickHrefNotification = @"PBViewDidClickHref";
-NSString *const PBViewHrefKey = @"href";
-NSString *const PBViewHrefParamsKey = @"hrefParams";
-
 @interface PBClient (Private)
 
 - (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
@@ -35,14 +31,11 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 @property (nonatomic, strong) NSArray *_pbClients;
 @property (nonatomic, strong) NSArray *_pbClientMappers;
-@property (nonatomic, strong) NSDictionary *_pbActionClients;
-@property (nonatomic, strong) NSDictionary *_pbActionMappers;
 
 @end
 
 @implementation UIView (Pbind)
 
-@dynamic client;
 @dynamic clients;
 @dynamic data;
 
@@ -89,14 +82,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     
     // Lazy init
     if (self.clients == nil) {
-        if (self.client == nil) return nil;
-        
-        PBClientMapper *mapper = [[PBClientMapper alloc] init];
-        mapper.clazz = self.client;
-        mapper.action = self.clientAction;
-        mapper.params = self.clientParams;
-        self._pbClientMappers = @[mapper];
-        return self._pbClientMappers;
+        return nil;
     } else {
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:self.clients.count];
         for (id data in self.clients) {
@@ -121,39 +107,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         [clients addObject:client];
     }
     self._pbClients = clients;
-    return clients;
-}
-
-- (NSDictionary *)pb_actionMappers
-{
-    if (self._pbActionMappers != nil) return self._pbActionMappers;
-    
-    if (self.actions == nil) return nil;
-    
-    NSMutableDictionary *mappers = [NSMutableDictionary dictionaryWithCapacity:self.actions.count];
-    for (NSString *key in self.actions) {
-        PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:self.actions[key] owner:self];
-        [mapper updateWithData:self.rootData andView:self];
-        [mappers setObject:mapper forKey:key];
-    }
-    self._pbActionMappers = mappers;
-    return mappers;
-}
-
-- (NSDictionary *)pb_actionClients
-{
-    if (self._pbActionClients != nil) return self._pbActionClients;
-    
-    if (self.pb_actionMappers == nil) return nil;
-    
-    NSMutableDictionary *clients = [NSMutableDictionary dictionaryWithCapacity:self.pb_actionMappers.count];
-    for (NSString *key in self.pb_actionMappers) {
-        PBClientMapper *mapper = [self.pb_actionMappers objectForKey:key];
-        PBClient *client = [PBClient clientWithName:mapper.clazz];
-        client.delegate = (id) self;
-        [clients setObject:client forKey:key];
-    }
-    self._pbActionClients = clients;
     return clients;
 }
 
@@ -321,7 +274,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         }
     }
     
-    if (self.data == nil && (self.client != nil || self.clients != nil)) {
+    if (self.data == nil && self.clients != nil) {
         if (self.window == nil) {
             // Cause the plist value may be specify with expression `@xx', which requires the view's super controller. If window is nil, it means the super controller is also not yet ready.
             return;
@@ -362,7 +315,7 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
         }
     }
     
-    if (self.data == nil && (self.client != nil || self.clients != nil)) {
+    if (self.data == nil && self.clients != nil) {
         [self pb_pullData];
     } else {
         if ([self respondsToSelector:@selector(reloadData)]) {
@@ -833,14 +786,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return [self valueForAdditionKey:@"_pbClients"];
 }
 
-- (void)set_pbActionClients:(NSDictionary *)value {
-    [self setValue:value forAdditionKey:@"_pbActionClients"];
-}
-
-- (NSDictionary *)_pbActionClients {
-    return [self valueForAdditionKey:@"_pbActionClients"];
-}
-
 - (void)set_pbClientMappers:(NSArray *)value {
     [self setValue:value forAdditionKey:@"_pbClientMappers"];
 }
@@ -857,14 +802,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
     return [self valueForAdditionKey:@"PB_internalMapper"];
 }
 
-- (void)set_pbActionMappers:(NSDictionary *)value {
-    [self setValue:value forAdditionKey:@"_pbActionMappers"];
-}
-
-- (NSDictionary *)_pbActionMappers {
-    return [self valueForAdditionKey:@"_pbActionMappers"];
-}
-
 - (void)setPlist:(NSString *)value {
     [self setValue:value forAdditionKey:@"plist"];
 }
@@ -879,38 +816,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (NSArray *)clients {
     return [self valueForAdditionKey:@"clients"];
-}
-
-- (void)setActions:(NSDictionary *)value {
-    [self setValue:value forAdditionKey:@"actions"];
-}
-
-- (NSDictionary *)actions {
-    return [self valueForAdditionKey:@"actions"];
-}
-
-- (void)setClient:(NSString *)value {
-    [self setValue:value forAdditionKey:@"client"];
-}
-
-- (NSString *)client {
-    return [self valueForAdditionKey:@"client"];
-}
-
-- (void)setClientAction:(NSString *)value {
-    [self setValue:value forAdditionKey:@"clientAction"];
-}
-
-- (NSString *)clientAction {
-    return [self valueForAdditionKey:@"clientAction"];
-}
-
-- (void)setClientParams:(NSDictionary *)value {
-    [self setValue:value forAdditionKey:@"clientParams"];
-}
-
-- (NSDictionary *)clientParams {
-    return [self valueForAdditionKey:@"clientParams"];
 }
 
 - (void)setData:(id)value {
@@ -937,22 +842,6 @@ NSString *const PBViewHrefParamsKey = @"hrefParams";
 
 - (id)pb_initialData {
     return [self valueForAdditionKey:@"initialData"];
-}
-
-- (void)setHref:(NSString *)value {
-    [self setValue:value forAdditionKey:@"href"];
-}
-
-- (NSString *)href {
-    return [self valueForAdditionKey:@"href"];
-}
-
-- (void)setHrefParams:(NSDictionary *)value {
-    [self setValue:value forAdditionKey:@"hrefParams"];
-}
-
-- (NSDictionary *)hrefParams {
-    return [self valueForAdditionKey:@"hrefParams"];
 }
 
 - (void)setLoadingDelegate:(id<PBViewLoadingDelegate>)value {

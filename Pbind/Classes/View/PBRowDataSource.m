@@ -441,9 +441,7 @@
     }
     
     // Init data for cell
-    if (cell.client == nil) {
-        [cell setData:[self dataAtIndexPath:indexPath]];
-    }
+    [cell setData:[self dataAtIndexPath:indexPath]];
     [row initDataForView:cell];
     [row mapData:tableView.data forView:cell];
     

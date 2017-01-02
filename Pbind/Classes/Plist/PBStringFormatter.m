@@ -42,14 +42,6 @@ static NSMutableDictionary *kFormatters;
         [formatter setDateFormat:dateFormat];
         return [formatter stringFromDate:date];
     }];
-    // Encoding json
-    [self registerTag:@"UE" withFormatterer:^NSString *(NSString *format, id value) {
-        return PBHrefEncode(value);
-    }];
-    // Encoding json
-    [self registerTag:@"UEJ" withFormatterer:^NSString *(NSString *format, id value) {
-        return PBParameterJson(value);
-    }];
 }
 
 + (void)registerTag:(NSString *)tag withFormatterer:(NSString * (^)(NSString *format, id value))formatter
