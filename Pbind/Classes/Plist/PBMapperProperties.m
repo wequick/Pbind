@@ -42,7 +42,10 @@
             // Nested
             PBMapperProperties *subproperties = [self propertiesWithDictionary:value];
             if (subproperties->_expressions == nil) {
-                [properties setConstant:subproperties->_constants forKey:key];
+                if (subproperties->_constants != nil) {
+                    value = subproperties->_constants;
+                }
+                [properties setConstant:value forKey:key];
             } else {
                 PBMutableExpression *expression = [[PBMutableExpression alloc] initWithProperties:subproperties];
                 [properties setExpression:expression forKey:key];
