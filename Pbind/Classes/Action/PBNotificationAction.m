@@ -19,7 +19,7 @@
     if ([self.type isEqualToString:@"notify"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:self.name object:self.target userInfo:self.params];
     } else if ([self.type isEqualToString:@"watch"]) {
-        if (![self haveNext:@"receive"]) {
+        if (![self haveNext:@"done"]) {
             return;
         }
         
@@ -28,7 +28,7 @@
 }
 
 - (void)didReceivedNotification:(NSNotification *)notification {
-    [self dispatchNext:@"receive"];
+    [self dispatchNext:@"done"];
 }
 
 @end

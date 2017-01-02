@@ -40,10 +40,10 @@
         state.status = response.status;
         if (response.error != nil) {
             state.error = response.error;
-            [self dispatchNext:@"failure"];
+            [self dispatchNext:@"fail"];
         } else {
             state.data = response.data;
-            [self dispatchNext:@"success"];
+            [self dispatchNext:@"done"];
         }
     }];
 }
