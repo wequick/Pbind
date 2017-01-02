@@ -102,21 +102,61 @@ static NSMutableDictionary *kEnums = nil;
         } else if ([aString isEqualToString:@"subtitle"]) {
             enumValue = UITableViewCellStyleSubtitle;
         }
+        // Cell style
+        else if ([aString isEqualToString:@"normalStyle"]) {
+            enumValue = UITableViewRowActionStyleNormal;
+        } else if ([aString isEqualToString:@"deleteStyle"]) {
+            enumValue = UITableViewRowActionStyleDestructive;
+        }
         // Cell height
         else if ([aString isEqualToString:@"auto"]) {
             enumValue = UITableViewAutomaticDimension;
         }
-        // UIBarButtonItem
-        else if ([aString isEqualToString:@"+"] ||
-                 [aString isEqualToString:@"add"]) {
+        // UIBarButtonSystemItem
+        else if ([aString isEqualToString:@"save"]) {
+            enumValue = UIBarButtonSystemItemSave;
+        } else if ([aString isEqualToString:@"add"]) {
             enumValue = UIBarButtonSystemItemAdd;
-        } else if ([aString isEqualToString:@"@"] ||
-                 [aString isEqualToString:@"share"]) {
+        } else if ([aString isEqualToString:@"compose"]) {
+            enumValue = UIBarButtonSystemItemCompose;
+        } else if ([aString isEqualToString:@"reply"]) {
+            enumValue = UIBarButtonSystemItemReply;
+        } else if ([aString isEqualToString:@"share"]) {
             enumValue = UIBarButtonSystemItemAction;
-        } else if ([aString isEqualToString:@"done"]) {
-            enumValue = UIBarButtonSystemItemDone;
-        } else if ([aString isEqualToString:@"edit"]) {
-            enumValue = UIBarButtonSystemItemEdit;
+        } else if ([aString isEqualToString:@"organize"]) {
+            enumValue = UIBarButtonSystemItemOrganize;
+        } else if ([aString isEqualToString:@"bookmarks"]) {
+            enumValue = UIBarButtonSystemItemBookmarks;
+        } else if ([aString isEqualToString:@"search"]) {
+            enumValue = UIBarButtonSystemItemSearch;
+        } else if ([aString isEqualToString:@"refresh"]) {
+            enumValue = UIBarButtonSystemItemRefresh;
+        } else if ([aString isEqualToString:@"stop"]) {
+            enumValue = UIBarButtonSystemItemStop;
+        } else if ([aString isEqualToString:@"camera"]) {
+            enumValue = UIBarButtonSystemItemCamera;
+        } else if ([aString isEqualToString:@"trash"]) {
+            enumValue = UIBarButtonSystemItemTrash;
+        } else if ([aString isEqualToString:@"play"]) {
+            enumValue = UIBarButtonSystemItemPlay;
+        } else if ([aString isEqualToString:@"pause"]) {
+            enumValue = UIBarButtonSystemItemPause;
+        } else if ([aString isEqualToString:@"rewind"]) {
+            enumValue = UIBarButtonSystemItemRewind;
+        } else if ([aString isEqualToString:@"fastforward"]) {
+            enumValue = UIBarButtonSystemItemFastForward;
+        } else if ([aString isEqualToString:@"undo"]) {
+            enumValue = UIBarButtonSystemItemUndo;
+        } else if ([aString isEqualToString:@"redo"]) {
+            enumValue = UIBarButtonSystemItemRedo;
+        } else if ([aString isEqualToString:@"pagecurl"]) {
+            enumValue = UIBarButtonSystemItemPageCurl;
+        }
+        // UIBarButtonItemStyle
+        else if ([aString isEqualToString:@"plainStyle"]) {
+            enumValue = UIBarButtonItemStylePlain;
+        } else if ([aString isEqualToString:@"doneStyle"]) {
+            enumValue = UIBarButtonItemStyleDone;
         }
         // PBFormIndicating
         else if ([aString isEqualToString:@"focus"]) {
