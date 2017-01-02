@@ -22,24 +22,19 @@
 @implementation PBCollectionViewController
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    
     _collectionView = [[PBCollectionView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
     _collectionView.backgroundColor = [UIColor whiteColor];
+    
     self.view = _collectionView;
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [_collectionView pb_setInitialData:self.data];
-    [_collectionView pb_reloadPlist];
 }
 
 #pragma mark - Stub dataSource

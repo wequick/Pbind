@@ -34,7 +34,6 @@
 @interface UIView (Pbind) <PBViewLoadingDelegate, PBViewMappingDelegate>
 
 @property (nonatomic, strong) NSString *plist;
-@property (nonatomic, strong) NSArray *clients;
 
 /**
  The alias name for the view.
@@ -46,13 +45,6 @@
 @property (nonatomic, strong) id data;
 @property (nonatomic, strong, readonly, getter=rootData) id rootData;
 @property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
-@property (nonatomic, assign) BOOL pb_needsReload;
-
-@property (nonatomic, assign, readonly) BOOL pb_loading;
-@property (nonatomic, assign) BOOL pb_interrupted;
-
-@property (nonatomic, assign) void (^pb_preparation)(void);
-@property (nonatomic, assign) id (^pb_transformation)(id data, NSError *error);
 
 @property (nonatomic, strong) NSDictionary *pb_constants;
 @property (nonatomic, strong) NSDictionary *pb_expressions;
@@ -75,12 +67,8 @@
 - (void)pb_initData; // Init constant properties
 - (void)pb_mapData:(id)data; // Init dynamic properties by data
 - (void)pb_mapData:(id)data forKey:(NSString *)key;
-- (BOOL)pb_canPullData;
-- (void)pb_pullData;
-- (void)pb_pullDataWithPreparation:(void (^)(void))preparation transformation:(id (^)(id data, NSError *error))transformation;
-- (void)pb_repullData; // repull with previous `preparation' and `transformation'
+- (void)pb_mapData:(id)data underType:(PBMapType)type dataTag:(unsigned char)tag;
 - (void)pb_loadData:(id)data;
-- (void)pb_cancelPull;
 
 /**
  Reload data from clients.

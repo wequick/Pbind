@@ -16,16 +16,8 @@
 #import "PBPropertyUtils.h"
 #import "PBValueParser.h"
 #import "PBViewController.h"
-
-NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
-NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
-NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
-
-@interface PBClient (Private)
-
-- (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
-
-@end
+#import "PBDataFetching.h"
+#import "PBDataFetcher.h"
 
 @interface UIView (Pbind_Private)
 
@@ -36,79 +28,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
 @implementation UIView (Pbind)
 
-@dynamic clients;
 @dynamic data;
-
-#pragma mark -
-#pragma mark - Override methods
-
-- (void)didMoveToWindow
-{
-    if (self.window == nil) {
-        if (self.pb_loading) {
-            // If super controller is neither a singleton nor a child of `UITabBarController', mark interrupted flag to reload at next appearance
-            if (![[[[self supercontroller] navigationController] parentViewController] isKindOfClass:[UITabBarController class]]) {
-                self.pb_interrupted = YES;
-                [self pb_cancelPull];
-            }
-        }
-    } else {
-        if (self.plist != nil) {
-            if (self._pbPlistURL == nil) {
-                [self pb_setInitialData:self.data];
-                self._pbPlistURL = PBResourceURL(self.plist, @"plist");
-                dispatch_async(dispatch_get_global_queue(0, 0), ^{
-                   dispatch_sync(dispatch_get_main_queue(), ^{
-                       [self _pb_initData];
-                   });
-                });
-            }
-        } else {
-            if ([[self valueForAdditionKey:@"pb_expressible"] boolValue]) {
-                [self _pb_initData];
-            }
-        }
-        
-        if (self.pb_interrupted) {
-            self.pb_interrupted = NO;
-            [self pb_repullData];
-        }
-    }
-}
-
-- (NSArray *)pb_clientMappers
-{
-    if (self._pbClientMappers != nil) return self._pbClientMappers;
-    
-    // Lazy init
-    if (self.clients == nil) {
-        return nil;
-    } else {
-        NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:self.clients.count];
-        for (id data in self.clients) {
-            PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:data owner:self];
-            [mappers addObject:mapper];
-        }
-        self._pbClientMappers = mappers;
-        return mappers;
-    }
-}
-
-- (NSArray *)pb_clients
-{
-    if (self._pbClients != nil) return self._pbClients;
-    
-    if (self.pb_clientMappers == nil) return nil;
-    
-    NSMutableArray *clients = [NSMutableArray arrayWithCapacity:self.clients.count];
-    for (PBClientMapper *mapper in self.pb_clientMappers) {
-        PBClient *client = [PBClient clientWithName:mapper.clazz];
-        client.delegate = (id) self;
-        [clients addObject:client];
-    }
-    self._pbClients = clients;
-    return clients;
-}
 
 - (PBMapper *)pb_mapper
 {
@@ -121,120 +41,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     return self.PB_internalMapper;
 }
 
-- (BOOL)pb_loading
-{
-    return self.pb_loadingCount > 0;
-}
-
-- (void)pb_pullData
-{
-    [self pb_pullDataWithPreparation:nil transformation:nil];
-}
-
-- (BOOL)pb_canPullData
-{
-    return (!self.pb_loading && self.pb_clientMappers != nil && self.pb_clients != nil);
-}
-
-- (void)pb_pullDataWithPreparation:(void (^)(void))preparation
-                    transformation:(id (^)(id, NSError *))transformation
-{
-    if (![self pb_canPullData]) {
-        return;
-    }
-    
-    if (preparation) {
-        preparation();
-    }
-    
-    // Notify loading start
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:self];
-    
-    // Unbind
-    [self pb_unbindAll];
-    
-    self.pb_preparation = preparation;
-    self.pb_transformation = transformation;
-    NSInteger N = self.pb_clients.count;
-    self.pb_loadingCount = (int) N;
-    
-    // Init null data
-    if (self.data == nil) {
-        self.data = [PBArray arrayWithCapacity:self.clients.count];
-        for (NSInteger i = 0; i < N; i++) {
-            [self.data addObject:[NSNull null]];
-        }
-    }
-    
-    // Load request parallel
-    for (NSInteger i = 0; i < N; i++) {
-        PBClient *client = [self.pb_clients objectAtIndex:i];
-        [client cancel];
-
-        PBClientMapper *mapper = [self.pb_clientMappers objectAtIndex:i];
-        [mapper updateWithData:self.data andView:self];
-        
-        Class requestClass = [client.class requestClass];
-        PBRequest *request = [[requestClass alloc] init];
-        request.action = mapper.action;
-        request.params = mapper.params;
-        request.requiresMutableResponse = mapper.mutable;
-        
-        if ([self respondsToSelector:@selector(view:shouldLoadRequest:)]) {
-            BOOL flag = [self view:self shouldLoadRequest:request];
-            if (!flag) {
-                continue;
-            }
-        }
-        if ([self.loadingDelegate respondsToSelector:@selector(view:shouldLoadRequest:)]) {
-            BOOL flag = [self.loadingDelegate view:self shouldLoadRequest:request];
-            if (!flag) {
-                continue;
-            }
-        }
-        
-        [client _loadRequest:request mapper:nil notifys:NO complection:^(PBResponse *response) {
-            BOOL handledError = NO;
-            if ([self respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [self view:self didFinishLoading:response handledError:&handledError];
-            }
-            if ([self.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [self.loadingDelegate view:self didFinishLoading:response handledError:&handledError];
-            }
-            NSDictionary *userInfo = nil;
-            if (response != nil) {
-                userInfo = @{PBResponseKey:response, PBViewHasHandledLoadErrorKey:@(handledError)};
-            } else {
-                userInfo = @{PBViewHasHandledLoadErrorKey:@(handledError)};
-            }
-            
-            id data = response.data;
-            if (transformation) {
-                data = transformation(data, response.error);
-            }
-            if (data == nil) {
-                data = [NSNull null];
-            }
-            
-            self.pb_preparation = nil;
-            self.pb_transformation = nil;
-            self.data[i] = data;
-            self.pb_needsReload = YES;
-            [self _pb_mapData:self.rootData];
-            [self layoutIfNeeded];
-            
-            self.pb_loadingCount--;
-            if (self.pb_loadingCount == 0) {
-                // Notify loading finish
-                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidFinishLoadNotification object:self userInfo:userInfo];
-            }
-        }];
-    }
-}
-
 - (void)_pb_initData {
-    self.pb_needsReload = YES;
-    
     PBMapper *mapper = [self pb_mapper];
     if (mapper == nil) {
         [self pb_initData];
@@ -266,26 +73,14 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     [self pb_bindData];
     
     // Recursive
-    if ([self respondsToSelector:@selector(reloadData)]) {
-        
-    } else {
+    BOOL canReload = [self respondsToSelector:@selector(reloadData)];
+    if (!canReload) {
         for (UIView *subview in [self subviews]) {
             [subview pb_initData];
         }
     }
     
-    if (self.data == nil && self.clients != nil) {
-        if (self.window == nil) {
-            // Cause the plist value may be specify with expression `@xx', which requires the view's super controller. If window is nil, it means the super controller is also not yet ready.
-            return;
-        }
-        
-        [self pb_mapData:nil];
-    }
-    
-    if ([self respondsToSelector:@selector(reloadData)]) {
-        [(id)self reloadData];
-    }
+    [self pb_mapData:nil underType:PBMapToContext dataTag:PBDataTagUnset];
 }
 
 - (void)pb_bindData
@@ -297,46 +92,53 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     }
 }
 
-- (void)pb_mapData:(id)data
+- (void)pb_mapData:(id)data underType:(PBMapType)type dataTag:(unsigned char)tag
 {
-    NSDictionary *properties = [self pb_expressions];
-    for (NSString *key in properties) {
-        if ([self mappableForKeyPath:key]) {
-            PBExpression *exp = [properties objectForKey:key];
-            [exp mapData:data toTarget:self forKeyPath:key inContext:self];
-        }
-    }
+    [self pb_mapData:data forKeys:nil underType:type dataTag:tag];
+    
     // Recursive
-    if ([self respondsToSelector:@selector(reloadData)]) {
-        
-    } else {
+    BOOL canReload = [self respondsToSelector:@selector(reloadData)];
+    if (!canReload) {
         for (UIView *subview in [self subviews]) {
-            [subview pb_mapData:data];
+            [subview pb_mapData:data underType:type dataTag:tag];
         }
+    } else {
+        [(id)self reloadData];
+    }
+}
+
+- (void)pb_mapData:(id)data forKeys:(NSArray *)keys underType:(PBMapType)type dataTag:(unsigned char)tag
+{
+    NSDictionary *expressions = [self pb_expressions];
+    if (keys == nil) {
+        keys = [expressions allKeys];
     }
     
-    if (self.data == nil && self.clients != nil) {
-        [self pb_pullData];
-    } else {
-        if ([self respondsToSelector:@selector(reloadData)]) {
-            [(id)self reloadData];
+    for (NSString *key in keys) {
+        if (![self mappableForKeyPath:key]) {
+            continue;
         }
+        
+        PBExpression *exp = [expressions objectForKey:key];
+        if (![exp matchesType:type dataTag:tag]) {
+            continue;
+        }
+        
+        [exp mapData:data toTarget:self forKeyPath:key inContext:self];
     }
+}
+
+- (void)pb_mapData:(id)data
+{
+    [self pb_mapData:data underType:PBMapToAll dataTag:PBDataTagUnset];
 }
 
 - (void)pb_mapData:(id)data forKey:(NSString *)key
 {
-    PBExpression *exp = [[self pb_expressions] objectForKey:key];
-    if (exp == nil) {
+    if (key == nil) {
         return;
     }
-    
-    [exp mapData:data toTarget:self forKeyPath:key inContext:self];
-}
-
-- (void)pb_repullData
-{
-    [self pb_pullDataWithPreparation:self.pb_preparation transformation:self.pb_transformation];
+    [self pb_mapData:data forKeys:@[key] underType:PBMapToAll dataTag:PBDataTagUnset];
 }
 
 - (void)pb_loadData:(id)data
@@ -352,7 +154,10 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     [self pb_unbindAll];
     
     // Re-init data if there is
-    [self setData:[self pb_initialData]];
+    id initialData = [self pb_initialData];
+    if (initialData != nil) {
+        [self setData:initialData];
+    }
     
     [self pb_reloadPlistForView:self];
 }
@@ -374,8 +179,8 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     [self _pb_resetMappersForView:view];
     
     [mapper initDataForView:view];
-    if ([view respondsToSelector:@selector(reloadData)]) {
-        view.pb_needsReload = YES;
+    if ([view conformsToProtocol:@protocol(PBDataFetching)]) {
+        [(id<PBDataFetching>)view setDataUpdated:YES];
     }
     [mapper mapData:view.rootData forView:view];
 }
@@ -386,8 +191,8 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 }
 
 - (BOOL)pb_reloadClientForView:(UIView *)view {
-    if (view.pb_clientMappers != nil) {
-        [view pb_repullData];
+    if ([view conformsToProtocol:@protocol(PBDataFetching)]) {
+        [[(id<PBDataFetching>)view fetcher] refetchData];
         return YES;
     }
     
@@ -449,8 +254,8 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 - (void)pb_reset
 {
     self.data = nil;
-    if ([self respondsToSelector:@selector(reloadData)]) {
-        self.pb_needsReload = YES;
+    if ([self conformsToProtocol:@protocol(PBDataFetching)]) {
+        [(id<PBDataFetching>)self setDataUpdated:YES];
     }
 }
 
@@ -469,16 +274,6 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     for (UIView *subview in view.subviews) {
         [self _pb_resetMappersForView:subview];
     }
-}
-
-- (void)pb_cancelPull
-{
-    if (self.pb_clients == nil) return;
-    
-    for (PBClient *client in self.pb_clients) {
-        [client cancel];
-    }
-    self.pb_loadingCount = 0;
 }
 
 #pragma mark -
@@ -734,7 +529,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 - (void)setDefaultValueForKeys:(NSArray *)keys {
     UIView *temp = [[[self class] alloc] init];
     for (NSString *key in keys) {
-        id defaultValue = [temp valueForKeyPath:key];
+        id defaultValue = [temp pb_valueForKeyPath:key];
         [self pb_setValue:defaultValue forKeyPath:key];
     }
 }
@@ -804,18 +599,15 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
 - (void)setPlist:(NSString *)value {
     [self setValue:value forAdditionKey:@"plist"];
+    if (self._pbPlistURL == nil) {
+        [self pb_setInitialData:self.data];
+        self._pbPlistURL = PBResourceURL(self.plist, @"plist");
+        [self _pb_initData];
+    }
 }
 
 - (NSString *)plist {
     return [self valueForAdditionKey:@"plist"];
-}
-
-- (void)setClients:(NSArray *)value {
-    [self setValue:value forAdditionKey:@"clients"];
-}
-
-- (NSArray *)clients {
-    return [self valueForAdditionKey:@"clients"];
 }
 
 - (void)setData:(id)value {
@@ -823,10 +615,14 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     id data = self.data;
     if (data == nil) {
         if (value != nil) {
-            self.pb_needsReload = YES;
+            if ([self conformsToProtocol:@protocol(PBDataFetching)]) {
+                [(id<PBDataFetching>)self setDataUpdated:YES];
+            }
         }
     } else if (![data isEqual:value]) {
-        self.pb_needsReload = YES;
+        if ([self conformsToProtocol:@protocol(PBDataFetching)]) {
+            [(id<PBDataFetching>)self setDataUpdated:YES];
+        }
     }
     
     [self setValue:value forAdditionKey:@"data"];
@@ -898,14 +694,6 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
 - (NSString *)alias {
     return [self valueForAdditionKey:@"alias"];
-}
-
-- (void)setPb_needsReload:(BOOL)value {
-    [self setValue:[NSNumber numberWithBool:value] forAdditionKey:@"pb_needsReload"];
-}
-
-- (BOOL)pb_needsReload {
-    return [[self valueForAdditionKey:@"pb_needsReload"] boolValue];
 }
 
 @end

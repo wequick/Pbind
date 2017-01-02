@@ -197,6 +197,24 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     return [super _dataSourceWithData:data target:target context:context];
 }
 
+- (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag
+{
+    if (_properties != nil) {
+        return [_properties matchesType:type dataTag:dataTag];
+    }
+    
+    if (_expressions != nil) {
+        for (PBExpression *exp in _expressions) {
+            if ([exp matchesType:type dataTag:dataTag]) {
+                return YES;
+            }
+        }
+        return NO;
+    }
+    
+    return [super matchesType:type dataTag:dataTag];
+}
+
 - (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     if (_expressions == nil) {

@@ -116,6 +116,21 @@
     }
 }
 
+- (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag
+{
+    if (_expressions == nil) {
+        return NO;
+    }
+    
+    for (NSString *key in _expressions) {
+        PBExpression *exp = _expressions[key];
+        if ([exp matchesType:type dataTag:dataTag]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context
 {
     [self mapData:data toTarget:target forKeyPath:nil withContext:context];

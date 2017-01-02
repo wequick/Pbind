@@ -10,8 +10,9 @@
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
 #import "PBViewResizingDelegate.h"
+#import "PBDataFetching.h"
 
-@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizingDelegate>
+@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizingDelegate, PBDataFetching>
 {
     struct {
         unsigned int deallocing:1;

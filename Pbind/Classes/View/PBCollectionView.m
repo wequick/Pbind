@@ -21,6 +21,7 @@
 @synthesize listKey, page, pagingParams, needsLoadMore;
 @synthesize row, rows, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
+@synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     _flowLayout = [[UICollectionViewFlowLayout alloc] init];
@@ -121,15 +122,16 @@
         return;
     }
     
-    if (!self.pb_needsReload) {
+    if (!self.dataUpdated) {
         return;
     }
     
     [rowDataSource updateSections];
     
     [super reloadData];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.pb_needsReload = NO;
+        self.dataUpdated = NO;
         
         if (self.autoResize) {
             CGSize size = self.collectionViewLayout.collectionViewContentSize;

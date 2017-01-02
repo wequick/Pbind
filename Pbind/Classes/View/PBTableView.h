@@ -14,10 +14,11 @@
 #import "PBRowDelegate.h"
 #import "PBRowDataSource.h"
 #import "PBRowPaging.h"
+#import "PBDataFetching.h"
 
 //______________________________________________________________________________
 
-@interface PBTableView : UITableView <PBRowPaging>
+@interface PBTableView : UITableView <PBRowPaging, PBDataFetching>
 {
     NSMutableArray *_hasRegisteredCellClasses;
     NSArray *_sectionIndexTitles;

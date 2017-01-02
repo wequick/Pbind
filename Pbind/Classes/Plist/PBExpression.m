@@ -17,7 +17,7 @@
 #import "PBArray.h"
 #import "PBActionStore.h"
 
-static const int kDataTagUnset = 0xFF;
+const unsigned char PBDataTagUnset = 0xFF;
 
 @interface PBForm (Private)
 
@@ -46,7 +46,7 @@ static const int kDataTagUnset = 0xFF;
         return nil;
     }
     
-    _flags.dataTag = kDataTagUnset;
+    _flags.dataTag = PBDataTagUnset;
     return [self initWithUTF8String:[aString UTF8String]];
 }
 
@@ -284,7 +284,7 @@ static const int kDataTagUnset = 0xFF;
         int dataIndex = 0;
         if (_flags.dataTag >= 0 && _flags.dataTag <= 9) {
             dataIndex = _flags.dataTag;
-        } else if (_flags.dataTag != kDataTagUnset) {
+        } else if (_flags.dataTag != PBDataTagUnset) {
             id (^mapper)(id data, id target, UIView *context) = [PBVariableMapper mapperForTag:_flags.dataTag];
             return mapper(data, target, context);
         }
@@ -528,6 +528,49 @@ static const int kDataTagUnset = 0xFF;
     }
 }
 
+- (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag {
+    if (_flags.mapToData) {
+        if (type & PBMapToData == 0) {
+            return NO;
+        }
+        if (dataTag == PBDataTagUnset) {
+            return YES;
+        }
+        return _flags.dataTag == dataTag;
+    }
+    if (_flags.mapToOwnerView) {
+        return type & PBMapToOwnerView;
+    }
+    if (_flags.mapToOwnerViewData) {
+        return type & PBMapToOwnerViewData;
+    }
+    if (_flags.mapToFormFieldText) {
+        return type & PBMapToFormFieldText;
+    }
+    if (_flags.mapToFormFieldValue) {
+        return type & PBMapToFormFieldValue;
+    }
+    if (_flags.mapToFormFieldError) {
+        return type & PBMapToFormFieldError;
+    }
+    if (_flags.mapToForm) {
+        return type & PBMapToForm;
+    }
+    if (_flags.mapToActiveController) {
+        return type & PBMapToActiveController;
+    }
+    if (_flags.mapToAliasView) {
+        return type & PBMapToAliasView;
+    }
+    if (_flags.mapToActionState) {
+        return type & PBMapToActionState;
+    }
+    if (_flags.mapToActionStateData) {
+        return type & PBMapToActionStateData;
+    }
+    return NO;
+}
+
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
     char flag = [targetKeyPath characterAtIndex:0];
@@ -634,7 +677,7 @@ static const int kDataTagUnset = 0xFF;
     }
     
     // Free the property first if the data source is not from custom
-    BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != kDataTagUnset));
+    BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != PBDataTagUnset));
     if (!isMapToCustomData) {
         if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
             [_bindingData pb_setValue:nil forKeyPath:_variable];
@@ -685,7 +728,7 @@ static const int kDataTagUnset = 0xFF;
     if (_flags.mapToData) {
         if (_flags.dataTag >= 0 && _flags.dataTag <= 9) {
             [s appendFormat:@"$%d.", _flags.dataTag];
-        } else if (_flags.dataTag != kDataTagUnset) {
+        } else if (_flags.dataTag != PBDataTagUnset) {
             [s appendFormat:@"$%c.", _flags.dataTag];
         } else {
             [s appendString:@"$"];

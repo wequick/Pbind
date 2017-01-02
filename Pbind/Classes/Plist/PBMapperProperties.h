@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PBExpression.h"
 
 /**
  An instance of PBMapperProperties stores the parsing result of the PBMapper's 
@@ -27,6 +28,7 @@
 
 - (void)initDataForOwner:(id)owner;
 
+- (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 - (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context;
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context;
 

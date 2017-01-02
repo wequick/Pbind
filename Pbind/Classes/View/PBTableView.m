@@ -27,6 +27,7 @@
 @synthesize listKey, page, pagingParams, needsLoadMore;
 @synthesize row, rows, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
+@synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 
 - (void)awakeFromNib
 {
@@ -257,7 +258,7 @@
     if (rowDelegate.pulling) {
         [rowDelegate endPullingForPagingView:self];
     } else {
-        if (!self.pb_needsReload) {
+        if (!self.dataUpdated) {
             return;
         }
         
@@ -275,7 +276,7 @@
         
         [super reloadData];
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.pb_needsReload = NO;
+            self.dataUpdated = NO;
         });
     }
 }

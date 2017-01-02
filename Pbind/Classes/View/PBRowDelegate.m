@@ -11,6 +11,8 @@
 #import "PBSection.h"
 #import "PBActionStore.h"
 #import "PBCollectionView.h"
+#import "PBDataFetcher.h"
+#import "PBDataFetching.h"
 
 @implementation PBRowDelegate
 
@@ -114,8 +116,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 - (void)refreshControlDidReleased:(UIRefreshControl *)sender {
     NSDate *start = [NSDate date];
     
-    UIScrollView<PBRowPaging> *pagingView = (id)[sender nextResponder];
-    if (![pagingView pb_canPullData]) {
+    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)[sender nextResponder];
+    if ([pagingView isFetching] || pagingView.clients == nil) {
         [self endRefreshing:sender startAt:start];
         return;
     }
@@ -124,7 +126,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     pagingView.page = 0;
     [pagingView pb_mapData:pagingView.data forKey:@"pagingParams"];
     
-    [pagingView pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+    [pagingView.fetcher fetchDataWithTransformation:^id(id data, NSError *error) {
         [self endRefreshing:sender startAt:start];
         return data;
     }];
@@ -147,7 +149,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)pullupControlDidReleased:(UIRefreshControl *)sender {
-    UIScrollView<PBRowPaging> *pagingView = (id)[sender nextResponder];
+    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)[sender nextResponder];
     
     UIEdgeInsets insets = pagingView.contentInset;
     insets.bottom += _pullupControl.bounds.size.height;
@@ -158,7 +160,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     [pagingView pb_mapData:pagingView.data forKey:@"pagingParams"];
     
     _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
-    [pagingView pb_pullDataWithPreparation:nil transformation:^id(id data, NSError *error) {
+    [pagingView.fetcher fetchDataWithTransformation:^id(id data, NSError *error) {
         if (pagingView.listKey != nil) {
             NSMutableArray *list = [NSMutableArray arrayWithArray:[self.dataSource list]];
             [list addObjectsFromArray:[data valueForKey:pagingView.listKey]];

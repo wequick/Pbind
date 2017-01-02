@@ -8,6 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum : NSUInteger {
+    PBMapToData             = 0x1,
+    PBMapToOwnerView        = 0x1 << 1,
+    PBMapToOwnerViewData    = 0x1 << 2,
+    
+    PBMapToFormFieldText    = 0x1 << 3,
+    PBMapToFormFieldValue   = 0x1 << 4,
+    PBMapToFormFieldError   = 0x1 << 5,
+    PBMapToForm             = 0x1 << 6,
+    
+    PBMapToActiveController = 0x1 << 7,
+    PBMapToAliasView        = 0x1 << 8,
+    
+    PBMapToActionState      = 0x1 << 9,
+    PBMapToActionStateData  = 0x1 << 10,
+    
+    PBMapToContext          = PBMapToOwnerView | PBMapToOwnerViewData | PBMapToForm | PBMapToActiveController | PBMapToAliasView,
+    PBMapToAll              = 0xFFFF
+} PBMapType;
+
 /**
  This class is used to parse the expressions configure in Plist.
  
@@ -130,6 +150,7 @@
 
 - (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context;
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context;
+- (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 
 /**
  The expression text, for debugger output.
@@ -144,3 +165,5 @@
 - (void)unbind:(id)target forKeyPath:(NSString *)keyPath;
 
 @end
+
+FOUNDATION_EXTERN const unsigned char PBDataTagUnset;

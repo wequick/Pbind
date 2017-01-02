@@ -14,8 +14,9 @@
 #import "PBRowDelegate.h"
 #import "PBRowDataSource.h"
 #import "PBRowPaging.h"
+#import "PBDataFetching.h"
 
-@interface PBCollectionView : UICollectionView <PBRowPaging>
+@interface PBCollectionView : UICollectionView <PBRowPaging, PBDataFetching>
 {
     PBMessageInterceptor *_dataSourceInterceptor;
     PBMessageInterceptor *_delegateInterceptor;
