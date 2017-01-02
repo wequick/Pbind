@@ -379,6 +379,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)reset
 {
+    // TODO: add 'reset' action
     if ([self.formDelegate respondsToSelector:@selector(formShouldReset:)]) {
         if (![self.formDelegate formShouldReset:self]) {
             return;
@@ -399,34 +400,23 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             [input setValue:nil];
         }
     }
-    // Reset values
-    void (^complection)(PBResponse *) = ^(PBResponse *response) {
-        [self pb_loadData:[response data]];
-        NSDictionary *userInfo = (response == nil) ? nil : @{PBResponseKey:response};
-        [[NSNotificationCenter defaultCenter] postNotificationName:PBFormDidResetNotification
-                                                            object:self
-                                                          userInfo:userInfo];
-        if ([self.formDelegate respondsToSelector:@selector(form:didReset:)]) {
-            [self.formDelegate form:self didReset:response];
-        }
-        // Reset params
-        _initialParams = nil;
-        // Scroll to top
-        CGPoint offset = self.contentOffset;
-        [self setContentOffset:CGPointMake(offset.x, -self.contentInset.top) animated:YES];
-    };
-    PBClient *client = [self resetClient];
-    if (client == nil) {
-        PBResponse *response = [[PBResponse alloc] init];
-        response.data = _initialData;
-        complection(response);
-    } else {
-        // Post action
-        Class requestClass = [[client class] requestClass];
-        PBRequest *request = [[requestClass alloc] init];
-        request.action = _resetClientAction;
-        [client _loadRequest:request mapper:nil notifys:NO complection:complection];
+}
+
+- (void)didReset:(PBResponse *)response {
+    // TODO: add 'reset' action
+    [self pb_loadData:[response data]];
+    NSDictionary *userInfo = (response == nil) ? nil : @{PBResponseKey:response};
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBFormDidResetNotification
+                                                        object:self
+                                                      userInfo:userInfo];
+    if ([self.formDelegate respondsToSelector:@selector(form:didReset:)]) {
+        [self.formDelegate form:self didReset:response];
     }
+    // Reset params
+    _initialParams = nil;
+    // Scroll to top
+    CGPoint offset = self.contentOffset;
+    [self setContentOffset:CGPointMake(offset.x, -self.contentInset.top) animated:YES];
 }
 
 - (NSDictionary *)verifiedParamsForSubmit
@@ -539,34 +529,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
     }
     return params;
-}
-
-- (PBClient *)submitClient {
-    if (_submitClient == nil && _action != nil) {
-        NSURL *url = [NSURL URLWithString:_action];
-        NSString *scheme = [url scheme];
-        if (![scheme isEqualToString:@"client"]) {
-            return nil;
-        }
-        NSString *clientName = [url host];
-        _submitClient = [PBClient clientWithName:clientName];
-        _submitClientAction = [url path];
-    }
-    return _submitClient;
-}
-
-- (PBClient *)resetClient {
-    if (_resetClient == nil && _resetAction != nil) {
-        NSURL *url = [NSURL URLWithString:_resetAction];
-        NSString *scheme = [url scheme];
-        if (![scheme isEqualToString:@"client"]) {
-            return nil;
-        }
-        NSString *clientName = [url host];
-        _resetClient = [PBClient clientWithName:clientName];
-        _resetClientAction = [url path];
-    }
-    return _resetClient;
 }
 
 #pragma mark - Notifications

@@ -63,17 +63,10 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
         unsigned int hasScrollToInput:1;
         unsigned int needsInitParams:1;
     } _formFlags;
-    PBClient *_submitClient;
-    NSString *_submitClientAction;
-    PBClient *_resetClient;
-    NSString *_resetClientAction;
     NSDictionary *_initialParams;
     id _initialData;
-    NSMutableDictionary *_radioGroups;
 }
 
-@property (nonatomic, strong) NSString *action; // submit action, accepts client://{PBClient}/$action
-@property (nonatomic, strong) NSString *resetAction; // accepts client://{PBClient}/$action
 @property (nonatomic, assign) id<PBFormDelegate> formDelegate;
 
 @property (nonatomic, strong, readonly) NSDictionary *params;
