@@ -452,6 +452,11 @@
         if (hidden != view.hidden) {
             if (hidden) {
                 [view endEditing:YES];
+            } else {
+                // set the height to zero for showing animation
+                CGRect frame = view.frame;
+                frame.size.height = 0;
+                view.frame = frame;
             }
             NSIndexSet *indexes = [NSIndexSet indexSetWithIndex:index];
             [self reloadRowAtIndexes:indexes animated:self.animatedOnValueChanged completion:^(BOOL finished) {

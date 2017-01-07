@@ -14,6 +14,7 @@
 @synthesize type, name, value, required, requiredTips;
 @synthesize maxlength, maxchars, pattern, validators;
 @synthesize acceptsClearOnAccessory;
+@synthesize errorRow;
 
 - (id)init {
     if (self = [super init]) {

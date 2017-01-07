@@ -214,6 +214,11 @@
     }
 }
 
+- (void)setExpression:(PBExpression *)expression forKey:(NSString *)key
+{
+    [_properties setExpression:expression forKey:key];
+}
+
 - (void)unbind {
     if (_properties == nil) {
         return;

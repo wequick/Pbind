@@ -67,6 +67,7 @@ static NSString *const kInputKeyPathPlaceholderTextColor = @"_placeholderLabel.t
 @synthesize accessoryItems = _accessoryItems;
 @synthesize name, value, required, requiredTips;
 @synthesize maxlength, maxchars, pattern, validators;
+@synthesize errorRow;
 
 static NSMutableDictionary *kInitializations = nil;
 

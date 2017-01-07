@@ -10,6 +10,8 @@
 #import <UIKit/UIKit.h>
 #import "PBMapperProperties.h"
 
+@class PBExpression;
+
 /**
  The PBMapper stores all the Plist Key-Value properties and parse them with special format.
  
@@ -45,5 +47,7 @@
 - (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view;
 
 - (void)unbind;
+
+- (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
 
 @end

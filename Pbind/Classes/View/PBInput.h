@@ -58,6 +58,7 @@
 @property (nonatomic, strong) NSString *text;
 @property (nonatomic, assign) BOOL acceptsClearOnAccessory;
 @property (nonatomic, strong) NSArray *accessoryItems; // UIBarButtonItem
+@property (nonatomic, strong) NSDictionary *errorRow; // the row to display validating error tips below current input
 
 - (BOOL)isEmpty; // default returns `value != nil'
 - (CGRect)invalidIndicatorRect; // the rect for displaying a red box while validating failed

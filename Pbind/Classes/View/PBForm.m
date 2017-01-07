@@ -56,6 +56,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 @interface PBScrollView (Private)
 
 - (void)didInitRowViews;
+- (UIView *)viewWithRow:(PBRowMapper *)row;
 
 @end
 
@@ -106,6 +107,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     for (id<PBInput> input in _inputs) {
         [self validateInput:input forState:PBFormValidatingInitialized];
     }
+    
+    // Add error rows if there are.
+    [self initErrorRowViews];
 }
 
 - (void)didMoveToWindow {
@@ -310,6 +314,62 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
                 [self scrollToInput:object animated:YES];
             });
         }
+    }
+}
+
+#pragma mark - Error tips
+
+- (void)initErrorRowViews
+{
+    for (UIView<PBInput> *input in _inputs) {
+        if (![input respondsToSelector:@selector(errorRow)]) {
+            continue;
+        }
+        
+        NSDictionary *info = [input errorRow];
+        if (info == nil) {
+            continue;
+        }
+        
+        [self insertErrorRowWithDictionary:info belowInput:input];
+    }
+}
+
+- (void)insertErrorRowWithDictionary:(NSDictionary *)dictionary belowInput:(UIView<PBInput> *)input
+{
+    if (_rowMappers == nil) {
+        return;
+    }
+    
+    UIView *rowViewForInput = input;
+    while (rowViewForInput.superview != self) {
+        rowViewForInput = rowViewForInput.superview;
+    }
+    NSInteger index = [self indexForView:rowViewForInput];
+    if (index == NSNotFound) {
+        return;
+    }
+    
+    PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dictionary owner:self];
+    mapper.delegate = self;
+    [_rowMappers insertObject:mapper atIndex:index + 1];
+    
+    UIView *errorView = [self viewWithRow:mapper];
+    [self insertSubview:errorView belowSubview:rowViewForInput];
+    [mapper initDataForView:errorView];
+    [_rowViews insertObject:errorView atIndex:index + 1];
+    
+    // Bind the 'hidden' to 'error'
+    NSString *name = [input name];
+    NSString *format = [NSString stringWithFormat:@"=!>!%@", name];
+    PBExpression *expression = [PBExpression expressionWithString:format];
+    [mapper setExpression:expression forKey:@"hidden"];
+    
+    // Bind the 'error tips'
+    UIView *tipsView = [errorView viewWithAlias:@"tips"];
+    if (tipsView != nil) {
+        format = [NSString stringWithFormat:@"=>!%@", name];
+        [tipsView setExpression:format forKeyPath:@"text"];
     }
 }
 

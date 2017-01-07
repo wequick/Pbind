@@ -24,8 +24,8 @@
     } _pbFlags;
     PBMessageInterceptor *_delegateInterceptor;
     PBRowMapper *_rowMapper;
+    NSMutableArray *_rowMappers;
     NSMutableArray *_rowViews;
-    NSArray *_rowMappers;
     UIView *_footerView;
     NSMutableArray *_rowHeights;
     CGFloat _statusBarHeight;
