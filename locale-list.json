@@ -14,6 +14,7 @@
     "name": "简体中文", 
     "isoName": "Simplified Chinese", 
     "isoCodes": [
+      "cn",
       "zh-cn", 
       "zh-hans", 
       "zh"

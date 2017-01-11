@@ -1,33 +1,33 @@
-<h2><a href="/Pbind/cn/quickstart#概要" id=概要 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>概要</h2>
+<h2><a href="/Pbind/en/quickstart#概要" id=概要 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>概要</h2>
 <p>本入门应用包含了使用Pbind开发的基础目录结构，并通过配置显示一条简单的文本：</p>
 
 <p><img src="/Pbind/img/tour-0@2x.png" alt="hello-work"/></p>
 
-<p>你可以按照以下步骤新建一个自己的工程，或者直接在GitHub上clone我们的<a href="https://github.com/wequick/Pbind" target="_blank">示例工程</a>来进入<a href="/Pbind/cn/tour-databinding" name="wq-redirect" data-redirect="cn/tour-databinding">下一步</a>。</p>
+<p>你可以按照以下步骤新建一个自己的工程，或者直接在GitHub上clone我们的<a href="https://github.com/wequick/Pbind" target="_blank">示例工程</a>来进入<a href="/Pbind/en/tour-databinding" name="wq-redirect" data-redirect="en/tour-databinding">下一步</a>。</p>
 
 <p>开始创建工程！</p>
 
 <ul>
-<li><a href="/Pbind/cn/quickstart#准备工作:-安装cocoapods">准备工作</a>: 安装CocoaPods</li>
-<li><a href="/Pbind/cn/quickstart#step-1:-创建与配置工程">Step 1</a>: 创建与配置工程</li>
-<li><a href="/Pbind/cn/quickstart#step-2:-创建一个基于配置化的界面">Step 2</a>: 创建一个基于配置化的界面</li>
-<li><a href="/Pbind/cn/quickstart#step-3:-启动应用">Step 3</a>: 启动应用</li>
-<li><a href="/Pbind/cn/quickstart#step-4:-做一些即时修改">Step 4</a>: 做一些即时修改</li>
-<li><a href="/Pbind/cn/quickstart#总结与下一步">总结与下一步</a></li>
+<li><a href="/Pbind/en/quickstart#准备工作:-安装cocoapods">准备工作</a>: 安装CocoaPods</li>
+<li><a href="/Pbind/en/quickstart#step-1:-创建与配置工程">Step 1</a>: 创建与配置工程</li>
+<li><a href="/Pbind/en/quickstart#step-2:-创建一个基于配置化的界面">Step 2</a>: 创建一个基于配置化的界面</li>
+<li><a href="/Pbind/en/quickstart#step-3:-启动应用">Step 3</a>: 启动应用</li>
+<li><a href="/Pbind/en/quickstart#step-4:-做一些即时修改">Step 4</a>: 做一些即时修改</li>
+<li><a href="/Pbind/en/quickstart#总结与下一步">总结与下一步</a></li>
 </ul>
-<h2><a href="/Pbind/cn/quickstart#准备工作:-安装cocoapods" id=准备工作:-安装cocoapods aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>准备工作: 安装CocoaPods</h2>
+<h2><a href="/Pbind/en/quickstart#准备工作:-安装cocoapods" id=准备工作:-安装cocoapods aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>准备工作: 安装CocoaPods</h2>
 <p>如果你的电脑还未安装CocoaPods，<a href="https://cocoapods.org/" target="_blank">安装它</a>。</p>
-<h2><a href="/Pbind/cn/quickstart#step-1:-创建与配置工程" id=step-1:-创建与配置工程 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 1: 创建与配置工程</h2>
+<h2><a href="/Pbind/en/quickstart#step-1:-创建与配置工程" id=step-1:-创建与配置工程 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 1: 创建与配置工程</h2>
 <p>在本步骤你将：</p>
 
 <ul>
-<li><a href="/Pbind/cn/quickstart#创建application">创建Application</a></li>
-<li><a href="/Pbind/cn/quickstart#集成pbind">集成Pbind</a></li>
-<li><a href="/Pbind/cn/quickstart#集成pbliveloader">集成PBLiveLoader</a></li>
+<li><a href="/Pbind/en/quickstart#创建application">创建Application</a></li>
+<li><a href="/Pbind/en/quickstart#集成pbind">集成Pbind</a></li>
+<li><a href="/Pbind/en/quickstart#集成pbliveloader">集成PBLiveLoader</a></li>
 </ul>
-<h3><a href="/Pbind/cn/quickstart#创建application" id=创建application aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>创建Application</h3>
+<h3><a href="/Pbind/en/quickstart#创建application" id=创建application aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>创建Application</h3>
 <p>打开Xcode，点选菜单栏 <code>File-&gt;New-&gt;Project...</code> 创建一个 <code>Single View Application</code>。<code>Product Name</code> 本示例设置为 <code>HeroTour</code> （您可以填写为自己的项目名称）。</p>
-<h3><a href="/Pbind/cn/quickstart#集成pbind" id=集成pbind aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>集成Pbind</h3>
+<h3><a href="/Pbind/en/quickstart#集成pbind" id=集成pbind aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>集成Pbind</h3>
 <p>关闭工程，在命令行进入到工程目录，执行命令来初始化Podfile:</p>
 <div class="highlight highlight-source-text"><pre>pod init
 </pre></div>
@@ -42,7 +42,7 @@
 <span class="k">end</span>
 </pre></div>
 <p>执行命令<code>pod install</code>来安装依赖。</p>
-<h4><a href="/Pbind/cn/quickstart#集成pbliveloader" id=集成pbliveloader aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>集成PBLiveLoader</h4>
+<h4><a href="/Pbind/en/quickstart#集成pbliveloader" id=集成pbliveloader aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>集成PBLiveLoader</h4>
 <p>PBLiveLoader是一个目录监听器，用于即时刷新界面。</p>
 
 <p>首先安装 <code>Pbind</code> 工具集:</p>
@@ -74,7 +74,7 @@
 <li><code>PBLocalhost</code> - 本地服务配置路径</li>
 </ul></li>
 </ul>
-<h2><a href="/Pbind/cn/quickstart#step-2:-创建一个基于配置化的界面" id=step-2:-创建一个基于配置化的界面 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 2: 创建一个基于配置化的界面</h2>
+<h2><a href="/Pbind/en/quickstart#step-2:-创建一个基于配置化的界面" id=step-2:-创建一个基于配置化的界面 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 2: 创建一个基于配置化的界面</h2>
 <p>重新打开<code>[your-project].xcworkspace</code>。</p>
 <div class="highlight highlight-source-text"><pre>open HeroTour.xcworkspace
 </pre></div>
@@ -100,11 +100,11 @@
 <blockquote>
 <p>如果要复制上述代码，你可以选中上述代码片段的 Root 节点，点击出现的 [COPY] 按钮来复制代码。粘贴时注意先收起 Xcode 的 Root 节点，再选中它，然后按 [⌘+v] 来覆盖。</p>
 </blockquote>
-<h2><a href="/Pbind/cn/quickstart#step-3:-启动应用" id=step-3:-启动应用 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 3: 启动应用</h2>
+<h2><a href="/Pbind/en/quickstart#step-3:-启动应用" id=step-3:-启动应用 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 3: 启动应用</h2>
 <p>选择一个模拟器，<code>[Command + R]</code> 运行应用。</p>
 
 <p><img src="/Pbind/img/tour-0-hello@2x.png" alt="hello-first"/></p>
-<h2><a href="/Pbind/cn/quickstart#step-4:-做一些即时修改" id=step-4:-做一些即时修改 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 4: 做一些即时修改</h2>
+<h2><a href="/Pbind/en/quickstart#step-4:-做一些即时修改" id=step-4:-做一些即时修改 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 4: 做一些即时修改</h2>
 <p>由于没有导航栏，view跟状态栏重叠了，状态栏的高度为20，我们通过 <code>margin</code> 来加上这个上边距：</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>height</span></td><td><span>String</span></td><td><span>100</span></td></tr><tr data-level="1"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{20,0,0,0}</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
 <p><code>[Command + S]</code> 保存文件，界面将立即刷新：</p>
@@ -124,8 +124,8 @@
 
 <p>你可以试着改变文字的背景/前景色，来感受下即时刷新带来的畅快开发体验。</p>
 
-<p>更多常量属性的配置可以参考<a href="/Pbind/cn/cheatsheet#常量" name="wq-redirect" data-redirect="cn/cheatsheet#常量">常量表达式</a>与<a href="/Pbind/cn/pbrowmapper" name="wq-redirect" data-redirect="cn/pbrowmapper">行映射</a>。</p>
-<h2><a href="/Pbind/cn/quickstart#总结与下一步" id=总结与下一步 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>总结与下一步</h2>
+<p>更多常量属性的配置可以参考<a href="/Pbind/en/cheatsheet#常量" name="wq-redirect" data-redirect="en/cheatsheet#常量">常量表达式</a>与<a href="/Pbind/en/pbrowmapper" name="wq-redirect" data-redirect="en/pbrowmapper">行映射</a>。</p>
+<h2><a href="/Pbind/en/quickstart#总结与下一步" id=总结与下一步 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>总结与下一步</h2>
 <p>最后的工程目录结构看起来是这样的：</p>
 <div class="highlight highlight-source-text"><pre>├── HeroTour
 │   ├── AppDelegate.h
@@ -154,4 +154,4 @@
 <li>通过监听Plist改变来实时刷新界面</li>
 </ol>
 
-<p><a href="/Pbind/cn/tour-databinding" name="wq-redirect" data-redirect="cn/tour-databinding">下一步</a>我们将通过配置来对接数据并逐步完成一个 <code>英雄App</code>。</p>
+<p><a href="/Pbind/en/tour-databinding" name="wq-redirect" data-redirect="en/tour-databinding">下一步</a>我们将通过配置来对接数据并逐步完成一个 <code>英雄App</code>。</p>

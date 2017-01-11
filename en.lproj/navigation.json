@@ -17,8 +17,12 @@
   "show_previous_next": true, 
   "quick_links": [
     {
-      "title": "QuickStart", 
-      "href": "quickstart.html"
+      "name": "Quick Start", 
+      "id": "quickstart"
+    },
+    {
+      "name": "Cheatsheet", 
+      "id": "cheatsheet"
     }
   ], 
   "icon": "", 
@@ -28,25 +32,35 @@
     "feature",
     "quickstart",
     "tutorial",
-    "advance"
+    "advance",
+    "cheatsheet"
   ], 
   "sections": {
     "tutorial": {
-      "name": "Tutorial",
+      "name": "Tour of heroes",
       "children": [
-        "tour-databinding"
+        "tour-databinding",
+        "tour-cell-layout",
+        "tour-detail-and-route",
+        "tour-add-hero",
+        "tour-form-validating",
+        "tour-delete-hero"
       ]
     },
     "advance": {
       "name": "Advance",
       "children": [
-        "custom-tag"
+        "pbrowmapper",
+        "pblayoutmapper",
+        "nav",
+        "pbclient",
+        "pbaction"
       ]
     }
   }, 
   "topics": {
     "home": {
-      "name": "Welcome", 
+      "name": "Home", 
       "href": "home.html", 
       "categories": [
         "passionpoints", 
@@ -54,21 +68,54 @@
       ]
     },
     "feature": {
-      "name": "Feature", 
+      "name": "Features", 
       "href": "feature.html"
     },
     "quickstart": {
-      "name": "Quick Start", 
+      "name": "Quick start", 
       "href": "quickstart.html"
     },
     "tour-databinding": {
-      "name": "Data Binding",
+      "name": "Data binding",
       "href": "tour-databinding.html"
     },
-    "custom-tag": {
-      "name": "Custom Tag",
-      "href": "custom-tag.html"
+    "cheatsheet": {
+      "name": "Cheatsheet",
+      "href": "cheatsheet.html"
+    },
+    "tour-cell-layout": {
+      "name": "Heroes list"
+    },
+    "tour-detail-and-route": {
+      "name": "Detail and route"
+    },
+    "test": {
+      "name": "Test"
+    },
+    "pbclient": {
+      "name": "Client componenet"
+    },
+    "pbaction": {
+      "name": "Action componenet"
+    },
+    "tour-add-hero": {
+      "name": "Add hero"
+    },
+    "pbrowmapper": {
+      "name": "Row mapper"
+    },
+    "pblayoutmapper": {
+      "name": "Layout mapper"
+    },
+    "nav": {
+      "name": "Navigation mapper"
+    },
+    "tour-form-validating": {
+      "name": "Form validating"
+    },
+    "tour-delete-hero": {
+      "name": "Delete hero"
     }
-  }, 
+  },
   "copyright_text": "© 2016 Wequick.net. All rights reserved."
 }

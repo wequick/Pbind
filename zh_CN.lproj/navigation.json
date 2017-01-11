@@ -42,12 +42,17 @@
         "tour-databinding",
         "tour-cell-layout",
         "tour-detail-and-route",
-        "tour-add-hero"
+        "tour-add-hero",
+        "tour-form-validating",
+        "tour-delete-hero"
       ]
     },
     "advance": {
       "name": "进阶教程",
       "children": [
+        "pbrowmapper",
+        "pblayoutmapper",
+        "nav",
         "pbclient",
         "pbaction"
       ]
@@ -99,6 +104,21 @@
     },
     "tour-add-hero": {
       "name": "添加英雄"
+    },
+    "pbrowmapper": {
+      "name": "行配置"
+    },
+    "pblayoutmapper": {
+      "name": "布局配置"
+    },
+    "nav": {
+      "name": "导航配置"
+    },
+    "tour-form-validating": {
+      "name": "表单检验"
+    },
+    "tour-delete-hero": {
+      "name": "删除英雄"
     }
   },
   "copyright_text": "© 2016 Wequick.net. 保留一切权利。"
