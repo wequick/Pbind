@@ -13,6 +13,7 @@
 #import "PBArray.h"
 #import "Pbind+API.h"
 #import "UIView+Pbind.h"
+#import "PBValueParser.h"
 
 @implementation PBRowDataSource
 
@@ -192,15 +193,15 @@
                 }
                 aSection.rows = rows;
             } else if (aRowSource != nil) {
-                aSection.row = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:nil];
             }
             
             if (aSection.emptyRow != nil) {
-                aSection.emptyRow = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:nil];
             }
             
             if (aSection.footer != nil) {
-                aSection.footer = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.footer = [PBRowMapper mapperWithDictionary:aSection.footer owner:nil];
             }
             [temp addObject:aSection];
         }
@@ -377,6 +378,8 @@
     if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver numberOfSectionsInTableView:tableView];
     }
+    
+    [self initRowMapper];
     
     if (self.sections != nil) {
         return [self.sections count];
@@ -621,6 +624,14 @@
 
 - (NSDictionary *)dictionaryByMergingDictionary:(NSDictionary *)oneDictionay withAnother:(NSDictionary *)anotherDictionay
 {
+    if (![anotherDictionay isKindOfClass:[NSDictionary class]]) {
+        id anotherValue = [PBValueParser valueWithString:anotherDictionay];
+        if (anotherValue == nil) {
+            return nil;
+        }
+        return oneDictionay;
+    }
+    
     NSMutableDictionary *mergedDictionary = [NSMutableDictionary dictionary];
     NSMutableDictionary *valuesOnlyInOther = [NSMutableDictionary dictionaryWithDictionary:anotherDictionay];
     for (NSString *key in oneDictionay) {
@@ -634,7 +645,12 @@
             }
             [valuesOnlyInOther removeObjectForKey:key];
         }
-        [mergedDictionary setObject:otherValue forKey:key];
+        
+        if (otherValue == nil) {
+            [mergedDictionary removeObjectForKey:key];
+        } else {
+            [mergedDictionary setObject:otherValue forKey:key];
+        }
     }
     [mergedDictionary setValuesForKeysWithDictionary:valuesOnlyInOther];
     return mergedDictionary;
