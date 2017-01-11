@@ -305,6 +305,8 @@
         return;
     }
     
+    inset = PBEdgeInsets(inset);
+    
     // Add inset constraints
     NSLayoutConstraint *constraint;
     constraint = [self constraintWithItem:innerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:outerView attribute:NSLayoutAttributeLeading multiplier:1 constant:inset.left];
