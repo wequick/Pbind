@@ -8,13 +8,13 @@
 
 Pbind is a development platform for building mobile applications with apple Plist file.
 
-## Quickstart
-
-[Get started in 5 minutes.](http://code.wequick.net/Pbind)
-
 ## Snapshot (LiveLoad)
 
 ![Pbind playground](https://cloud.githubusercontent.com/assets/5291591/18739105/bc203a7a-80d3-11e6-98f9-fdcacecf4197.gif)
+
+## Quickstart
+
+[Get started in 5 minutes.](http://code.wequick.net/Pbind)
 
 ## Example
 
