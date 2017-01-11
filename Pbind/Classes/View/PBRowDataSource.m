@@ -193,15 +193,15 @@
                 }
                 aSection.rows = rows;
             } else if (aRowSource != nil) {
-                aSection.row = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:nil];
             }
             
             if (aSection.emptyRow != nil) {
-                aSection.emptyRow = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:nil];
             }
             
             if (aSection.footer != nil) {
-                aSection.footer = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                aSection.footer = [PBRowMapper mapperWithDictionary:aSection.footer owner:nil];
             }
             [temp addObject:aSection];
         }
