@@ -379,6 +379,8 @@
         return [self.receiver numberOfSectionsInTableView:tableView];
     }
     
+    [self initRowMapper];
+    
     if (self.sections != nil) {
         return [self.sections count];
     } else if (self.row != nil || self.rows != nil) {
