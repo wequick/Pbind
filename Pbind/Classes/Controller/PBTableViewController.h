@@ -14,6 +14,8 @@
 
 @property (nonatomic, strong) PBTableView *tableView;
 
+@property (nonatomic, assign) BOOL grouped;
+
 - (UITableViewStyle)preferredTableViewStyle; // TO IMPLEMENT, Default is UITableViewStylePlain
 
 @end
