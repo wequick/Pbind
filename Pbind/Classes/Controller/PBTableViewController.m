@@ -11,7 +11,7 @@
 @implementation PBTableViewController
 
 - (UITableViewStyle)preferredTableViewStyle {
-    return UITableViewStylePlain;
+    return _grouped ? UITableViewStyleGrouped : UITableViewStylePlain;
 }
 
 - (void)viewDidLoad {
