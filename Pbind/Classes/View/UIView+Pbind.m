@@ -385,6 +385,7 @@
         key = keys[i];
         while (i < N - 1) {
             key = [key stringByAppendingFormat:@".%@", keys[i]];
+            i++;
         }
     }
     
