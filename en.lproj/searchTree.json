@@ -1971,7 +1971,6 @@
                                         "s": {
                                           "$": {
                                             "quickstart": 2111,
-                                            "test": 143,
                                             "tour-add-hero": 1005,
                                             "tour-cell-layout": 943,
                                             "tour-databinding": 1039,
@@ -2723,7 +2722,6 @@
                         "pbaction": 3678,
                         "pblayoutmapper": 78,
                         "quickstart": 2059,
-                        "test": 16,
                         "tour-add-hero": 165,
                         "tour-cell-layout": 118,
                         "tour-databinding": 430,
@@ -5460,7 +5458,6 @@
                   "_": {
                     "r": {
                       "$": {
-                        "test": 229,
                         "tour-add-hero": 3585
                       }
                     }
@@ -7046,7 +7043,6 @@
                   "$": {
                     "nav": 28,
                     "quickstart": 2073,
-                    "test": 30,
                     "tour-add-hero": 179,
                     "tour-cell-layout": 132,
                     "tour-databinding": 2287,
@@ -8376,7 +8372,6 @@
                           "_": {
                             "n": {
                               "$": {
-                                "test": 207,
                                 "tour-add-hero": 1069,
                                 "tour-form-validating": 182
                               }
@@ -8445,7 +8440,6 @@
                       "_": {
                         "n": {
                           "$": {
-                            "test": 68,
                             "tour-add-hero": 3424,
                             "tour-form-validating": 3066
                           },
@@ -9459,7 +9453,6 @@
                                                   "_": {
                                                     "s": {
                                                       "$": {
-                                                        "test": 190,
                                                         "tour-add-hero": 3546
                                                       }
                                                     }
@@ -9526,7 +9519,6 @@
                       "$": {
                         "pbrowmapper": 130,
                         "quickstart": 2231,
-                        "test": 108,
                         "tour-add-hero": 298,
                         "tour-cell-layout": 250,
                         "tour-databinding": 1179,
@@ -10099,7 +10091,6 @@
                                               "_": {
                                                 "s": {
                                                   "$": {
-                                                    "test": 235,
                                                     "tour-add-hero": 3591
                                                   }
                                                 }
@@ -11045,7 +11036,6 @@
                             "nav": 147,
                             "pbaction": 113,
                             "quickstart": 2240,
-                            "test": 117,
                             "tour-add-hero": 307,
                             "tour-cell-layout": 259,
                             "tour-databinding": 452,
@@ -12750,7 +12740,6 @@
                         "r": {
                           "$": {
                             "cheatsheet": 4570,
-                            "test": 251,
                             "tour-add-hero": 3607
                           },
                           "_": {
@@ -12852,7 +12841,6 @@
                 "pbaction": 3667,
                 "pblayoutmapper": 65,
                 "quickstart": 2048,
-                "test": 5,
                 "tour-add-hero": 154,
                 "tour-cell-layout": 107,
                 "tour-databinding": 419,
@@ -13715,7 +13703,6 @@
                   "$": {
                     "pbaction": 3719,
                     "quickstart": 2098,
-                    "test": 55,
                     "tour-add-hero": 520,
                     "tour-cell-layout": 394,
                     "tour-databinding": 1125,
@@ -13728,7 +13715,6 @@
                       "$": {
                         "pbaction": 3790,
                         "quickstart": 2327,
-                        "test": 174,
                         "tour-add-hero": 204,
                         "tour-cell-layout": 157,
                         "tour-databinding": 1165,
@@ -13802,7 +13788,6 @@
               "$": {
                 "nav": 2215,
                 "pbaction": 2787,
-                "test": 218,
                 "tour-add-hero": 3574,
                 "tour-detail-and-route": 3011,
                 "tour-form-validating": 193
@@ -14483,7 +14468,6 @@
                                             "nav": 187,
                                             "pbaction": 193,
                                             "quickstart": 2081,
-                                            "test": 38,
                                             "tour-add-hero": 187,
                                             "tour-cell-layout": 140,
                                             "tour-databinding": 1148,
@@ -15377,7 +15361,6 @@
                     "nav": 546,
                     "pbaction": 105,
                     "quickstart": 2053,
-                    "test": 10,
                     "tour-add-hero": 159,
                     "tour-cell-layout": 112,
                     "tour-databinding": 424,
@@ -18064,7 +18047,6 @@
                               "_": {
                                 "n": {
                                   "$": {
-                                    "test": 127,
                                     "tour-add-hero": 3895
                                   }
                                 }
