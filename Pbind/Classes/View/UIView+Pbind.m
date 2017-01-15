@@ -10,7 +10,7 @@
 //
 
 #import "UIView+Pbind.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "PBClient.h"
 #import "PBMapper.h"
 #import "PBMutableExpression.h"

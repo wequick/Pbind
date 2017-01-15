@@ -11,7 +11,7 @@
 
 #import "PBPropertyUtils.h"
 #import <objc/runtime.h>
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "UIView+Pbind.h"
 
 @interface _PBPropertyInfo : NSObject

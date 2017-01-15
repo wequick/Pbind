@@ -10,7 +10,7 @@
 //
 
 #import "PBRowMapper.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "PBTableViewCell.h"
 #import "PBRowDataSource.h"
 

@@ -12,7 +12,7 @@
 #import "PBLayoutMapper.h"
 #import "PBRowMapper.h"
 #import "UIView+Pbind.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "PBValueParser.h"
 #import "PBLayoutConstraint.h"
 

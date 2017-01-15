@@ -11,7 +11,7 @@
 
 #import "UIImageView+Pbind.h"
 #import "UIView+Pbind.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 
 @implementation UIImageView (Pbind)
 

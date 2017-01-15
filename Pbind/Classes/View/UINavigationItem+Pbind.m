@@ -12,7 +12,7 @@
 #import "UINavigationItem+Pbind.h"
 #import "PBAction.h"
 #import "PBRowMapper.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "PBValueParser.h"
 #import "PBActionStore.h"
 #import "PBPropertyUtils.h"

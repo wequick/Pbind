@@ -13,7 +13,7 @@
 
 #import "PBValueParser.h"
 #import "PBForm.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 
 static NSMutableDictionary *kEnums = nil;
 
