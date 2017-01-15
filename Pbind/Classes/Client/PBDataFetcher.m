@@ -13,6 +13,7 @@
 #import "PBDataFetching.h"
 #import "PBArray.h"
 #import "UIView+Pbind.h"
+#import "PBClientMapper.h"
 
 NSString *const PBViewDidStartLoadNotification = @"PBViewDidStartLoadNotification";
 NSString *const PBViewDidFinishLoadNotification = @"PBViewDidFinishLoadNotification";
@@ -20,7 +21,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
 
 @interface PBClient (Private)
 
-- (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
+- (void)_loadRequest:(PBRequest *)request notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
 
 @end
 
@@ -99,7 +100,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
             }
         }
         
-        [client _loadRequest:request mapper:nil notifys:NO complection:^(PBResponse *response) {
+        [client _loadRequest:request notifys:NO complection:^(PBResponse *response) {
             BOOL handledError = NO;
             if ([_owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [_owner view:self didFinishLoading:response handledError:&handledError];
