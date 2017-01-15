@@ -9,9 +9,6 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-//  LICENSE file in the root directory of this source tree.
-//
-
 #import <UIKit/UIKit.h>
 
 //! Project version number for Pbind.
