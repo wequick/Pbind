@@ -38,7 +38,7 @@
         NSString *buttonTitle = buttons[index];
         void (^ handler)(UIAlertAction *action) = nil;
         NSString *nextActionKey = [NSString stringWithFormat:@"%i", (int)index];
-        if ([self haveNext:nextActionKey]) {
+        if ([self hasNext:nextActionKey]) {
             handler = ^(UIAlertAction *action) {
                 [self dispatchNext:nextActionKey];
             };

@@ -22,7 +22,7 @@
     if ([self.type isEqualToString:@"notify"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:self.name object:self.target userInfo:self.params];
     } else if ([self.type isEqualToString:@"watch"]) {
-        if (![self haveNext:@"done"]) {
+        if (![self hasNext:@"done"]) {
             return;
         }
         

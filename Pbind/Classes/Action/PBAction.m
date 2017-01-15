@@ -53,7 +53,7 @@ static NSMutableDictionary *kActionClasses;
     return [[actionClass alloc] init];
 }
 
-- (BOOL)haveNext:(NSString *)key {
+- (BOOL)hasNext:(NSString *)key {
     if (self.nextMappers == nil) {
         return NO;
     }
