@@ -47,7 +47,17 @@
     [super setHighlighted:highlighted];
     
     if (highlighted) {
-        [super setBackgroundColor:[_backgroundColor colorWithAlphaComponent:.8]];
+        [super setBackgroundColor:self.highlightedBackgroundColor];
+    } else {
+        [super setBackgroundColor:_backgroundColor];
+    }
+}
+
+- (void)setSelected:(BOOL)selected {
+    [super setSelected:selected];
+    
+    if (selected) {
+        [super setBackgroundColor:self.selectedBackgroundColor];
     } else {
         [super setBackgroundColor:_backgroundColor];
     }
@@ -59,8 +69,29 @@
     if (enabled) {
         [super setBackgroundColor:_backgroundColor];
     } else {
-        [super setBackgroundColor:[_backgroundColor colorWithAlphaComponent:.2]];
+        [super setBackgroundColor:self.disabledBackgroundColor];
     }
+}
+
+- (UIColor *)disabledBackgroundColor {
+    if (_disabledBackgroundColor != nil) {
+        return _disabledBackgroundColor;
+    }
+    return [_backgroundColor colorWithAlphaComponent:.2];
+}
+
+- (UIColor *)highlightedBackgroundColor {
+    if (_highlightedBackgroundColor != nil) {
+        return _highlightedBackgroundColor;
+    }
+    return [_backgroundColor colorWithAlphaComponent:.8];
+}
+
+- (UIColor *)selectedBackgroundColor {
+    if (_selectedBackgroundColor != nil) {
+        return _selectedBackgroundColor;
+    }
+    return _backgroundColor;
 }
 
 #pragma mark - PBInput
@@ -118,12 +149,33 @@
 }
 
 - (void)setHighlightedImage:(NSString *)highlightedImage {
+    _highlightedImage = highlightedImage;
     [self setImage:PBImage(highlightedImage) forState:UIControlStateHighlighted];
 }
 
 - (void)setSelectedImage:(NSString *)selectedImage {
     _selectedImage = selectedImage;
     [self setImage:PBImage(selectedImage) forState:UIControlStateSelected];
+}
+
+- (void)setBackgroundImage:(NSString *)image {
+    _backgroundImage = image;
+    [self setBackgroundImage:PBImage(image) forState:UIControlStateNormal];
+}
+
+- (void)setDisabledBackgroundImage:(NSString *)disabledImage {
+    _disabledBackgroundImage = disabledImage;
+    [self setBackgroundImage:PBImage(disabledImage) forState:UIControlStateDisabled];
+}
+
+- (void)setHighlightedBackgroundImage:(NSString *)highlightedImage {
+    _highlightedBackgroundImage = highlightedImage;
+    [self setBackgroundImage:PBImage(highlightedImage) forState:UIControlStateHighlighted];
+}
+
+- (void)setSelectedBackgroundImage:(NSString *)selectedImage {
+    _selectedBackgroundImage = selectedImage;
+    [self setBackgroundImage:PBImage(selectedImage) forState:UIControlStateSelected];
 }
 
 @end

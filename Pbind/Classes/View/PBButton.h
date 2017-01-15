@@ -21,4 +21,13 @@
 @property (nonatomic, strong) NSString *selectedImage;
 @property (nonatomic, strong) NSString *highlightedImage;
 
+@property (nonatomic, strong) NSString *backgroundImage;
+@property (nonatomic, strong) NSString *disabledBackgroundImage;
+@property (nonatomic, strong) NSString *selectedBackgroundImage;
+@property (nonatomic, strong) NSString *highlightedBackgroundImage;
+
+@property (nonatomic, strong) UIColor *disabledBackgroundColor;
+@property (nonatomic, strong) UIColor *selectedBackgroundColor;
+@property (nonatomic, strong) UIColor *highlightedBackgroundColor;
+
 @end
