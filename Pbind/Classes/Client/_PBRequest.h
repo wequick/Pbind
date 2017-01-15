@@ -20,6 +20,11 @@
  */
 @interface _PBRequest : NSObject
 
+#pragma mark - Sending
+///=============================================================================
+/// @name Sending
+///=============================================================================
+
 /**
  The API name for the request.
  */
@@ -42,12 +47,24 @@
  */
 @property (nonatomic, strong) NSDictionary *params;
 
+#pragma mark - Resulting
+///=============================================================================
+/// @name Resulting
+///=============================================================================
+
 /**
  Whether the response data should be mutable, default is NO.
  
  @discussion if set to YES then will convert all the response data from NSDictionary to PBDictionary in nested.
  */
 @property (nonatomic, assign) BOOL requiresMutableResponse;
+
+/**
+ The user info carried.
+ 
+ @discussion this info will be directly passed to the response
+ */
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 @end
 

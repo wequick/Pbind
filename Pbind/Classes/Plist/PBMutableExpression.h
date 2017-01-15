@@ -14,14 +14,14 @@
 #import <UIKit/UIKit.h>
 
 /**
- A PBMutableExpression allows to calculate a set of PBExpressions.
+ An instance of PBMutableExpression provides the ability of evaluating a group of PBExpressions.
  
  @discussion Supports:
  
  * %(%@: %@),$a,$b  -> String formater
  * %!(%@: %@),$a,$b -> Format the string only if arguments are not empty
  * %JS($2/$1),$a,$b -> Javascript evaluator
- * %AT(%@|%@),$a,$b
+ * %AT(%@|%@),$a,$b -> Attribute string
  
  */
 @interface PBMutableExpression : PBExpression

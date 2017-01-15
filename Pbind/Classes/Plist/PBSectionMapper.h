@@ -13,8 +13,14 @@
 #import <UIKit/UIKit.h>
 #import "PBRowMapper.h"
 
+/**
+ An instance of PBSectionMapper stores the configuration of UI section.
+ 
+ @discussion The section here is for PBTableView and PBCollectionView.
+ */
 @interface PBSectionMapper : PBRowMapper
 
+/** The title for the section header */
 @property (nonatomic, strong) NSString *title;
 
 /**

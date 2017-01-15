@@ -11,6 +11,11 @@
 
 #import "PBMapper.h"
 
+/**
+ The PBLayoutMapper is one of the base component of Pbind.
+ 
+ @discussion We use this mapper to render the layout from Plist by Auto-layout constraint formats.
+ */
 @interface PBLayoutMapper : PBMapper
 
 /**
