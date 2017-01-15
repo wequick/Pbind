@@ -26,12 +26,12 @@
     }];
 }
 
-- (id)initWithArray:(NSArray *)array sortKey:(NSString *)sortKey titleBlock:(CYDataSectionGetTitleBlock)block
+- (id)initWithArray:(NSArray *)array sortKey:(NSString *)sortKey titleBlock:(PBSectionGetTitleBlock)block
 {
     return [self initWithArray:array sortKey:sortKey ascending:YES titleBlock:block];
 }
 
-- (id)initWithArray:(NSArray *)array sortKey:(NSString *)sortKey ascending:(BOOL)ascending titleBlock:(CYDataSectionGetTitleBlock)block
+- (id)initWithArray:(NSArray *)array sortKey:(NSString *)sortKey ascending:(BOOL)ascending titleBlock:(PBSectionGetTitleBlock)block
 {
     if (self = [super init]) {
         NSArray *sortedArray = nil;
@@ -228,7 +228,6 @@
     for (NSArray *key in self.sectionRecords) {
         NSArray *records = [self.sectionRecords objectForKey:key];
         for (NSDictionary *record in records) {
-            //判断record 是否包含 part
             for (NSString *part_key in part) {
                 NSString *part_value = [part objectForKey:part_key];
                 NSString *main_value = [record objectForKey:part_key];
@@ -310,7 +309,7 @@
     return [records objectAtIndex:indexPath.row];
 }
 
-- (void)visit:(CYDataSectionVisitBlock)visitBlock
+- (void)visit:(PBSectionVisitBlock)visitBlock
 {
     for (NSUInteger section = 0; section < [self.sectionIndexTitles count]; section ++) {
         NSString *title = [self.sectionIndexTitles objectAtIndex:section];
