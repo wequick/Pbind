@@ -25,7 +25,6 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBClient.h"
 #import "PBVariableMapper.h"
 #import "PBInput.h"
-#import "PBRecord.h"
 #import "PBSection.h"
 #import "PBFormController.h"
 #import "PBTextView.h"
