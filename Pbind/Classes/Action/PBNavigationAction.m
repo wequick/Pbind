@@ -44,7 +44,7 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
         }
         [self initPropertiesForController:nextController];
         
-        if ([self haveNext:DONE]) {
+        if ([self hasNext:DONE]) {
             // We need to dispatch next action after the target controller `viewDidLoad`,
             // sadly, the UINavigationControllerDelegate takes no effect while I try:
             //
@@ -82,7 +82,7 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
             }
         }
         
-        if ([self haveNext:DONE]) {
+        if ([self hasNext:DONE]) {
             // FIXME: Detect `viewDidUnload`.
             NSDictionary *userInfo = @{kUserInfoTargetControllerKey: controller};
             _viewLoadedDetectionTimer = [NSTimer timerWithTimeInterval:.5 target:self selector:@selector(viewUnloadedDetectionTimerTick:) userInfo:userInfo repeats:YES];

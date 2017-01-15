@@ -75,7 +75,7 @@
  @param key the key for the next actions
  @return YES if got one
  */
-- (BOOL)haveNext:(NSString *)key;
+- (BOOL)hasNext:(NSString *)key;
 - (void)dispatchNext:(NSString *)key;
 
 @end
