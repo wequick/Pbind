@@ -10,7 +10,6 @@
 //
 
 #import "PBScrollView.h"
-#import "NSArray+PBUtils.h"
 #import "PBRowMapper.h"
 #import "PBExpression.h"
 #import "UIView+Pbind.h"
