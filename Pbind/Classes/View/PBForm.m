@@ -50,12 +50,6 @@ static CGFloat kKeyboardDuration = 0;
 static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
 static NSInteger kMinKeyboardHeightToScroll = 200;
 
-@interface PBClient (Private)
-
-- (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
-
-@end
-
 @interface PBScrollView (Private)
 
 - (void)didInitRowViews;

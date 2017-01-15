@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import "PBResponse.h"
 #import "_PBRequest.h"
-#import "PBClientMapper.h"
 
 //______________________________________________________________________________
 

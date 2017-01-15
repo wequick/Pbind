@@ -14,7 +14,7 @@
 
 @interface PBClient (Private)
 
-- (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
+- (void)_loadRequest:(PBRequest *)request notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection;
 
 @end
 
@@ -39,7 +39,7 @@
     request.params = [state mergedParams:self.params];
     request.action = self.name;
     
-    [client _loadRequest:request mapper:nil notifys:YES complection:^(PBResponse *response) {
+    [client _loadRequest:request notifys:YES complection:^(PBResponse *response) {
         state.status = response.status;
         if (response.error != nil) {
             state.error = response.error;

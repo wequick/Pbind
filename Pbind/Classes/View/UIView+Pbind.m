@@ -22,13 +22,6 @@
 #import "PBDataFetching.h"
 #import "PBDataFetcher.h"
 
-@interface UIView (Pbind_Private)
-
-@property (nonatomic, strong) NSArray *_pbClients;
-@property (nonatomic, strong) NSArray *_pbClientMappers;
-
-@end
-
 @implementation UIView (Pbind)
 
 @dynamic data;
@@ -575,22 +568,6 @@
 
 - (NSURL *)_pbPlistURL {
     return [self valueForAdditionKey:@"_pbPlistURL"];
-}
-
-- (void)set_pbClients:(NSArray *)value {
-    [self setValue:value forAdditionKey:@"_pbClients"];
-}
-
-- (NSArray *)_pbClients {
-    return [self valueForAdditionKey:@"_pbClients"];
-}
-
-- (void)set_pbClientMappers:(NSArray *)value {
-    [self setValue:value forAdditionKey:@"_pbClientMappers"];
-}
-
-- (NSArray *)_pbClientMappers {
-    return [self valueForAdditionKey:@"_pbClientMappers"];
 }
 
 - (void)setPB_internalMapper:(PBMapper *)value {

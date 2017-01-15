@@ -74,7 +74,7 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     request.action = action;
     request.params = params;
     request.method = @"GET";
-    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
+    [self _loadRequest:request notifys:YES complection:complection];
 }
 
 - (void)POST:(NSString *)action params:(NSDictionary *)params complection:(void (^)(PBResponse *response))complection
@@ -83,7 +83,7 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     request.action = action;
     request.params = params;
     request.method = @"POST";
-    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
+    [self _loadRequest:request notifys:YES complection:complection];
 }
 
 - (void)PATCH:(NSString *)action params:(NSDictionary *)params complection:(void (^)(PBResponse *response))complection
@@ -92,7 +92,7 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     request.action = action;
     request.params = params;
     request.method = @"PATCH";
-    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
+    [self _loadRequest:request notifys:YES complection:complection];
 }
 
 - (void)DELETE:(NSString *)action params:(NSDictionary *)params complection:(void (^)(PBResponse *response))complection
@@ -101,10 +101,10 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     request.action = action;
     request.params = params;
     request.method = @"DELETE";
-    [self _loadRequest:request mapper:nil notifys:YES complection:complection];
+    [self _loadRequest:request notifys:YES complection:complection];
 }
 
-- (void)_loadRequest:(PBRequest *)request mapper:(PBClientMapper *)mapper notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection
+- (void)_loadRequest:(PBRequest *)request notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection
 {
     _canceled = NO;
     
@@ -183,14 +183,7 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
         if (notifys) {
             NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
             userInfo[PBResponseKey] = response;
-            if (mapper.successTips != nil) {
-                response.tips = mapper.successTips;
-            }
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
-        }
-
-        if (mapper != nil && mapper.nextClient != nil) {
-            // TODO: Call next
         }
     } failure:^(NSError *error) {
         PBResponse *response = [[PBResponse alloc] init];
@@ -204,9 +197,6 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
         if (notifys) {
             NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
             userInfo[PBResponseKey] = response;
-            if (mapper.failureTips != nil) {
-                response.tips = mapper.failureTips;
-            }
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
         }
     }];
