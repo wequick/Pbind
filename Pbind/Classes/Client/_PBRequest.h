@@ -20,10 +20,27 @@
  */
 @interface _PBRequest : NSObject
 
-@property (nonatomic, strong) NSString *action; // Interface action.
-@property (nonatomic, strong) NSString *method; // Interface action.
-@property (nonatomic, strong) NSDictionary *params; // Major params.
-@property (nonatomic, strong) NSDictionary *extParams; // Minor params.
+/**
+ The API name for the request.
+ */
+@property (nonatomic, strong) NSString *action;
+
+/**
+ The method for the request which defined in RESTFul way.
+ 
+ @discussion Include:
+ - get
+ - post
+ - put
+ - patch
+ - delete
+ */
+@property (nonatomic, strong) NSString *method;
+
+/**
+ The parameters for the request.
+ */
+@property (nonatomic, strong) NSDictionary *params;
 
 /**
  Whether the response data should be mutable, default is NO.
