@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of navigation action.
+ */
 @interface PBNavigationAction : PBAction
 
 @end

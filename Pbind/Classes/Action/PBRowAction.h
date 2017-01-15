@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of row action for PBTableView and PBCollectionView.
+ */
 @interface PBRowAction : PBAction
 
 @end

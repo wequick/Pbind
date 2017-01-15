@@ -25,10 +25,19 @@
 
 //______________________________________________________________________________
 
+/**
+ The PBClient is one of the base component of Pbind.
+ We use the Client to define the standard of data fetching.
+ */
 @interface PBClient : NSObject
 {
     BOOL _canceled;
 }
+
+#pragma mark - Register
+///=============================================================================
+/// @name Register
+///=============================================================================
 
 + (Class)requestClass; // default is PBRequest.
 + (instancetype)clientWithName:(NSString *)clientName;
@@ -41,11 +50,21 @@
  */
 + (void)registerDebugServer:(PBResponse *(^)(PBClient *client, PBRequest *request))server;
 
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
 @property (nonatomic, assign) NSInteger cacheCount; // default is PBClientCacheNever;
 @property (nonatomic, strong) NSMutableDictionary *readCacheCounts;
 
 @property (nonatomic, assign) id<PBClientDelegate> delegate;
 @property (nonatomic, strong, readonly) PBRequest *request;
+
+#pragma mark - API
+///=============================================================================
+/// @name API
+///=============================================================================
 
 - (void)GET:(NSString *)action params:(NSDictionary *)params complection:(void (^)(PBResponse *response))complection;
 - (void)POST:(NSString *)action params:(NSDictionary *)params complection:(void (^)(PBResponse *response))complection;
@@ -98,6 +117,11 @@ FOUNDATION_EXPORT NSInteger const PBClientCacheForever;
 FOUNDATION_EXPORT NSString *const PBClientWillLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBClientDidLoadRequestNotification;
 FOUNDATION_EXPORT NSString *const PBResponseKey;
+
+#pragma mark - Annotation
+///=============================================================================
+/// @name Annotation
+///=============================================================================
 
 #define pbclient(__alias__) \
 compatibility_alias _PBClient PBClient; \
