@@ -10,7 +10,7 @@
 //
 
 #import "PBLayoutConstraint.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 
 #pragma mark -
 #pragma mark - _PBMergedWrapperView

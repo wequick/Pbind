@@ -9,7 +9,7 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "UIView+Pbind.h"
 
 @implementation Pbind : NSObject

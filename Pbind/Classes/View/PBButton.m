@@ -12,7 +12,7 @@
 #import "PBButton.h"
 #import "UIView+Pbind.h"
 #import "PBActionStore.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 
 @implementation PBButton
 {

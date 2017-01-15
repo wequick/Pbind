@@ -14,7 +14,7 @@
 #import "PBTableView.h"
 #import "PBCollectionView.h"
 #import "PBArray.h"
-#import "Pbind+API.h"
+#import "PBInline.h"
 #import "UIView+Pbind.h"
 #import "PBValueParser.h"
 
