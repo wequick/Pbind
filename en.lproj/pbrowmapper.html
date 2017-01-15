@@ -1,46 +1,49 @@
-<h2><a href="/Pbind/en/pbrowmapper#行配置" id=行配置 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>行配置</h2>
-<p>Pbind的核心控件为 <code>PBTableView</code>, <code>PBCollectionView</code>, <code>PBScrollView</code>，均基于行布局。</p>
+<h2><a href="/Pbind/en/pbrowmapper#row-mapper" id=row-mapper aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Row mapper</h2>
+<p>The base controls of Pbind are <code>PBTableView</code>, <code>PBCollectionView</code> and <code>PBScrollView</code>, each of them use row(linear) layout.</p>
 
-<p>故以 <em>行</em> 为基础元素，来完成视图可复用。</p>
+<p>Hereby we take <em>row</em> as base element by which we can also achieve the reusability of view.</p>
 
-<p>可配置的属性包括：</p>
+<p>The names could be configured are:</p>
 <h3><a href="/Pbind/en/pbrowmapper#clazz" id=clazz aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>clazz</h3>
-<p>用于定义每一行的视图类，默认为 <code>UITableViewCell</code>。</p>
+<p>The class name for each row, default is <em>UITableViewCell</em>.</p>
 <h3><a href="/Pbind/en/pbrowmapper#nib" id=nib aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>nib</h3>
-<p>用于定义视图对应的 <code>xib</code> 文件名，默认与 <strong>clazz</strong> 同名。</p>
+<p>The xib file name for each row, default as <strong>clazz</strong>.</p>
 <h3><a href="/Pbind/en/pbrowmapper#style" id=style aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>style</h3>
-<p>用于定义 <code>UITableViewCellStyle</code>，如果有指定值，<strong>clazz</strong> 将默认为 <code>PBTableViewCell</code>，以支持该属性。</p>
+<p>The style(<em>UITableViewCellStyle</em>) for each cell. If configured, the <strong>clazz</strong> will take <em>PBTableViewCell</em> as default to support it.</p>
 <h3><a href="/Pbind/en/pbrowmapper#layout" id=layout aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>layout</h3>
-<p>用于定义子布局，其创建的子View将以AutoLayout的形式添加到 <strong>clazz</strong> 所构建的父View中。
-这个配置也为实现每个 <em>行单元</em> 的复杂布局提供了可能性。</p>
+<p>The layout file name by what to create the subviews for the view in the row. </p>
 <h3><a href="/Pbind/en/pbrowmapper#id" id=id aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>id</h3>
-<p>用于定义Cell的可复用标识，默认为：&quot;<strong>clazz</strong> @<strong>layout</strong> <strong>style</strong>&quot;。</p>
+<p>The resuable identifier for the cell(item) of the row. Default is &quot;<strong>clazz</strong> @<strong>layout</strong> <strong>style</strong>&quot;.
+Supports for <em>PBTableView</em> and <em>PBScrollView`</em>.</p>
 <h3><a href="/Pbind/en/pbrowmapper#height" id=height aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>height</h3>
-<p>用于定义行高，适用于 <code>PBTableView</code> 与 <code>PBScrollView</code>。默认为 <strong>-1</strong>，自动行高。</p>
+<p>The height for the row. Default is <strong>-1</strong> (auto-height).
+Supports for <em>PBTableView</em> and <em>PBScrollView`</em>.</p>
 <h3><a href="/Pbind/en/pbrowmapper#estimatedheight" id=estimatedheight aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>estimatedHeight</h3>
-<p>用于定义预估行高，用于自动行高的 <code>PBTableView</code>。默认为 <strong>44</strong>。</p>
+<p>The estimated height for the row. Default is <strong>-1</strong> (do not estimated).
+Supports <em>PBTableView</em>. If the <strong>height</strong> is unset, default to <strong>44</strong>.</p>
 <h3><a href="/Pbind/en/pbrowmapper#size" id=size aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>size</h3>
-<p>用于定义列表项(<code>UICollectionViewCell</code>)大小，用于 <code>PBCollectionView</code>。</p>
-<h3><a href="/Pbind/en/pbrowmapper#floating" id=floating aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>floating</h3>
-<p>用于定义行悬浮，适用于 <code>PBScrollView</code>，通常用作固定于底部的提交按钮等等。</p>
+<p>The size for the item(<em>UICollectionViewCell</em>) in the row.
+Supports for <em>PBCollectionView</em>.</p>
+<h3><a href="/Pbind/en/pbrowmapper#floating-(incubating)" id=floating-(incubating) aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>floating (Incubating)</h3>
+<p>The floating for the row, supports for <em>PBScrollView</em> and usually for the submit button which needs to stick in the bottom.</p>
 
-<p>支持的值为：</p>
+<p>Accept values:</p>
 
 <ul>
-<li>(1) PBRowFloatingTop 顶部悬浮，适用于纵向滚动布局</li>
-<li>(2) PBRowFloatingLeft 左悬浮，适用于横向滚动布局</li>
-<li>(3) PBRowFloatingBottom 底部悬浮，适用于纵向滚动布局</li>
-<li>(4) PBRowFloatingRight 右悬浮，适用于横向滚动布局</li>
+<li>(1) <strong>PBRowFloatingTop</strong> stick in top for vertical scroll view</li>
+<li>(2) <strong>PBRowFloatingLeft</strong> stick in left for horizontal scroll view</li>
+<li>(3) <strong>PBRowFloatingBottom</strong> stick in bottom for vertical scroll view</li>
+<li>(4) <strong>PBRowFloatingRight</strong> stick in right for horizontal scroll view</li>
 </ul>
 <h3><a href="/Pbind/en/pbrowmapper#actions" id=actions aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>actions</h3>
-<p>每一行的交互行为，包括：</p>
+<p>The actions for the row, includes:</p>
 
 <table><thead>
 <tr>
-<th>行为</th>
-<th>映射类</th>
-<th>代理方法</th>
-<th>描述</th>
+<th>name</th>
+<th>refer to</th>
+<th>delegate</th>
+<th>note</th>
 </tr>
 </thead><tbody>
 <tr>
@@ -81,29 +84,29 @@
 </tr>
 </tbody></table>
 
-<p>其中 <em>PBRowActionMapper</em> 基于 <em>PBActionMapper</em>，扩展以下属性来支持左滑出现的按钮外观配置：</p>
+<p>Thereinto, the <em>PBRowActionMapper</em> is based on <em>PBActionMapper</em> and extend following names to configure the appearance of the button displayed by swipe-to-left.</p>
 
 <table><thead>
 <tr>
-<th>属性</th>
-<th>类</th>
-<th>描述</th>
+<th>name</th>
+<th>class</th>
+<th>note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td><strong>style</strong></td>
 <td><em>UITableViewRowActionStyle</em></td>
-<td>按钮样式</td>
+<td>the button style</td>
 </tr>
 <tr>
 <td><strong>title</strong></td>
 <td><em>NSString</em></td>
-<td>按钮标题</td>
+<td>the title of the button</td>
 </tr>
 <tr>
 <td><strong>backgroundColor</strong></td>
 <td><em>UIColor</em></td>
-<td>按钮背景色</td>
+<td>the background color of the button</td>
 </tr>
 </tbody></table>
 

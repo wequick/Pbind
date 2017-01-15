@@ -1,47 +1,49 @@
-<h2><a href="/Pbind/en/tour-cell-layout#创建布局" id=创建布局 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>创建布局</h2>
-<p>首先创建一个布局文件：<code>hero.cell.plist</code>：</p>
+<h2><a href="/Pbind/en/tour-cell-layout#create-cell-layout" id=create-cell-layout aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Create cell layout</h2>
+<p>Firstly we create a cell layout <code>hero.cell.plist</code>:</p>
 
 <blockquote>
-<p>建议命名规范：[模块].[类型].plist，这里是个UITableViewCell，简写cell</p>
+<p>The propositional naming convention is: [module].[type].plist, the type here is UITableViewCell and we use cell as abbr.</p>
 </blockquote>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="0"><td><span class="button collapse-button"></span><span>Root</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>views</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>name</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>desc</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>formats</span></td><td><span>Array</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>String</span></td><td><span>|-[name]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 1</span></td><td><span>String</span></td><td><span>|-[desc]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 2</span></td><td><span>String</span></td><td><span>V:|-[name]-[desc]-|</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>其中：</p>
+<p>Thereinfo:</p>
 
 <ul>
-<li><p><strong>views</strong> - 待创建的视图列表</p>
+<li><p><strong>views</strong> - The views(dictionary) to be created</p>
 
 <ul>
-<li>各个key将作为视图的别名</li>
-<li>value作为视图的属性</li>
+<li>each key is as the view alias</li>
+<li>each value is used to describe the view properties</li>
 </ul></li>
-<li><p><strong>formats</strong> - 约束描述</p></li>
+<li><p><strong>formats</strong> - The official constraint formats</p></li>
 </ul>
 
-<p>这三个配置对应到官方 <code>AutoLayout</code> 的约束API如下：</p>
+<p>And a <strong>metrics</strong> for view margins which is not configured here.</p>
+
+<p>The above three properties are related the official constraint API:</p>
 <div class="highlight highlight-source-objc"><pre><span class="p">[</span><span class="bp">NSLayoutConstraint</span> <span class="nl">constraintsWithVisualFormat</span><span class="p">:</span><span class="n">formats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="nl">options</span><span class="p">:</span><span class="mi">0</span> <span class="nl">metrics</span><span class="p">:</span><span class="n">metrics</span> <span class="nl">views</span><span class="p">:</span><span class="n">views</span><span class="p">]</span>
 </pre></div>
-<p>有关约束描述语言的细节，可以查看官方文档<a href="https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage.html" target="_blank">VFL</a>。</p>
+<p>More details of the constraint format language can refer to the official document about <a href="https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage.html" target="_blank">VFL</a>.</p>
 
-<p>还有此处尚未配置的属性 <strong>metrics</strong> - (边距)尺寸，<strong>constraints</strong> - 复杂约束(VFL无法定义的约束)。细节可以参考<a href="/Pbind/en/pblayoutmapper" name="wq-redirect" data-redirect="en/pblayoutmapper">布局配置</a>。</p>
-<h2><a href="/Pbind/en/tour-cell-layout#使用布局" id=使用布局 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>使用布局</h2>
-<p>在 <code>main.tableview.plist</code> 的 <code>properties</code> 节点下配置行属性 - <strong>row</strong>：</p>
+<p>By the way, Pbind introduce a <strong>constraints</strong> to describe the complicated constraint formats which are not supported by <em>VFL</em>. You can also get the details in <a href="/Pbind/en/pblayoutmapper" name="wq-redirect" data-redirect="en/pblayoutmapper">Layout mapper</a>.</p>
+<h2><a href="/Pbind/en/tour-cell-layout#use-the-layout" id=use-the-layout aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Use the layout</h2>
+<p>Add a <strong>row</strong> property under the <code>properties</code> node of <code>main.tableview.plist</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>row</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>layout</span></td><td><span>String</span></td><td><span>hero.cell</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>@name.text</span></td><td><span>String</span></td><td><span>.$name</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>@desc.text</span></td><td><span>String</span></td><td><span>.$desc</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p><strong>row</strong> 对应 <code>PBRowMapper</code>，将在 <code>PBTableView</code> 的 <code>cellForRowAtIndexPath</code> 代理中将数据映射到指定的cell。</p>
+<p><strong>row</strong> related to <code>PBRowMapper</code> which will map the data for the cell created by <code>PBTableView</code>&#39;s <code>cellForRowAtIndexPath</code>.</p>
 
-<p><strong>layout</strong> 则对应刚才创建的布局文件 <code>hero.cell</code> （不带后缀）。</p>
+<p><strong>layout</strong> here set to the created <code>hero.cell</code> (note that we exclude the &#39;.plist&#39; suffix here).</p>
 
-<p><strong>properties</strong> 属性列表，将设置到对应的cell上。</p>
+<p><strong>properties</strong> cell properties which will be map to the created cell.</p>
 
-<p>这里，我们注意到：</p>
+<p>Here we note that:</p>
 
 <ul>
-<li><strong>@</strong>name 还有 <strong>@</strong>desc 将对应到 <code>layout</code> 上对应别名的视图。</li>
-<li><strong>.$</strong>name 与 <strong>.$</strong>desc 则是取到cell对应数据的 <code>name</code> 字段。</li>
+<li><strong>@</strong>name and <strong>@</strong>desc refer to the view alias in the <code>layout</code>.</li>
+<li><strong>.$</strong>name and <strong>.$</strong>desc refer to the keyed-value of the related cell data.</li>
 </ul>
 
-<p>我们将在下面用JSON模拟这个数据。</p>
-<h2><a href="/Pbind/en/tour-cell-layout#模拟数据" id=模拟数据 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>模拟数据</h2>
-<p>我们在 <code>PBLocalhost/PBClient/heroes.json</code> 下增加 <code>list</code> 字段：</p>
+<p>The cell data was not ready yet, let&#39;s make it.</p>
+<h2><a href="/Pbind/en/tour-cell-layout#mock" id=mock aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Mock</h2>
+<p>Add a <code>list</code> in the <code>PBLocalhost/PBClient/heroes.json</code>:</p>
 <div class="highlight highlight-source-json"><pre><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mock Pbind, Good&quot;</span><span class="p">,</span>
   <span class="nt">&quot;list&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -64,46 +66,47 @@
   <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
-<p>如何关联到这个 <code>list</code> 字段呢，我们在 <code>main.tableview.plist</code> 里为 <code>properties</code> 配置上 <code>listKey</code> 字段：</p>
+<p>Then we configure the <code>listKey</code> for the <code>main.tableview.plist</code> <code>properties</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>listKey</span></td><td><span>String</span></td><td><span>list</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>保存所有文件，我们可以看到界面显示出了 <code>英雄列表</code>：</p>
+<p>Save all the files then we got the heroes list:</p>
 
 <p><img src="/Pbind/img/tour-heroes@2x.png" alt="heroes list"/></p>
 
-<p>不过现在英雄描述并没有被完整的显示。接下来我们要为表格配置 <code>自动行高</code>。</p>
-<h2><a href="/Pbind/en/tour-cell-layout#自动行高" id=自动行高 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自动行高</h2>
-<p>我们在之前配置的约束语句 <code>V:|-[name]-[desc]-|</code> 实际上约定了两个 <code>UILabel</code> 在垂直方向上撑满整个cell。</p>
+<p>As you see, the hero description was not totally displayed and we gonna to achieve the <code>auto height</code>.</p>
+<h2><a href="/Pbind/en/tour-cell-layout#auto-height" id=auto-height aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Auto-height</h2>
+<p>Actually we had restrain the two labels fill the cell vertically by <code>V:|-[name]-[desc]-|</code>.</p>
 
-<p>接下来我们只需要让 <strong>@</strong>desc 这个 <code>UILabel</code> 自动换行就好，在 <code>hero.cell.plist</code> 的 <code>desc</code> 节点下配置 <strong>numberOfLines</strong> 为 <strong>0</strong>:</p>
+<p>What we needs to do is to configure line wrap for the <strong>@</strong>desc label.
+Let&#39;s add a <strong>numberOfLines</strong> property and set to <strong>0</strong> for the <code>desc</code> label in the <code>hero.cell.plist</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>numberOfLines</span></td><td><span>String</span></td><td><span>0</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>这里的 <code>properties</code> 属性大家应该不陌生了，所有视图的数据绑定都是通过这个属性。</p>
+<p>The <code>properties</code> is well to known, all the property binding is owe to it.</p>
 
-<p>保存文件：</p>
+<p>Save files:</p>
 
 <p><img src="/Pbind/img/tour-heroes-auto@2x.png" alt="heroes list with auto height"/></p>
 
-<p>现实场景中，我们可能要根据UI效果图做一些边距的微调。通过配置，这将很简单。</p>
-<h2><a href="/Pbind/en/tour-cell-layout#细节调整" id=细节调整 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>细节调整</h2><h3><a href="/Pbind/en/tour-cell-layout#调整单元格分隔线边距" id=调整单元格分隔线边距 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>调整单元格分隔线边距</h3>
-<p>对应系统API：</p>
+<p>In reality, we may needs to make some little tweaking for the UI. With Plist this would be quite easy.</p>
+<h2><a href="/Pbind/en/tour-cell-layout#tweaking" id=tweaking aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Tweaking</h2><h3><a href="/Pbind/en/tour-cell-layout#cell-separator" id=cell-separator aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Cell separator</h3>
+<p>Note the system related API:</p>
 <div class="highlight highlight-source-objc"><pre><span class="bp">UITableViewCell</span><span class="p">.</span><span class="n">separatorInset</span> <span class="o">=</span> <span class="bp">UIEdgeInsets</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
 </pre></div>
-<p>我们让 <code>left</code> 为 0 来让分隔线占满整行，在 <code>main.tableview.plist &gt; row &gt; properties</code> 中进行配置：</p>
+<p>Let&#39;s make the <code>left</code> of the edge insets to 0 to let the separator fill the bottom of the cell in <code>main.tableview.plist &gt; row &gt; properties</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr data-level="1"><td><span class="button collapse-button"></span><span>separatorInset</span></td><td><span>String</span></td><td><span>{0,0,0,0}</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>保存文件：</p>
+<p>Save:</p>
 
 <p><img src="/Pbind/img/tour-heroes-inset@2x.png" alt="heroes list separator insets"/></p>
-<h3><a href="/Pbind/en/tour-cell-layout#调整视图间边距" id=调整视图间边距 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>调整视图间边距</h3>
-<p>我们来配置一下上文提到的 <strong>metrics</strong> 来控制各种视图间的边距，在 <code>hero.cell.plist</code> 下增加 <strong>metrics</strong> 属性：</p>
+<h3><a href="/Pbind/en/tour-cell-layout#view-margins" id=view-margins aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>View margins</h3>
+<p>Here we configure the <strong>metrics</strong> mentioned above to control the view margins in <code>hero.cell.plist</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>metrics</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>left</span></td><td><span>String</span></td><td><span>96</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>并在 <strong>formats</strong> 中用上 <strong>left</strong>：</p>
+<p>And just use the <strong>left</strong> metric in the constraint <strong>formats</strong>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>formats</span></td><td><span>Array</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>String</span></td><td><span>|-left-[name]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 1</span></td><td><span>String</span></td><td><span>|-left-[desc]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 2</span></td><td><span>String</span></td><td><span>V:|-[name]-[desc]-|</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>保存文件：</p>
+<p>Save:</p>
 
 <p><img src="/Pbind/img/tour-heroes-margin@2x.png" alt="heroes list separator insets"/></p>
 
-<p>两个 <code>UILabel</code> 间的垂直间距类似可配置，此处就不作演示了。大家可以自己试试看。</p>
-<h2><a href="/Pbind/en/tour-cell-layout#总结与下一步" id=总结与下一步 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>总结与下一步</h2>
-<p>最后的工程目录结构看起来是这样的：</p>
+<p>Furthermore, you can try to configure the vertical margin of the two label.</p>
+<h2><a href="/Pbind/en/tour-cell-layout#next" id=next aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Next</h2>
+<p>The final project looks like this:</p>
 <div class="highlight highlight-source-text"><pre>├── HeroTour
 │   ├── AppDelegate.h
 │   ├── AppDelegate.m
@@ -118,10 +121,15 @@
     └── PBClient
         └── heroes.json
 </pre></div>
-<p>完整的 <code>main.tableview.plist</code>：</p>
+<p>The complete <code>main.tableview.plist</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="0"><td><span class="button collapse-button"></span><span>Root</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(3 items)</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>clients</span></td><td><span>Array</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="3" data-empty="1"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>PBClient</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>action</span></td><td><span>String</span></td><td><span>heroes</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>headers</span></td><td><span>Array</span></td><td><span class="sub">(1 item)</span></td></tr><tr class="collapsible" data-level="3"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>height</span></td><td><span>String</span></td><td><span>100</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>margin</span></td><td><span>String</span></td><td><span>{60,0,0,0}</span></td></tr><tr class="collapsible" data-level="4" data-empty="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>text</span></td><td><span>String</span></td><td><span>%(Hello %@!),$name</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>textColor</span></td><td><span>String</span></td><td><span>#fff</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>backgroundColor</span></td><td><span>String</span></td><td><span>#333</span></td></tr><tr data-level="5"><td><span class="button collapse-button"></span><span>textAlignment</span></td><td><span>String</span></td><td><span>:center</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>row</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>layout</span></td><td><span>String</span></td><td><span>hero.cell</span></td></tr><tr class="collapsible" data-level="3" data-empty="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>@name.text</span></td><td><span>String</span></td><td><span>.$name</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>@desc.text</span></td><td><span>String</span></td><td><span>.$desc</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>separatorInset</span></td><td><span>String</span></td><td><span>{0,0,0,0}</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>listKey</span></td><td><span>String</span></td><td><span>list</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>完整的 <code>hero.cell.plist</code>：</p>
+<p>And the complete <code>hero.cell.plist</code>:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="0"><td><span class="button collapse-button"></span><span>Root</span></td><td><span>Dictionary</span></td><td><span class="sub">(3 items)</span></td></tr><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>views</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>name</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>desc</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>clazz</span></td><td><span>String</span></td><td><span>UILabel</span></td></tr><tr class="collapsible" data-level="3" data-empty="1"><td><span class="button collapse-button"></span><span>properties</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>numberOfLines</span></td><td><span>String</span></td><td><span>0</span></td></tr><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>metrics</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>left</span></td><td><span>String</span></td><td><span>96</span></td></tr><tr class="collapsible" data-level="1" data-empty="1"><td><span class="button collapse-button"></span><span>formats</span></td><td><span>Array</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 0</span></td><td><span>String</span></td><td><span>|-left-[name]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 1</span></td><td><span>String</span></td><td><span>|-left-[desc]-|</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>Item 2</span></td><td><span>String</span></td><td><span>V:|-[name]-[desc]-|</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>本节我们学习了使用Pbind配置 <code>AutoLayout</code> 布局，以及对最常用的 <code>TableView</code> 进行单元格布局的配置与数据绑定操作。</p>
+<p>By this section, we learn the layout function of Pbind:</p>
 
-<p><a href="/Pbind/en/tour-detail-and-route" name="wq-redirect" data-redirect="en/tour-detail-and-route">下一步</a>我们来配置界面跳转，并完成一个英雄详情页面。</p>
+<ol>
+<li>Create a cell from a layout with <em>Auto Layout</em></li>
+<li>Layout and bind data for the general <code>TableView</code> cell</li>
+</ol>
+
+<p><a href="/Pbind/en/tour-detail-and-route" name="wq-redirect" data-redirect="en/tour-detail-and-route">Next</a> we will configure the router and accomplish a hero detail page.</p>

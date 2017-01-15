@@ -1,81 +1,83 @@
-<h2><a href="/Pbind/en/nav#导航配置" id=导航配置 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>导航配置</h2>
-<p>在根视图 plist 的 <em>Root</em> 节点下支持通过 <strong>nav</strong> 来配置导航栏，其下定义的属性将会映射到当前 Controller 的 <code>navigationItem</code>：</p>
+<h2><a href="/Pbind/en/nav#navigation-mapper" id=navigation-mapper aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Navigation mapper</h2>
+<p>We support configure the navigation bar by define a <strong>nav</strong> property under the <em>Root</em> node in Plist.</p>
+
+<p>All the properties defined in <strong>nav</strong> would be map to the current controller&#39;s <em>navigationItem</em>:</p>
 
 <table><thead>
 <tr>
-<th>属性</th>
-<th>类型</th>
-<th>对应</th>
-<th>含义</th>
+<th>name</th>
+<th>type</th>
+<th>map to</th>
+<th>note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td><strong>title</strong></td>
 <td><em>String</em></td>
 <td>title</td>
-<td>导航栏标题</td>
+<td>navigation title</td>
 </tr>
 <tr>
 <td><strong>left</strong></td>
 <td><em>Dictionary</em></td>
 <td>leftBarButtonItem</td>
-<td>左导航按钮</td>
+<td>the left bar button item for the navigation bar</td>
 </tr>
 <tr>
 <td><strong>lefts</strong></td>
 <td><em>Array<Dictionary></em></td>
 <td>leftBarButtonItems</td>
-<td>左导航按钮数组</td>
+<td>the left bar button items for the navigation bar</td>
 </tr>
 <tr>
 <td><strong>right</strong></td>
 <td><em>Dictionary</em></td>
 <td>rightBarButtonItem</td>
-<td>右导航按钮</td>
+<td>the right bar button item for the navigation bar</td>
 </tr>
 <tr>
 <td><strong>rights</strong></td>
 <td><em>Array<Dictionary></em></td>
 <td>rightsBarButtonItems</td>
-<td>右导航按钮数组</td>
+<td>the right bar button items for the navigation bar</td>
 </tr>
 </tbody></table>
-<h3><a href="/Pbind/en/nav#导航按钮配置" id=导航按钮配置 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>导航按钮配置</h3>
-<p>导航按钮通过字典来定义，最终转换为 <em>UIBarButtonItem</em>。</p>
+<h3><a href="/Pbind/en/nav#barbuttonitem" id=barbuttonitem aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>BarButtonItem</h3>
+<p>The item configured by a Dictionay and turns to be a <em>UIBarButtonItem</em> finally.</p>
 
-<p>参数包括两部分，首先是初始化参数，不同的初始化参数决定了使用不同的系统 <em>API</em> 来创建按钮。</p>
+<p>The dictionary contains two part of parameters, first part is for initializing by what we select the related <em>API</em> to create a <em>UIBarButtonItem</em>.</p>
 
 <table><thead>
 <tr>
-<th>初始化参数</th>
+<th>name</th>
 <th>API</th>
-<th>效果</th>
+<th>result</th>
 </tr>
 </thead><tbody>
 <tr>
 <td><strong>type</strong></td>
 <td><em>initWithBarButtonSystemItem:target:action:</em></td>
-<td>系统内置样式</td>
+<td>a system built-in item</td>
 </tr>
 <tr>
 <td><strong>image</strong><br/>&amp; <strong>style</strong></td>
 <td><em>initWithImage:style::target:action:</em></td>
-<td>自定义背景图按钮</td>
+<td>a custom background image item</td>
 </tr>
 <tr>
 <td><strong>title</strong><br/>&amp; <strong>style</strong></td>
 <td><em>initWithTitle:style::target:action:</em></td>
-<td>自定义标题按钮</td>
+<td>a custom title item</td>
 </tr>
 </tbody></table>
 
-<p>其中 <strong>type</strong> 支持：</p>
+<p>Thereinfo we support <strong>type</strong>s:</p>
 
 <table><thead>
 <tr>
 <th>type</th>
-<th>系统图标类型</th>
-<th>效果</th>
+<th>UIBarButtonSystemItem</th>
+<th>effect</th>
 </tr>
 </thead><tbody>
 <tr>
@@ -190,47 +192,47 @@
 </tr>
 </tbody></table>
 
-<p><strong>image</strong> 配置的是图片名称，将从 <code>[Pbind allResourceBundles]</code> 中读取。</p>
+<p><strong>image</strong> refer to the background image name, we will find the image from <code>[Pbind allResourceBundles]</code>.</p>
 
-<p><strong>style</strong> 支持：</p>
+<p><strong>style</strong> supports:</p>
 
 <table><thead>
 <tr>
 <th>style</th>
-<th>边框样式</th>
-<th>效果</th>
+<th>UIBarButtonItemStyle</th>
+<th>effect</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>:<strong>plainStyle</strong></td>
 <td>UIBarButtonItemStylePlain</td>
-<td>无</td>
+<td>nothing</td>
 </tr>
 <tr>
 <td>:<strong>doneStyle</strong></td>
 <td>UIBarButtonItemStyleDone</td>
-<td>字体加粗</td>
+<td>bold font for title</td>
 </tr>
 </tbody></table>
 
-<p>此外，另一部分参数控制已创建按钮的属性：</p>
+<p>The other part of parameters are used to configure the properties of the created item:</p>
 
 <table><thead>
 <tr>
-<th>控制参数</th>
-<th>描述</th>
+<th>name</th>
+<th>note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td><strong>hidden</strong></td>
-<td>是否隐藏，默认 <em>NO</em></td>
+<td>Whether hide the item, default is <em>NO</em></td>
 </tr>
 <tr>
 <td><strong>enabled</strong></td>
-<td>是否可点击，默认 <em>YES</em></td>
+<td>Whether the item can be clicked, default is <em>YES</em></td>
 </tr>
 <tr>
 <td><strong>action</strong></td>
-<td>按钮点击事件，参考<a href="/Pbind/en/pbaction" name="wq-redirect" data-redirect="en/pbaction">PBAction组件</a></td>
+<td>The click action for the item, refer to <a href="/Pbind/en/pbaction" name="wq-redirect" data-redirect="en/pbaction">Action mapper</a></td>
 </tr>
 </tbody></table>

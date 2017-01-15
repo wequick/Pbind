@@ -1,292 +1,303 @@
-<h2><a href="/Pbind/en/pbaction#action组件" id=action组件 aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action组件</h2>
-<p>Action组件由 <code>PBAction</code> 实现，用于定义交互行为标准，实现交互可配置化。</p>
+<h2><a href="/Pbind/en/pbaction#action-component" id=action-component aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Component</h2>
+<p>the action component is implemented by <code>PBAction</code>, used to define the action standard by what we can configure the interactions.</p>
 
-<p>基础参数列表：</p>
+<p>Base names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>type</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">行为类型</td>
+<td style="text-align: left">action type</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>disabled</strong></td>
 <td style="text-align: left">BOOL</td>
-<td style="text-align: left">是否禁用，默认NO，通常配置为表达式进行开关</td>
+<td style="text-align: left">whether disabled, default is NO, assigned by an expression as usuall</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>params</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">附加参数</td>
+<td style="text-align: left">parameters for each action</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.*</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，* 由不同Action决定</td>
+<td style="text-align: left">the next action, the * is determined by different actions, usually is <em>done</em></td>
 </tr>
 </tbody></table>
 <h2><a href="/Pbind/en/pbaction#pbnotificationaction" id=pbnotificationaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBNotificationAction</h2>
-<p>通知交互，用于配置通知相关。接收 <strong>type</strong>：</p>
+<p>Notification action is used to configure the interactions of notification center. 
+Accept <strong>types</strong>:</p>
 <h3><a href="/Pbind/en/pbaction#notify" id=notify aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>notify</h3>
-<p>发送通知，附加配置：</p>
+<p>Send a notification, extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>name</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">发送通知名</td>
+<td style="text-align: left">the notification name to send</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">通知携带的 <em>object</em></td>
+<td style="text-align: left">the <em>object</em> carried by the notification</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>params</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">通知携带的 <em>userInfo</em></td>
+<td style="text-align: left">the <em>userInfo</em> carried by the notification</td>
 </tr>
 </tbody></table>
 <h3><a href="/Pbind/en/pbaction#watch" id=watch aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>watch</h3>
-<p>监听通知，附加配置</p>
+<p>Observe a notification, extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>name</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">监听通知名</td>
+<td style="text-align: left">the notification name to observe</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">通知携带的 <em>object</em></td>
+<td style="text-align: left">the <em>object</em> carried by the notification</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.done</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">下个行为，接收到通知后触发</td>
+<td style="text-align: left">the next action triggered by received the specify notification</td>
 </tr>
 </tbody></table>
 <h2><a href="/Pbind/en/pbaction#pbnavigationaction" id=pbnavigationaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBNavigationAction</h2>
-<p>导航交互，用于配置界面跳转。接收 <strong>type</strong>：</p>
+<p>Navigation action is used to configure the interactions of page routing.
+Accept <strong>types</strong>:</p>
 <h3><a href="/Pbind/en/pbaction#push" id=push aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>push</h3>
-<p>弹出界面，附加配置：</p>
+<p>Push a new page, extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">弹出ViewController类名</td>
+<td style="text-align: left">the target route, usually is a ViewController class name</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>params</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">弹出ViewController初始化属性集</td>
+<td style="text-align: left">the properties used to initialize the target controller</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.done</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，弹出结束后触发</td>
+<td style="text-align: left">the next action triggered by push done</td>
 </tr>
 </tbody></table>
 <h3><a href="/Pbind/en/pbaction#pop" id=pop aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>pop</h3>
-<p>退出界面，附加配置：</p>
+<p>Pop page, extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">返回ViewController类名，不填则返回上一个界面</td>
+<td style="text-align: left">the target route, if not set, back to the last controller</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>params</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">返回ViewController更新属性集</td>
+<td style="text-align: left">the properties used to update the target controller</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.done</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，弹出结束后触发</td>
+<td style="text-align: left">the next action triggered by pop done</td>
 </tr>
 </tbody></table>
 <h3><a href="/Pbind/en/pbaction#present" id=present aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>present</h3>
-<p>弹出模式界面，配置同 <strong>push</strong>。</p>
+<p>Present a model page, the configurations are same as <strong>push</strong>.</p>
 <h3><a href="/Pbind/en/pbaction#dismiss" id=dismiss aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>dismiss</h3>
-<p>退出模式界面，除不接收 <strong>target</strong> 参数外，配置同 <strong>pop</strong>。</p>
+<p>Dismiss the model page, the configurations are same as <strong>push</strong> except doesn&#39;t accept <strong>target</strong>.</p>
 <h2><a href="/Pbind/en/pbaction#pbalertaction" id=pbalertaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBAlertAction</h2>
-<p>弹窗交互，用于配置 <code>UIAlertController</code>。接收 <strong>type</strong>：</p>
+<p>Alert action is used to configure the interactions of <em>UIAlertController</em>.
+Accept <strong>types</strong>:</p>
 <h3><a href="/Pbind/en/pbaction#alert" id=alert aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>alert</h3>
-<p>确认对话框，对应 <code>UIAlertControllerStyleAlert</code>，接收的 <strong>params</strong> 配置：</p>
+<p>Display a model dialog, related to <em>UIAlertControllerStyleAlert</em>, accept <strong>params</strong>:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>title</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">弹窗标题</td>
+<td style="text-align: left">the title of the dialog</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>message</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">弹窗内容</td>
+<td style="text-align: left">the content of the dialog</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>buttons</strong></td>
 <td style="text-align: left">Array</td>
-<td style="text-align: left">按钮文本数组</td>
+<td style="text-align: left">the button titles for the dialog</td>
 </tr>
 </tbody></table>
 
-<p><strong>next</strong> 配置：</p>
+<p>and the <strong>next</strong> param format:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>next.[0-N]</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，点击第 i 个按钮后触发</td>
+<td style="text-align: left">the next action triggered by click the specified index</td>
 </tr>
 </tbody></table>
 <h3><a href="/Pbind/en/pbaction#sheet" id=sheet aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>sheet</h3>
-<p>底部清单弹窗，对应 <code>UIAlertControllerStyleActionSheet</code>，参数同 <strong>alert</strong>。</p>
+<p>Present a model sheet, related to the style of <em>UIAlertControllerStyleActionSheet</em>.
+All the names are same as <strong>alert</strong>.</p>
 <h2><a href="/Pbind/en/pbaction#pbclientaction" id=pbclientaction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBClientAction</h2>
-<p>数据交互，用于配置请求，接收的 <strong>type</strong> 遵循 <code>RESTFul</code> 规范，包括：</p>
+<p>Client action is used to configure the interactions of API sending.
+The accept <strong>types</strong> follow the convention of <code>RESTFul</code> which includes:</p>
 <h3><a href="/Pbind/en/pbaction#get/post/put/patch/delete/head" id=get/post/put/patch/delete/head aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>get/post/put/patch/delete/head</h3>
-<p>附加参数：</p>
+<p>Extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">Client的类名或别名</td>
+<td style="text-align: left">the target client name or alias</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>name</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">请求API</td>
+<td style="text-align: left">the action of the API</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>params</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">请求参数</td>
+<td style="text-align: left">the parameters for the API</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.done</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，请求成功后触发</td>
+<td style="text-align: left">the next action triggered by successful response</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.fail</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，请求失败后触发</td>
+<td style="text-align: left">the next action triggered by error response</td>
 </tr>
 </tbody></table>
 <h2><a href="/Pbind/en/pbaction#pbtriggeraction" id=pbtriggeraction aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBTriggerAction</h2>
-<p>事件交互，用于配置触发事件。接收 <strong>type</strong>：</p>
+<p>Trigger action is used to configure the interactions of events.
+Accept <strong>types</strong>:</p>
 <h3><a href="/Pbind/en/pbaction#trigger" id=trigger aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>trigger</h3>
-<p>方法触发器，支持触发指定对象任意的 Objective-C 方法（限制5个参数以内）。</p>
+<p>Method trigger which used to trigger the method(limit in 5 parameters) of the specified object.</p>
 
-<p>附加参数：</p>
+<p>Extension names:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>target</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">对象表达式，参见<a href="/Pbind/en/cheatsheet#数据源标签" name="wq-redirect" data-redirect="en/cheatsheet#数据源标签">数据源标签</a></td>
+<td style="text-align: left">the <em>object</em>, should be an expression refer to <a href="/Pbind/en/cheatsheet#datasource-tag" name="wq-redirect" data-redirect="en/cheatsheet#datasource-tag">Datasource</a></td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>name</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">方法名(NSStringFromSelector)</td>
+<td style="text-align: left">the <em>selector</em> name (as NSStringFromSelector)</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>next.done</strong></td>
 <td style="text-align: left">Dictionary</td>
-<td style="text-align: left">下个行为，执行完成触发</td>
+<td style="text-align: left">the next action triggered by the trigger done.</td>
 </tr>
 </tbody></table>
 
-<p><strong>params</strong> 接收参数：</p>
+<p>and the <strong>params</strong> accept:</p>
 
 <table><thead>
 <tr>
-<th style="text-align: left">参数</th>
-<th style="text-align: left">类型</th>
-<th style="text-align: left">描述</th>
+<th style="text-align: left">name</th>
+<th style="text-align: left">type</th>
+<th style="text-align: left">note</th>
 </tr>
 </thead><tbody>
 <tr>
 <td style="text-align: left"><strong>arg[0-4]</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">第 i 个参数</td>
+<td style="text-align: left">the argument for the specified index</td>
 </tr>
 <tr>
 <td style="text-align: left"><strong>ret</strong></td>
 <td style="text-align: left">String</td>
-<td style="text-align: left">方法返回值类型，void类型无需设置</td>
+<td style="text-align: left">the return type of the selector (default is <em>void</em>)</td>
 </tr>
 </tbody></table>
-<h2><a href="/Pbind/en/pbaction#自定义action" id=自定义action aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>自定义Action</h2>
-<p>在 <strong>type</strong> 不冲突的前提下，你可以定义自己的 <code>Action</code>。以下示例定义一个类型为 <code>toast</code> 的 <code>Action</code>。</p>
+<h2><a href="/Pbind/en/pbaction#custom-action" id=custom-action aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom Action</h2>
+<p>You can define your <code>Action</code> with a <strong>type</strong> unmentioned above.</p>
 
-<p>创建一个类继承至 <code>PBAction</code>，命名如 <code>PBMyCustomAction</code>，在 <code>.m</code> 文件中实现 <code>run</code> 方法：</p>
+<p>In following example, we try to implement an <code>Action</code> with a <strong>type</strong> of <code>toast</code>.</p>
+
+<p>Firstly, we create a class which extends <em>PBAction</em>, named as <em>PBMyCustomAction</em>.</p>
+
+<p>Then implement the <code>run</code> method in <code>PBMyCustomAction.m</code>:</p>
 <div class="highlight highlight-source-objc"><pre><span class="k">@implementation</span> <span class="nc">PBMyCustomAction</span>
 
 <span class="p">@</span><span class="n">pbaction</span><span class="p">(</span><span class="s">@&quot;toast&quot;</span><span class="p">)</span>
-<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">run</span> <span class="p">{</span>
-    <span class="n">MBProgressHUD</span> <span class="o">*</span><span class="n">hud</span> <span class="o">=</span> <span class="p">[</span><span class="n">MBProgressHUD</span> <span class="nl">showHUDAddedTo</span><span class="p">:</span><span class="nb">self</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">supercontroller</span><span class="p">.</span><span class="n">view</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span><span class="p">];</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">run</span><span class="p">:(</span><span class="n">PBActionState</span> <span class="o">*</span><span class="p">)</span><span class="n">state</span> <span class="p">{</span>
+    <span class="bp">UIView</span> <span class="o">*</span><span class="n">rootView</span> <span class="o">=</span> <span class="n">state</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">supercontroller</span><span class="p">.</span><span class="n">view</span><span class="p">;</span>
+    <span class="n">MBProgressHUD</span> <span class="o">*</span><span class="n">hud</span> <span class="o">=</span> <span class="p">[</span><span class="n">MBProgressHUD</span> <span class="nl">showHUDAddedTo</span><span class="p">:</span><span class="n">rootView</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span><span class="p">];</span>
     <span class="n">hud</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">MBProgressHUDModeText</span><span class="p">;</span>
     <span class="n">hud</span><span class="p">.</span><span class="n">bezelView</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="nl">colorWithWhite</span><span class="p">:</span><span class="mi">0</span> <span class="nl">alpha</span><span class="p">:</span><span class="mf">.8f</span><span class="p">];</span>
     <span class="n">hud</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">textColor</span> <span class="o">=</span> <span class="p">[</span><span class="bp">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
@@ -300,15 +311,15 @@
 
 <span class="k">@end</span>
 </pre></div>
-<p>注意这里的几个细节：</p>
+<p>Note some details:</p>
 
 <ol>
-<li>使用 <code>@pbaction</code> 修饰符来注册Action类型为 <code>toast</code> (多个类型使用 <code>@pbactions</code>，如 <code>@pbactions(@&quot;get&quot;, @&quot;post&quot;))</code>)</li>
-<li>通过 <code>self.params</code> 来读取用户配置</li>
-<li>通过 <code>[self dispatchNext:@&quot;done&quot;]</code> 来触发用户配置的 <code>next.done</code> 行为</li>
+<li>Use <code>@pbaction</code> annotation to register an action with type of <code>toast</code> (If got a series types, you can use <code>@pbactions</code> like <code>@pbactions(@&quot;get&quot;, @&quot;post&quot;))</code>)</li>
+<li>Use <code>self.params</code> to get the user-defined parameters</li>
+<li>Use <code>[self dispatchNext:@&quot;done&quot;]</code> to trigger the next action configured by <code>next.done</code></li>
 </ol>
 
-<p>现在，你可以使用plist来配置这个行为：</p>
+<p>Now we can configure this action by the Plist:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>action</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Hello Toast with Pbind Action!</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
-<p>并可配置 <code>next.done</code> 来链接下一个行为：</p>
+<p>And a <code>next.done</code> to link to next action:</p>
 <div name="plist-content"><table class="plist"><tbody><tr><th style="width: 40%">Key</th><th style="width: 25%">Type</th><th style="width: 35%">Value</th></tr></tbody><tbody><tr class="collapsible" data-level="1"><td><span class="button collapse-button"></span><span>action</span></td><td><span>Dictionary</span></td><td><span class="sub">(2 items)</span></td></tr><tr data-level="2"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="2" data-empty="1"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Hello Toast with Pbind Action!</span></td></tr><tr class="collapsible" data-level="2"><td><span class="button collapse-button"></span><span>next.done</span></td><td><span>Dictionary</span></td><td><span class="sub">(1 item)</span></td></tr><tr data-level="3"><td><span class="button collapse-button"></span><span>type</span></td><td><span>String</span></td><td><span>toast</span></td></tr><tr class="collapsible" data-level="3" data-empty="1"><td><span class="button collapse-button"></span><span>params</span></td><td><span>Dictionary</span></td><td><span class="sub">(0 items)</span></td></tr><tr data-level="4"><td><span class="button collapse-button"></span><span>message</span></td><td><span>String</span></td><td><span>Toast Done!</span></td></tr><tr><td></td><td></td><td></td></tr></tbody></table></div>
