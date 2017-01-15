@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of form action.
+ */
 @interface PBFormAction : PBAction
 
 @end

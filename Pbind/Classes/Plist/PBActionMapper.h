@@ -12,6 +12,9 @@
 #import "PBMapper.h"
 #import "PBDictionary.h"
 
+/**
+ This class is used to create a PBAction and map data to it.
+ */
 @interface PBActionMapper : PBMapper
 
 @property (nonatomic, strong) NSString *type;

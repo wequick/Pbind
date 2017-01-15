@@ -11,6 +11,13 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ An instance of PBRequest defines the base factors of fetching a data.
+ 
+ @discussion Cause the private ProtocolBuffer.framework use the same class name,
+ we had to rename it as _PBRequest, but owe to the ability of `@compatibility_alias` annotation,
+ we can also use PBRequest in our source code.
+ */
 @interface _PBRequest : NSObject
 
 @property (nonatomic, strong) NSString *action; // Interface action.

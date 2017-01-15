@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of notification action.
+ */
 @interface PBNotificationAction : PBAction
 
 @end

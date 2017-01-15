@@ -11,6 +11,9 @@
 
 #import <Pbind/Pbind.h>
 
+/**
+ This class define the standard of event action.
+ */
 @interface PBTriggerAction : PBAction
 
 @end

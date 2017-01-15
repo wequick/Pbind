@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of alert action.
+ */
 @interface PBAlertAction : PBAction
 
 @end

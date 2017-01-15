@@ -70,12 +70,18 @@
 @property (nonatomic, weak) PBActionStore *store;
 
 /**
- Check if has next action with the specified key
+ Check if has next action with the specified key.
 
  @param key the key for the next actions
  @return YES if got one
  */
 - (BOOL)hasNext:(NSString *)key;
+
+/**
+ Dispatch next action if there is.
+
+ @param key the key for the next action
+ */
 - (void)dispatchNext:(NSString *)key;
 
 @end

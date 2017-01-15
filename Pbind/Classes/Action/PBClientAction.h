@@ -11,6 +11,9 @@
 
 #import "PBAction.h"
 
+/**
+ This class define the standard of API action.
+ */
 @interface PBClientAction : PBAction
 
 @end

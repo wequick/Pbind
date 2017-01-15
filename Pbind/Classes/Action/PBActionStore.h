@@ -13,15 +13,53 @@
 #import "PBActionMapper.h"
 #import "PBAction.h"
 
+/**
+ This class is the root action dispatcher.
+ */
 @interface PBActionStore : NSObject
 
+#pragma mark - Singleton
+///=============================================================================
+/// @name Singleton
+///=============================================================================
+
+/**
+ The default store for dispatching actions configured by Plist
+
+ @return an action store singleton
+ */
 + (instancetype)defaultStore;
 
+#pragma mark - Recording
+///=============================================================================
+/// @name Recording
+///=============================================================================
+
+/** The state for the actions running in current action store */
 @property (nonatomic, strong) PBActionState *state;
 
+/**
+ Dispatch an action.
+
+ @param action the action to be dispatched
+ */
 - (void)dispatchAction:(PBAction *)action;
 
+/**
+ Dispatch an action from action mapper.
+ 
+ @discussion we will create an action from the mapper and dispatch it
+
+ @param mapper the mapper for the action to be created and dispatched
+ */
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper;
+
+/**
+ Dispatch an action from action mapper and initialize the context for current state.
+
+ @param mapper the mapper for the action to be created and dispatched
+ @param context the context to be stored in current state, all the actions will based on this
+ */
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context;
 
 @end
