@@ -12,10 +12,23 @@
 #import <UIKit/UIKit.h>
 #import "PBActionMapper.h"
 
+/**
+ An instance of PBRowActionMapper provides the ability of configurating the UITableViewRowAction.
+ */
 @interface PBRowActionMapper : PBActionMapper
 
+#pragma mark - Creating
+///=============================================================================
+/// @name Creating
+///=============================================================================
+
+/** The style of the row action */
 @property (nonatomic, assign) UITableViewRowActionStyle style;
+
+/** The title for the action button */
 @property (nonatomic, strong) NSString *title;
+
+/** The background color for the action button */
 @property (nonatomic, strong) UIColor *backgroundColor;
 
 @end

@@ -11,6 +11,21 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ This class is used to parse the constant value.
+ 
+ @discussion The string in following format will be converted:
+ 
+ - :some_enum -> enumerator value
+ - #hex_string -> UIColor
+ - ##hex_string -> CGColor
+ - {num, num} -> CGSize, CGPoint or NSRange
+ - {num, num, num, num} -> CGRect or UIEdgeInsets
+ - {F:family, style, size} -> NSFont
+ - @[...] -> NSArray
+ - @{...} -> NSDictionary
+ 
+ */
 @interface PBValueParser : NSObject
 
 + (id)valueWithString:(NSString *)aString;

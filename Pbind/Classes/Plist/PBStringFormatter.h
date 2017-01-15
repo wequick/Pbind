@@ -11,6 +11,16 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ This class used to register a custom tag for formating string.
+ 
+ @discussion Built-in tags are:
+ 
+ - t, for NSDate formation
+ - T, for NSDate formation with date template
+ 
+ @see PBString
+ */
 @interface PBStringFormatter : NSObject
 
 + (void)registerTag:(NSString *)tag withFormatterer:(NSString * (^)(NSString *format, id value))formatter;

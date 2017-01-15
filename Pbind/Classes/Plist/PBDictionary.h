@@ -25,9 +25,14 @@
 @property (nonatomic, strong, readonly) NSDictionary *dictionary;
 
 /**
- Notify Keyed-value change events to the owner, default is nil and just notify to self.
+ The owner to be notified keyed-value change events. Default is nil and notify to self.
  */
 @property (nonatomic, weak) id owner;
+
+#pragma mark - Implementing
+///=============================================================================
+/// @name Implementing
+///=============================================================================
 
 @property (readonly) NSUInteger count;
 

@@ -11,6 +11,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ This class provides the ability of defining custom variable evaluator for PBMutableExpression.
+ */
 @interface PBVariableEvaluator : NSObject
 
 + (void)registerTag:(NSString *)tag withEvaluator:(id (^)(NSString *tag, NSString *format, NSArray *args))formatter;

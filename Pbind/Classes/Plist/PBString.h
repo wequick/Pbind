@@ -11,6 +11,17 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ The PBString extends the ability of string formation.
+ 
+ @discussion extension format tags:
+ 
+ - %#.2f, NSNumber formation
+ - %J, JSON formation
+ - %<t>, NSDate formation
+ - %<T>, NSDate formation with date template
+ 
+ */
 @interface PBString : NSString
 
 + (NSString *)stringWithFormat:(NSString *)format array:(NSArray *)arguments;

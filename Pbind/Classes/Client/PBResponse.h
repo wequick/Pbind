@@ -18,11 +18,26 @@ typedef enum : NSUInteger {
     PBResponseStatusNoContent = 204, // DELETE done
 } PBResponseStatus;
 
+/**
+ An instance of PBResponse stores the result of the data fetching from client.
+ */
 @interface PBResponse : NSObject
 
-@property (nonatomic, strong) id        data;
-@property (nonatomic, strong) NSError  *error;
-@property (nonatomic, strong) NSString *tips;
+#pragma mark - Resulting
+///=============================================================================
+/// @name Resulting
+///=============================================================================
+
+/** The data fetched by client. Default is nil */
+@property (nonatomic, strong) id data;
+
+/** The error occured while fetching data. Default is nil */
+@property (nonatomic, strong) NSError *error;
+
+/** The code of the fetching status */
 @property (nonatomic, assign) PBResponseStatus status;
+
+/** The user info passed from PBRequest */
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 @end

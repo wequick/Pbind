@@ -42,13 +42,21 @@
  */
 @interface PBClientMapper : PBMapper
 
-#pragma mark - Creating
+#pragma mark - Client Creating
 ///=============================================================================
-/// @name Creating
+/// @name Client Creating
 ///=============================================================================
 
 /** The class name of the PBClient. */
 @property (nonatomic, strong) NSString *clazz;
+
+/** Load the request in parallel mode. Default is YES. */
+@property (nonatomic, assign) BOOL parallel;
+
+#pragma mark - Request Creating
+///=============================================================================
+/// @name Request Creating
+///=============================================================================
 
 /** The action of the PBRequest which will be loaded by the PBClient. */
 @property (nonatomic, strong) NSString *action;
@@ -56,59 +64,15 @@
 /** The parameters of the PBRequest which will be loaded by the PBClient. */
 @property (nonatomic, strong) NSDictionary *params;
 
-/** The mutable of the PBRequest which will be loaded by the PBClient. */
-@property (nonatomic, assign) BOOL mutable;
-
-/** Load the request in parallel mode. Default is YES. */
-@property (nonatomic, assign) BOOL parallel;
+/** The user info for the PBRequest to carry. */
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 #pragma mark - Resulting
 ///=============================================================================
 /// @name Resulting
 ///=============================================================================
 
-/**
- The presenting tips on request succeed.
- 
- @discussion This tips will be passed to PBClientDidLoadRequestNotification as `PBResponse.tips`.
- 
- Example:
- 
-     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clientDidLoadRequest:) name:PBClientDidLoadRequestNotification object:nil];
-     
-     + (void)clientDidLoadRequest:(NSNotification *)note {
-         PBResponse *response = note.userInfo[PBResponseKey];
-         NSString *tips = response.tips;
-         if (response.error != nil) {
-             if (tips == nil) {
-                 tips = [response.error localizedDescription];
-             }
-         }
-         
-         // Displays the tips with HUD.
-     }
- */
-@property (nonatomic, strong) NSString *successTips;
-
-/**
- The presenting tips on request failed.
- 
- @see successTips
- */
-@property (nonatomic, strong) NSString *failureTips;
-
-/**
- The href will be triggered after the PBClient succeed.
- 
- @discussion Triggered by the built-in action `[view pb_clickHref:successHref]`.
- */
-@property (nonatomic, strong) NSString *successHref;
-
-/**
- The client will be called on request succeed.
- 
- @discussion This will provide the nested loading ability.
- */
-@property (nonatomic, strong) PBClient *nextClient;
+/** Whether convert the response dat to be mutable after fetching. Default is NO. */
+@property (nonatomic, assign) BOOL mutable;
 
 @end

@@ -36,6 +36,16 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
     PBRowFloatingRight      // :fr
 };
 
+/**
+ The PBRowMapper is one of the base components of Pbind.
+ 
+ @dicussion It provides the ability of configurating row elements like:
+ 
+ - UITableViewCell
+ - UICollectionViewCell
+ 
+ for PBTableView, PBCollectionView and PBScrollView.
+ */
 @interface PBRowMapper : PBMapper
 {
     struct {
@@ -45,24 +55,98 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
     } _pbFlags;
 }
 
-@property (nonatomic, strong) NSString *nib;
-@property (nonatomic, strong) NSString *clazz;
-@property (nonatomic, strong) NSString *id;
-@property (nonatomic, assign) CGFloat estimatedHeight;
-@property (nonatomic, assign) CGFloat height;
-@property (nonatomic, assign) CGSize size;
-@property (nonatomic, assign) BOOL hidden;
-@property (nonatomic, assign) UIEdgeInsets margin;
-@property (nonatomic, assign) UIEdgeInsets padding;
+#pragma mark - Creating
+///=============================================================================
+/// @name Creating
+///=============================================================================
 
+/** The class name of the view in the row. Default is UITableViewCell */
+@property (nonatomic, strong) NSString *clazz;
+
+/** The xib file name for the view in the row. Default to `clazz` */
+@property (nonatomic, strong) NSString *nib;
+
+/**
+ The style for the cell in the row.
+ 
+ @discussion If set, the default `clazz` turns to be PBTalbViewCell.
+ */
 @property (nonatomic, assign) UITableViewCellStyle style;
 
+/**
+ The identifier for the view in the row.
+ 
+ @discussion This property is only for PBTableView and PBCollectionView
+ */
+@property (nonatomic, strong) NSString *id;
+
+/**
+ The layout file to create subviews and add to the view in the row.
+ 
+ @discussion The layout file with Plist will be parsed by PBLayoutMapper.
+ */
+@property (nonatomic, strong) NSString *layout;
+
+#pragma mark - Styling
+///=============================================================================
+/// @name Styling
+///=============================================================================
+
+/**
+ The height for the row. Default is -1 (auto-height).
+ */
+@property (nonatomic, assign) CGFloat height;
+
+/**
+ The estimated height for the row. Default is -1 (do not estimated).
+ 
+ @discussion This property is only for PBTableView and PBCollectionView.
+ If the `height` was explicitly set as `:auto`(-1) then default to 44.
+ */
+@property (nonatomic, assign) CGFloat estimatedHeight;
+
+/**
+ The size for the item(UICollectionViewCell) in the row.
+ 
+ @discussion This property if only for PBCollectionView.
+ */
+@property (nonatomic, assign) CGSize size;
+
+/**
+ Whether hides the row. Default is NO.
+ 
+ @discussion For PBTableView and PBCollection, this will cause the delegate method
+ `heightForCell` returns 0. For PBScrollView we just set adjust the frame of the view in the row.
+ */
+@property (nonatomic, assign) BOOL hidden;
+
+/**
+ The outer margin for the row.
+ 
+ @discussion This property is only for PBScrollView.
+ The function of margin is same as the CSS margin.
+ */
+@property (nonatomic, assign) UIEdgeInsets margin;
+
+/**
+ The inner margin for the row.
+ 
+ @discussion This property is only for PBScrollView.
+ The function of padding is same as the CSS padding.
+ */
+@property (nonatomic, assign) UIEdgeInsets padding;
+
+/**
+ The floating style for the row.
+ 
+ @discussion This property is only for PBScrollView.
+ */
 @property (nonatomic, assign) PBRowFloating floating;
 
-@property (nonatomic, strong) NSString *layout;
-@property (nonatomic, strong) PBLayoutMapper *layoutMapper;
-
-@property (nonatomic, assign) Class viewClass;
+#pragma mark - Behavior
+///=============================================================================
+/// @name Behavior
+///=============================================================================
 
 @property (nonatomic, assign) id<PBRowMapperDelegate> delegate;
 
@@ -80,9 +164,27 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, strong) NSDictionary *actions;
 
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+/** The mapper created from `layout` */
+@property (nonatomic, strong) PBLayoutMapper *layoutMapper;
+
+/** The class initialized from `clazz` */
+@property (nonatomic, assign) Class viewClass;
+
+/** The mapper created from `actions`.willSelect */
 @property (nonatomic, strong) PBActionMapper *willSelectActionMapper;
+
+/** The mapper created from `actions`.select */
 @property (nonatomic, strong) PBActionMapper *selectActionMapper;
+
+/** The mapper created from `actions`.willDeselect */
 @property (nonatomic, strong) PBActionMapper *willDeselectActionMapper;
+
+/** The mapper created from `actions`.deselect */
 @property (nonatomic, strong) PBActionMapper *deselectActionMapper;
 
 /**
