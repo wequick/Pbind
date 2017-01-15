@@ -1,11 +1,14 @@
 //
 //  PBSection.h
-//  MainWebsite
+//  Pbind <https://github.com/wequick/Pbind>
 //
 //  Created by galen on 13-7-5.
-//  Copyright (c) 2013年 wequick. All rights reserved.
+//  Copyright (c) 2015-present, Wequick.net. All rights reserved.
 //
-//  UITableView电话簿风格的数据
+//  This source code is licensed under the MIT-style license found in the
+//  LICENSE file in the root directory of this source tree.
+//
+
 //  <NSArray> sectionIndexTitles
 //      - title1
 //      - ...
