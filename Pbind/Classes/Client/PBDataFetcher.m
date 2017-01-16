@@ -49,7 +49,9 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
             [mappers addObject:mapper];
             
             PBClient *client = [PBClient clientWithName:mapper.clazz];
-            client.delegate = self;
+            if ([_owner conformsToProtocol:@protocol(PBClientDelegate)]) {
+                client.delegate = (id) _owner;
+            }
             [clients addObject:client];
         }
         
@@ -87,14 +89,14 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         request.requiresMutableResponse = mapper.mutable;
         
         if ([_owner respondsToSelector:@selector(view:shouldLoadRequest:)]) {
-            BOOL flag = [_owner view:self shouldLoadRequest:request];
+            BOOL flag = [_owner view:_owner shouldLoadRequest:request];
             if (!flag) {
                 continue;
             }
         }
         
         if ([_owner.loadingDelegate respondsToSelector:@selector(view:shouldLoadRequest:)]) {
-            BOOL flag = [_owner.loadingDelegate view:self shouldLoadRequest:request];
+            BOOL flag = [_owner.loadingDelegate view:_owner shouldLoadRequest:request];
             if (!flag) {
                 continue;
             }
@@ -103,10 +105,10 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         [client _loadRequest:request notifys:NO complection:^(PBResponse *response) {
             BOOL handledError = NO;
             if ([_owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [_owner view:self didFinishLoading:response handledError:&handledError];
+                [_owner view:_owner didFinishLoading:response handledError:&handledError];
             }
             if ([_owner.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [_owner.loadingDelegate view:self didFinishLoading:response handledError:&handledError];
+                [_owner.loadingDelegate view:_owner didFinishLoading:response handledError:&handledError];
             }
             NSDictionary *userInfo = nil;
             if (response != nil) {

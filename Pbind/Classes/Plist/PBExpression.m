@@ -533,7 +533,7 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag {
     if (_flags.mapToData) {
-        if (type & PBMapToData == 0) {
+        if ((type & PBMapToData) == 0) {
             return NO;
         }
         if (dataTag == PBDataTagUnset) {

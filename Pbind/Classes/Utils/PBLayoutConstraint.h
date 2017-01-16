@@ -14,8 +14,8 @@
 
 @interface PBLayoutConstraint : NSLayoutConstraint
 
-+ (void)addConstraintsWithPbindFormats:(NSArray<NSString *> *)formats metrics:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views forParentView:(UIView *)parentView;
++ (void)addConstraintsWithPbindFormats:(NSArray<NSString *> * _Nonnull)formats metrics:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> * _Nonnull)views forParentView:(UIView * _Nonnull)parentView;
 
-+ (void)removeAllConstraintsOfSubview:(UIView *)subview fromParentView:(UIView *)parentView;
++ (void)removeAllConstraintsOfSubview:(UIView * _Nonnull)subview fromParentView:(UIView * _Nonnull)parentView;
 
 @end

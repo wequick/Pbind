@@ -18,8 +18,8 @@
 @protocol PBViewLoadingDelegate <NSObject>
 
 @optional
-- (BOOL)view:(UIView *)view shouldLoadRequest:(PBRequest *)request;
-- (void)view:(UIView *)view didFinishLoading:(PBResponse *)response handledError:(BOOL *)handledError;
+- (BOOL)view:(UIView *)theView shouldLoadRequest:(PBRequest *)request;
+- (void)view:(UIView *)theView didFinishLoading:(PBResponse *)response handledError:(BOOL *)handledError;
 
 @end
 
