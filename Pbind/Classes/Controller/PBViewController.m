@@ -15,6 +15,11 @@
 #import "PBDataFetching.h"
 
 @interface PBViewController ()
+{
+    struct {
+        unsigned int initializedViewData: 1;
+    } _pbFlags;
+}
 
 @end
 
@@ -39,16 +44,20 @@
     }
     
     // Map properties
-    if (self.plist != nil) {
-        [self.view setPlist:self.plist];
-        self.plist = nil;
-        
-        // Init fetcher
-        if (fetchingView != nil && fetchingView.clients != nil) {
-            PBDataFetcher *fetcher = [[PBDataFetcher alloc] init];
-            fetcher.owner = fetchingView;
-            fetchingView.fetcher = fetcher;
-            needsFetch = YES;
+    if (!_pbFlags.initializedViewData) {
+        _pbFlags.initializedViewData = 1;
+        if (self.plist != nil) {
+            [self.view setPlist:self.plist];
+            self.plist = nil;
+        }
+        if (self.view.plist != nil) {
+            // Init fetcher
+            if (fetchingView != nil && fetchingView.clients != nil) {
+                PBDataFetcher *fetcher = [[PBDataFetcher alloc] init];
+                fetcher.owner = fetchingView;
+                fetchingView.fetcher = fetcher;
+                needsFetch = YES;
+            }
         }
     }
     
