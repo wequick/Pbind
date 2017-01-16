@@ -13,6 +13,9 @@
 #import "PBInput.h"
 #import "PBViewResizingDelegate.h"
 
+/**
+ An instance of PBTextView extends the ability of configurating the placeholder.
+ */
 @interface PBTextView : UITextView <PBInput, PBTextInputValidator, UITextViewDelegate>
 {
     UILabel *_placeholderLabel;
@@ -22,7 +25,14 @@
     NSLayoutConstraint *_heightConstraint;
 }
 
+/**
+ The placeloder text.
+ */
 @property (nonatomic, strong) NSString *placeholder;
+
+/**
+ The text color for the placeholder label.
+ */
 @property (nonatomic, strong) UIColor *placeholderColor;
 
 @end

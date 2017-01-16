@@ -21,6 +21,9 @@
 
 //______________________________________________________________________________
 
+/**
+ The PBTableView is one of the base components of Pbind. An instance of PBTableView provides the ability of configurating a group of reusable views and displays as a scrollable list.
+ */
 @interface PBTableView : UITableView <PBRowPaging, PBDataFetching>
 {
     NSMutableArray *_hasRegisteredCellClasses;
