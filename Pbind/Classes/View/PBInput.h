@@ -70,6 +70,9 @@
 
 //___________________________________________________________________________________________________
 
+/**
+ The PBInput is one of the base components of Pbind. An instance of PBInput provides the ability of inputing various type data.
+ */
 @interface PBInput : UITextField <PBInput, PBTextInputValidator, UITextFieldDelegate, PBInputDelegate>
 {
     UIColor *_originalTextColor;
@@ -95,28 +98,131 @@
 
 + (void)registerType:(NSString *)type withInitialization:(void (^)(PBInput *input))initialization;
 
-@property (nonatomic, strong) NSString *type; // accepts TEXTs(text, password, number, decimal, phone, url, email), PICKERs(date, time, datetime, month, select). If the type is select, then should follows with `options` or `selector`.
-@property (nonatomic, strong) NSString *min; // minimum value. translate to `NSInteger' for number input, `CGfloat' for decimal input, `NSDate' for date inputs(e.g. '2015-2-1', '2015-2')
-@property (nonatomic, strong) NSString *max; // maximum value. translate to `NSInteger' for number input, `CGfloat' for decimal input, `NSDate' for date inputs(e.g. '2015-2-1', '2015-2')
-@property (nonatomic, assign) NSInteger step; // step value. map to `minuteInterval' for time input
+#pragma mark - Datasource
+///=============================================================================
+/// @name Datasource
+///=============================================================================
 
-@property (nonatomic, strong) NSString *unit; // default is nil. if set, place a `UILabel' with unit as `rightView' for editable inputs
+/**
+ The type for the input.
+ 
+ @discussion Accept types:
+ 
+ - text, input normal text with a text keyboard
+ - password, input secret text with a text keyboard
+ - number, input an integer with a numeric keyboard
+ - decimal, input a float with a numeric keyboard
+ - phone, input a phone number with a numeric keyboard
+ - url, input an url with a text keyboard
+ - email, input an email with a text keyboard
+ - date, input a date with a date picker
+ - time, input a time with a date picker
+ - datetime, input a datetime with a date picker
+ - month, input a month with a date picker
+ - select, input a custom option with an option picker, requires setting of `options` or `selector`
+ */
+@property (nonatomic, strong) NSString *type;
+
+/**
+ The options for the `select` input
+ 
+ @discussion Each option is a dictionay and should contains key of 'text' and 'value'.
+ The 'text' is used for displaying and the 'value' for model. As example:
+ 
+        [{text:'a', value:0}, {text:'b', value:1}]
+ 
+ */
+@property (nonatomic, strong) NSArray<NSDictionary<NSString *, id> *> *options;
+
+/**
+ The input view class name for the `select` input
+ 
+ @discussion The class should be a subclass of `PBInputView`
+ */
+@property (nonatomic, strong) NSString *selector;
+
+#pragma mark - Validating
+///=============================================================================
+/// @name Validating
+///=============================================================================
+
+/**
+ The minimum value for the input
+ 
+ @discussion Accepts value by the type:
+ 
+ - number, integer
+ - decimal, float
+ - date, string with format as '2015-2-1'
+ - month, string with format as '2015-2'
+ */
+@property (nonatomic, strong) NSString *min;
+
+/**
+ The maximum value for the input
+ 
+ @discussion Accepts value by the type:
+ 
+ - number, integer
+ - decimal, float
+ - date, string with format as '2015-2-1'
+ - month, string with format as '2015-2'
+ */
+@property (nonatomic, strong) NSString *max;
+
+#pragma mark - Styling
+///=============================================================================
+/// @name Styling
+///=============================================================================
+
+/**
+ The unit text for the input.
+ 
+ @discussion Default is nil. If set will place an `UILabel' as the `rightView' of the input to display the unit text.
+ */
+@property (nonatomic, strong) NSString *unit;
+
+/** The text color for the unit label */
 @property (nonatomic, strong) UIColor *unitColor;
-@property (nonatomic, strong) NSArray<NSDictionary<NSString *, id> *> *options; // for select input, as [{text:'a', value:0}, {text:'b', value:1}]
 
-@property (nonatomic, assign) NSString *format; // default is nil. string format for text inputs, supports '#' expression (e.g. "66667777" & "## ## ## ##" = "66 66 77 77")
-
+/** The text color for the placeholder label */
 @property (nonatomic, strong) UIColor *placeholderColor;
-@property (nonatomic, strong) UIColor *selectedTextColor; // default is view's tintColor
 
-@property (nonatomic, strong) NSString *selector; // for select input. selector is the class name for the view which is a subclass of `PBInputView'
+/** The text color for the input in the selected state. Default is the tint color of the input */
+@property (nonatomic, strong) UIColor *selectedTextColor;
 
-@property (nonatomic, assign) BOOL hidesCursor; //
+/** Whether hides the cursor while editing. Default is NO */
+@property (nonatomic, assign) BOOL hidesCursor;
 
-@property (nonatomic, strong) NSArray<UIBarButtonItem *> *accessoryItems;
+#pragma mark - Formating
+///=============================================================================
+/// @name Formating
+///=============================================================================
 
-/* Handlers */
+/**
+ The format for the input text. Default is nil means no format.
+ 
+ @discussion Support format by type:
+ 
+ - number, a string format which contains "%lld" such as "%lld pieces"
+ - decimal, a string format which contains "%lf" such as "%.2lf"
+ - any type, a sharp format to separate the word (e.g. "66667777" & "## ## ## ##" => "66 66 77 77")
+ */
+@property (nonatomic, assign) NSString *format;
+
+#pragma mark - Incubating
+///=============================================================================
+/// @name Incubating
+///=============================================================================
+
+/** Step value. map to `minuteInterval' for time input */
+@property (nonatomic, assign) NSInteger step;
+
+/** The handler for reseting value for the input */
 @property (nonatomic, strong) void (^onReset)(PBInput *input);
+
+/** The additional items to display in the form accessory tool bar */
+@property (nonatomic, strong) NSArray<UIBarButtonItem *> *accessoryItems;
 
 - (void)config; // call on `initWithFrame' or `awakeFromNib'
 - (void)addAccessoryItem:(UIBarButtonItem *)item withClickHandler:(void (^)(UIBarButtonItem *sender, PBInput *input))handler;

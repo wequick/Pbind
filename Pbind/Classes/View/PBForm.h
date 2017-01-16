@@ -57,6 +57,10 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 
 //______________________________________________________________________________
 
+/**
+ The PBForm is one of the base components of Pbind. An instance of PBForm manages
+ a group of inputs just like the behavior of web form.
+ */
 @interface PBForm : PBScrollView
 {
     struct {
@@ -70,23 +74,90 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
     id _initialData;
 }
 
-@property (nonatomic, assign) id<PBFormDelegate> formDelegate;
+#pragma mark - Styling
+///=============================================================================
+/// @name Styling
+///=============================================================================
 
-@property (nonatomic, strong, readonly) NSDictionary *params;
-@property (nonatomic, strong, readonly) NSDictionary *submitParams; // params to submit
-
-@property (readonly, getter=isInvalid) BOOL invalid;
-
-@property (nonatomic, assign) PBFormValidating validating;
+/**
+ The behavior of the indicator (a rectangle covers on the input).
+ 
+ @discussion Default to add following behavior:
+ 
+ - PBFormIndicatingMaskInputFocus, displays the indicator with normal color while the input is focus.
+ - PBFormIndicatingMaskInputInvalid, displays the indicator with red color while the input is invalid.
+ 
+ @see PBFormIndicating
+ */
 @property (nonatomic, assign) PBFormIndicating indicating;
 
-@property (nonatomic, assign) PBFormMode mode;
-@property (readonly, getter=isChanged) BOOL changed; // any input value changed
+#pragma mark - Resulting
+///=============================================================================
+/// @name Resulting
+///=============================================================================
 
+/** 
+ The invalid state for the form 
+ 
+ @discussion Turns to be invalid if any of the input is invalid.
+ */
+@property (readonly, getter=isInvalid) BOOL invalid;
+
+/**
+ The changed state for the form
+ 
+ @discussion Turns to be changed if any of the input has changed it's value.
+ */
+@property (readonly, getter=isChanged) BOOL changed;
+
+#pragma mark - Incubating
+///=============================================================================
+/// @name Incubating
+///=============================================================================
+
+/** 
+ The mode for the form 
+ 
+ @see PBFormMode
+ */
+@property (nonatomic, assign) PBFormMode mode;
+
+/**
+ The time to validate the form.
+ 
+ @see PBFormValidating
+ */
+@property (nonatomic, assign) PBFormValidating validating;
+
+/** The delegate for the form */
+@property (nonatomic, assign) id<PBFormDelegate> formDelegate;
+
+/**
+ Find the input with the name
+
+ @param name the name of an input
+ @return the input for the name
+ */
 - (id<PBInput>)inputForName:(NSString *)name;
+
+/**
+ Check if the named input is invalid
+
+ @param name the name of an input
+ @return YES if the input is invalid
+ */
 - (BOOL)isInvalidForName:(NSString *)name;
 
-- (NSDictionary *)verifiedParamsForSubmit;
+/**
+ Verify all the named inputs and add to the name value pairs if the input is valid
+
+ @return the name value pairs from the valid inputs
+ */
+- (NSDictionary *)nameValuePairsByVerifying;
+
+/**
+ Reset the value for all the inputs
+ */
 - (void)reset;
 
 @end

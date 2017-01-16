@@ -15,6 +15,15 @@
 @protocol PBFormAccessoryDelegate;
 @protocol PBFormAccessoryDataSource;
 
+/**
+ An instance of PBFormAccessory displays the accessory view for all the inputs in the form.
+ 
+ @discussion The built-in components in the accessory tool bar are:
+ 
+ - [<] a previous button for navigating to the previous input
+ - [>] a next button for navigating to the next input
+ - [done] a done button for ending the editing of the current input
+ */
 @interface PBFormAccessory : UIView
 
 @property (nonatomic, assign) id<PBFormAccessoryDelegate> delegate;
