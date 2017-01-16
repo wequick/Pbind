@@ -14,6 +14,14 @@
 			<string>PBTableViewCell</string>
 			<key>height</key>
 			<string>184</string>
+			<key>actions</key>
+			<dict>
+				<key>select</key>
+				<dict>
+					<key>type</key>
+					<string>dismiss</string>
+				</dict>
+			</dict>
 			<key>properties</key>
 			<dict>
 				<key>layoutMargins</key>
@@ -32,11 +40,6 @@
 				<string>.$customInfo.avatar</string>
 				<key>textLabel.text</key>
 				<string>.$nameCard</string>
-				<key>action</key>
-				<dict>
-					<key>type</key>
-					<string>dismiss</string>
-				</dict>
 			</dict>
 		</dict>
 	</dict>
