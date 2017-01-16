@@ -73,15 +73,9 @@
 				<key>rows</key>
 				<array>
 					<dict>
-						<key>properties</key>
+						<key>actions</key>
 						<dict>
-							<key>textLabel.attributedText</key>
-							<string>%AT(全部群成员 ( |%@| )),$memberNum;|#FF00FF-{F:60}</string>
-							<key>backgroundColor</key>
-							<string>#fff</string>
-							<key>accessoryType</key>
-							<string>:&gt;</string>
-							<key>action</key>
+							<key>select</key>
 							<dict>
 								<key>type</key>
 								<string>push</string>
@@ -97,6 +91,15 @@
 									<string>$1.fullList</string>
 								</dict>
 							</dict>
+						</dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.attributedText</key>
+							<string>%AT(全部群成员 ( |%@| )),$memberNum;|#FF00FF-{F:60}</string>
+							<key>backgroundColor</key>
+							<string>#fff</string>
+							<key>accessoryType</key>
+							<string>:&gt;</string>
 						</dict>
 					</dict>
 				</array>
@@ -126,15 +129,9 @@
 					<dict>
 						<key>style</key>
 						<string>:value1</string>
-						<key>properties</key>
+						<key>actions</key>
 						<dict>
-							<key>backgroundColor</key>
-							<string>#fff</string>
-							<key>textLabel.text</key>
-							<string>群组公告</string>
-							<key>detailTextLabel.text</key>
-							<string>$notification</string>
-							<key>action</key>
+							<key>select</key>
 							<dict>
 								<key>type</key>
 								<string>alert</string>
@@ -151,6 +148,15 @@
 								</dict>
 							</dict>
 						</dict>
+						<key>properties</key>
+						<dict>
+							<key>backgroundColor</key>
+							<string>#fff</string>
+							<key>textLabel.text</key>
+							<string>群组公告</string>
+							<key>detailTextLabel.text</key>
+							<string>$notification</string>
+						</dict>
 					</dict>
 				</array>
 			</dict>
@@ -162,15 +168,9 @@
 					<dict>
 						<key>style</key>
 						<string>:value1</string>
-						<key>properties</key>
+						<key>actions</key>
 						<dict>
-							<key>backgroundColor</key>
-							<string>#fff</string>
-							<key>textLabel.text</key>
-							<string>我的群昵称</string>
-							<key>detailTextLabel.text</key>
-							<string>$1.nickname</string>
-							<key>action</key>
+							<key>select</key>
 							<dict>
 								<key>type</key>
 								<string>trigger</string>
@@ -189,6 +189,15 @@
 								</dict>
 							</dict>
 						</dict>
+						<key>properties</key>
+						<dict>
+							<key>backgroundColor</key>
+							<string>#fff</string>
+							<key>textLabel.text</key>
+							<string>我的群昵称</string>
+							<key>detailTextLabel.text</key>
+							<string>$1.nickname</string>
+						</dict>
 					</dict>
 				</array>
 			</dict>
@@ -198,13 +207,9 @@
 				<key>rows</key>
 				<array>
 					<dict>
-						<key>properties</key>
+						<key>actions</key>
 						<dict>
-							<key>backgroundColor</key>
-							<string>#fff</string>
-							<key>textLabel.text</key>
-							<string>清空聊天记录</string>
-							<key>action</key>
+							<key>select</key>
 							<dict>
 								<key>type</key>
 								<string>trigger</string>
@@ -214,6 +219,13 @@
 								<string>clearChat:</string>
 							</dict>
 						</dict>
+						<key>properties</key>
+						<dict>
+							<key>backgroundColor</key>
+							<string>#fff</string>
+							<key>textLabel.text</key>
+							<string>清空聊天记录</string>
+						</dict>
 					</dict>
 				</array>
 			</dict>
@@ -222,7 +234,7 @@
 		<array>
 			<dict>
 				<key>clazz</key>
-				<string>UIButton</string>
+				<string>PBButton</string>
 				<key>height</key>
 				<string>132</string>
 				<key>margin</key>

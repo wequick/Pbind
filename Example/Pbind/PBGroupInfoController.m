@@ -27,12 +27,7 @@
     _groupId = @"111";
     _groupParams = @{@"group": @"@TGS"};
     [self.tableView setPlist:@"PBExample"];
-//    self.navigationController.delegate = self;
 }
-
-//- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-//    NSLog(@"xxxx %@", viewController);
-//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -58,7 +53,7 @@
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
-    [self.tableView pb_repullData];
+    [self.tableView.fetcher refetchData];
 }
 
 @end

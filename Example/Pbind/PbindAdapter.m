@@ -69,11 +69,9 @@
 + (void)clientDidLoadRequest:(NSNotification *)note {
     UIWindow *window = [[UIApplication sharedApplication].delegate window];
     PBResponse *response = note.userInfo[PBResponseKey];
-    NSString *tips = response.tips;
+    NSString *tips = nil;
     if (response.error != nil) {
-        if (tips == nil) {
-            tips = [response.error localizedDescription];
-        }
+        tips = [response.error localizedDescription];
     }
     
     if (tips != nil) {
