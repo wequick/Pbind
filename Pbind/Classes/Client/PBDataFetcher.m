@@ -60,7 +60,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     }
     
     // Notify loading start
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidStartLoadNotification object:_owner];
     
     // Unbind
     [_owner pb_unbindAll];
@@ -137,7 +137,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
                 _owner.fetching = NO;
                 
                 // Notify loading finish
-                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidFinishLoadNotification object:self userInfo:userInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidFinishLoadNotification object:_owner userInfo:userInfo];
             }
         }];
     }
