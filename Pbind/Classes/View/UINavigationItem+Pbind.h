@@ -12,7 +12,7 @@
 #import <UIKit/UIKit.h>
 
 /**
- This category provides the ability of configurating the left and right items for the navigation item.
+ This category provides the ability of configuring the left and right items for the navigation item.
  */
 @interface UINavigationItem (Pbind)
 

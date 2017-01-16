@@ -13,7 +13,7 @@
 #import "PBInput.h"
 
 /**
- An instance of PBButton provides the ability of configurating with Plist.
+ An instance of PBButton provides the ability of configuring with Plist.
  
  @discussion Support configure title, image, backgroundImage and backgroundColor for state.
  */

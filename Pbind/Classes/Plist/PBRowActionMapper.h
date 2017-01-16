@@ -13,7 +13,7 @@
 #import "PBActionMapper.h"
 
 /**
- An instance of PBRowActionMapper provides the ability of configurating the UITableViewRowAction.
+ An instance of PBRowActionMapper provides the ability of configuring the UITableViewRowAction.
  */
 @interface PBRowActionMapper : PBActionMapper
 
