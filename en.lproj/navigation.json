@@ -54,7 +54,9 @@
         "pblayoutmapper",
         "nav",
         "pbclient",
-        "pbaction"
+        "pbaction",
+        "pbbutton",
+        "pbinput"
       ]
     }
   }, 
@@ -115,6 +117,12 @@
     },
     "tour-delete-hero": {
       "name": "Delete hero"
+    },
+    "pbinput": {
+      "name": "PBInput"
+    },
+    "pbbutton": {
+      "name": "PBButton"
     }
   },
   "copyright_text": "© 2016 Wequick.net. All rights reserved."

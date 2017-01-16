@@ -54,7 +54,9 @@
         "pblayoutmapper",
         "nav",
         "pbclient",
-        "pbaction"
+        "pbaction",
+        "pbbutton",
+        "pbinput"
       ]
     }
   }, 
@@ -119,6 +121,12 @@
     },
     "tour-delete-hero": {
       "name": "删除英雄"
+    },
+    "pbbutton": {
+      "name": "PBButton控件"
+    },
+    "pbinput": {
+      "name": "PBInput控件"
     }
   },
   "copyright_text": "© 2016 Wequick.net. 保留一切权利。"

@@ -19,6 +19,23 @@
         }
       }
     },
+    "辅": {
+      "_": {
+        "助": {
+          "_": {
+            "输": {
+              "_": {
+                "入": {
+                  "$": {
+                    "pbinput": 87
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "合": {
       "_": {
         "适": {
@@ -79,6 +96,7 @@
       "_": {
         "个": {
           "$": {
+            "pbinput": 1901,
             "pblayoutmapper": 1884,
             "quickstart": 1409,
             "tour-cell-layout": 2600,
@@ -116,10 +134,34 @@
     },
     "键": {
       "_": {
+        "盘": {
+          "$": {
+            "pbinput": 140
+          }
+        },
         "值": {
           "$": {
+            "pbinput": 599,
             "tour-add-hero": 2254,
             "tour-detail-and-route": 3097
+          }
+        }
+      }
+    },
+    "0": {
+      "_": {
+        ".": {
+          "_": {
+            "8": {
+              "$": {
+                "pbbutton": 1041
+              }
+            },
+            "2": {
+              "$": {
+                "pbbutton": 1096
+              }
+            }
           }
         }
       }
@@ -186,8 +228,14 @@
     },
     "必": {
       "_": {
+        "须": {
+          "$": {
+            "pbinput": 1264
+          }
+        },
         "填": {
           "$": {
+            "pbinput": 1048,
             "tour-form-validating": 7
           }
         }
@@ -267,6 +315,7 @@
       "_": {
         "点": {
           "$": {
+            "pbinput": 799,
             "pblayoutmapper": 148
           },
           "_": {
@@ -283,14 +332,36 @@
       "_": {
         "a": {
           "_": {
+            "s": {
+              "_": {
+                "s": {
+                  "_": {
+                    "w": {
+                      "_": {
+                        "o": {
+                          "_": {
+                            "r": {
+                              "_": {
+                                "d": {
+                                  "$": {
+                                    "pbinput": 153
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "r": {
               "_": {
                 "a": {
                   "_": {
                     "m": {
-                      "$": {
-                        "cheatsheet": 6157
-                      },
                       "_": {
                         "s": {
                           "$": {
@@ -334,6 +405,23 @@
                     "h": {
                       "$": {
                         "pbaction": 1737
+                      }
+                    }
+                  }
+                },
+                "t": {
+                  "_": {
+                    "e": {
+                      "_": {
+                        "r": {
+                          "_": {
+                            "n": {
+                              "$": {
+                                "pbinput": 1784
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -629,6 +717,7 @@
                               "_": {
                                 "n": {
                                   "$": {
+                                    "pbbutton": 7,
                                     "tour-add-hero": 3483
                                   }
                                 }
@@ -973,8 +1062,28 @@
                           "_": {
                             "t": {
                               "$": {
+                                "pbinput": 7,
                                 "tour-add-hero": 391,
                                 "tour-form-validating": 1938
+                              },
+                              "_": {
+                                "v": {
+                                  "_": {
+                                    "i": {
+                                      "_": {
+                                        "e": {
+                                          "_": {
+                                            "w": {
+                                              "$": {
+                                                "pbinput": 1269
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             }
                           }
@@ -987,6 +1096,7 @@
                         "home": 6,
                         "nav": 1926,
                         "pbaction": 3842,
+                        "pbinput": 1763,
                         "pblayoutmapper": 217,
                         "pbrowmapper": 13,
                         "quickstart": 22,
@@ -1117,6 +1227,55 @@
                                                 "quickstart": 1064,
                                                 "tour-cell-layout": 1523,
                                                 "tour-databinding": 811
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "o": {
+              "_": {
+                "p": {
+                  "_": {
+                    "t": {
+                      "_": {
+                        "i": {
+                          "_": {
+                            "o": {
+                              "_": {
+                                "n": {
+                                  "_": {
+                                    "p": {
+                                      "_": {
+                                        "i": {
+                                          "_": {
+                                            "c": {
+                                              "_": {
+                                                "k": {
+                                                  "_": {
+                                                    "e": {
+                                                      "_": {
+                                                        "r": {
+                                                          "$": {
+                                                            "pbinput": 529
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
                                               }
                                             }
                                           }
@@ -1339,7 +1498,7 @@
                                                                   "_": {
                                                                     "r": {
                                                                       "$": {
-                                                                        "cheatsheet": 6380
+                                                                        "cheatsheet": 6253
                                                                       }
                                                                     }
                                                                   }
@@ -1951,6 +2110,40 @@
             }
           }
         },
+        "i": {
+          "_": {
+            "e": {
+              "_": {
+                "c": {
+                  "_": {
+                    "e": {
+                      "$": {
+                        "pbinput": 1384
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "h": {
+          "_": {
+            "o": {
+              "_": {
+                "n": {
+                  "_": {
+                    "e": {
+                      "$": {
+                        "pbinput": 250
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "l": {
           "_": {
             "a": {
@@ -2009,6 +2202,29 @@
                                               "$": {
                                                 "tour-add-hero": 1883,
                                                 "tour-form-validating": 495
+                                              },
+                                              "_": {
+                                                "c": {
+                                                  "_": {
+                                                    "o": {
+                                                      "_": {
+                                                        "l": {
+                                                          "_": {
+                                                            "o": {
+                                                              "_": {
+                                                                "r": {
+                                                                  "$": {
+                                                                    "pbinput": 1525
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
                                               }
                                             }
                                           }
@@ -2337,6 +2553,19 @@
         }
       }
     },
+    "年": {
+      "_": {
+        "月": {
+          "_": {
+            "日": {
+              "$": {
+                "pbinput": 380
+              }
+            }
+          }
+        }
+      }
+    },
     "其": {
       "_": {
         "下": {
@@ -2344,10 +2573,16 @@
             "quickstart": 1264
           }
         },
+        "他": {
+          "$": {
+            "pbbutton": 83
+          }
+        },
         "中": {
           "$": {
             "cheatsheet": 3710,
             "nav": 765,
+            "pbinput": 1152,
             "pblayoutmapper": 2050,
             "pbrowmapper": 1475,
             "quickstart": 1230,
@@ -2409,6 +2644,7 @@
       "_": {
         "证": {
           "$": {
+            "pbinput": 1798,
             "tour-add-hero": 4297
           }
         }
@@ -2467,6 +2703,7 @@
       "_": {
         "误": {
           "$": {
+            "pbinput": 1963,
             "tour-form-validating": 235
           },
           "_": {
@@ -2529,66 +2766,11 @@
         }
       }
     },
-    "数": {
+    "走": {
       "_": {
-        "值": {
+        "通": {
           "$": {
-            "cheatsheet": 901,
-            "pblayoutmapper": 2057
-          }
-        },
-        "组": {
-          "$": {
-            "cheatsheet": 5233,
-            "nav": 280,
-            "pbaction": 1470,
-            "pbclient": 1554,
-            "pblayoutmapper": 177,
-            "tour-databinding": 1372
-          }
-        },
-        "据": {
-          "$": {
-            "cheatsheet": 690,
-            "feature": 152,
-            "pbaction": 1673,
-            "pbclient": 58,
-            "quickstart": 3788,
-            "tour-add-hero": 2833,
-            "tour-cell-layout": 1277,
-            "tour-databinding": 9,
-            "tour-detail-and-route": 2069
-          },
-          "_": {
-            "流": {
-              "$": {
-                "tour-add-hero": 4857
-              }
-            },
-            "源": {
-              "$": {
-                "cheatsheet": 3432,
-                "pbaction": 2169
-              }
-            },
-            "结": {
-              "_": {
-                "构": {
-                  "$": {
-                    "cheatsheet": 690
-                  }
-                }
-              }
-            },
-            "类": {
-              "_": {
-                "型": {
-                  "$": {
-                    "cheatsheet": 5819
-                  }
-                }
-              }
-            }
+            "tour-add-hero": 5065
           }
         }
       }
@@ -2607,7 +2789,8 @@
         "否": {
           "$": {
             "nav": 2174,
-            "pbaction": 153
+            "pbaction": 153,
+            "pbinput": 1617
           }
         }
       }
@@ -2616,7 +2799,8 @@
       "_": {
         "败": {
           "$": {
-            "pbaction": 1977
+            "pbaction": 1977,
+            "pbinput": 1959
           }
         }
       }
@@ -2681,6 +2865,7 @@
           "$": {
             "feature": 171,
             "nav": 2244,
+            "pbbutton": 1177,
             "pblayoutmapper": 1468,
             "quickstart": 3271,
             "tour-add-hero": 2815,
@@ -2712,6 +2897,7 @@
           "$": {
             "nav": 2255,
             "pbaction": 13,
+            "pbbutton": 1186,
             "pbclient": 13,
             "tour-add-hero": 9,
             "tour-databinding": 1276,
@@ -2735,6 +2921,7 @@
           "$": {
             "cheatsheet": 3278,
             "nav": 16,
+            "pbinput": 91,
             "pblayoutmapper": 56,
             "pbrowmapper": 102,
             "tour-add-hero": 5047,
@@ -2900,6 +3087,19 @@
                                       }
                                     }
                                   }
+                                },
+                                "o": {
+                                  "_": {
+                                    "r": {
+                                      "_": {
+                                        "s": {
+                                          "$": {
+                                            "pbinput": 1856
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
                                 }
                               }
                             }
@@ -2915,6 +3115,7 @@
                       "$": {
                         "cheatsheet": 197,
                         "pbaction": 3678,
+                        "pbinput": 591,
                         "pblayoutmapper": 78,
                         "quickstart": 2059,
                         "tour-add-hero": 165,
@@ -3037,6 +3238,7 @@
         "发": {
           "$": {
             "pbaction": 657,
+            "pbbutton": 1171,
             "tour-delete-hero": 2470
           },
           "_": {
@@ -3212,6 +3414,7 @@
       "_": {
         "件": {
           "$": {
+            "pbinput": 112,
             "pbrowmapper": 21,
             "tour-add-hero": 1365,
             "tour-form-validating": 109
@@ -3264,6 +3467,7 @@
             "cheatsheet": 123,
             "pbaction": 42,
             "pbclient": 42,
+            "pbinput": 578,
             "pbrowmapper": 138,
             "quickstart": 900,
             "tour-detail-and-route": 2572
@@ -3286,6 +3490,7 @@
           "_": {
             "个": {
               "$": {
+                "pbinput": 2038,
                 "tour-delete-hero": 506
               }
             }
@@ -3359,7 +3564,17 @@
       "_": {
         "于": {
           "$": {
+            "pbbutton": 52,
             "pblayoutmapper": 1893
+          }
+        }
+      }
+    },
+    "仅": {
+      "_": {
+        "当": {
+          "$": {
+            "pbinput": 995
           }
         }
       }
@@ -3384,26 +3599,12 @@
         }
       }
     },
-    "完": {
+    "掌": {
       "_": {
-        "成": {
+        "握": {
           "$": {
-            "cheatsheet": 707,
-            "feature": 338,
-            "pbaction": 2266,
-            "pbrowmapper": 100,
-            "quickstart": 3193,
-            "tour-add-hero": 4281,
-            "tour-cell-layout": 5728,
-            "tour-detail-and-route": 4192,
-            "tour-form-validating": 3614
-          }
-        },
-        "整": {
-          "$": {
-            "tour-cell-layout": 2518,
-            "tour-databinding": 2228,
-            "tour-detail-and-route": 3222
+            "quickstart": 3712,
+            "tour-databinding": 2914
           }
         }
       }
@@ -3428,9 +3629,26 @@
             "tour-form-validating": 1967
           }
         },
+        "小": {
+          "_": {
+            "值": {
+              "$": {
+                "pbinput": 706
+              }
+            }
+          }
+        },
         "大": {
           "$": {
+            "pbinput": 710,
             "tour-form-validating": 1915
+          },
+          "_": {
+            "值": {
+              "$": {
+                "pbinput": 710
+              }
+            }
           }
         },
         "后": {
@@ -3449,6 +3667,8 @@
             "cheatsheet": 72,
             "nav": 60,
             "pbaction": 863,
+            "pbbutton": 50,
+            "pbinput": 51,
             "pblayoutmapper": 34,
             "pbrowmapper": 116,
             "quickstart": 3264,
@@ -3466,7 +3686,9 @@
         "下": {
           "$": {
             "pbaction": 2456,
+            "pbbutton": 89,
             "pbclient": 509,
+            "pbinput": 49,
             "pblayoutmapper": 1702,
             "pbrowmapper": 1520,
             "quickstart": 66
@@ -3672,7 +3894,8 @@
                       "_": {
                         "t": {
                           "$": {
-                            "cheatsheet": 4771
+                            "cheatsheet": 4771,
+                            "pbinput": 1292
                           },
                           "_": {
                             "s": {
@@ -3833,12 +4056,18 @@
       "_": {
         "造": {
           "$": {
+            "pbinput": 580,
             "tour-add-hero": 2234
           }
         },
         "建": {
           "$": {
             "pbrowmapper": 375
+          }
+        },
+        "成": {
+          "$": {
+            "pbinput": 1874
           }
         }
       }
@@ -3854,6 +4083,7 @@
         "定": {
           "$": {
             "pbaction": 2067,
+            "pbinput": 910,
             "pblayoutmapper": 1476,
             "pbrowmapper": 270,
             "quickstart": 1855,
@@ -3864,12 +4094,26 @@
         }
       }
     },
-    "掌": {
+    "完": {
       "_": {
-        "握": {
+        "成": {
           "$": {
-            "quickstart": 3712,
-            "tour-databinding": 2914
+            "cheatsheet": 707,
+            "feature": 338,
+            "pbaction": 2266,
+            "pbrowmapper": 100,
+            "quickstart": 3193,
+            "tour-add-hero": 4281,
+            "tour-cell-layout": 5728,
+            "tour-detail-and-route": 4192,
+            "tour-form-validating": 3614
+          }
+        },
+        "整": {
+          "$": {
+            "tour-cell-layout": 2518,
+            "tour-databinding": 2228,
+            "tour-detail-and-route": 3222
           }
         }
       }
@@ -3898,6 +4142,7 @@
       "_": {
         "验": {
           "$": {
+            "pbinput": 1884,
             "tour-add-hero": 5524,
             "tour-form-validating": 1725
           }
@@ -3937,6 +4182,39 @@
         "3": {
           "$": {
             "cheatsheet": 5097
+          }
+        },
+        "2": {
+          "$": {
+            "pbinput": 1495
+          },
+          "_": {
+            "3": {
+              "_": {
+                "4": {
+                  "_": {
+                    "5": {
+                      "_": {
+                        "6": {
+                          "$": {
+                            "pbinput": 1495
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "l": {
+          "_": {
+            "f": {
+              "$": {
+                "pbinput": 1443
+              }
+            }
           }
         },
         "4": {
@@ -4161,7 +4439,8 @@
               "_": {
                 "h": {
                   "$": {
-                    "pbaction": 3837
+                    "pbaction": 3837,
+                    "pbinput": 2023
                   },
                   "_": {
                     "m": {
@@ -4431,12 +4710,22 @@
         "典": {
           "$": {
             "nav": 428,
+            "pbinput": 1872,
             "pblayoutmapper": 58
           }
         },
         "体": {
           "$": {
             "nav": 2102
+          }
+        },
+        "节": {
+          "_": {
+            "数": {
+              "$": {
+                "pbinput": 1710
+              }
+            }
           }
         },
         "段": {
@@ -4446,13 +4735,15 @@
         },
         "符": {
           "$": {
-            "cheatsheet": 3808
+            "cheatsheet": 3808,
+            "pbinput": 345
           },
           "_": {
             "串": {
               "$": {
                 "cheatsheet": 4839,
                 "pbclient": 443,
+                "pbinput": 904,
                 "tour-databinding": 502
               }
             }
@@ -4496,6 +4787,7 @@
                           "$": {
                             "nav": 590,
                             "pbaction": 7,
+                            "pbbutton": 1155,
                             "pbclient": 1857,
                             "tour-add-hero": 2526,
                             "tour-cell-layout": 4329,
@@ -4849,6 +5141,11 @@
                 "tour-databinding": 143
               }
             },
+            "d": {
+              "$": {
+                "pbinput": 686
+              }
+            },
             "g": {
               "_": {
                 "u": {
@@ -4978,7 +5275,7 @@
           "_": {
             "r": {
               "$": {
-                "cheatsheet": 6304
+                "cheatsheet": 6177
               },
               "_": {
                 "a": {
@@ -5106,7 +5403,7 @@
           "_": {
             "s": {
               "$": {
-                "cheatsheet": 6295
+                "cheatsheet": 6168
               }
             }
           }
@@ -5175,6 +5472,7 @@
             "nav": 490,
             "pbaction": 3454,
             "pbclient": 395,
+            "pbinput": 1808,
             "pblayoutmapper": 18,
             "quickstart": 20,
             "tour-add-hero": 1369,
@@ -5230,6 +5528,7 @@
         "要": {
           "$": {
             "home": 25,
+            "pbinput": 1897,
             "pblayoutmapper": 1950,
             "quickstart": 2979,
             "tour-add-hero": 16,
@@ -5262,6 +5561,20 @@
             "tour-add-hero": 4991,
             "tour-detail-and-route": 3190,
             "tour-form-validating": 1690
+          }
+        }
+      }
+    },
+    "计": {
+      "_": {
+        "为": {
+          "$": {
+            "pbinput": 1716
+          }
+        },
+        "算": {
+          "$": {
+            "pbinput": 1776
           }
         }
       }
@@ -5320,6 +5633,7 @@
         },
         "规": {
           "$": {
+            "pbbutton": 72,
             "pblayoutmapper": 259
           }
         },
@@ -5337,12 +5651,14 @@
         "式": {
           "$": {
             "cheatsheet": 15,
+            "pbinput": 1051,
             "pblayoutmapper": 242
           },
           "_": {
             "化": {
               "$": {
                 "cheatsheet": 4842,
+                "pbinput": 1305,
                 "tour-add-hero": 3172,
                 "tour-databinding": 505
               }
@@ -5420,6 +5736,7 @@
           "$": {
             "feature": 167,
             "pbaction": 48,
+            "pbbutton": 1174,
             "pbclient": 51,
             "pbrowmapper": 949,
             "tour-add-hero": 4288,
@@ -5779,6 +6096,32 @@
                   }
                 }
               }
+            },
+            "n": {
+              "_": {
+                "g": {
+                  "_": {
+                    "t": {
+                      "_": {
+                        "h": {
+                          "$": {
+                            "pbinput": 1636
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "l": {
+          "_": {
+            "d": {
+              "$": {
+                "pbinput": 1380
+              }
             }
           }
         },
@@ -5949,6 +6292,7 @@
           "$": {
             "nav": 168,
             "pbaction": 1405,
+            "pbbutton": 80,
             "pbrowmapper": 1645,
             "tour-detail-and-route": 621
           }
@@ -6032,6 +6376,7 @@
             "nav": 505,
             "pbaction": 2491,
             "pbclient": 93,
+            "pbinput": 82,
             "pbrowmapper": 339,
             "quickstart": 121,
             "tour-add-hero": 18,
@@ -6046,7 +6391,8 @@
       "_": {
         "色": {
           "$": {
-            "feature": 220
+            "feature": 220,
+            "pbinput": 992
           }
         }
       }
@@ -6143,6 +6489,19 @@
           "$": {
             "quickstart": 279
           }
+        },
+        "话": {
+          "_": {
+            "号": {
+              "_": {
+                "码": {
+                  "$": {
+                    "pbinput": 259
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -6215,7 +6574,9 @@
             "feature": 36,
             "nav": 9,
             "pbaction": 58,
+            "pbbutton": 54,
             "pbclient": 63,
+            "pbinput": 1822,
             "pblayoutmapper": 9,
             "pbrowmapper": 8,
             "quickstart": 40,
@@ -6239,6 +6600,7 @@
           "_": {
             "色": {
               "$": {
+                "pbbutton": 771,
                 "pbrowmapper": 1688,
                 "tour-add-hero": 3914
               }
@@ -6246,6 +6608,13 @@
             "图": {
               "$": {
                 "nav": 677
+              },
+              "_": {
+                "片": {
+                  "$": {
+                    "pbbutton": 516
+                  }
+                }
               }
             }
           }
@@ -6281,7 +6650,9 @@
           "$": {
             "nav": 2179,
             "pbaction": 158,
+            "pbbutton": 1033,
             "pbclient": 450,
+            "pbinput": 1551,
             "pblayoutmapper": 932,
             "pbrowmapper": 150,
             "quickstart": 2955,
@@ -6293,6 +6664,15 @@
                 "cheatsheet": 1046
               }
             }
+          }
+        }
+      }
+    },
+    "连": {
+      "_": {
+        "接": {
+          "$": {
+            "pbinput": 829
           }
         }
       }
@@ -6469,6 +6849,11 @@
     },
     "分": {
       "_": {
+        "解": {
+          "$": {
+            "tour-delete-hero": 16
+          }
+        },
         "辨": {
           "_": {
             "率": {
@@ -6483,9 +6868,9 @@
             "tour-add-hero": 75
           }
         },
-        "解": {
+        "段": {
           "$": {
-            "tour-delete-hero": 16
+            "pbinput": 1475
           }
         },
         "隔": {
@@ -6496,6 +6881,11 @@
               }
             }
           }
+        },
+        "类": {
+          "$": {
+            "pbinput": 1771
+          }
         }
       }
     },
@@ -6504,6 +6894,7 @@
         "入": {
           "$": {
             "cheatsheet": 3652,
+            "pbinput": 68,
             "tour-add-hero": 7,
             "tour-form-validating": 107
           }
@@ -6549,13 +6940,32 @@
       "_": {
         "0": {
           "$": {
+            "pbinput": 780,
             "pblayoutmapper": 1066,
             "quickstart": 2717
           },
           "_": {
+            "1": {
+              "_": {
+                "5": {
+                  "$": {
+                    "pbinput": 838
+                  }
+                }
+              }
+            },
             "4": {
               "$": {
                 "tour-delete-hero": 104
+              }
+            },
+            ".": {
+              "_": {
+                "0": {
+                  "$": {
+                    "pbinput": 805
+                  }
+                }
               }
             }
           }
@@ -6611,6 +7021,7 @@
       "_": {
         "示": {
           "$": {
+            "pbinput": 172,
             "quickstart": 42,
             "tour-cell-layout": 2485,
             "tour-databinding": 712,
@@ -6633,6 +7044,15 @@
         "好": {
           "$": {
             "tour-form-validating": 242
+          }
+        }
+      }
+    },
+    "子": {
+      "_": {
+        "类": {
+          "$": {
+            "pbinput": 1283
           }
         }
       }
@@ -6811,6 +7231,23 @@
                                             }
                                           }
                                         }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "v": {
+                          "_": {
+                            "i": {
+                              "_": {
+                                "e": {
+                                  "_": {
+                                    "w": {
+                                      "$": {
+                                        "pbinput": 956
                                       }
                                     }
                                   }
@@ -7259,11 +7696,13 @@
       "_": {
         "型": {
           "$": {
+            "pbinput": 775,
             "pblayoutmapper": 907
           }
         },
         "个": {
           "$": {
+            "pbinput": 1886,
             "tour-cell-layout": 2621
           }
         },
@@ -7312,6 +7751,15 @@
         }
       }
     },
+    "备": {
+      "_": {
+        "注": {
+          "$": {
+            "pbinput": 117
+          }
+        }
+      }
+    },
     "三": {
       "_": {
         "个": {
@@ -7356,6 +7804,7 @@
         },
         "效": {
           "$": {
+            "pbinput": 1008,
             "pblayoutmapper": 2023
           }
         }
@@ -7375,12 +7824,6 @@
             "tour-databinding": 1437
           }
         },
-        "板": {
-          "$": {
-            "cheatsheet": 6059,
-            "feature": 38
-          }
-        },
         "拟": {
           "$": {
             "pbclient": 517,
@@ -7397,6 +7840,12 @@
                 "tour-databinding": 1430
               }
             }
+          }
+        },
+        "板": {
+          "$": {
+            "cheatsheet": 6059,
+            "feature": 38
           }
         }
       }
@@ -7443,6 +7892,7 @@
             "feature": 135,
             "nav": 37,
             "pbaction": 2063,
+            "pbinput": 1337,
             "pbrowmapper": 306,
             "tour-add-hero": 1457,
             "tour-detail-and-route": 14
@@ -7473,6 +7923,7 @@
       "_": {
         "态": {
           "$": {
+            "pbbutton": 74,
             "tour-add-hero": 4924,
             "tour-delete-hero": 99
           },
@@ -7570,6 +8021,7 @@
         },
         "示": {
           "$": {
+            "pbinput": 1965,
             "tour-form-validating": 583
           }
         },
@@ -7700,13 +8152,53 @@
                 }
               }
             },
-            "p": {
+            "x": {
+              "$": {
+                "pbinput": 691
+              },
               "_": {
-                "t": {
+                "c": {
                   "_": {
-                    "o": {
-                      "$": {
-                        "cheatsheet": 3894
+                    "h": {
+                      "_": {
+                        "a": {
+                          "_": {
+                            "r": {
+                              "_": {
+                                "s": {
+                                  "$": {
+                                    "pbinput": 1691
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "l": {
+                  "_": {
+                    "e": {
+                      "_": {
+                        "n": {
+                          "_": {
+                            "g": {
+                              "_": {
+                                "t": {
+                                  "_": {
+                                    "h": {
+                                      "$": {
+                                        "pbinput": 1633
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -7743,6 +8235,19 @@
                             "tour-databinding": 2655
                           }
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "p": {
+              "_": {
+                "t": {
+                  "_": {
+                    "o": {
+                      "$": {
+                        "cheatsheet": 3894
                       }
                     }
                   }
@@ -7971,6 +8476,11 @@
                   }
                 }
               }
+            },
+            "n": {
+              "$": {
+                "pbinput": 681
+              }
             }
           }
         },
@@ -8004,13 +8514,17 @@
                 }
               }
             },
-            "n": {
+            "f": {
               "_": {
-                "e": {
+                "i": {
                   "_": {
-                    "y": {
-                      "$": {
-                        "cheatsheet": 4860
+                    "f": {
+                      "_": {
+                        "y": {
+                          "$": {
+                            "quickstart": 1052
+                          }
+                        }
                       }
                     }
                   }
@@ -8026,17 +8540,22 @@
                 }
               }
             },
-            "f": {
+            "n": {
               "_": {
-                "i": {
+                "e": {
                   "_": {
-                    "f": {
-                      "_": {
-                        "y": {
-                          "$": {
-                            "quickstart": 1052
-                          }
-                        }
+                    "y": {
+                      "$": {
+                        "cheatsheet": 4860
+                      }
+                    }
+                  }
+                },
+                "t": {
+                  "_": {
+                    "h": {
+                      "$": {
+                        "pbinput": 479
                       }
                     }
                   }
@@ -8113,6 +8632,7 @@
       "_": {
         "度": {
           "$": {
+            "pbinput": 1655,
             "tour-form-validating": 1919
           }
         }
@@ -8132,7 +8652,8 @@
         },
         "片": {
           "$": {
-            "nav": 1916
+            "nav": 1916,
+            "pbbutton": 293
           }
         },
         "标": {
@@ -8200,7 +8721,8 @@
         "收": {
           "$": {
             "pbaction": 310,
-            "pbclient": 1511
+            "pbclient": 1511,
+            "pbinput": 723
           }
         }
       }
@@ -8277,6 +8799,27 @@
                                       "_": {
                                         "d": {
                                           "_": {
+                                            "i": {
+                                              "_": {
+                                                "m": {
+                                                  "_": {
+                                                    "a": {
+                                                      "_": {
+                                                        "g": {
+                                                          "_": {
+                                                            "e": {
+                                                              "$": {
+                                                                "pbbutton": 488
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
                                             "c": {
                                               "_": {
                                                 "o": {
@@ -8288,6 +8831,7 @@
                                                             "r": {
                                                               "$": {
                                                                 "pbaction": 2873,
+                                                                "pbbutton": 743,
                                                                 "pbrowmapper": 1655,
                                                                 "quickstart": 2414,
                                                                 "tour-add-hero": 4173,
@@ -8606,6 +9150,13 @@
         "留": {
           "$": {
             "tour-delete-hero": 790
+          },
+          "_": {
+            "字": {
+              "$": {
+                "pbinput": 1174
+              }
+            }
           }
         },
         "存": {
@@ -8651,7 +9202,9 @@
         "承": {
           "$": {
             "pbaction": 2496,
+            "pbbutton": 29,
             "pbclient": 98,
+            "pbinput": 27,
             "quickstart": 1604
           }
         }
@@ -8697,6 +9250,35 @@
                           }
                         }
                       }
+                    },
+                    "s": {
+                      "_": {
+                        "c": {
+                          "_": {
+                            "u": {
+                              "_": {
+                                "r": {
+                                  "_": {
+                                    "s": {
+                                      "_": {
+                                        "o": {
+                                          "_": {
+                                            "r": {
+                                              "$": {
+                                                "pbinput": 1601
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },
@@ -8708,6 +9290,166 @@
                           "$": {
                             "cheatsheet": 96,
                             "nav": 2164
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "g": {
+              "_": {
+                "h": {
+                  "_": {
+                    "l": {
+                      "_": {
+                        "i": {
+                          "_": {
+                            "g": {
+                              "_": {
+                                "h": {
+                                  "_": {
+                                    "t": {
+                                      "_": {
+                                        "e": {
+                                          "_": {
+                                            "d": {
+                                              "_": {
+                                                "i": {
+                                                  "_": {
+                                                    "m": {
+                                                      "_": {
+                                                        "a": {
+                                                          "_": {
+                                                            "g": {
+                                                              "_": {
+                                                                "e": {
+                                                                  "$": {
+                                                                    "pbbutton": 339
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "b": {
+                                                  "_": {
+                                                    "a": {
+                                                      "_": {
+                                                        "c": {
+                                                          "_": {
+                                                            "k": {
+                                                              "_": {
+                                                                "g": {
+                                                                  "_": {
+                                                                    "r": {
+                                                                      "_": {
+                                                                        "o": {
+                                                                          "_": {
+                                                                            "u": {
+                                                                              "_": {
+                                                                                "n": {
+                                                                                  "_": {
+                                                                                    "d": {
+                                                                                      "_": {
+                                                                                        "i": {
+                                                                                          "_": {
+                                                                                            "m": {
+                                                                                              "_": {
+                                                                                                "a": {
+                                                                                                  "_": {
+                                                                                                    "g": {
+                                                                                                      "_": {
+                                                                                                        "e": {
+                                                                                                          "$": {
+                                                                                                            "pbbutton": 564
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        },
+                                                                                        "c": {
+                                                                                          "_": {
+                                                                                            "o": {
+                                                                                              "_": {
+                                                                                                "l": {
+                                                                                                  "_": {
+                                                                                                    "o": {
+                                                                                                      "_": {
+                                                                                                        "r": {
+                                                                                                          "$": {
+                                                                                                            "pbbutton": 818
+                                                                                                          }
+                                                                                                        }
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "t": {
+                                                  "_": {
+                                                    "i": {
+                                                      "_": {
+                                                        "t": {
+                                                          "_": {
+                                                            "l": {
+                                                              "_": {
+                                                                "e": {
+                                                                  "$": {
+                                                                    "pbbutton": 126
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -8938,19 +9680,6 @@
         },
         "c": {
           "_": {
-            "o": {
-              "_": {
-                "d": {
-                  "_": {
-                    "e": {
-                      "$": {
-                        "quickstart": 416
-                      }
-                    }
-                  }
-                }
-              }
-            },
             "w": {
               "_": {
                 "o": {
@@ -8987,6 +9716,19 @@
                   }
                 }
               }
+            },
+            "o": {
+              "_": {
+                "d": {
+                  "_": {
+                    "e": {
+                      "$": {
+                        "quickstart": 416
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -9011,6 +9753,7 @@
       "_": {
         "略": {
           "$": {
+            "pbinput": 1846,
             "quickstart": 1312
           }
         }
@@ -9030,6 +9773,7 @@
       "_": {
         "含": {
           "$": {
+            "pbinput": 1899,
             "pblayoutmapper": 1881,
             "quickstart": 17
           }
@@ -9039,6 +9783,7 @@
             "cheatsheet": 5294,
             "nav": 464,
             "pbaction": 1712,
+            "pbinput": 338,
             "pblayoutmapper": 36,
             "pbrowmapper": 118,
             "tour-form-validating": 1911
@@ -9093,7 +9838,8 @@
       "_": {
         "#": {
           "$": {
-            "cheatsheet": 341
+            "cheatsheet": 341,
+            "pbinput": 1484
           }
         },
         ".": {
@@ -9146,15 +9892,6 @@
     },
     "3": {
       "_": {
-        "9": {
-          "_": {
-            "0": {
-              "$": {
-                "tour-form-validating": 1281
-              }
-            }
-          }
-        },
         "0": {
           "$": {
             "pblayoutmapper": 1216
@@ -9180,9 +9917,23 @@
             }
           }
         },
+        "4": {
+          "$": {
+            "pbinput": 1497
+          }
+        },
         "7": {
           "$": {
             "tour-add-hero": 3686
+          }
+        },
+        "9": {
+          "_": {
+            "0": {
+              "$": {
+                "tour-form-validating": 1281
+              }
+            }
           }
         },
         "x": {
@@ -9211,6 +9962,15 @@
         }
       }
     },
+    "光": {
+      "_": {
+        "标": {
+          "$": {
+            "pbinput": 1621
+          }
+        }
+      }
+    },
     "单": {
       "_": {
         "向": {
@@ -9235,6 +9995,11 @@
                 "tour-databinding": 2996
               }
             }
+          }
+        },
+        "位": {
+          "$": {
+            "pbinput": 902
           }
         },
         "行": {
@@ -9513,6 +10278,51 @@
           "_": {
             "a": {
               "_": {
+                "r": {
+                  "_": {
+                    "a": {
+                      "_": {
+                        "t": {
+                          "_": {
+                            "e": {
+                              "_": {
+                                "r": {
+                                  "_": {
+                                    "l": {
+                                      "_": {
+                                        "e": {
+                                          "_": {
+                                            "n": {
+                                              "_": {
+                                                "g": {
+                                                  "_": {
+                                                    "t": {
+                                                      "_": {
+                                                        "h": {
+                                                          "$": {
+                                                            "pbinput": 1745
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "n": {
                   "_": {
                     "g": {
@@ -9815,7 +10625,7 @@
                                                                                               "_": {
                                                                                                 "g": {
                                                                                                   "$": {
-                                                                                                    "cheatsheet": 6535
+                                                                                                    "cheatsheet": 6408
                                                                                                   }
                                                                                                 }
                                                                                               }
@@ -10425,6 +11235,7 @@
                       "_": {
                         "t": {
                           "$": {
+                            "pbinput": 518,
                             "pbrowmapper": 1073,
                             "tour-delete-hero": 1902,
                             "tour-detail-and-route": 2272
@@ -10435,6 +11246,174 @@
                                 "d": {
                                   "$": {
                                     "cheatsheet": 3286
+                                  },
+                                  "_": {
+                                    "i": {
+                                      "_": {
+                                        "m": {
+                                          "_": {
+                                            "a": {
+                                              "_": {
+                                                "g": {
+                                                  "_": {
+                                                    "e": {
+                                                      "$": {
+                                                        "pbbutton": 392
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "b": {
+                                      "_": {
+                                        "a": {
+                                          "_": {
+                                            "c": {
+                                              "_": {
+                                                "k": {
+                                                  "_": {
+                                                    "g": {
+                                                      "_": {
+                                                        "r": {
+                                                          "_": {
+                                                            "o": {
+                                                              "_": {
+                                                                "u": {
+                                                                  "_": {
+                                                                    "n": {
+                                                                      "_": {
+                                                                        "d": {
+                                                                          "_": {
+                                                                            "i": {
+                                                                              "_": {
+                                                                                "m": {
+                                                                                  "_": {
+                                                                                    "a": {
+                                                                                      "_": {
+                                                                                        "g": {
+                                                                                          "_": {
+                                                                                            "e": {
+                                                                                              "$": {
+                                                                                                "pbbutton": 627
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "c": {
+                                                                              "_": {
+                                                                                "o": {
+                                                                                  "_": {
+                                                                                    "l": {
+                                                                                      "_": {
+                                                                                        "o": {
+                                                                                          "_": {
+                                                                                            "r": {
+                                                                                              "$": {
+                                                                                                "pbbutton": 881
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "t": {
+                                      "_": {
+                                        "i": {
+                                          "_": {
+                                            "t": {
+                                              "_": {
+                                                "l": {
+                                                  "_": {
+                                                    "e": {
+                                                      "$": {
+                                                        "pbbutton": 179
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "e": {
+                                          "_": {
+                                            "x": {
+                                              "_": {
+                                                "t": {
+                                                  "_": {
+                                                    "c": {
+                                                      "_": {
+                                                        "o": {
+                                                          "_": {
+                                                            "l": {
+                                                              "_": {
+                                                                "o": {
+                                                                  "_": {
+                                                                    "r": {
+                                                                      "$": {
+                                                                        "pbinput": 1563
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "o": {
+                              "_": {
+                                "r": {
+                                  "$": {
+                                    "pbinput": 1211
                                   }
                                 }
                               }
@@ -10686,6 +11665,19 @@
             },
             "o": {
               "_": {
+                "u": {
+                  "_": {
+                    "l": {
+                      "_": {
+                        "d": {
+                          "$": {
+                            "pbinput": 2009
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "w": {
                   "_": {
                     "h": {
@@ -10954,6 +11946,19 @@
             },
             "a": {
               "_": {
+                "r": {
+                  "_": {
+                    "t": {
+                      "_": {
+                        "s": {
+                          "$": {
+                            "pbinput": 2016
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "t": {
                   "_": {
                     "i": {
@@ -10976,6 +11981,7 @@
                     },
                     "e": {
                       "$": {
+                        "pbbutton": 110,
                         "tour-add-hero": 4928
                       }
                     }
@@ -11186,6 +12192,15 @@
             "tour-delete-hero": 123,
             "tour-form-validating": 47
           }
+        },
+        "分": {
+          "_": {
+            "秒": {
+              "$": {
+                "pbinput": 419
+              }
+            }
+          }
         }
       }
     },
@@ -11196,6 +12211,7 @@
             "cheatsheet": 760,
             "nav": 114,
             "pbaction": 87,
+            "pbinput": 70,
             "tour-cell-layout": 62
           },
           "_": {
@@ -11212,7 +12228,8 @@
         },
         "名": {
           "$": {
-            "pbaction": 811
+            "pbaction": 811,
+            "pbinput": 1261
           }
         },
         "似": {
@@ -11229,6 +12246,7 @@
           "$": {
             "cheatsheet": 5228,
             "nav": 62,
+            "pbinput": 78,
             "pblayoutmapper": 1698,
             "quickstart": 3187,
             "tour-databinding": 901
@@ -11349,7 +12367,8 @@
         "定": {
           "$": {
             "nav": 487,
-            "pbaction": 257
+            "pbaction": 257,
+            "pbinput": 1683
           }
         }
       }
@@ -11379,6 +12398,7 @@
           "$": {
             "nav": 2208,
             "pbaction": 1555,
+            "pbbutton": 1166,
             "quickstart": 2538,
             "tour-add-hero": 2787,
             "tour-detail-and-route": 3178
@@ -11451,6 +12471,7 @@
         },
         "为": {
           "$": {
+            "pbinput": 952,
             "tour-add-hero": 2258,
             "tour-cell-layout": 565,
             "tour-detail-and-route": 2101
@@ -11573,11 +12594,80 @@
         }
       }
     },
-    "走": {
+    "数": {
       "_": {
-        "通": {
+        "值": {
           "$": {
-            "tour-add-hero": 5065
+            "cheatsheet": 901,
+            "pblayoutmapper": 2057
+          }
+        },
+        "组": {
+          "$": {
+            "cheatsheet": 5233,
+            "nav": 280,
+            "pbaction": 1470,
+            "pbclient": 1554,
+            "pbinput": 1879,
+            "pblayoutmapper": 177,
+            "tour-databinding": 1372
+          }
+        },
+        "字": {
+          "_": {
+            "键": {
+              "_": {
+                "盘": {
+                  "$": {
+                    "pbinput": 197
+                  }
+                }
+              }
+            }
+          }
+        },
+        "据": {
+          "$": {
+            "cheatsheet": 690,
+            "feature": 152,
+            "pbaction": 1673,
+            "pbclient": 58,
+            "quickstart": 3788,
+            "tour-add-hero": 2833,
+            "tour-cell-layout": 1277,
+            "tour-databinding": 9,
+            "tour-detail-and-route": 2069
+          },
+          "_": {
+            "流": {
+              "$": {
+                "tour-add-hero": 4857
+              }
+            },
+            "源": {
+              "$": {
+                "cheatsheet": 3432,
+                "pbaction": 2169
+              }
+            },
+            "结": {
+              "_": {
+                "构": {
+                  "$": {
+                    "cheatsheet": 690
+                  }
+                }
+              }
+            },
+            "类": {
+              "_": {
+                "型": {
+                  "$": {
+                    "cheatsheet": 5819
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -11587,6 +12677,7 @@
         "加": {
           "$": {
             "pbclient": 140,
+            "pbinput": 919,
             "pblayoutmapper": 1537,
             "pbrowmapper": 362,
             "quickstart": 613,
@@ -11669,6 +12760,11 @@
     },
     "选": {
       "_": {
+        "项": {
+          "$": {
+            "pbinput": 547
+          }
+        },
         "择": {
           "$": {
             "quickstart": 2629
@@ -11676,6 +12772,7 @@
         },
         "中": {
           "$": {
+            "pbinput": 1585,
             "pbrowmapper": 1060,
             "quickstart": 2520,
             "tour-detail-and-route": 3116
@@ -11714,7 +12811,13 @@
         "同": {
           "$": {
             "nav": 479,
-            "pbaction": 249
+            "pbaction": 249,
+            "pbinput": 73
+          }
+        },
+        "是": {
+          "$": {
+            "pbinput": 2044
           }
         },
         "会": {
@@ -11831,6 +12934,7 @@
           "$": {
             "cheatsheet": 927,
             "feature": 233,
+            "pbinput": 714,
             "pblayoutmapper": 888,
             "tour-cell-layout": 2923,
             "tour-delete-hero": 80
@@ -11929,6 +13033,7 @@
           "$": {
             "cheatsheet": 97,
             "pbclient": 216,
+            "pbinput": 1089,
             "pbrowmapper": 424,
             "tour-databinding": 45,
             "tour-delete-hero": 404
@@ -11982,7 +13087,8 @@
                   "_": {
                     "e": {
                       "$": {
-                        "nav": 615
+                        "nav": 615,
+                        "pbbutton": 275
                       }
                     }
                   }
@@ -12635,6 +13741,7 @@
             "cheatsheet": 3806,
             "pbaction": 1018,
             "pbclient": 95,
+            "pbinput": 921,
             "pblayoutmapper": 87,
             "quickstart": 72,
             "tour-add-hero": 20,
@@ -12660,6 +13767,7 @@
         "些": {
           "$": {
             "cheatsheet": 5808,
+            "pbbutton": 48,
             "quickstart": 227,
             "tour-add-hero": 5522,
             "tour-cell-layout": 2931,
@@ -12742,11 +13850,6 @@
     },
     "编": {
       "_": {
-        "码": {
-          "$": {
-            "cheatsheet": 6127
-          }
-        },
         "辑": {
           "$": {
             "tour-delete-hero": 887
@@ -12790,7 +13893,6 @@
             "cheatsheet": 3841,
             "nav": 64,
             "pbrowmapper": 969,
-            "quickstart": 3283,
             "tour-add-hero": 5306,
             "tour-cell-layout": 1279,
             "tour-databinding": 2950
@@ -12839,7 +13941,9 @@
                   "$": {
                     "cheatsheet": 3552,
                     "pbaction": 380,
+                    "pbbutton": 103,
                     "pbclient": 1048,
+                    "pbinput": 563,
                     "pblayoutmapper": 1289,
                     "quickstart": 489,
                     "tour-add-hero": 129,
@@ -13142,7 +14246,8 @@
                           "_": {
                             "y": {
                               "$": {
-                                "cheatsheet": 5949
+                                "cheatsheet": 5949,
+                                "pbinput": 1056
                               }
                             }
                           }
@@ -13212,7 +14317,8 @@
                                               "_": {
                                                 "y": {
                                                   "$": {
-                                                    "cheatsheet": 5935
+                                                    "cheatsheet": 5935,
+                                                    "pbinput": 1064
                                                   }
                                                 }
                                               }
@@ -13747,6 +14853,7 @@
                                   "$": {
                                     "cheatsheet": 4698,
                                     "pbclient": 1031,
+                                    "pbinput": 1077,
                                     "pbrowmapper": 1631
                                   },
                                   "_": {
@@ -14030,6 +15137,7 @@
                         "r": {
                           "$": {
                             "cheatsheet": 5904,
+                            "pbinput": 187,
                             "tour-add-hero": 3607
                           },
                           "_": {
@@ -14109,6 +15217,7 @@
           "$": {
             "cheatsheet": 54,
             "pbaction": 2458,
+            "pbinput": 754,
             "pblayoutmapper": 974,
             "quickstart": 101
           }
@@ -14125,6 +15234,7 @@
         "制": {
           "$": {
             "pbaction": 2090,
+            "pbinput": 701,
             "tour-form-validating": 9
           }
         }
@@ -14226,7 +15336,27 @@
                 },
                 "e": {
                   "$": {
-                    "cheatsheet": 5318
+                    "cheatsheet": 5318,
+                    "pbinput": 355
+                  },
+                  "_": {
+                    "t": {
+                      "_": {
+                        "i": {
+                          "_": {
+                            "m": {
+                              "_": {
+                                "e": {
+                                  "$": {
+                                    "pbinput": 433
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -14304,6 +15434,45 @@
                 }
               }
             },
+            "t": {
+              "_": {
+                "a": {
+                  "_": {
+                    "i": {
+                      "_": {
+                        "l": {
+                          "$": {
+                            "tour-delete-hero": 2119,
+                            "tour-detail-and-route": 640
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "c": {
+              "_": {
+                "i": {
+                  "_": {
+                    "m": {
+                      "_": {
+                        "a": {
+                          "_": {
+                            "l": {
+                              "$": {
+                                "pbinput": 215
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "l": {
               "_": {
                 "e": {
@@ -14352,24 +15521,6 @@
                                 }
                               }
                             }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "t": {
-              "_": {
-                "a": {
-                  "_": {
-                    "i": {
-                      "_": {
-                        "l": {
-                          "$": {
-                            "tour-delete-hero": 2119,
-                            "tour-detail-and-route": 640
                           }
                         }
                       }
@@ -14444,6 +15595,132 @@
                                 "d": {
                                   "$": {
                                     "pbaction": 134
+                                  },
+                                  "_": {
+                                    "i": {
+                                      "_": {
+                                        "m": {
+                                          "_": {
+                                            "a": {
+                                              "_": {
+                                                "g": {
+                                                  "_": {
+                                                    "e": {
+                                                      "$": {
+                                                        "pbbutton": 439
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "b": {
+                                      "_": {
+                                        "a": {
+                                          "_": {
+                                            "c": {
+                                              "_": {
+                                                "k": {
+                                                  "_": {
+                                                    "g": {
+                                                      "_": {
+                                                        "r": {
+                                                          "_": {
+                                                            "o": {
+                                                              "_": {
+                                                                "u": {
+                                                                  "_": {
+                                                                    "n": {
+                                                                      "_": {
+                                                                        "d": {
+                                                                          "_": {
+                                                                            "i": {
+                                                                              "_": {
+                                                                                "m": {
+                                                                                  "_": {
+                                                                                    "a": {
+                                                                                      "_": {
+                                                                                        "g": {
+                                                                                          "_": {
+                                                                                            "e": {
+                                                                                              "$": {
+                                                                                                "pbbutton": 684
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "c": {
+                                                                              "_": {
+                                                                                "o": {
+                                                                                  "_": {
+                                                                                    "l": {
+                                                                                      "_": {
+                                                                                        "o": {
+                                                                                          "_": {
+                                                                                            "r": {
+                                                                                              "$": {
+                                                                                                "pbbutton": 938
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "t": {
+                                      "_": {
+                                        "i": {
+                                          "_": {
+                                            "t": {
+                                              "_": {
+                                                "l": {
+                                                  "_": {
+                                                    "e": {
+                                                      "$": {
+                                                        "pbbutton": 226
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
                                   }
                                 }
                               }
@@ -14884,6 +16161,7 @@
                   "$": {
                     "cheatsheet": 3627,
                     "pbaction": 2738,
+                    "pbinput": 130,
                     "quickstart": 2341,
                     "tour-add-hero": 1809,
                     "tour-cell-layout": 1129,
@@ -14970,6 +16248,7 @@
               "_": {
                 "s": {
                   "$": {
+                    "pbinput": 1919,
                     "tour-form-validating": 1066
                   }
                 }
@@ -14979,7 +16258,8 @@
               "_": {
                 "e": {
                   "$": {
-                    "pbaction": 3250
+                    "pbaction": 3250,
+                    "pbinput": 394
                   },
                   "_": {
                     "s": {
@@ -15000,6 +16280,7 @@
                         "cheatsheet": 402,
                         "nav": 137,
                         "pbaction": 1385,
+                        "pbbutton": 62,
                         "pbrowmapper": 1621,
                         "tour-add-hero": 258,
                         "tour-delete-hero": 1049,
@@ -15274,6 +16555,7 @@
                     "cheatsheet": 5279,
                     "nav": 546,
                     "pbaction": 105,
+                    "pbinput": 59,
                     "quickstart": 2053,
                     "tour-add-hero": 159,
                     "tour-cell-layout": 112,
@@ -15336,6 +16618,7 @@
         },
         "于": {
           "$": {
+            "pbinput": 1313,
             "pblayoutmapper": 1594,
             "tour-add-hero": 1418
           }
@@ -15350,6 +16633,7 @@
             "cheatsheet": 1081,
             "nav": 119,
             "pbaction": 1304,
+            "pbinput": 670,
             "pblayoutmapper": 70,
             "pbrowmapper": 193,
             "tour-add-hero": 1398,
@@ -15373,6 +16657,11 @@
     },
     "任": {
       "_": {
+        "何": {
+          "$": {
+            "pbinput": 1469
+          }
+        },
         "意": {
           "$": {
             "pbaction": 2071
@@ -15400,6 +16689,7 @@
           "$": {
             "nav": 224,
             "pbaction": 1466,
+            "pbbutton": 78,
             "pbrowmapper": 748,
             "quickstart": 2551,
             "tour-add-hero": 2334
@@ -15435,11 +16725,25 @@
         }
       }
     },
+    "透": {
+      "_": {
+        "明": {
+          "_": {
+            "度": {
+              "$": {
+                "pbbutton": 1046
+              }
+            }
+          }
+        }
+      }
+    },
     "隐": {
       "_": {
         "藏": {
           "$": {
             "nav": 2176,
+            "pbinput": 1619,
             "tour-form-validating": 1710
           }
         }
@@ -15501,6 +16805,7 @@
       "_": {
         "配": {
           "$": {
+            "pbinput": 1943,
             "tour-form-validating": 1926
           }
         }
@@ -15547,6 +16852,8 @@
           "$": {
             "cheatsheet": 1028,
             "pbaction": 2393,
+            "pbbutton": 1029,
+            "pbinput": 923,
             "pblayoutmapper": 1757,
             "quickstart": 498,
             "tour-add-hero": 4831,
@@ -15680,6 +16987,7 @@
                 "cheatsheet": 2841,
                 "nav": 674,
                 "pbaction": 2409,
+                "pbinput": 1768,
                 "pblayoutmapper": 222,
                 "pbrowmapper": 1458,
                 "tour-add-hero": 5395
@@ -15746,6 +17054,7 @@
                           "_": {
                             "s": {
                               "$": {
+                                "pbinput": 1016,
                                 "tour-cell-layout": 730
                               }
                             }
@@ -15932,6 +17241,7 @@
           "$": {
             "cheatsheet": 3654,
             "pbaction": 1468,
+            "pbinput": 138,
             "quickstart": 49,
             "tour-add-hero": 1402,
             "tour-databinding": 710
@@ -16000,6 +17310,8 @@
         "果": {
           "$": {
             "cheatsheet": 1039,
+            "pbbutton": 996,
+            "pbinput": 908,
             "pblayoutmapper": 1473,
             "pbrowmapper": 267,
             "quickstart": 275
@@ -16025,6 +17337,8 @@
             "cheatsheet": 962,
             "nav": 39,
             "pbaction": 3550,
+            "pbbutton": 87,
+            "pbinput": 1731,
             "pblayoutmapper": 2072,
             "quickstart": 38,
             "tour-add-hero": 4886,
@@ -16455,6 +17769,15 @@
         }
       }
     },
+    "5": {
+      "_": {
+        "6": {
+          "$": {
+            "pbinput": 1499
+          }
+        }
+      }
+    },
     "页": {
       "_": {
         "面": {
@@ -16527,6 +17850,7 @@
       "_": {
         "个": {
           "$": {
+            "pbinput": 1800,
             "pblayoutmapper": 61,
             "pbrowmapper": 394
           }
@@ -16563,6 +17887,7 @@
       "_": {
         "则": {
           "$": {
+            "pbinput": 1810,
             "tour-form-validating": 1924
           }
         },
@@ -16661,6 +17986,23 @@
                             }
                           }
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "m": {
+          "_": {
+            "a": {
+              "_": {
+                "i": {
+                  "_": {
+                    "l": {
+                      "$": {
+                        "pbinput": 322
                       }
                     }
                   }
@@ -16879,6 +18221,8 @@
         "展": {
           "$": {
             "cheatsheet": 131,
+            "pbbutton": 45,
+            "pbinput": 46,
             "pbrowmapper": 1518,
             "tour-add-hero": 3919
           }
@@ -17146,6 +18490,137 @@
                                         "cheatsheet": 162
                                       },
                                       "_": {
+                                        "s": {
+                                          "_": {
+                                            "t": {
+                                              "_": {
+                                                "a": {
+                                                  "_": {
+                                                    "t": {
+                                                      "_": {
+                                                        "e": {
+                                                          "_": {
+                                                            "h": {
+                                                              "_": {
+                                                                "i": {
+                                                                  "_": {
+                                                                    "g": {
+                                                                      "_": {
+                                                                        "h": {
+                                                                          "_": {
+                                                                            "l": {
+                                                                              "_": {
+                                                                                "i": {
+                                                                                  "_": {
+                                                                                    "g": {
+                                                                                      "_": {
+                                                                                        "h": {
+                                                                                          "_": {
+                                                                                            "t": {
+                                                                                              "_": {
+                                                                                                "e": {
+                                                                                                  "_": {
+                                                                                                    "d": {
+                                                                                                      "$": {
+                                                                                                        "pbbutton": 146
+                                                                                                      }
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                              }
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "s": {
+                                                              "_": {
+                                                                "e": {
+                                                                  "_": {
+                                                                    "l": {
+                                                                      "_": {
+                                                                        "e": {
+                                                                          "_": {
+                                                                            "c": {
+                                                                              "_": {
+                                                                                "t": {
+                                                                                  "_": {
+                                                                                    "e": {
+                                                                                      "_": {
+                                                                                        "d": {
+                                                                                          "$": {
+                                                                                            "pbbutton": 196
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "d": {
+                                                              "_": {
+                                                                "i": {
+                                                                  "_": {
+                                                                    "s": {
+                                                                      "_": {
+                                                                        "a": {
+                                                                          "_": {
+                                                                            "b": {
+                                                                              "_": {
+                                                                                "l": {
+                                                                                  "_": {
+                                                                                    "e": {
+                                                                                      "_": {
+                                                                                        "d": {
+                                                                                          "$": {
+                                                                                            "pbbutton": 243
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
                                         "e": {
                                           "_": {
                                             "v": {
@@ -17930,6 +19405,7 @@
                               "_": {
                                 "n": {
                                   "$": {
+                                    "pbbutton": 34,
                                     "tour-add-hero": 3895
                                   }
                                 }
@@ -17965,6 +19441,47 @@
                                                   "$": {
                                                     "cheatsheet": 813,
                                                     "tour-cell-layout": 3038
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "d": {
+              "_": {
+                "a": {
+                  "_": {
+                    "t": {
+                      "_": {
+                        "e": {
+                          "_": {
+                            "p": {
+                              "_": {
+                                "i": {
+                                  "_": {
+                                    "c": {
+                                      "_": {
+                                        "k": {
+                                          "_": {
+                                            "e": {
+                                              "_": {
+                                                "r": {
+                                                  "$": {
+                                                    "pbinput": 364
                                                   }
                                                 }
                                               }
@@ -18092,6 +19609,7 @@
                           "_": {
                             "l": {
                               "$": {
+                                "pbinput": 943,
                                 "quickstart": 2250,
                                 "tour-add-hero": 317,
                                 "tour-cell-layout": 269,
@@ -18649,6 +20167,39 @@
                       }
                     }
                   }
+                },
+                "e": {
+                  "_": {
+                    "x": {
+                      "_": {
+                        "t": {
+                          "_": {
+                            "f": {
+                              "_": {
+                                "i": {
+                                  "_": {
+                                    "e": {
+                                      "_": {
+                                        "l": {
+                                          "_": {
+                                            "d": {
+                                              "$": {
+                                                "pbinput": 32
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },
@@ -18764,19 +20315,7 @@
           "_": {
             "l": {
               "$": {
-                "cheatsheet": 6124
-              }
-            }
-          }
-        },
-        "e": {
-          "$": {
-            "cheatsheet": 6117
-          },
-          "_": {
-            "j": {
-              "$": {
-                "cheatsheet": 6171
+                "pbinput": 300
               }
             }
           }
@@ -18790,6 +20329,55 @@
                     "y": {
                       "$": {
                         "cheatsheet": 3114
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "i": {
+              "_": {
+                "c": {
+                  "_": {
+                    "o": {
+                      "_": {
+                        "d": {
+                          "_": {
+                            "e": {
+                              "$": {
+                                "pbinput": 1720
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "t": {
+                  "$": {
+                    "pbinput": 891
+                  },
+                  "_": {
+                    "c": {
+                      "_": {
+                        "o": {
+                          "_": {
+                            "l": {
+                              "_": {
+                                "o": {
+                                  "_": {
+                                    "r": {
+                                      "$": {
+                                        "pbinput": 972
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }

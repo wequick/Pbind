@@ -1,0 +1,204 @@
+<h2><a href="/Pbind/cn/pbinput#pbinput" id=pbinput aria-hidden="true" class="anchor"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>PBInput</h2>
+<p><em>PBInput</em> 继承至 <em>UITextField</em>，并扩展了以下属性：</p>
+
+<p><strong>type</strong></p>
+
+<p>输入类型，不同的类型将会为其创建不同的辅助输入视图：</p>
+
+<table><thead>
+<tr>
+<th>类型</th>
+<th>辅助输入控件</th>
+<th>备注</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><strong>text</strong></td>
+<td>文本键盘</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>password</strong></td>
+<td>文本键盘</td>
+<td>显示为 <strong>*</strong></td>
+</tr>
+<tr>
+<td><strong>number</strong></td>
+<td>数字键盘</td>
+<td>0-9</td>
+</tr>
+<tr>
+<td><strong>decimal</strong></td>
+<td>数字键盘</td>
+<td>0-9 与 &#39;.&#39;</td>
+</tr>
+<tr>
+<td><strong>phone</strong></td>
+<td>电话号码键盘</td>
+<td>0-9 与 &#39;*&#39;, &#39;+&#39;, &#39;-&#39;, &#39;;&#39;</td>
+</tr>
+<tr>
+<td><strong>url</strong></td>
+<td>文本键盘</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>email</strong></td>
+<td>文本键盘</td>
+<td>包括 &#39;@&#39; 字符</td>
+</tr>
+<tr>
+<td><strong>date</strong></td>
+<td><em>UIDatePicker</em></td>
+<td>年月日，3列</td>
+</tr>
+<tr>
+<td><strong>time</strong></td>
+<td><em>UIDatePicker</em></td>
+<td>时分秒，3列</td>
+</tr>
+<tr>
+<td><strong>datetime</strong></td>
+<td><em>UIDatePicker</em></td>
+<td>年月日时分秒，6列</td>
+</tr>
+<tr>
+<td><strong>month</strong></td>
+<td><em>UIDatePicker</em></td>
+<td>年月，2列</td>
+</tr>
+<tr>
+<td><strong>select</strong></td>
+<td><em>PBOptionPicker</em></td>
+<td>选项值，1列</td>
+</tr>
+</tbody></table>
+
+<p><strong>name</strong></p>
+
+<p>输入控件域，用于构造 <code>&lt;name, value&gt;</code> 键值对。</p>
+
+<p><strong>value</strong></p>
+
+<p>输入控件值，用于构造 <code>&lt;name, value&gt;</code> 键值对。</p>
+
+<p><strong>text</strong></p>
+
+<p>用于显示控件值对应的文本。</p>
+
+<p><strong>min</strong> and <strong>max</strong></p>
+
+<p>用于限制输入的最小值与最大值，根据不同的输入类型接收不同的值：</p>
+
+<table><thead>
+<tr>
+<th>类型</th>
+<th>最小值/最大值</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>number</td>
+<td>整型</td>
+<td>20</td>
+</tr>
+<tr>
+<td>decimal</td>
+<td>浮点型</td>
+<td>20.0</td>
+</tr>
+<tr>
+<td>date</td>
+<td>由 &#39;-&#39; 连接的年月日</td>
+<td>2015-2-1</td>
+</tr>
+<tr>
+<td>month</td>
+<td>由 &#39;-&#39; 连接的年月</td>
+<td>2015-2</td>
+</tr>
+</tbody></table>
+
+<p><strong>unit</strong></p>
+
+<p>输入单位字符串，如果指定了将为输入控件添加一个设置 text 为 <strong>unit</strong> 的 <em>UILabel</em> 作为 <em>rightView</em>。</p>
+
+<p><strong>unitColor</strong></p>
+
+<p>输入单位文本颜色。仅当指定 <strong>unit</strong> 时生效。</p>
+
+<p><strong>options</strong></p>
+
+<p>用于 <strong>select</strong> 类型的输入控件，必填。格式为 <em>NSArray&lt;NSDictionary&lt;NSString *, id&gt; *&gt;</em>, 形如：</p>
+<div class="highlight highlight-source-text"><pre>[{text:&#39;a&#39;, value:0}, {text:&#39;b&#39;, value:1}]
+</pre></div>
+<p>其中的 <strong>text</strong> 与 <strong>value</strong> 是保留字段，<strong>text</strong> 用于显示，<strong>value</strong> 作为选项的值。</p>
+
+<p><strong>selector</strong></p>
+
+<p>用于 <strong>select</strong> 类型的输入控件，可选。设置的值为 辅助输入视图 的类名（必须是 <em>PBInputView</em> 的子类）。</p>
+
+<p><strong>format</strong></p>
+
+<p>用于格式化输入文本，对于不同的输入类型：</p>
+
+<table><thead>
+<tr>
+<th>类型</th>
+<th>支持的格式化</th>
+<th>e.g.</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>number</td>
+<td>字符串格式化</td>
+<td>&quot;%lld piece(s)&quot;, 20 =&gt; &quot;20 piece(s)&quot;</td>
+</tr>
+<tr>
+<td>decimal</td>
+<td>字符串格式化</td>
+<td>&quot;%.1lf&quot;, 20 =&gt; &quot;20.0&quot;</td>
+</tr>
+<tr>
+<td><em>任何</em></td>
+<td>分段格式化</td>
+<td>&quot;## ## ##&quot;, 123456 =&gt; &quot;12 34 56&quot;</td>
+</tr>
+</tbody></table>
+
+<p><strong>placeholderColor</strong></p>
+
+<p>未输入时的默认文本颜色。</p>
+
+<p><strong>selectedTextColor</strong></p>
+
+<p>选中态的输入文本颜色。</p>
+
+<p><strong>hidesCursor</strong></p>
+
+<p>是否隐藏光标，默认否。</p>
+
+<p><strong>maxlength</strong></p>
+
+<p>可输入的最大文本长度。长度由 <code>[NSString length]</code> 来决定。</p>
+
+<p><strong>maxchars</strong></p>
+
+<p>可输入的最大字节数。字符计为1，unicode计为2。通过 <code>[NSString charaterLength]</code> (Pbind自定义分类) 来计算。</p>
+
+<p><strong>pattern</strong></p>
+
+<p>用于验证每个输入的字符，使用正则。</p>
+
+<blockquote>
+<p>示例：配置 &#39;[0-9]&#39; 时，如果输入 &#39;a&#39;，将被忽略。</p>
+</blockquote>
+
+<p><strong>validators</strong></p>
+
+<p>由字典构成的一个数组，用于校验整个输入文本。每个字典需要包含两个字段：<strong>pattern</strong> 与 <strong>tips</strong>。
+<strong>pattern</strong>为一个正则，用于匹配输入文本，<strong>tips</strong>为匹配失败时的错误提示。</p>
+
+<blockquote>
+<p>示例：配置 <code>[{pattern: &#39;^S\w?$&#39;, tips: &#39;Should starts with S&#39;}]</code> 时，如果第一个输入的不是 &#39;S&#39;，将提示 &#39;Should starts with S&#39;。</p>
+</blockquote>
