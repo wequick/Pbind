@@ -11,6 +11,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ An instance of PBMessageInterceptor intercepts the OC messages from receiver to a middle man.
+ */
 @interface PBMessageInterceptor : NSObject
 
 @property (nonatomic, weak) id receiver;

@@ -13,6 +13,9 @@
 
 #import "PBCollectionView.h"
 
+/**
+ An instance of PBCollectionsCell add a PBCollectionView as it's content view.
+ */
 @interface PBCollectionsCell : UITableViewCell
 
 @property (nonatomic, strong) PBCollectionView *collectionView;

@@ -476,7 +476,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self setContentOffset:CGPointMake(offset.x, -self.contentInset.top) animated:YES];
 }
 
-- (NSDictionary *)verifiedParamsForSubmit
+- (NSDictionary *)nameValuePairsByVerifying
 {
     // Validate inputs
     id<PBInput> invalidInput = nil;

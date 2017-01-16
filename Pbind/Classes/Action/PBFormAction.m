@@ -22,7 +22,7 @@
         return;
     }
     
-    NSDictionary *params = [controller.form verifiedParamsForSubmit];
+    NSDictionary *params = [controller.form nameValuePairsByVerifying];
     if (params != nil && [self hasNext:@"done"]) {
         state.params = params;
         [self dispatchNext:@"done"];

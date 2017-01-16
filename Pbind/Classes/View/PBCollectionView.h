@@ -19,6 +19,9 @@
 #import "PBRowPaging.h"
 #import "PBDataFetching.h"
 
+/**
+ An instance of PBCollectionView displays the collectio data source which can be configured by Plist.
+ */
 @interface PBCollectionView : UICollectionView <PBRowPaging, PBDataFetching>
 {
     PBMessageInterceptor *_dataSourceInterceptor;
@@ -32,30 +35,66 @@
     } _pbCollectionViewFlags;
 }
 
+#pragma mark - Datasource
+///=============================================================================
+/// @name Datasource
+///=============================================================================
+
+/** The reusable item for all the sections */
 @property (nonatomic, strong) NSDictionary *item;
+
+/** The items for the first section */
 @property (nonatomic, strong) NSArray *items;
 
+#pragma mark - Styling
+///=============================================================================
+/// @name Styling
+///=============================================================================
+
+/** The size for all the items in sections */
 @property (nonatomic, assign) CGSize itemSize;
+
+/** The insets for all the sections */
 @property (nonatomic, assign) UIEdgeInsets itemInsets;
+
+/** 
+ The spacing size for the items 
+ 
+ @discussion The size is composed of:
+ 
+ - width, the minimum inner item spacing
+ - height, the minimum line spacing
+ */
 @property (nonatomic, assign) CGSize spacingSize;
 
-@property (nonatomic, assign, getter=isAutoResize) BOOL autoResize; // auto resize the frame with it's content size, default is NO.
-
 /**
- Scroll the view with horizontal direction.
+ Whether scrolls the view in horizontal direction. Default is NO.
  */
 @property (nonatomic, assign, getter=isHorizontal) BOOL horizontal;
 
 /**
- The data of the current selected index path.
+ The data of the selected item.
  */
 @property (nonatomic, strong) id selectedData;
 
 /**
- The data of the previous selected index path.
+ The data of the previous selected item.
  */
 @property (nonatomic, strong) id deselectedData;
 
+#pragma mark - AutoResizing
+///=============================================================================
+/// @name AutoResizing
+///=============================================================================
+
+/**
+ Whether resizes frame by content automatically.
+ 
+ @discussion Default is NO. If set to YES will reset the frame on content size changed.
+ */
+@property (nonatomic, assign, getter=isAutoResize) BOOL autoResize;
+
+/** The delegate used to notify frame changes */
 @property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 @end

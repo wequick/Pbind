@@ -12,6 +12,9 @@
 #import <UIKit/UIKit.h>
 #import "PBInput.h"
 
+/**
+ An instance of PBOptionPicker displays the options for the `select` input.
+ */
 @interface PBOptionPicker : UIControl<PBTextInput, UIPickerViewDataSource, UIPickerViewDelegate>
 {
     UIPickerView *_picker;

@@ -14,6 +14,9 @@
 
 @protocol PBRowPaging;
 
+/**
+ An instance of PBRowDelegate provides the sizing, triggering for the cell of PBTableView and PBCollectionView.
+ */
 @interface PBRowDelegate : PBMessageInterceptor<UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 {
     UIRefreshControl *_refreshControl;
@@ -22,21 +25,37 @@
     UITableView *_pullControlWrapper;
 }
 
+#pragma mark - Context
+///=============================================================================
+/// @name Context
+///=============================================================================
+
+/** The receiver to receive the messages redirecting by the methods of the delegate */
 @property (nonatomic, weak) id receiver;
 
+/** The data source of the owner (PBTableView or PBCollectionView) */
 @property (nonatomic, strong) PBRowDataSource *dataSource;
 
 - (instancetype)initWithDataSource:(PBRowDataSource *)dataSource;
 
 #pragma mark - Paging
+///=============================================================================
+/// @name Paging
+///=============================================================================
 
+/** Whether the owner is refreshing data */
 @property (nonatomic, assign) BOOL refreshing;
-@property (nonatomic, assign) BOOL pulling; // Pulling more data
+
+/** Whether the owner is pulling more data */
+@property (nonatomic, assign) BOOL pulling;
 
 - (void)beginRefreshingForPagingView:(UIScrollView<PBRowPaging> *)pagingView;
 - (void)endPullingForPagingView:(UIScrollView<PBRowPaging> *)pagingView;
 
 #pragma mark - FlowLayout
+///=============================================================================
+/// @name FlowLayout
+///=============================================================================
 
 @property (nonatomic, assign) CGSize itemSize;
 @property (nonatomic, assign) UIEdgeInsets itemInsets;

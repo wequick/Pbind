@@ -12,25 +12,62 @@
 #import <UIKit/UIKit.h>
 #import "PBInput.h"
 
+/**
+ An instance of PBButton provides the ability of configurating with Plist.
+ 
+ @discussion Support configure title, image, backgroundImage and backgroundColor for state.
+ */
 @interface PBButton : UIButton<PBInput>
 
+#pragma mark - Styling
+///=============================================================================
+/// @name Styling
+///=============================================================================
+
+/** The title for the normal state */
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *disabledTitle; // title:disabled
-@property (nonatomic, strong) NSString *selectedTitle; // title:selected
+/** The title for the disabled state */
+@property (nonatomic, strong) NSString *disabledTitle;
+/** The title for the selected state */
+@property (nonatomic, strong) NSString *selectedTitle;
+/** The title for the highlighted state */
 @property (nonatomic, strong) NSString *highlightedTitle; // image:selected
 
+/** The image name to create the image for the normal state */
 @property (nonatomic, strong) NSString *image;
+/** The image name to create the image for the disabled state */
 @property (nonatomic, strong) NSString *disabledImage;
+/** The image name to create the image for the selected state */
 @property (nonatomic, strong) NSString *selectedImage;
+/** The image name to create the image for the highlighted state */
 @property (nonatomic, strong) NSString *highlightedImage;
 
+/** The image name to create the background image for the normal state */
 @property (nonatomic, strong) NSString *backgroundImage;
+/** The image name to create the background image for the disabled state */
 @property (nonatomic, strong) NSString *disabledBackgroundImage;
+/** The image name to create the background image for the selected state */
 @property (nonatomic, strong) NSString *selectedBackgroundImage;
+/** The image name to create the background image for the highlighted state */
 @property (nonatomic, strong) NSString *highlightedBackgroundImage;
 
+/** 
+ The color for the disabled state
+ 
+ @discussion If not specified, use the background color with 0.2 opacity.
+ */
 @property (nonatomic, strong) UIColor *disabledBackgroundColor;
+/**
+ The color for the selected state
+ 
+ @discussion If not specified, use the background color.
+ */
 @property (nonatomic, strong) UIColor *selectedBackgroundColor;
+/**
+ The color for the highlighted state
+ 
+ @discussion If not specified, use the background color with 0.8 opacity.
+ */
 @property (nonatomic, strong) UIColor *highlightedBackgroundColor;
 
 @end
