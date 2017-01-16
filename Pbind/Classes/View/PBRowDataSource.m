@@ -627,8 +627,8 @@
 
 - (NSDictionary *)dictionaryByMergingDictionary:(NSDictionary *)oneDictionay withAnother:(NSDictionary *)anotherDictionay
 {
-    if (![anotherDictionay isKindOfClass:[NSDictionary class]]) {
-        id anotherValue = [PBValueParser valueWithString:anotherDictionay];
+    if ([anotherDictionay isKindOfClass:[NSString class]]) {
+        id anotherValue = [PBValueParser valueWithString:(id)anotherDictionay];
         if (anotherValue == nil) {
             return nil;
         }

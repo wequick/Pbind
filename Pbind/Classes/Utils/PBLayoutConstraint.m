@@ -140,8 +140,7 @@
 
 + (void)addConstraintWithAspectRatioFormat:(const char *)str views:(NSDictionary *)views forParentView:(UIView *)parentView {
     char *p = (char *) str + 2;
-    char *p2, *temp;
-    size_t len = strlen(p) + 1;
+    char *p2;
     BOOL failed = NO;
     
     NSString *viewName = [self nameByReadingFormat:&p];
@@ -162,7 +161,7 @@
         return;
     }
     
-    int width = strtol(p, &p2, 0);
+    long width = strtol(p, &p2, 0);
     if (p == p2) {
         [self printMissingIntegerErrorOnFormat:str pos:p];
         return;
@@ -172,7 +171,7 @@
         return;
     }
     
-    int height = 0;
+    long height = 0;
     if (*p2 != '\0') {
         if (*p2 != ':') {
             [self printExpectedSymbolError:':' usage:@"separate width and height" onFormat:str pos:p];
@@ -210,8 +209,7 @@
 
 + (void)addConstraintsWithEdgeInsetsFormat:(const char *)str views:(NSDictionary *)views forParentView:(UIView *)parentView {
     char *p = (char *) str + 2;
-    char *p2, *temp;
-    size_t len = strlen(p) + 1;
+    char *p2;
     UIView *outerView = parentView;
     UIView *innerView;
     NSString *viewName;
@@ -490,8 +488,7 @@
     // firstItem.firstAttr = secondItem.secondAttr * multiplier + constant @ priority
     //
     char *p = (char *) str;
-    char *p2, *temp;
-    size_t len = strlen(str) + 1;
+    char *p2;
     NSString *viewName;
     UIView *firstItem, *secondItem;
     NSLayoutAttribute firstAttr, secondAttr;
@@ -646,7 +643,7 @@
 }
 
 + (NSLayoutRelation)relationByReadingFormat:(char **)inOutStr failed:(BOOL *)failed {
-    NSLayoutRelation relation;
+    NSLayoutRelation relation = NSLayoutRelationEqual;
     char *p = *inOutStr;
     if (*p == '=') {
         p++;
@@ -654,7 +651,6 @@
             p++;
         }
         *inOutStr = p;
-        relation = NSLayoutRelationEqual;
     } else if (*p == '<') {
         p++;
         if (*p == '=') {
@@ -764,7 +760,7 @@
         [error appendString:@" "];
     }
     [error appendString:@"^"];
-    NSLog(error);
+    NSLog(@"%@", error);
 }
 
 + (void)printUnknownAttributeErrorOnFormat:(const char *)format pos:(const char *)pos {
