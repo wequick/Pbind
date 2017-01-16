@@ -11,9 +11,19 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ An instance of PBTableViewCell extends the ability of configuration the image size and margin for the cell.
+ */
 @interface PBTableViewCell : UITableViewCell
 
-@property (nonatomic, assign) CGSize imageSize; // Size of cell.imageView
-@property (nonatomic, assign) UIEdgeInsets imageMargin; // Outside margins of cell.imageView
+/**
+ The size for the image of the cell's imageView.
+ */
+@property (nonatomic, assign) CGSize imageSize;
+
+/**
+ The margin for the image of the cell's imageView.
+ */
+@property (nonatomic, assign) UIEdgeInsets imageMargin;
 
 @end

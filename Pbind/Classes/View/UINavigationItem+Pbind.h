@@ -11,12 +11,37 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ This category provides the ability of configurating the left and right items for the navigation item.
+ */
 @interface UINavigationItem (Pbind)
 
-- (void)setRight:(NSDictionary *)right;
-- (void)setRights:(NSArray *)rights;
+/**
+ Initialize the right bar button item
 
+ @param right the dictionary for creating the item
+ */
+- (void)setRight:(NSDictionary *)right;
+
+/**
+ Initialize the right bar button items
+
+ @param rights the dictionary array for creating the items
+ */
+- (void)setRights:(NSArray<NSDictionary *> *)rights;
+
+/**
+ Initialize the left bar button item
+ 
+ @param left the dictionary for creating the item
+ */
 - (void)setLeft:(NSDictionary *)left;
+
+/**
+ Initialize the left bar button items
+ 
+ @param lefts the dictionary array for creating the items
+ */
 - (void)setLefts:(NSArray *)lefts;
 
 @end

@@ -15,6 +15,9 @@
 #import "PBViewResizingDelegate.h"
 #import "PBDataFetching.h"
 
+/**
+ The PBScrollView is one of the base components of Pbind. An instance of PBScrollView provides the ability of configurating a group of row views in linear layout.
+ */
 @interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizingDelegate, PBDataFetching>
 {
     struct {

@@ -34,8 +34,19 @@
 
 //______________________________________________________________________________
 
+/**
+ This category provides the ability of initializing a view with a Pbind-way Plist.
+ */
 @interface UIView (Pbind) <PBViewLoadingDelegate, PBViewMappingDelegate>
 
+#pragma mark - Initializing
+///=============================================================================
+/// @name Initializing
+///=============================================================================
+
+/**
+ The file name of a plist used to initialize the view.
+ */
 @property (nonatomic, strong) NSString *plist;
 
 /**
@@ -45,20 +56,85 @@
  */
 @property (nonatomic, strong) NSString *alias;
 
+#pragma mark - Fetching
+///=============================================================================
+/// @name Fetching
+///=============================================================================
+
+/**
+ The data of the view.
+ 
+ @discussion This is set after the fetching done.
+ */
 @property (nonatomic, strong) id data;
+
+/**
+ The data of the owner controller's root view.
+ */
 @property (nonatomic, strong, readonly, getter=rootData) id rootData;
+
+/** The delegate triggered by loading */
 @property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
 
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+/** The constant properties from the parsed plist */
 @property (nonatomic, strong) NSDictionary *pb_constants;
+
+/** The dynamic expressions from the parsed plist */
 @property (nonatomic, strong) NSDictionary *pb_expressions;
 
+/**
+ Set mappable for the key path. 
+ 
+ @discussion As default all the key paths allows to be map with the `pb_expressions`.
+ If sets to NO then will ignores the expression mapping.
+
+ @param mappable YES if allows property mapping
+ @param keyPath the key path for the property
+ */
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath;
+
+/**
+ Check if a key path is allows to be map.
+
+ @param keyPath the key path to be checked
+ @return YES if allows to be map.
+ */
 - (BOOL)mappableForKeyPath:(NSString *)keyPath;
 
+/**
+ Bind an expression for the key path.
+
+ @param expression the expression string
+ @param keyPath the key path to be bind
+ */
 - (void)setExpression:(NSString *)expression forKeyPath:(NSString *)keyPath;
+
+/**
+ Check if a key path has been bind to an expression
+
+ @param keyPath the key path to be checked
+ @return YES if bind
+ */
 - (BOOL)hasExpressionForKeyPath:(NSString *)keyPath;
 
+/**
+ Find the owner controller for the view
+
+ @return the super controller
+ */
 - (UIViewController *)supercontroller;
+
+/**
+ Find a super view with the specify class
+
+ @param clazz the searching class
+ @return the super view with the class
+ */
 - (id)superviewWithClass:(Class)clazz;
 
 /**
