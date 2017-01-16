@@ -14,7 +14,7 @@
 #import "PBViewResizingDelegate.h"
 
 /**
- An instance of PBTextView extends the ability of configurating the placeholder.
+ An instance of PBTextView extends the ability of configuring the placeholder.
  */
 @interface PBTextView : UITextView <PBInput, PBTextInputValidator, UITextViewDelegate>
 {

@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 /**
  The PBRowMapper is one of the base components of Pbind.
  
- @dicussion It provides the ability of configurating row elements like:
+ @dicussion It provides the ability of configuring row elements like:
  
  - UITableViewCell
  - UICollectionViewCell
