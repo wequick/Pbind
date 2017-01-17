@@ -49,10 +49,49 @@ static NSMutableArray *kResourcesBundles = nil;
     return kResourcesBundles;
 }
 
++ (void)enumerateControllersUsingBlock:(void (^)(UIViewController *controller))block {
+    UIViewController *rootViewController = [[UIApplication sharedApplication].delegate window].rootViewController;
+    [self enumerateControllersUsingBlock:block withController:rootViewController];
+}
+
++ (void)enumerateControllersUsingBlock:(void (^)(UIViewController *controller))block withController:(UIViewController *)controller {
+    
+    block(controller);
+    
+    UIViewController *presentedController = [controller presentedViewController];
+    if (presentedController != nil) {
+        [self enumerateControllersUsingBlock:block withController:presentedController];
+    }
+    
+    if ([controller isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *nav = (id) controller;
+        for (UIViewController *vc in nav.viewControllers) {
+            [self enumerateControllersUsingBlock:block withController:vc];
+        }
+    } else if ([controller isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tc = (id) controller;
+        for (UIViewController *vc in tc.viewControllers) {
+            [self enumerateControllersUsingBlock:block withController:vc];
+        }
+    }
+}
+
 + (void)reloadViewsOnPlistUpdate:(NSString *)plist {
-    // TODO: reload the specify views that using the plist.
-    UIViewController *controller = PBTopController();
-    [controller.view pb_reloadPlist];
+    // Reload the specify views that using the plist.
+    NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
+    NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
+    [self enumerateControllersUsingBlock:^(UIViewController *controller) {
+        NSString *usingPlist = controller.view.plist;
+        if (usingPlist == nil) {
+            return;
+        }
+        
+        if ([changedPlist isEqualToString:usingPlist]) {
+            [controller.view pb_reloadPlist];
+        }
+        
+        // TODO: check the layout configured in the plist
+    }];
 }
 
 + (void)reloadViewsOnAPIUpdate:(NSString *)action {
