@@ -168,6 +168,7 @@
     
     // Reset the plist mapper
     view._pbPlistURL = PBResourceURL(view.plist, @"plist");
+    [view.PB_internalMapper resetForView:view];
     view.PB_internalMapper = nil;
     PBMapper *mapper = [view pb_mapper];
     

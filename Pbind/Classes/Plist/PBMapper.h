@@ -49,6 +49,7 @@
 - (void)updateWithData:(id)data andView:(UIView *)view;
 - (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view;
 
+- (void)resetForView:(UIView *)view;
 - (void)unbind;
 
 - (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
