@@ -65,17 +65,31 @@
     // Cell height
     XCTAssertEqual([[PBValueParser valueWithString:@":auto"] intValue], UITableViewAutomaticDimension);
     // UIBarButtonItem
-    XCTAssertEqual([[PBValueParser valueWithString:@":+"] intValue], UIBarButtonSystemItemAdd);
-    XCTAssertEqual([[PBValueParser valueWithString:@":add"] intValue], UIBarButtonSystemItemAdd);
-    XCTAssertEqual([[PBValueParser valueWithString:@":@"] intValue], UIBarButtonSystemItemAction);
-    XCTAssertEqual([[PBValueParser valueWithString:@":share"] intValue], UIBarButtonSystemItemAction);
     XCTAssertEqual([[PBValueParser valueWithString:@":done"] intValue], UIBarButtonSystemItemDone);
+    XCTAssertEqual([[PBValueParser valueWithString:@":cancel"] intValue], UIBarButtonSystemItemCancel);
     XCTAssertEqual([[PBValueParser valueWithString:@":edit"] intValue], UIBarButtonSystemItemEdit);
+    XCTAssertEqual([[PBValueParser valueWithString:@":save"] intValue], UIBarButtonSystemItemSave);
+    XCTAssertEqual([[PBValueParser valueWithString:@":add"] intValue], UIBarButtonSystemItemAdd);
+    XCTAssertEqual([[PBValueParser valueWithString:@":compose"] intValue], UIBarButtonSystemItemCompose);
+    XCTAssertEqual([[PBValueParser valueWithString:@":reply"] intValue], UIBarButtonSystemItemReply);
+    XCTAssertEqual([[PBValueParser valueWithString:@":share"] intValue], UIBarButtonSystemItemAction);
+    XCTAssertEqual([[PBValueParser valueWithString:@":organize"] intValue], UIBarButtonSystemItemOrganize);
+    XCTAssertEqual([[PBValueParser valueWithString:@":bookmarks"] intValue], UIBarButtonSystemItemBookmarks);
+    XCTAssertEqual([[PBValueParser valueWithString:@":search"] intValue], UIBarButtonSystemItemSearch);
+    XCTAssertEqual([[PBValueParser valueWithString:@":refresh"] intValue], UIBarButtonSystemItemRefresh);
+    XCTAssertEqual([[PBValueParser valueWithString:@":stop"] intValue], UIBarButtonSystemItemStop);
+    XCTAssertEqual([[PBValueParser valueWithString:@":camera"] intValue], UIBarButtonSystemItemCamera);
+    XCTAssertEqual([[PBValueParser valueWithString:@":trash"] intValue], UIBarButtonSystemItemTrash);
+    XCTAssertEqual([[PBValueParser valueWithString:@":play"] intValue], UIBarButtonSystemItemPlay);
+    XCTAssertEqual([[PBValueParser valueWithString:@":pause"] intValue], UIBarButtonSystemItemPause);
+    XCTAssertEqual([[PBValueParser valueWithString:@":rewind"] intValue], UIBarButtonSystemItemRewind);
+    XCTAssertEqual([[PBValueParser valueWithString:@":fastforward"] intValue], UIBarButtonSystemItemFastForward);
+    XCTAssertEqual([[PBValueParser valueWithString:@":undo"] intValue], UIBarButtonSystemItemUndo);
+    XCTAssertEqual([[PBValueParser valueWithString:@":redo"] intValue], UIBarButtonSystemItemRedo);
+    XCTAssertEqual([[PBValueParser valueWithString:@":pagecurl"] intValue], UIBarButtonSystemItemPageCurl);
     // PBFormIndicating
     XCTAssertEqual([[PBValueParser valueWithString:@":focus"] intValue], PBFormIndicatingMaskInputFocus);
     XCTAssertEqual([[PBValueParser valueWithString:@":invalid"] intValue], PBFormIndicatingMaskInputInvalid);
-    XCTAssertEqual([[PBValueParser valueWithString:@":done"] intValue], UIBarButtonSystemItemDone);
-    XCTAssertEqual([[PBValueParser valueWithString:@":edit"] intValue], UIBarButtonSystemItemEdit);
 }
 
 - (void)testCanDefineEnum {
