@@ -116,7 +116,13 @@ static NSMutableDictionary *kEnums = nil;
             enumValue = UITableViewAutomaticDimension;
         }
         // UIBarButtonSystemItem
-        else if ([aString isEqualToString:@"save"]) {
+        else if ([aString isEqualToString:@"done"]) {
+            enumValue = UIBarButtonSystemItemDone;
+        } else if ([aString isEqualToString:@"cancel"]) {
+            enumValue = UIBarButtonSystemItemCancel;
+        } else if ([aString isEqualToString:@"edit"]) {
+            enumValue = UIBarButtonSystemItemEdit;
+        } else if ([aString isEqualToString:@"save"]) {
             enumValue = UIBarButtonSystemItemSave;
         } else if ([aString isEqualToString:@"add"]) {
             enumValue = UIBarButtonSystemItemAdd;
