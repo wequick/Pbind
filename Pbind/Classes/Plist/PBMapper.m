@@ -222,6 +222,17 @@
     [_properties setExpression:expression forKey:key];
 }
 
+- (void)resetForView:(UIView *)view {
+    if (_navProperties != nil) {
+        UINavigationItem *item = view.supercontroller.navigationItem;
+        item.title = nil;
+        item.leftBarButtonItem = nil;
+        item.leftBarButtonItems = nil;
+        item.rightBarButtonItem = nil;
+        item.rightBarButtonItems = nil;
+    }
+}
+
 - (void)unbind {
     if (_properties == nil) {
         return;
