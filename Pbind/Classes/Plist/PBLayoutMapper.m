@@ -31,6 +31,8 @@
         view = [(id)view contentView];
     }
     
+    view.pb_layoutName = self.name;
+    
     // Check if any view be removed.
     NSArray *aliases = [self.views allKeys];
     NSMutableArray *addedAliases = [NSMutableArray arrayWithCapacity:aliases.count];

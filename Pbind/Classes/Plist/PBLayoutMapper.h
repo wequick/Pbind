@@ -18,6 +18,11 @@
  */
 @interface PBLayoutMapper : PBMapper
 
+#pragma mark - Constraint
+///=============================================================================
+/// @name Constraint
+///=============================================================================
+
 /**
  The subviews to create.
  
@@ -49,6 +54,14 @@
  - Merge center vertically format   : M:|-left-[/[label1-label2]/(==width)]-icon-|
  */
 @property (nonatomic, strong) NSArray *constraints;
+
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+/** The layout name */
+@property (nonatomic, strong) NSString *name;
 
 /**
  Create all the subviews and add to the parent view.
