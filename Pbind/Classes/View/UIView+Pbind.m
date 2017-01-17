@@ -678,4 +678,12 @@
     return [self valueForAdditionKey:@"alias"];
 }
 
+- (void)setPb_layoutName:(NSString *)name {
+    [self setValue:name forAdditionKey:@"pb_layoutName"];
+}
+
+- (NSString *)pb_layoutName {
+    return [self valueForAdditionKey:@"pb_layoutName"];
+}
+
 @end

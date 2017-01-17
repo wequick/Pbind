@@ -87,6 +87,9 @@
 /** The dynamic expressions from the parsed plist */
 @property (nonatomic, strong) NSDictionary *pb_expressions;
 
+/** The plist layout file name */
+@property (nonatomic, strong) NSString *pb_layoutName;
+
 /**
  Set mappable for the key path. 
  

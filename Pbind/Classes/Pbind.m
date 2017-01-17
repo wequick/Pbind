@@ -76,6 +76,13 @@ static NSMutableArray *kResourcesBundles = nil;
     }
 }
 
++ (void)enumerateSubviewsForView:(UIView *)view usingBlock:(void (^)(UIView *subview))block {
+    block(view);
+    for (UIView *subview in view.subviews) {
+        [self enumerateSubviewsForView:subview usingBlock:block];
+    }
+}
+
 + (void)reloadViewsOnPlistUpdate:(NSString *)plist {
     // Reload the specify views that using the plist.
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
@@ -85,12 +92,21 @@ static NSMutableArray *kResourcesBundles = nil;
         if (usingPlist == nil) {
             return;
         }
-        
-        if ([changedPlist isEqualToString:usingPlist]) {
+        if ([usingPlist isEqualToString:changedPlist]) {
             [controller.view pb_reloadPlist];
+            return;
         }
         
-        // TODO: check the layout configured in the plist
+        // Check the layout configured in the plist
+        [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview) {
+            if (subview.pb_layoutName == nil) {
+                return;
+            }
+            if ([subview.pb_layoutName isEqualToString:changedPlist]) {
+                [controller.view pb_reloadPlist];
+                return;
+            }
+        }];
     }];
 }
 
