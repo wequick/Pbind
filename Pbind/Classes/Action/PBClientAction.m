@@ -20,8 +20,6 @@
 
 @implementation PBClientAction
 
-@compatibility_alias _PBAction PBAction;
-
 @pbactions(@"get",
            @"post",
            @"put",
