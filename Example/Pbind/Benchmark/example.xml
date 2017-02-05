@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf8"?>
+<pbind>
+    <properties backgroundColor="#f0f0f0">
+        <clients>
+            <PBExampleClient action="GetGroupInfo" params="@^groupParams"/>
+            <PBExampleClient action="GetGroupMembers" params="@^groupParams"/>
+        </clients>
+        <headers>
+            <PBCollectionView height="-1" data="$1.list" backgroundColor="#fff" autoResize="true"
+                contentSize="{1080,573}" itemSize="{165,221}" itemInsets="{40,52,46,52}" spacingSize="{100,45}">
+                <item clazz="PBExampleGroupMemberAvatarCell">
+                    <properties @1.avatarUrl=".$customInfo.avatar" $b.text=".$nameCard" _3.font="{F:42}" />
+                </item>
+            </PBCollectionView>
+        </headers>
+    </properties>
+</pbind>

@@ -26,6 +26,14 @@
 		AE5A9EB421D4C1E65661FB6A /* ignore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEAB0540A7C32634CC14DA0 /* ignore.h */; };
 		B63A7B0E0E34A60FA48585E5 /* PBDirectoryWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB1FFF75A24FC06E88ED9B5 /* PBDirectoryWatcher.h */; };
 		D3CEFE1C5CDA754B7A98EEF3 /* PBLiveLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 428300620C3FC16A7E7C8734 /* PBLiveLoader.m */; };
+		F8039BE01E3437DC009C5372 /* level1.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8039BDF1E3437DC009C5372 /* level1.plist */; };
+		F8039BE21E3437EB009C5372 /* level1.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8039BE11E3437EB009C5372 /* level1.xml */; };
+		F8039BE41E343871009C5372 /* level1.json in Resources */ = {isa = PBXBuildFile; fileRef = F8039BE31E343871009C5372 /* level1.json */; };
+		F8039BE71E343995009C5372 /* BMXMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F8039BE51E343995009C5372 /* BMXMLParser.h */; };
+		F8039BE81E343995009C5372 /* BMXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F8039BE61E343995009C5372 /* BMXMLParser.m */; };
+		F8039BEA1E343B11009C5372 /* BMParsingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F8039BE91E343B11009C5372 /* BMParsingTests.m */; };
+		F8039C2F1E47780C009C5372 /* example.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8039C2E1E47780C009C5372 /* example.plist */; };
+		F8039C311E47781F009C5372 /* example.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8039C301E47781F009C5372 /* example.xml */; };
 		F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F80D432F1D8E667D00FF298B /* PBExpressionTests.m */; };
 		F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */; };
 		F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */; };
@@ -81,6 +89,14 @@
 		BBB1FFF75A24FC06E88ED9B5 /* PBDirectoryWatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PBDirectoryWatcher.h; path = PBLiveLoader/PBDirectoryWatcher.h; sourceTree = "<group>"; };
 		C9A6AD796B424285D2184205 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F255872ABDC8B50205417D02 /* Pods-Pbind_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pbind_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Pbind_Example/Pods-Pbind_Example.release.xcconfig"; sourceTree = "<group>"; };
+		F8039BDF1E3437DC009C5372 /* level1.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = level1.plist; sourceTree = "<group>"; };
+		F8039BE11E3437EB009C5372 /* level1.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = level1.xml; sourceTree = "<group>"; };
+		F8039BE31E343871009C5372 /* level1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = level1.json; sourceTree = "<group>"; };
+		F8039BE51E343995009C5372 /* BMXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMXMLParser.h; sourceTree = "<group>"; };
+		F8039BE61E343995009C5372 /* BMXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BMXMLParser.m; sourceTree = "<group>"; };
+		F8039BE91E343B11009C5372 /* BMParsingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BMParsingTests.m; sourceTree = "<group>"; };
+		F8039C2E1E47780C009C5372 /* example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = example.plist; sourceTree = "<group>"; };
+		F8039C301E47781F009C5372 /* example.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = example.xml; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
 		F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBGroupMembers.plist; sourceTree = "<group>"; };
 		F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBCreateGroup.plist; sourceTree = "<group>"; };
@@ -218,6 +234,8 @@
 			children = (
 				F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */,
 				F80D432F1D8E667D00FF298B /* PBExpressionTests.m */,
+				F8039BDE1E3437DC009C5372 /* Benchmark */,
+				F8039BE91E343B11009C5372 /* BMParsingTests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
 			path = Tests;
@@ -249,6 +267,21 @@
 				55A1CBB835E651FB9CBFC89D /* Pods-Pbind_Example.debug.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		F8039BDE1E3437DC009C5372 /* Benchmark */ = {
+			isa = PBXGroup;
+			children = (
+				F8039C2E1E47780C009C5372 /* example.plist */,
+				F8039C301E47781F009C5372 /* example.xml */,
+				F8039BDF1E3437DC009C5372 /* level1.plist */,
+				F8039BE11E3437EB009C5372 /* level1.xml */,
+				F8039BE31E343871009C5372 /* level1.json */,
+				F8039BE51E343995009C5372 /* BMXMLParser.h */,
+				F8039BE61E343995009C5372 /* BMXMLParser.m */,
+			);
+			name = Benchmark;
+			path = ../Pbind/Benchmark;
 			sourceTree = "<group>";
 		};
 		F89500C71D87AB7B0038A3E5 /* Adapter */ = {
@@ -300,6 +333,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8039BE71E343995009C5372 /* BMXMLParser.h in Headers */,
 				B63A7B0E0E34A60FA48585E5 /* PBDirectoryWatcher.h in Headers */,
 				516526C3CC17AE8E19E9A314 /* PBLiveLoader.h in Headers */,
 				AE5A9EB421D4C1E65661FB6A /* ignore.h in Headers */,
@@ -392,11 +426,16 @@
 			files = (
 				F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				F8039BE21E3437EB009C5372 /* level1.xml in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				F8039C2F1E47780C009C5372 /* example.plist in Resources */,
+				F8039C311E47781F009C5372 /* example.xml in Resources */,
 				F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */,
 				F89500D31D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib in Resources */,
 				F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */,
+				F8039BE41E343871009C5372 /* level1.json in Resources */,
+				F8039BE01E3437DC009C5372 /* level1.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +507,7 @@
 				F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */,
 				F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */,
 				F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */,
+				F8039BE81E343995009C5372 /* BMXMLParser.m in Sources */,
 				6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */,
 				F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */,
 				F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */,
@@ -483,6 +523,7 @@
 			files = (
 				F89500E11D87B0C20038A3E5 /* PBValueParserTests.m in Sources */,
 				F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */,
+				F8039BEA1E343B11009C5372 /* BMParsingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
