@@ -5,9 +5,7 @@
 //  Created by Galen Lin on 2016/12/9.
 //
 
-#include <targetconditionals.h>
-
-#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+#if (DEBUG)
 
 #import <Foundation/Foundation.h>
 

@@ -27,7 +27,7 @@
 	<key>PBLocalhost</key>
 	<string>$(SRCROOT)/PBLocalhost</string>
 	<key>PBResourcesPath</key>
-	<string>$(SRCROOT)/Pbind</string>
+	<string>$(SRCROOT)/Pbind_Example</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
