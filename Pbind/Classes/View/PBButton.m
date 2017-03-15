@@ -97,6 +97,46 @@
     return _backgroundColor;
 }
 
+- (void)setTitleColor:(UIColor *)titleColor {
+    [self setTitleColor:titleColor forState:UIControlStateNormal];
+}
+
+- (UIColor *)titleColor {
+    return [self titleColorForState:UIControlStateNormal];
+}
+
+- (void)setTextColor:(UIColor *)titleColor {
+    [self setTitleColor:titleColor forState:UIControlStateNormal];
+}
+
+- (UIColor *)textColor {
+    return [self titleColorForState:UIControlStateNormal];
+}
+
+- (void)setDisabledTitleColor:(UIColor *)titleColor {
+    [self setTitleColor:titleColor forState:UIControlStateDisabled];
+}
+
+- (UIColor *)disabledTitleColor {
+    return [self titleColorForState:UIControlStateDisabled];
+}
+
+- (void)setHighlightedTitleColor:(UIColor *)titleColor {
+    [self setTitleColor:titleColor forState:UIControlStateHighlighted];
+}
+
+- (UIColor *)highlightedTitleColor {
+    return [self titleColorForState:UIControlStateHighlighted];
+}
+
+- (void)setSelectedTitleColor:(UIColor *)titleColor {
+    [self setTitleColor:titleColor forState:UIControlStateSelected];
+}
+
+- (UIColor *)selectedTitleColor {
+    return [self titleColorForState:UIControlStateSelected];
+}
+
 #pragma mark - PBInput
 
 - (void)setText:(NSString *)text {

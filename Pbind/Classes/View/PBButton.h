@@ -31,7 +31,18 @@
 /** The title for the selected state */
 @property (nonatomic, strong) NSString *selectedTitle;
 /** The title for the highlighted state */
-@property (nonatomic, strong) NSString *highlightedTitle; // image:selected
+@property (nonatomic, strong) NSString *highlightedTitle;
+
+/** The title color for the normal state */
+@property (nonatomic, strong) UIColor *titleColor;
+@property (nonatomic, strong) UIColor *textColor; // same to titleColor
+
+/** The title color for the disabled state */
+@property (nonatomic, strong) UIColor *disabledTitleColor;
+/** The title color for the selected state */
+@property (nonatomic, strong) UIColor *selectedTitleColor;
+/** The title color for the highlighted state */
+@property (nonatomic, strong) UIColor *highlightedTitleColor;
 
 /** The image name to create the image for the normal state */
 @property (nonatomic, strong) NSString *image;
