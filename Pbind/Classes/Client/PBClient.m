@@ -19,7 +19,7 @@ NSString *const PBResponseKey = @"PBResponseKey";
 @implementation PBClient
 
 static NSMutableDictionary *kAliasNames;
-static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
+static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complection)(PBResponse *response));
 
 + (Class)requestClass
 {
@@ -64,7 +64,7 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     [kAliasNames setObject:[[self class] description] forKey:alias];
 }
 
-+ (void)registerDebugServer:(PBResponse *(^)(PBClient *, PBRequest *))server {
++ (void)registerDebugServer:(void (^)(PBClient *client, PBRequest *request, void (^complection)(PBResponse *response)))server {
     kDebugServer = server;
 }
 
@@ -118,14 +118,21 @@ static PBResponse *(^kDebugServer)(PBClient *client, PBRequest *request);
     
     // Global debug response
     if (kDebugServer != nil) {
-        PBResponse *response = kDebugServer(self, request);
-        if (response != nil) {
-            response = [self transformingResponse:response withRequest:request];
-            complection(response);
-            return;
-        }
+        kDebugServer(self, request, ^(PBResponse *response) {
+            if (response != nil) {
+                response = [self transformingResponse:response withRequest:request];
+                complection(response);
+            } else {
+                [self __loadRequest:request notifys:notifys complection:complection];
+            }
+        });
+        return;
     }
     
+    [self __loadRequest:request notifys:notifys complection:complection];
+}
+
+- (void)__loadRequest:(PBRequest *)request notifys:(BOOL)notifys complection:(void (^)(PBResponse *))complection {
     PBRequest *aRequest = [self transformingRequest:request];
     // Read cache
     NSString *cacheKey = [self cacheKeyForRequest:aRequest];
