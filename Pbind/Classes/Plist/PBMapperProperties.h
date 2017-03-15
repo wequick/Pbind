@@ -29,7 +29,19 @@
 
 - (BOOL)initPropertiesForOwner:(id)owner; // UIView
 
+/**
+ Initialize the properties of the owner by KVC
+
+ @param owner the owner to be initialized
+ */
 - (void)initDataForOwner:(id)owner;
+
+/**
+ Initialize the properties of the owner by setter method
+ 
+ @param owner the owner to be initialized
+ */
+- (void)setDataToOwner:(id)owner;
 
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 - (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context;

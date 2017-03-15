@@ -131,6 +131,37 @@
     }
 }
 
++ (void)invokeSetterWithValue:(id)value forKey:(NSString *)key toObject:(id)object failure:(void (^)(void))failure
+{
+    BOOL set = NO;
+    do {
+        if ([key length] <= 1) {
+            break;
+        }
+        
+        NSString *setterName = [NSString stringWithFormat:@"set%c%@:", toupper([key characterAtIndex:0]), [key substringFromIndex:1]];
+        SEL setter = NSSelectorFromString(setterName);
+        if (setter == nil) {
+            break;
+        }
+        
+        IMP imp = [object methodForSelector:setter];
+        if (imp == nil) {
+            break;
+        }
+        
+        void (*func)(id target, SEL sel, id value) = (void (*)(id, SEL, id)) imp;
+        func(object, setter, value);
+        set = YES;
+    } while (false);
+    
+    if (!set) {
+        if (failure) {
+            failure();
+        }
+    }
+}
+
 + (void)setValue:(id)value forKeyPath:(NSString *)keyPath toObject:(id)object failure:(void (^)(void))failure
 {
     @try {

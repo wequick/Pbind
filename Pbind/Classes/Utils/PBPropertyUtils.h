@@ -19,4 +19,6 @@
 
 + (void)setValuesForKeysWithDictionary:(NSDictionary *)dictionary toObject:(id)object failure:(void (^)(void))failure;
 
++ (void)invokeSetterWithValue:(id)value forKey:(NSString *)key toObject:(id)object failure:(void (^)(void))failure;
+
 @end
