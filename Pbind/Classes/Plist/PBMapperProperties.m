@@ -125,6 +125,13 @@
     }
 }
 
+- (void)setDataToOwner:(id)owner
+{
+    for (NSString *key in _constants) {
+        [PBPropertyUtils invokeSetterWithValue:_constants[key] forKey:key toObject:owner failure:nil];
+    }
+}
+
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag
 {
     if (_expressions == nil) {
