@@ -47,7 +47,7 @@
 
  @param server A block function that returns response data.
  */
-+ (void)registerDebugServer:(PBResponse *(^)(PBClient *client, PBRequest *request))server;
++ (void)registerDebugServer:(void (^)(PBClient *client, PBRequest *request, void (^complection)(PBResponse *response)))server;
 
 #pragma mark - Caching
 ///=============================================================================
