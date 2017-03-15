@@ -6,11 +6,31 @@
 //
 
 #import "PBLiveLoader.h"
+#include <targetconditionals.h>
 
-#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+#if (DEBUG)
 
 #import "PBDirectoryWatcher.h"
 #import <Pbind/Pbind.h>
+
+#import "PBSimulatorEnviroment.h"
+
+#if !(TARGET_IPHONE_SIMULATOR)
+
+#import "PBLLRemoteWatcher.h"
+#import "PBLLInspector.h"
+
+@interface PBLiveLoader () <PBLLRemoteWatcherDelegate>
+{
+    void (^apiComplection)(PBResponse *);
+    NSData *apiReqData;
+    NSString *tempResourcesPath;
+    NSMutableDictionary *cacheResponseData;
+}
+
+@end
+
+#endif
 
 @implementation PBLiveLoader
 
@@ -22,8 +42,11 @@ static NSString *const kDebugJSONRedirectKey = @"$redirect";
 static NSString *const kDebugJSONStatusKey = @"$status";
 
 static NSArray<NSString *> *kIgnoreAPIs;
+
+#if (TARGET_IPHONE_SIMULATOR)
 static PBDirectoryWatcher  *kResWatcher;
 static PBDirectoryWatcher  *kAPIWatcher;
+#endif
 
 static BOOL HasSuffix(NSString *src, NSString *tail)
 {
@@ -37,22 +60,14 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
 
 + (void)load {
     [super load];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidFinishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-}
-
-+ (void)applicationDidFinishLaunching:(id)note {
     [self watchPlist];
     [self watchAPI];
 }
 
 + (void)watchPlist {
-    NSString *resPath = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PBResourcesPath"];
-    if (resPath == nil) {
-        NSLog(@"PBLiveLoader: Please define PBResourcesPath in Info.plist with value '$(SRCROOT)/[path-to-resources]'!");
-        return;
-    }
-    
-    if (![[NSFileManager defaultManager] fileExistsAtPath:resPath]) {
+#if (TARGET_IPHONE_SIMULATOR)
+    NSString *resPath = PBLLMainBundlePath();
+    if (resPath == nil || ![[NSFileManager defaultManager] fileExistsAtPath:resPath]) {
         NSLog(@"PBLiveLoader: PBResourcesPath is not exists! (%@)", resPath);
         return;
     }
@@ -83,15 +98,21 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
                 break;
         }
     }];
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentPath = paths.firstObject;
+    NSString *tempBundlePath = [documentPath stringByAppendingPathComponent:@".pb_liveload"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:tempBundlePath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:tempBundlePath withIntermediateDirectories:NO attributes:nil error:nil];
+    }
+    [self defaultLoader]->tempResourcesPath = tempBundlePath;
+    [Pbind addResourcesBundle:[NSBundle bundleWithPath:tempBundlePath]];
+#endif
 }
 
 + (void)watchAPI {
-    NSString *serverPath = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"PBLocalhost"];
-    if (serverPath == nil) {
-        NSLog(@"PBLiveLoader: Please define PBLocalhost in Info.plist with value '$(SRCROOT)/[path-to-api]'!");
-        return;
-    }
-    
+#if (TARGET_IPHONE_SIMULATOR)
+    NSString *serverPath = PBLLMockingAPIPath();
     if (![[NSFileManager defaultManager] fileExistsAtPath:serverPath]) {
         NSLog(@"PBLiveLoader: PBLocalhost is not exists! (%@)", serverPath);
         return;
@@ -126,8 +147,10 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
                 break;
         }
     }];
+#endif
     
-    [PBClient registerDebugServer:^id(PBClient *client, PBRequest *request) {
+    [PBClient registerDebugServer:^(PBClient *client, PBRequest *request, void (^complection)(PBResponse *response)) {
+        
         NSString *action = request.action;
         if ([action characterAtIndex:0] == '/') {
             action = [action substringFromIndex:1]; // bypass '/'
@@ -139,49 +162,60 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
         }
         action = [action stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
         if (kIgnoreAPIs != nil && [kIgnoreAPIs containsObject:action]) {
-            return nil;
+            complection(nil);
+            return;
         }
         
         NSString *jsonName = [NSString stringWithFormat:@"%@/%@.json", [[client class] description], action];
+#if (TARGET_IPHONE_SIMULATOR)
         NSString *jsonPath = [serverPath stringByAppendingPathComponent:jsonName];
         if (![[NSFileManager defaultManager] fileExistsAtPath:jsonPath]) {
             NSLog(@"PBLiveLoader: Missing '%@', ignores!", jsonName);
-            return nil;
+            complection(nil);
+            return;
         }
         NSData *jsonData = [NSData dataWithContentsOfFile:jsonPath];
-        NSError *error = nil;
-        
-        PBResponse *response = [[PBResponse alloc] init];
-        response.data = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
-        if (error != nil) {
-            NSLog(@"PBLiveLoader: Invalid '%@', ignores! The file format should be pure JSON style.", jsonName);
-            return nil;
-        }
-        
-        if ([response.data isKindOfClass:[NSDictionary class]]) {
-            NSString *redirect = [response.data objectForKey:kDebugJSONRedirectKey];
-            if (redirect != nil) {
-                PBExpression *expression = [PBExpression expressionWithString:redirect];
-                if (expression != nil) {
-                    response.data = [expression valueWithData:nil];
-                }
+        [self receiveJsonData:jsonData withFile:jsonName complection:complection];
+#else
+        [[self defaultLoader] requestAPI:jsonName complection:complection];
+#endif
+    }];
+}
+
++ (void)receiveJsonData:(NSData *)jsonData withFile:(NSString *)jsonName complection:(void (^)(PBResponse *))complection {
+    NSError *error = nil;
+    id data = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+    if (data == nil) {
+        NSLog(@"PBLiveLoader: Invalid '%@', ignores! The file format should be pure JSON style.", jsonName);
+        complection(nil);
+        return;
+    }
+    
+    PBResponse *response = [[PBResponse alloc] init];
+    if ([data isKindOfClass:[NSDictionary class]]) {
+        NSString *redirect = [data objectForKey:kDebugJSONRedirectKey];
+        if (redirect != nil) {
+            PBExpression *expression = [PBExpression expressionWithString:redirect];
+            if (expression != nil) {
+                data = [expression valueWithData:nil];
+            }
+        } else {
+            NSString *statusString = [data objectForKey:kDebugJSONStatusKey];
+            if (statusString != nil) {
+                response.status = [statusString intValue];
+            }
+            NSMutableDictionary *filteredDict = [NSMutableDictionary dictionaryWithDictionary:data];
+            [filteredDict removeObjectForKey:kDebugJSONStatusKey];
+            if (filteredDict.count == 0) {
+                data = nil;
             } else {
-                NSString *statusString = [response.data objectForKey:kDebugJSONStatusKey];
-                if (statusString != nil) {
-                    response.status = [statusString intValue];
-                }
-                NSMutableDictionary *filteredDict = [NSMutableDictionary dictionaryWithDictionary:response.data];
-                [filteredDict removeObjectForKey:kDebugJSONStatusKey];
-                if (filteredDict.count == 0) {
-                    response.data = nil;
-                } else {
-                    response.data = filteredDict;
-                }
+                data = filteredDict;
             }
         }
-        
-        return response;
-    }];
+    }
+    
+    response.data = data;
+    complection(response);
 }
 
 + (NSArray *)ignoreAPIsWithContentsOfFile:(NSString *)path {
@@ -228,6 +262,63 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
         }
     }
 }
+
+#if !(TARGET_IPHONE_SIMULATOR)
+
++ (PBLiveLoader *)defaultLoader {
+    static PBLiveLoader *loader = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        loader = [[self alloc] init];
+        [PBLLRemoteWatcher globalWatcher].delegate = loader;
+    });
+    return loader;
+}
+
+- (void)requestAPI:(NSString *)api complection:(void (^)(PBResponse *))complection {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [PBLLInspector addToWindow];
+        [[PBLLRemoteWatcher globalWatcher] connectDefaultIP];
+    });
+    
+    NSString *key = [api lastPathComponent];
+    NSData *cacheData = cacheResponseData[key];
+    if (cacheData != nil) {
+        [[self class] receiveJsonData:cacheData withFile:nil complection:complection];
+        [cacheResponseData removeObjectForKey:key];
+        return;
+    }
+    
+    [[PBLLRemoteWatcher globalWatcher] requestAPI:api success:^(NSData *data) {
+        [[self class] receiveJsonData:data withFile:nil complection:complection];
+    } failure:^(NSError *error) {
+        complection(nil);
+    }];
+}
+
+#pragma mark - PBLLRemoteWatcherDelegate
+
+- (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didReceiveResponse:(NSData *)jsonData {
+    [[self class] receiveJsonData:jsonData withFile:nil complection:apiComplection];
+}
+
+- (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didUpdateFile:(NSString *)fileName withData:(NSData *)data {
+    if (HasSuffix(fileName, @".plist")) {
+        NSString *plist = [tempResourcesPath stringByAppendingPathComponent:fileName];
+        [data writeToFile:plist atomically:NO];
+        
+        [Pbind reloadViewsOnPlistUpdate:fileName];
+    } else if (HasSuffix(fileName, @".json")) {
+        if (cacheResponseData == nil) {
+            cacheResponseData = [[NSMutableDictionary alloc] init];
+        }
+        cacheResponseData[fileName] = data;
+        [Pbind reloadViewsOnAPIUpdate:fileName];
+    }
+}
+
+#endif
 
 @end
 
