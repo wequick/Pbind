@@ -201,6 +201,11 @@
     [_properties mapData:data toTarget:self forKeyPath:key withContext:view];
 }
 
+- (void)updateValuesForKeys:(NSArray *)keys withData:(id)data andView:(UIView *)view
+{
+    [_properties mapData:data toTarget:self forKeyPaths:keys withContext:view];
+}
+
 - (void)mapData:(id)data forView:(UIView *)view
 {
     /* for self */

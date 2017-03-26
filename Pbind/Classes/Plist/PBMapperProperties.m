@@ -152,24 +152,31 @@
     [self mapData:data toTarget:target forKeyPath:nil withContext:context];
 }
 
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSString *)keyPaths withContext:(UIView *)context {
+    for (NSString *key in keyPaths) {
+        PBExpression *exp = _expressions[key];
+        if (exp == nil) {
+            continue;
+        }
+        
+        [exp mapData:data toTarget:target forKeyPath:key inContext:context];
+    }
+}
+
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context
 {
+    NSArray *keyPaths = nil;
     if (keyPath == nil) {
         // Map all the expressions
-        for (NSString *key in _expressions) {
-            PBExpression *exp = _expressions[key];
-            [exp mapData:data toTarget:target forKeyPath:key inContext:context];
+        keyPaths = [_expressions allKeys];
+    } else {
+        if (keyPath == nil) {
+            return;
         }
-        return;
+        keyPaths = @[keyPath];
     }
     
-    // Map the specify expression
-    PBExpression *exp = _expressions[keyPath];
-    if (exp == nil) {
-        return;
-    }
-    
-    [exp mapData:data toTarget:target forKeyPath:keyPath inContext:context];
+    [self mapData:data toTarget:target forKeyPaths:keyPaths withContext:context];
 }
 
 - (void)unbind:(id)target
