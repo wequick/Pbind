@@ -22,7 +22,6 @@
  */
 @interface PBRowDataSource : NSObject <UITableViewDataSource, UICollectionViewDataSource>
 {
-    NSMutableArray *_registeredCellClasses;
     NSArray *_sectionIndexTitles;
 }
 

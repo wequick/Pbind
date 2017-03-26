@@ -25,6 +25,7 @@
 @synthesize row, rows, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
+@synthesize registeredCellNames, registeredSectionNames;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     _flowLayout = [[UICollectionViewFlowLayout alloc] init];

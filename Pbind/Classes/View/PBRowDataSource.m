@@ -442,23 +442,32 @@
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
     [row updateWithData:tableView.rootData andView:dataWrapper];
     
+    // Lazy register reusable cell
     NSString *cellClazz = NSStringFromClass(row.viewClass);
-    if (row.viewClass != [UITableViewCell class] && ![_registeredCellClasses containsObject:cellClazz]) {
-        // Lazy register reusable cell
+    BOOL needsRegister = NO;
+    if (tableView.registeredCellNames == nil) {
+        tableView.registeredCellNames = [[NSMutableArray alloc] init];
+        needsRegister = YES;
+    } else {
+        needsRegister = ![tableView.registeredCellNames containsObject:cellClazz];
+    }
+    if (needsRegister) {
         UINib *nib = PBNib(row.nib);
         if (nib != nil) {
             [tableView registerNib:nib forCellReuseIdentifier:row.id];
         } else {
             [tableView registerClass:row.viewClass forCellReuseIdentifier:row.id];
         }
-        [_registeredCellClasses addObject:cellClazz];
+        [tableView.registeredCellNames addObject:cellClazz];
     }
     
+    // Dequeue reusable cell
     cell = [tableView dequeueReusableCellWithIdentifier:row.id];
     if (cell == nil) {
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
     }
     
+    // Add custom layout
     if (row.layoutMapper != nil) {
         [row.layoutMapper renderToView:cell.contentView];
     }
@@ -471,7 +480,7 @@
     }
     
     // Init data for cell
-    [cell setData:[self dataAtIndexPath:indexPath]];
+    [cell setData:data];
     [row initDataForView:cell];
     [row mapData:tableView.data forView:cell];
     
@@ -610,7 +619,7 @@
     return [self numberOfRowsInSection:section withData:collectionView.data key:collectionView.listKey];
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = nil;
     if ([self.receiver respondsToSelector:_cmd]) {
         cell = [self.receiver collectionView:collectionView cellForItemAtIndexPath:indexPath];
@@ -628,25 +637,36 @@
     if (![item.viewClass isSubclassOfClass:[UICollectionViewCell class]]) {
         [item setClazz:@"UICollectionViewCell"];
     }
-    NSString *itemClazz = NSStringFromClass(item.viewClass);
-    if (![_registeredCellClasses containsObject:itemClazz]) {
-        // Lazy register reusable item
+    
+    // Lazy register reusable cell
+    NSString *cellClazz = NSStringFromClass(item.viewClass);
+    BOOL needsRegister = NO;
+    if (collectionView.registeredCellNames == nil) {
+        collectionView.registeredCellNames = [[NSMutableArray alloc] init];
+        needsRegister = YES;
+    } else {
+        needsRegister = ![collectionView.registeredCellNames containsObject:cellClazz];
+    }
+    if (needsRegister) {
         UINib *nib = PBNib(item.nib);
         if (nib != nil) {
             [collectionView registerNib:nib forCellWithReuseIdentifier:item.id];
         } else {
             [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:item.id];
         }
-        [_registeredCellClasses addObject:itemClazz];
+        [collectionView.registeredCellNames addObject:cellClazz];
     }
     
+    // Dequeue reusable cell
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
+    
+    // Add custom layout
     if (item.layoutMapper != nil) {
         [item.layoutMapper renderToView:cell.contentView];
     }
     
     // Init data for cell
-    [cell setData:[self dataAtIndexPath:indexPath]];
+    [cell setData:data];
     [item initDataForView:cell];
     
     return cell;
