@@ -18,6 +18,25 @@
 #import "UIView+Pbind.h"
 #import "PBValueParser.h"
 
+@interface _RowDataWrapper : NSObject
+
+@property (nonatomic, weak) id data;
+
+- (instancetype)initWithData:(id)data;
+
+@end
+
+@implementation _RowDataWrapper
+
+- (instancetype)initWithData:(id)data {
+    if (self = [super init]) {
+        self.data = data;
+    }
+    return self;
+}
+
+@end
+
 @implementation PBRowDataSource
 
 @synthesize receiver;
@@ -417,7 +436,12 @@
         }
     }
     
+    // Initialize the row mapper
+    id data = [self dataAtIndexPath:indexPath];
+    id dataWrapper = data != nil ? [[_RowDataWrapper alloc] initWithData:data] : nil;
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
+    [row updateWithData:tableView.rootData andView:dataWrapper];
+    
     NSString *cellClazz = NSStringFromClass(row.viewClass);
     if (row.viewClass != [UITableViewCell class] && ![_registeredCellClasses containsObject:cellClazz]) {
         // Lazy register reusable cell
@@ -595,7 +619,12 @@
         }
     }
     
+    // Initialize the row mapper
+    id data = [self dataAtIndexPath:indexPath];
+    id dataWrapper = data != nil ? [[_RowDataWrapper alloc] initWithData:data] : nil;
     PBRowMapper *item = [self rowAtIndexPath:indexPath];
+    [item updateWithData:collectionView.rootData andView:dataWrapper];
+    
     if (![item.viewClass isSubclassOfClass:[UICollectionViewCell class]]) {
         [item setClazz:@"UICollectionViewCell"];
     }
