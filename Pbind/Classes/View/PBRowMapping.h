@@ -34,23 +34,23 @@
 @property (nonatomic, strong) NSIndexPath *editingIndexPath;
 
 /**
- The registered cell name collection.
+ The registered cell identifier collection.
  
  @discussion This is used for lazy-register reusable cell class by:
  
  - registerNib:forCellWithReuseIdentifier:
  - registerClass:forCellWithReuseIdentifier:
  */
-@property (nonatomic, strong) NSMutableArray *registeredCellNames;
+@property (nonatomic, strong) NSMutableArray *registeredCellIdentifiers;
 
 /**
- The registered section(header|footer) name collection.
+ The registered section(header|footer) identifier collection.
  
  @discussion This is used for lazy-register resuable header|footer view class by:
  
  - registerNib:forSupplementaryViewOfKind:withReuseIdentifier:
  - registerClass:forSupplementaryViewOfKind:withReuseIdentifier:
  */
-@property (nonatomic, strong) NSMutableArray *registeredSectionNames;
+@property (nonatomic, strong) NSMutableArray *registeredSectionIdentifiers;
 
 @end
