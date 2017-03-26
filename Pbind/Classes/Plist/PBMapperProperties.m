@@ -152,7 +152,7 @@
     [self mapData:data toTarget:target forKeyPath:nil withContext:context];
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSString *)keyPaths withContext:(UIView *)context {
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withContext:(UIView *)context {
     for (NSString *key in keyPaths) {
         PBExpression *exp = _expressions[key];
         if (exp == nil) {
