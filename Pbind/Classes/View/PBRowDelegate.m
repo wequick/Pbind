@@ -576,8 +576,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    PBSectionMapper *sectionMapper = [self.dataSource.sections objectAtIndex:section];
-    return CGSizeMake(collectionView.bounds.size.width, sectionMapper.height);
+    PBRowMapper *element = [self.dataSource.sections objectAtIndex:section];
+    return [self referenceSizeForCollectionView:collectionView withElementMapper:element];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)theSection {
+    PBSectionMapper *section = [self.dataSource.sections objectAtIndex:theSection];
+    return [self referenceSizeForCollectionView:collectionView withElementMapper:section.footer];
+}
+
+- (CGSize)referenceSizeForCollectionView:(UICollectionView *)collectionView withElementMapper:(PBRowMapper *)element {
+    if (element.layout == nil && element.viewClass == [UICollectionReusableView class]) {
+        return CGSizeZero;
+    }
+    return CGSizeMake(collectionView.bounds.size.width, element.height);
 }
 
 #pragma mark - UICollectionViewDelegateLayout
