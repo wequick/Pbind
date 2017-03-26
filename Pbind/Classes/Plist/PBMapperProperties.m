@@ -170,9 +170,6 @@
         // Map all the expressions
         keyPaths = [_expressions allKeys];
     } else {
-        if (keyPath == nil) {
-            return;
-        }
         keyPaths = @[keyPath];
     }
     
