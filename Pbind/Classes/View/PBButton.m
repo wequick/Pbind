@@ -36,7 +36,7 @@
 }
 
 - (void)setAction:(NSDictionary *)action {
-    _actionMapper = [PBActionMapper mapperWithDictionary:action owner:nil];
+    _actionMapper = [PBActionMapper mapperWithDictionary:action];
     [self addTarget:self action:@selector(handleAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 

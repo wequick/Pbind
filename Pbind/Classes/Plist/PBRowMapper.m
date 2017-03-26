@@ -58,13 +58,22 @@ static const CGFloat kHeightUnset = -2;
     }
     
     if (_clazz == nil) {
-        if (_style == 0) {
+        [self initDefaultViewClass];
+    }
+}
+
+- (void)initDefaultViewClass {
+    if (_style == 0) {
+        if ([self.owner isKindOfClass:[UICollectionView class]]) {
+            _clazz = @"UICollectionViewCell";
+            _viewClass = [UICollectionViewCell class];
+        } else {
             _clazz = @"UITableViewCell";
             _viewClass = [UITableViewCell class];
-        } else {
-            _clazz = @"PBTableViewCell";
-            _viewClass = [PBTableViewCell class];
         }
+    } else {
+        _clazz = @"PBTableViewCell";
+        _viewClass = [PBTableViewCell class];
     }
 }
 
@@ -225,7 +234,7 @@ static const CGFloat kHeightUnset = -2;
     
     _layout = layout;
     NSDictionary *dict = PBPlist(layout);
-    _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict owner:nil];
+    _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict];
     _layoutMapper.name = layout;
 }
 
@@ -234,25 +243,25 @@ static const CGFloat kHeightUnset = -2;
     NSDictionary *a;
     
     a = as[@"willSelect"];
-    _willSelectActionMapper   = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    _willSelectActionMapper   = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a];
     a = as[@"select"];
-    _selectActionMapper       = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    _selectActionMapper       = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a];
     a = as[@"willDeselect"];
-    _willDeselectActionMapper = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    _willDeselectActionMapper = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a];
     a = as[@"deselect"];
-    _deselectActionMapper     = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a owner:nil];
+    _deselectActionMapper     = (a == nil) ? nil : [PBActionMapper mapperWithDictionary:a];
     
     NSArray *edits = as[@"edits"];
     if (edits != nil) {
         _editActionMappers = [NSMutableArray arrayWithCapacity:edits.count];
         for (a in edits) {
-            PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:a owner:nil];
+            PBRowActionMapper *actionMapper = [PBRowActionMapper mapperWithDictionary:a];
             [_editActionMappers addObject:actionMapper];
         }
     } else {
         a = as[@"delete"];
         if (a != nil) {
-            PBRowActionMapper *deleteActionMapper = [PBRowActionMapper mapperWithDictionary:a owner:nil];
+            PBRowActionMapper *deleteActionMapper = [PBRowActionMapper mapperWithDictionary:a];
             deleteActionMapper.title = deleteActionMapper.title ?: PBLocalizedString(@"Delete");
             _editActionMappers = [NSMutableArray arrayWithCapacity:1];
             [_editActionMappers addObject:deleteActionMapper];

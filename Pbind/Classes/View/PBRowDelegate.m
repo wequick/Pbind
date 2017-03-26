@@ -575,6 +575,11 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
 }
 
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+    PBSectionMapper *sectionMapper = [self.dataSource.sections objectAtIndex:section];
+    return CGSizeMake(collectionView.bounds.size.width, sectionMapper.height);
+}
+
 #pragma mark - UICollectionViewDelegateLayout
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {

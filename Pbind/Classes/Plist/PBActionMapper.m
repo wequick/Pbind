@@ -22,7 +22,7 @@
     if (nextCount > 0) {
         NSMutableDictionary *nextMappers = [NSMutableDictionary dictionaryWithCapacity:nextCount];
         for (NSString *key in self.next) {
-            PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:self.next[key] owner:nil];
+            PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:self.next[key]];
             [nextMappers setObject:mapper forKey:key];
         }
         self.nextMappers = nextMappers;

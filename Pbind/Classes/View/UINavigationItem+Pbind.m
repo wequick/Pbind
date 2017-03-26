@@ -85,7 +85,7 @@
         
         NSDictionary *customViewInfo = spec.customView;
         if (customViewInfo != nil) {
-            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:customViewInfo owner:nil];
+            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:customViewInfo];
             UIView *customView = [mapper createView];
             self = [super initWithCustomView:customView];
             
@@ -103,7 +103,7 @@
     }
     
     if (spec.action != nil) {
-        PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:spec.action owner:nil];
+        PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:spec.action];
         [self setActionMapper:mapper];
         [self setTarget:self];
         [self setAction:@selector(handleAction:)];

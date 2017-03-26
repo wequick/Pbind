@@ -38,9 +38,12 @@
 }
 
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url;
++ (instancetype)mapperWithDictionary:(NSDictionary *)dictionary;
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
 
-- (id)initWithDictionary:(NSDictionary *)dictionary;
+@property (nonatomic, weak) UIView *owner;
+
+- (id)initWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary;
 
 - (void)initDataForView:(UIView *)view;
