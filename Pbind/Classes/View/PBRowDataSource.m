@@ -675,12 +675,15 @@
 
 - (UICollectionReusableView *)collectionView:(PBCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
-    if (section.layout == nil) {
-        return nil;
+    PBRowMapper *element;
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        element = section;
+    } else {
+        element = section.footer;
     }
     
     // Lazy register reusable view
-    NSString *viewClazz = section.clazz;
+    NSString *viewClazz = element.clazz;
     BOOL needsRegister = NO;
     if (collectionView.registeredSectionNames == nil) {
         collectionView.registeredSectionNames = [[NSMutableArray alloc] init];
@@ -689,21 +692,21 @@
         needsRegister = ![collectionView.registeredSectionNames containsObject:viewClazz];
     }
     if (needsRegister) {
-        UINib *nib = PBNib(section.nib);
+        UINib *nib = PBNib(element.nib);
         if (nib != nil) {
-            [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:section.id];
+            [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:element.id];
         } else {
-            [collectionView registerClass:section.viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:section.id];
+            [collectionView registerClass:element.viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:element.id];
         }
         [collectionView.registeredSectionNames addObject:viewClazz];
     }
     
     // Dequeue reusable view
-    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:section.id forIndexPath:indexPath];
+    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:element.id forIndexPath:indexPath];
     
     // Add custom layout
-    if (section.layoutMapper != nil) {
-        [section.layoutMapper renderToView:view];
+    if (element.layoutMapper != nil) {
+        [element.layoutMapper renderToView:view];
     }
     
     return view;
