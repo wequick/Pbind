@@ -52,7 +52,7 @@
     
     for (NSString *alias in self.views) {
         NSDictionary *properties = [self.views objectForKey:alias];
-        PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:properties owner:nil];
+        PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:properties];
         UIView *subview = [view viewWithAlias:alias];
         
         // Support for instant updating.

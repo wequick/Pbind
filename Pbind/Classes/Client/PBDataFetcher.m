@@ -45,7 +45,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         NSMutableArray *clients = [NSMutableArray arrayWithCapacity:clientCount];
         
         for (NSDictionary *info in _owner.clients) {
-            PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:info owner:nil];
+            PBClientMapper *mapper = [PBClientMapper mapperWithDictionary:info];
             [mappers addObject:mapper];
             
             PBClient *client = [PBClient clientWithName:mapper.clazz];

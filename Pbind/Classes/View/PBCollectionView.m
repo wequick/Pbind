@@ -70,7 +70,7 @@
     if (_delegateInterceptor) {
         return;
     }
-    rowDelegate = [[PBRowDelegate alloc] init];
+    rowDelegate = [[PBRowDelegate alloc] initWithDataSource:rowDataSource];
     _delegateInterceptor = [[PBMessageInterceptor alloc] init];
     _delegateInterceptor.middleMan = rowDelegate;
     _delegateInterceptor.receiver = rowDelegate.receiver = self.delegate;
@@ -103,13 +103,6 @@
     super.delegate = nil;
     _delegateInterceptor.receiver = rowDelegate.receiver = delegate;
     super.delegate = (id)_delegateInterceptor;
-}
-
-- (void)didMoveToWindow {
-    if (self.window != nil) {
-        [rowDelegate setDataSource:rowDataSource];
-    }
-    [super didMoveToWindow];
 }
 
 - (void)dealloc {

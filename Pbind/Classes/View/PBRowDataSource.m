@@ -89,8 +89,6 @@
 
 - (PBRowMapper *)rowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self initRowMapper];
-    
     if (self.row != nil) {
         // Repeated row
         return self.row;
@@ -115,8 +113,6 @@
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self initRowMapper];
-    
     id _data = [self.owner data];
     if (_data == nil) {
         return nil;
@@ -164,11 +160,11 @@
 }
 
 - (void)initRowMapper {
-    if (self.row != nil || self.rows != nil || self.sections != nil) {
+    if (_row != nil || _rows != nil || _sections != nil) {
         return;
     }
     
-    PBRowMapper *row = self.row;
+    PBRowMapper *row = _row;
     if (row != nil) {
         return;
     }
@@ -185,7 +181,7 @@
                 // Take the `row' as base mapper
                 dict = [self dictionaryByMergingDictionary:rowSource withAnother:dict];
             }
-            PBRowMapper *aRow = [PBRowMapper mapperWithDictionary:dict owner:nil];
+            PBRowMapper *aRow = [PBRowMapper mapperWithDictionary:dict owner:self.owner];
             [temp addObject:aRow];
         }
         _rows = temp;
@@ -198,7 +194,7 @@
         NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[sections count]];
         for (NSInteger section = 0; section < [sections count]; section++) {
             NSDictionary *dict = [sections objectAtIndex:section];
-            PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:nil];
+            PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self.owner];
             NSDictionary *aRowSource = (id)aSection.row;
             
             if ([aSection.rows count] > 0) {
@@ -210,20 +206,20 @@
                         dict = [self dictionaryByMergingDictionary:aRowSource withAnother:dict];
                         aSection.row = nil; // don't need any more.
                     }
-                    PBRowMapper *aRow = [PBRowMapper mapperWithDictionary:dict owner:nil];
+                    PBRowMapper *aRow = [PBRowMapper mapperWithDictionary:dict owner:self.owner];
                     [rows addObject:aRow];
                 }
                 aSection.rows = rows;
             } else if (aRowSource != nil) {
-                aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:nil];
+                aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:self.owner];
             }
             
             if (aSection.emptyRow != nil) {
-                aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:nil];
+                aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:self.owner];
             }
             
             if (aSection.footer != nil) {
-                aSection.footer = [PBRowMapper mapperWithDictionary:aSection.footer owner:nil];
+                aSection.footer = [PBRowMapper mapperWithDictionary:aSection.footer owner:self.owner];
             }
             [temp addObject:aSection];
         }
@@ -248,9 +244,24 @@
     }
     
     if (rowSource != nil) {
-        self.row = [PBRowMapper mapperWithDictionary:rowSource owner:nil];
+        _row = [PBRowMapper mapperWithDictionary:rowSource owner:self.owner];
     }
     return;
+}
+
+- (PBRowMapper *)row {
+    [self initRowMapper];
+    return _row;
+}
+
+- (NSArray<PBRowMapper *> *)rows {
+    [self initRowMapper];
+    return _rows;
+}
+
+- (NSArray<PBSectionMapper *> *)sections {
+    [self initRowMapper];
+    return _sections;
 }
 
 - (void)updateSections {
@@ -262,8 +273,6 @@
 }
 
 - (NSInteger)numberOfRowsInSection:(NSInteger)section withData:(id)data key:(NSString *)key {
-    [self initRowMapper];
-    
     NSInteger count = 0;
     if (self.row != nil) {
         // response array
@@ -401,8 +410,6 @@
         return [self.receiver numberOfSectionsInTableView:tableView];
     }
     
-    [self initRowMapper];
-    
     if (self.sections != nil) {
         return [self.sections count];
     } else if (self.row != nil || self.rows != nil) {
@@ -443,7 +450,7 @@
     [row updateWithData:tableView.rootData andView:dataWrapper];
     
     // Lazy register reusable cell
-    NSString *cellClazz = NSStringFromClass(row.viewClass);
+    NSString *cellClazz = row.clazz;
     BOOL needsRegister = NO;
     if (tableView.registeredCellNames == nil) {
         tableView.registeredCellNames = [[NSMutableArray alloc] init];
@@ -596,8 +603,6 @@
         return [self.receiver numberOfSectionsInCollectionView:collectionView];
     }
     
-    [self initRowMapper];
-    
     if (self.sections != nil) {
         return [self.sections count];
     } else if (self.row != nil || self.rows != nil) {
@@ -634,12 +639,8 @@
     PBRowMapper *item = [self rowAtIndexPath:indexPath];
     [item updateWithData:collectionView.rootData andView:dataWrapper];
     
-    if (![item.viewClass isSubclassOfClass:[UICollectionViewCell class]]) {
-        [item setClazz:@"UICollectionViewCell"];
-    }
-    
     // Lazy register reusable cell
-    NSString *cellClazz = NSStringFromClass(item.viewClass);
+    NSString *cellClazz = item.clazz;
     BOOL needsRegister = NO;
     if (collectionView.registeredCellNames == nil) {
         collectionView.registeredCellNames = [[NSMutableArray alloc] init];
@@ -670,6 +671,42 @@
     [item initDataForView:cell];
     
     return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(PBCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
+    if (section.layout == nil) {
+        return nil;
+    }
+    
+    // Lazy register reusable view
+    NSString *viewClazz = section.clazz;
+    BOOL needsRegister = NO;
+    if (collectionView.registeredSectionNames == nil) {
+        collectionView.registeredSectionNames = [[NSMutableArray alloc] init];
+        needsRegister = YES;
+    } else {
+        needsRegister = ![collectionView.registeredSectionNames containsObject:viewClazz];
+    }
+    if (needsRegister) {
+        UINib *nib = PBNib(section.nib);
+        if (nib != nil) {
+            [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:section.id];
+        } else {
+            [collectionView registerClass:section.viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:section.id];
+        }
+        [collectionView.registeredSectionNames addObject:viewClazz];
+    }
+    
+    // Dequeue reusable view
+    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:section.id forIndexPath:indexPath];
+    
+    // Add custom layout
+    if (section.layoutMapper != nil) {
+        [section.layoutMapper renderToView:view];
+    }
+    
+    return view;
 }
 
 #pragma mark - Helper

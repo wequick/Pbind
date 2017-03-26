@@ -13,7 +13,21 @@
 #import "PBRowMapper.h"
 #import "Pbind+API.h"
 
+@interface PBRowMapper (Private)
+
+- (void)initDefaultViewClass;
+
+@end
+
 @implementation PBSectionMapper
+
+- (void)initDefaultViewClass {
+    if ([self.owner isKindOfClass:[UICollectionView class]]) {
+        self.clazz = @"UICollectionReusableView";
+    } else {
+        self.clazz = @"UIView";
+    }
+}
 
 - (NSInteger)rowCount {
     NSInteger rowCount = 0;

@@ -40,24 +40,24 @@
 
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary
 {
-    if ([dictionary isKindOfClass:self]) {
-        return (id) dictionary;
-    }
-    return [[self alloc] initWithDictionary:dictionary];
+    return [self mapperWithDictionary:dictionary owner:nil];
 }
 
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner {
-    PBMapper *mapper = [self mapperWithDictionary:dictionary];
-    return mapper;
+    if ([dictionary isKindOfClass:self]) {
+        return (id) dictionary;
+    }
+    return [[self alloc] initWithDictionary:dictionary owner:owner];
 }
 
-- (id)initWithDictionary:(NSDictionary *)dictionary
+- (id)initWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner
 {
     self = [super init];
     if (self == nil) {
         return nil;
     }
     
+    self.owner = owner;
     [self setPropertiesWithDictionary:dictionary];
     return self;
 }

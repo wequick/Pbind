@@ -65,7 +65,7 @@
 
 - (void)setAccessoryView:(UIView *)accessoryView {
     if ([accessoryView isKindOfClass:[NSDictionary class]]) {
-        PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:(id) accessoryView owner:self];
+        PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:(id) accessoryView];
         _accessoryMapper = mapper;
         UIView *view = [[mapper.viewClass alloc] init];
         [mapper initDataForView:view];
