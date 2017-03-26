@@ -709,6 +709,10 @@
         [element.layoutMapper renderToView:view];
     }
     
+    // Map data
+    [element initDataForView:view];
+    [element mapData:collectionView.data forView:view];
+    
     return view;
 }
 
