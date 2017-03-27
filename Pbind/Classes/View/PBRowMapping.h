@@ -41,7 +41,7 @@
  - registerNib:forCellWithReuseIdentifier:
  - registerClass:forCellWithReuseIdentifier:
  */
-@property (nonatomic, strong) NSMutableArray *registeredCellNames;
+@property (nonatomic, strong) NSMutableArray *registeredCellIdentifiers;
 
 /**
  The registered section(header|footer) name collection.
@@ -51,6 +51,6 @@
  - registerNib:forSupplementaryViewOfKind:withReuseIdentifier:
  - registerClass:forSupplementaryViewOfKind:withReuseIdentifier:
  */
-@property (nonatomic, strong) NSMutableArray *registeredSectionNames;
+@property (nonatomic, strong) NSMutableArray *registeredSectionIdentifiers;
 
 @end
