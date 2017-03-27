@@ -113,4 +113,11 @@
  */
 @property (nonatomic, assign) CGSize inner;
 
+/**
+ The columns count.
+ 
+ @discussion Default is 0. If defined, the item width will be automatically calculated.
+ */
+@property (nonatomic, assign) NSUInteger numberOfColumns;
+
 @end
