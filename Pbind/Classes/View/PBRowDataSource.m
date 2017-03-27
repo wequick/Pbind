@@ -450,22 +450,22 @@
     [row updateWithData:tableView.rootData andView:dataWrapper];
     
     // Lazy register reusable cell
-    NSString *cellClazz = row.clazz;
+    NSString *identifier = row.id;
     BOOL needsRegister = NO;
-    if (tableView.registeredCellNames == nil) {
-        tableView.registeredCellNames = [[NSMutableArray alloc] init];
+    if (tableView.registeredCellIdentifiers == nil) {
+        tableView.registeredCellIdentifiers = [[NSMutableArray alloc] init];
         needsRegister = YES;
     } else {
-        needsRegister = ![tableView.registeredCellNames containsObject:cellClazz];
+        needsRegister = ![tableView.registeredCellIdentifiers containsObject:identifier];
     }
     if (needsRegister) {
         UINib *nib = PBNib(row.nib);
         if (nib != nil) {
-            [tableView registerNib:nib forCellReuseIdentifier:row.id];
+            [tableView registerNib:nib forCellReuseIdentifier:identifier];
         } else {
-            [tableView registerClass:row.viewClass forCellReuseIdentifier:row.id];
+            [tableView registerClass:row.viewClass forCellReuseIdentifier:identifier];
         }
-        [tableView.registeredCellNames addObject:cellClazz];
+        [tableView.registeredCellIdentifiers addObject:identifier];
     }
     
     // Dequeue reusable cell
@@ -640,22 +640,22 @@
     [item updateWithData:collectionView.rootData andView:dataWrapper];
     
     // Lazy register reusable cell
-    NSString *cellClazz = item.clazz;
+    NSString *identifier = item.id;
     BOOL needsRegister = NO;
-    if (collectionView.registeredCellNames == nil) {
-        collectionView.registeredCellNames = [[NSMutableArray alloc] init];
+    if (collectionView.registeredCellIdentifiers == nil) {
+        collectionView.registeredCellIdentifiers = [[NSMutableArray alloc] init];
         needsRegister = YES;
     } else {
-        needsRegister = ![collectionView.registeredCellNames containsObject:cellClazz];
+        needsRegister = ![collectionView.registeredCellIdentifiers containsObject:identifier];
     }
     if (needsRegister) {
         UINib *nib = PBNib(item.nib);
         if (nib != nil) {
-            [collectionView registerNib:nib forCellWithReuseIdentifier:item.id];
+            [collectionView registerNib:nib forCellWithReuseIdentifier:identifier];
         } else {
-            [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:item.id];
+            [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:identifier];
         }
-        [collectionView.registeredCellNames addObject:cellClazz];
+        [collectionView.registeredCellIdentifiers addObject:identifier];
     }
     
     // Dequeue reusable cell
@@ -683,22 +683,22 @@
     }
     
     // Lazy register reusable view
-    NSString *viewClazz = element.clazz;
+    NSString *identifier = element.id;
     BOOL needsRegister = NO;
-    if (collectionView.registeredSectionNames == nil) {
-        collectionView.registeredSectionNames = [[NSMutableArray alloc] init];
+    if (collectionView.registeredSectionIdentifiers == nil) {
+        collectionView.registeredSectionIdentifiers = [[NSMutableArray alloc] init];
         needsRegister = YES;
     } else {
-        needsRegister = ![collectionView.registeredSectionNames containsObject:viewClazz];
+        needsRegister = ![collectionView.registeredSectionIdentifiers containsObject:identifier];
     }
     if (needsRegister) {
         UINib *nib = PBNib(element.nib);
         if (nib != nil) {
-            [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:element.id];
+            [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:identifier];
         } else {
-            [collectionView registerClass:element.viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:element.id];
+            [collectionView registerClass:element.viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:identifier];
         }
-        [collectionView.registeredSectionNames addObject:viewClazz];
+        [collectionView.registeredSectionIdentifiers addObject:identifier];
     }
     
     // Dequeue reusable view
