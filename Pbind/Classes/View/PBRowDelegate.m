@@ -601,21 +601,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     PBSectionMapper *section = [self.dataSource.sections objectAtIndex:indexPath.section];
     PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
+    CGFloat itemWidth = item.size.width;
+    CGFloat itemHeight = item.size.height;
+    if (itemWidth == -1) {
+        itemWidth = collectionView.bounds.size.width;
+    }
+    if (itemWidth != 0) {
+        return CGSizeMake(itemWidth, itemHeight);
+    }
+    
     if (section.numberOfColumns != 0) {
         NSInteger numberOfGaps = section.numberOfColumns - 1;
         CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
         CGFloat height = width + item.additionalHeight;
         return CGSizeMake(width, height);
-    } else {
-        if (!CGSizeEqualToSize(item.size, CGSizeZero)) {
-            CGFloat width = item.size.width;
-            if (width == -1) {
-                width = collectionView.bounds.size.width;
-                return CGSizeMake(width, item.size.height);
-            }
-            
-            return item.size;
-        }
     }
     
     return collectionViewLayout.itemSize;
@@ -647,6 +646,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         CGSize size = mapper.inner;
         if (size.width != 0) {
             return size.width;
+        }
+        
+        if (mapper.numberOfColumns != 0) {
+            PBRowMapper *item = [self.dataSource rowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            CGFloat spacing = (collectionView.bounds.size.width - item.size.width * mapper.numberOfColumns - mapper.inset.left - mapper.inset.right) / (mapper.numberOfColumns - 1);
+            return spacing;
         }
     }
     
