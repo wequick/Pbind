@@ -608,6 +608,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return CGSizeMake(width, height);
     } else {
         if (!CGSizeEqualToSize(item.size, CGSizeZero)) {
+            CGFloat width = item.size.width;
+            if (width == -1) {
+                width = collectionView.bounds.size.width;
+                return CGSizeMake(width, item.size.height);
+            }
+            
             return item.size;
         }
     }
