@@ -87,6 +87,13 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, strong) NSString *layout;
 
+/**
+ The parent view alias name.
+ 
+ @discussion This is used for `PBLayoutMapper`.
+ */
+@property (nonatomic, strong) NSString *parent;
+
 #pragma mark - Styling
 ///=============================================================================
 /// @name Styling
