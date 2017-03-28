@@ -45,9 +45,11 @@
         }
     }
     
-    NSMutableDictionary *views = [NSMutableDictionary dictionaryWithCapacity:viewCount];
+    NSMutableDictionary<NSString *, UIView *> *views = [NSMutableDictionary dictionaryWithCapacity:viewCount];
     [views setObject:view forKey:@"super"];
-    NSMutableArray *originalViews = [NSMutableArray arrayWithCapacity:viewCount];
+    NSMutableArray<UIView *> *originalViews = [NSMutableArray arrayWithCapacity:viewCount];
+    NSMutableArray<NSString *> *nestedViewParents = [NSMutableArray arrayWithCapacity:viewCount];
+    NSMutableArray<UIView *> *nestedViews = [NSMutableArray arrayWithCapacity:viewCount];
     BOOL needsReset = NO;
     
     for (NSString *alias in self.views) {
@@ -59,16 +61,35 @@
         BOOL needsCreate = NO;
         if (subview == nil) {
             needsCreate = YES;
-        } else if (subview.class != mapper.viewClass) {
-            needsCreate = YES;
-            [subview removeFromSuperview];
+        } else {
+            if (subview.class != mapper.viewClass) {
+                // view class changed
+                needsCreate = YES;
+            } else {
+                // view parent changed
+                UIView *parentView = [subview superview];
+                if (mapper.parent == nil) {
+                    needsCreate = parentView != view;
+                } else {
+                    needsCreate = [parentView.alias isEqualToString:mapper.parent];
+                }
+            }
+            
+            if (needsCreate) {
+                [subview removeFromSuperview];
+            }
         }
         
         if (needsCreate) {
             subview = [[mapper.viewClass alloc] init];
             subview.translatesAutoresizingMaskIntoConstraints = NO;
             subview.alias = alias;
-            [view addSubview:subview];
+            if (mapper.parent != nil) {
+                [nestedViews addObject:subview];
+                [nestedViewParents addObject:mapper.parent];
+            } else {
+                [view addSubview:subview];
+            }
             
             needsReset = YES;
         } else {
@@ -77,6 +98,15 @@
         
         [mapper initDataForView:subview];
         [views setObject:subview forKey:alias];
+    }
+    
+    if (nestedViews.count != 0) {
+        for (NSInteger index = 0; index < nestedViews.count; index++) {
+            UIView *subview = nestedViews[index];
+            NSString *parent = nestedViewParents[index];
+            UIView *parentView = [view viewWithAlias:parent];
+            [parentView addSubview:subview];
+        }
     }
     
     // Remove the related constraints if needed.
