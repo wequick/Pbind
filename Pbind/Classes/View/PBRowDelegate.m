@@ -599,10 +599,17 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return [self.receiver collectionView:collectionView layout:collectionViewLayout sizeForItemAtIndexPath:indexPath];
     }
     
-    PBRowMapper *mapper = [self.dataSource rowAtIndexPath:indexPath];
-    CGSize itemSize = mapper.size;
-    if (!CGSizeEqualToSize(itemSize, CGSizeZero)) {
-        return itemSize;
+    PBSectionMapper *section = [self.dataSource.sections objectAtIndex:indexPath.section];
+    PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
+    if (section.numberOfColumns != 0) {
+        NSInteger numberOfGaps = section.numberOfColumns - 1;
+        CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
+        CGFloat height = width + item.additionalHeight;
+        return CGSizeMake(width, height);
+    } else {
+        if (!CGSizeEqualToSize(item.size, CGSizeZero)) {
+            return item.size;
+        }
     }
     
     return collectionViewLayout.itemSize;

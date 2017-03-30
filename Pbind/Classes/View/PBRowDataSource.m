@@ -462,9 +462,9 @@
     if (needsRegister) {
         UINib *nib = PBNib(row.nib);
         if (nib != nil) {
-            [tableView registerNib:nib forCellReuseIdentifier:row.id];
+            [tableView registerNib:nib forCellReuseIdentifier:identifier];
         } else {
-            [tableView registerClass:row.viewClass forCellReuseIdentifier:row.id];
+            [tableView registerClass:row.viewClass forCellReuseIdentifier:identifier];
         }
         [tableView.registeredCellIdentifiers addObject:identifier];
     }
@@ -652,9 +652,9 @@
     if (needsRegister) {
         UINib *nib = PBNib(item.nib);
         if (nib != nil) {
-            [collectionView registerNib:nib forCellWithReuseIdentifier:item.id];
+            [collectionView registerNib:nib forCellWithReuseIdentifier:identifier];
         } else {
-            [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:item.id];
+            [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:identifier];
         }
         [collectionView.registeredCellIdentifiers addObject:identifier];
     }

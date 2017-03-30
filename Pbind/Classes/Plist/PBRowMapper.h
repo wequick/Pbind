@@ -87,6 +87,13 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, strong) NSString *layout;
 
+/**
+ The parent view alias name.
+ 
+ @discussion This is used for `PBLayoutMapper`.
+ */
+@property (nonatomic, strong) NSString *parent;
+
 #pragma mark - Styling
 ///=============================================================================
 /// @name Styling
@@ -111,6 +118,15 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  @discussion This property if only for PBCollectionView.
  */
 @property (nonatomic, assign) CGSize size;
+
+/**
+ The additional height from with. 
+ 
+    item.size.height = item.size.width + additionalHeight;
+ 
+ @discussion Takes effect while the section specified `numberOfColumns`.
+ */
+@property (nonatomic, assign) CGFloat additionalHeight;
 
 /**
  Whether hides the row. Default is NO.
