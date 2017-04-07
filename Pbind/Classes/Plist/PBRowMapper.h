@@ -129,6 +129,15 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) CGFloat additionalHeight;
 
 /**
+ The size ratio.
+ 
+    item.size.ratio = item.size.width / ratio + additionalHeight;
+ 
+ @discussion Takes effect while the section specified `numberOfColumns`.
+ */
+@property (nonatomic, assign) CGFloat ratio;
+
+/**
  Whether hides the row. Default is NO.
  
  @discussion For PBTableView and PBCollection, this will cause the delegate method
