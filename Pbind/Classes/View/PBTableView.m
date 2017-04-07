@@ -135,9 +135,7 @@
     
     [self initDataSource];
     
-    super.dataSource = nil;
     _dataSourceInterceptor.receiver = rowDataSource.receiver = dataSource;
-    super.dataSource = (id)_dataSourceInterceptor;
 }
 
 - (void)setDelegate:(id<UITableViewDelegate>)delegate
@@ -149,9 +147,7 @@
     
     [self initDelegate];
     
-    super.delegate = nil;
     _delegateInterceptor.receiver = rowDelegate.receiver = delegate;
-    super.delegate = (id)_delegateInterceptor;
 }
 
 - (void)setIndexViewHidden:(BOOL)indexViewHidden {
