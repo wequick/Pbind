@@ -690,8 +690,8 @@
     len = p2 - temp;
     *inOutStr = p;
     
-    // left, right, top, bottom, leading, trailing, baseline, centerX or centerY
-    //  4      5     3     6        7        8         8         7          7
+    // left, right, top, bottom, leading, trailing, width, height, baseline, centerX or centerY
+    //  4      5     3     6        7        8        5      6        8         7          7
     
     switch (len) {
         case 3:
@@ -707,11 +707,15 @@
         case 5:
             if (strcmp(temp, "right") == 0) {
                 attr = NSLayoutAttributeRight;
+            } else if (strcmp(temp, "width") == 0) {
+                attr = NSLayoutAttributeWidth;
             }
             break;
         case 6:
             if (strcmp(temp, "bottom") == 0) {
                 attr = NSLayoutAttributeBottom;
+            } else if (strcmp(temp, "height") == 0) {
+                attr = NSLayoutAttributeHeight;
             }
             break;
         case 7:
