@@ -613,7 +613,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (section.numberOfColumns != 0) {
         NSInteger numberOfGaps = section.numberOfColumns - 1;
         CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
-        CGFloat height = width + item.additionalHeight;
+        CGFloat ratio = item.ratio == 0 ? 1 : item.ratio;
+        CGFloat height = width / ratio + item.additionalHeight;
         return CGSizeMake(width, height);
     }
     
