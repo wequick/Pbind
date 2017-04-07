@@ -71,7 +71,7 @@
                 if (mapper.parent == nil) {
                     needsCreate = parentView != view;
                 } else {
-                    needsCreate = [parentView.alias isEqualToString:mapper.parent];
+                    needsCreate = (parentView == view) || ![mapper.parent isEqualToString:parentView.alias];
                 }
             }
             
