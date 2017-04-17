@@ -23,4 +23,9 @@
  */
 @property (nonatomic, strong) id data;
 
+/**
+ Reload data on next `viewWillAppear` loop.
+ */
+- (void)setNeedsReloadData;
+
 @end

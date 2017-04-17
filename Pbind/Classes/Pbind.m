@@ -11,6 +11,10 @@
 
 #import "PBInline.h"
 #import "UIView+Pbind.h"
+#import "PBDataFetching.h"
+#import "PBDataFetcher.h"
+#import "PBClientMapper.h"
+#import "PBViewController.h"
 
 @implementation Pbind : NSObject
 
@@ -76,10 +80,22 @@ static NSMutableArray *kResourcesBundles = nil;
     }
 }
 
-+ (void)enumerateSubviewsForView:(UIView *)view usingBlock:(void (^)(UIView *subview))block {
-    block(view);
++ (void)enumerateSubviewsForView:(UIView *)view usingBlock:(void (^)(UIView *subview, BOOL *stop))block {
+    BOOL stop;
+    [self _enumerateSubviewsForView:view stop:&stop usingBlock:block];
+}
+
++ (void)_enumerateSubviewsForView:(UIView *)view stop:(BOOL *)stop usingBlock:(void (^)(UIView *subview, BOOL *stop))block {
+    block(view, stop);
+    if (*stop) {
+        return;
+    }
+    
     for (UIView *subview in view.subviews) {
-        [self enumerateSubviewsForView:subview usingBlock:block];
+        [self _enumerateSubviewsForView:subview stop:stop usingBlock:block];
+        if (*stop) {
+            return;
+        }
     }
 }
 
@@ -98,7 +114,7 @@ static NSMutableArray *kResourcesBundles = nil;
         }
         
         // Check the layout configured in the plist
-        [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview) {
+        [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview, BOOL *stop) {
             if (subview.pb_layoutName == nil) {
                 return;
             }
@@ -111,9 +127,38 @@ static NSMutableArray *kResourcesBundles = nil;
 }
 
 + (void)reloadViewsOnAPIUpdate:(NSString *)action {
-    // TODO: reload the specify views that using the API.
-    UIViewController *controller = PBTopController();
-    [controller.view pb_reloadClient];
+    // Reload the specify views that using the API.
+    UIViewController *topController = PBTopController();
+    [self enumerateControllersUsingBlock:^(UIViewController *controller) {
+        __block PBDataFetcher *fetcher = nil;
+        [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview, BOOL *stop) {
+            if (![subview conformsToProtocol:@protocol(PBDataFetching)]) {
+                return;
+            }
+            
+            UIView<PBDataFetching> *fetchingView = (id) subview;
+            NSArray *clients = [[fetchingView fetcher] clientMappers];
+            for (PBClientMapper *client in clients) {
+                if ([client.action isEqualToString:action] ||
+                    [client.action isEqualToString:[NSString stringWithFormat:@"/%@", action]]) {
+                    fetcher = [fetchingView fetcher];
+                    *stop = YES;
+                    break;
+                }
+            }
+        }];
+        
+        if (fetcher == nil) {
+            return;
+        }
+        
+        BOOL lazyReload = (controller != topController && [controller isKindOfClass:[PBViewController class]]);
+        if (lazyReload) {
+            [(PBViewController *)controller setNeedsReloadData];
+        } else {
+            [fetcher fetchData];
+        }
+    }];
 }
 
 @end
