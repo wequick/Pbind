@@ -18,6 +18,7 @@
 {
     struct {
         unsigned int initializedViewData: 1;
+        unsigned int needsReloadData: 1;
     } _pbFlags;
 }
 
@@ -32,12 +33,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (self.data != nil) {
-        [self.view setData:self.data];
-        self.data = nil;
-    }
     
-    BOOL needsFetch = NO;
     UIView<PBDataFetching> *fetchingView = nil;
     if ([self.view conformsToProtocol:@protocol(PBDataFetching)]) {
         fetchingView = (id) self.view;
@@ -46,27 +42,29 @@
     // Map properties
     if (!_pbFlags.initializedViewData) {
         _pbFlags.initializedViewData = 1;
+        if (self.data != nil) {
+            [self.view setData:self.data];
+        }
         if (self.plist != nil) {
             [self.view setPlist:self.plist];
-            self.plist = nil;
-        }
-        if (self.view.plist != nil) {
             // Init fetcher
             if (fetchingView != nil && fetchingView.clients != nil) {
                 PBDataFetcher *fetcher = [[PBDataFetcher alloc] init];
                 fetcher.owner = fetchingView;
                 fetchingView.fetcher = fetcher;
-                needsFetch = YES;
+                _pbFlags.needsReloadData = 1;
             }
         }
     }
     
     // Fetch data
     if (fetchingView != nil) {
-        if (!needsFetch && fetchingView.interrupted) {
-            needsFetch = YES;
+        if (fetchingView.interrupted) {
+            _pbFlags.needsReloadData = 1;
         }
-        if (needsFetch) {
+        
+        if (_pbFlags.needsReloadData) {
+            _pbFlags.needsReloadData = 0;
             [fetchingView.fetcher fetchData];
         }
     }
@@ -85,6 +83,10 @@
             }
         }
     }
+}
+
+- (void)setNeedsReloadData {
+    _pbFlags.needsReloadData = 1;
 }
 
 - (void)dealloc {
