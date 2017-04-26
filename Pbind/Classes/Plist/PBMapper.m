@@ -135,9 +135,9 @@
     [_properties initDataForOwner:self];
 }
 
-- (void)setPropertiesToObject:(id)object
+- (void)setPropertiesToObject:(id)object transform:(id (^)(NSString *key, id value))transform
 {
-    [_viewProperties initDataForOwner:object];
+    [_viewProperties initDataForOwner:object transform:transform];
 }
 
 - (void)initDataForView:(UIView *)view

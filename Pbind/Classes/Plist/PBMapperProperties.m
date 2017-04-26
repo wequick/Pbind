@@ -120,8 +120,17 @@
 
 - (void)initDataForOwner:(id)owner
 {
+    [self initDataForOwner:owner transform:nil];
+}
+
+- (void)initDataForOwner:(id)owner transform:(id (^)(NSString *key, id value))transform
+{
     for (NSString *key in _constants) {
-        [PBPropertyUtils setValue:_constants[key] forKeyPath:key toObject:owner failure:nil];
+        id value = _constants[key];
+        if (transform != nil) {
+            value = transform(key, value);
+        }
+        [PBPropertyUtils setValue:value forKeyPath:key toObject:owner failure:nil];
     }
 }
 

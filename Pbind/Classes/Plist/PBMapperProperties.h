@@ -36,6 +36,8 @@
  */
 - (void)initDataForOwner:(id)owner;
 
+- (void)initDataForOwner:(id)owner transform:(id (^)(NSString *key, id value))transform;
+
 /**
  Initialize the properties of the owner by setter method
  
