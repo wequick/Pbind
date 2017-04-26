@@ -21,6 +21,7 @@
 static const CGFloat kDefaultSketchWidth = 320.f;
 static CGFloat kValueScale = 0;
 static NSMutableArray *kResourcesBundles = nil;
+static NSMutableArray *kPlistReloaders = nil;
 
 + (void)setSketchWidth:(CGFloat)sketchWidth {
     kValueScale = [UIScreen mainScreen].bounds.size.width / sketchWidth;
@@ -104,23 +105,22 @@ static NSMutableArray *kResourcesBundles = nil;
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
     NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
-        NSString *usingPlist = controller.view.plist;
-        if (usingPlist == nil) {
-            return;
-        }
-        if ([usingPlist isEqualToString:changedPlist]) {
-            [controller.view pb_reloadPlist];
+        if (![controller isKindOfClass:[PBViewController class]]) {
             return;
         }
         
         // Check the layout configured in the plist
-        [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview, BOOL *stop) {
-            if (subview.pb_layoutName == nil) {
-                return;
-            }
-            if ([subview.pb_layoutName isEqualToString:changedPlist]) {
-                [controller.view pb_reloadPlist];
-                return;
+        UIView *rootView = controller.view;
+        [self enumerateSubviewsForView:rootView usingBlock:^(UIView *subview, BOOL *stop) {
+            if ([subview.plist isEqualToString:changedPlist]) {
+                [subview pb_reloadPlist];
+                *stop = YES;
+            } else if ([subview.pb_layoutName isEqualToString:changedPlist]) {
+                [rootView pb_reloadPlist];
+            } else if (kPlistReloaders != nil) {
+                for (PBPlistReloader reloader in kPlistReloaders) {
+                    reloader(rootView, subview, changedPlist, stop);
+                }
             }
         }];
     }];
@@ -130,6 +130,10 @@ static NSMutableArray *kResourcesBundles = nil;
     // Reload the specify views that using the API.
     UIViewController *topController = PBTopController();
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
+        if (![controller isKindOfClass:[PBViewController class]]) {
+            return;
+        }
+        
         __block PBDataFetcher *fetcher = nil;
         [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview, BOOL *stop) {
             if (![subview conformsToProtocol:@protocol(PBDataFetching)]) {
@@ -152,13 +156,20 @@ static NSMutableArray *kResourcesBundles = nil;
             return;
         }
         
-        BOOL lazyReload = (controller != topController && [controller isKindOfClass:[PBViewController class]]);
+        BOOL lazyReload = (controller != topController);
         if (lazyReload) {
             [(PBViewController *)controller setNeedsReloadData];
         } else {
             [fetcher fetchData];
         }
     }];
+}
+
++ (void)registerPlistReloader:(PBPlistReloader)reloader {
+    if (kPlistReloaders == nil) {
+        kPlistReloaders = [[NSMutableArray alloc] init];
+    }
+    [kPlistReloaders addObject:reloader];
 }
 
 @end
