@@ -46,6 +46,8 @@
 - (id)initWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary;
 
+- (void)setPropertiesToObject:(id)object;
+
 - (void)initDataForView:(UIView *)view;
 - (void)mapData:(id)data forView:(UIView *)view;
 

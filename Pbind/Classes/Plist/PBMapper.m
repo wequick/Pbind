@@ -135,6 +135,11 @@
     [_properties initDataForOwner:self];
 }
 
+- (void)setPropertiesToObject:(id)object
+{
+    [_viewProperties initDataForOwner:object];
+}
+
 - (void)initDataForView:(UIView *)view
 {
     if (_viewProperties == nil) {
