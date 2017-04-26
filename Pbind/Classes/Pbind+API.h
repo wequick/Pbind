@@ -11,6 +11,8 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void(^PBPlistReloader)(UIView *rootView, UIView *view, NSString *changedPlist, BOOL *stop);
+
 @interface Pbind : NSObject
 
 /**
@@ -43,6 +45,8 @@
  @param plistPath the path of the plist
  */
 + (void)reloadViewsOnPlistUpdate:(NSString *)plist;
+
++ (void)registerPlistReloader:(PBPlistReloader)reloader;
 
 /**
  Reload all the views who are using the API(`action`).
