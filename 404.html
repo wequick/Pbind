@@ -5,7 +5,12 @@
 </head>
 <body>
 <script>
-  window.location = '/Pbind';
+  var base = '/Pbind'
+  var url = window.location.href;
+  var path = url.substring(url.indexOf(base) + 7);
+  sessionStorage.setItem('gh-404-recirect', path);
+
+  window.location = base;
 </script>
 </body>
 </html>
