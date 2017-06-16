@@ -105,9 +105,9 @@ static NSMutableArray *kPlistReloaders = nil;
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
     NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
-        if (![controller isKindOfClass:[PBViewController class]]) {
-            return;
-        }
+//        if (![controller isKindOfClass:[PBViewController class]]) {
+//            return;
+//        }
         
         // Check the layout configured in the plist
         UIView *rootView = controller.view;
