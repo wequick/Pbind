@@ -35,6 +35,21 @@
  */
 @property (nonatomic, strong) UIColor *placeholderColor;
 
+#pragma mark - AutoResizing
+///=============================================================================
+/// @name AutoResizing
+///=============================================================================
+
+/**
+ The minimum frame size height for auto resizing
+ */
+@property (nonatomic, assign) CGFloat minHeight;
+
+/**
+ The maximum frame size height for auto resizing
+ */
+@property (nonatomic, assign) CGFloat maxHeight;
+
 @end
 
 //___________________________________________________________________________________________________

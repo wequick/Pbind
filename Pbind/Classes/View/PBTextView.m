@@ -180,4 +180,37 @@
     return YES;
 }
 
+#pragma mark - AutoResizing
+
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
+    CGSize size;
+    if (self.minHeight > 0) {
+        if (self.translatesAutoresizingMaskIntoConstraints) {
+            size.width = self.frame.size.width;
+            size.height = CGFLOAT_MAX;
+            size.height = [self sizeThatFits:size].height;
+            size.height = MAX(size.height, self.minHeight);
+        } else {
+            BOOL scrollEnabled = self.scrollEnabled;
+            self.scrollEnabled = NO;
+            size = [super systemLayoutSizeFittingSize:targetSize];
+            size.height = MAX(size.height, self.minHeight);
+            self.scrollEnabled = scrollEnabled;
+        }
+    } else {
+        if (self.translatesAutoresizingMaskIntoConstraints) {
+            size.width = self.frame.size.width;
+            size.height = CGFLOAT_MAX;
+            size.height = [self sizeThatFits:size].height;
+        } else {
+            size = [super systemLayoutSizeFittingSize:targetSize];
+        }
+    }
+    
+    if (self.maxHeight > 0) {
+        size.height = MIN(size.height, self.maxHeight);
+    }
+    return size;
+}
+
 @end
