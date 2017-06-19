@@ -273,9 +273,6 @@
         for (NSInteger index = 0; index < [_rowViews count]; index++)  {
             UIView *view = [_rowViews objectAtIndex:index];
             PBRowMapper *row = [self rowMapperAtIndex:index];
-            if (indexes == nil || [indexes containsIndex:index]) {
-                [row mapData:data forView:view];
-            }
             
             BOOL hidden = [row hiddenForView:view withData:data];
             [view setHidden:hidden];
@@ -310,6 +307,11 @@
             }
             _rowHeights[index] = @(view.frame.size.height);
             y += h + row.margin.bottom + row.padding.bottom;
+            
+            // Map data
+            if (h > 0 && (indexes == nil || [indexes containsIndex:index])) {
+                [row mapData:data forView:view];
+            }
         }
         
         w = self.contentSize.width;
