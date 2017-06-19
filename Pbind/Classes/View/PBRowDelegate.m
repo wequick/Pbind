@@ -651,8 +651,10 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         
         if (mapper.numberOfColumns != 0) {
             PBRowMapper *item = [self.dataSource rowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-            CGFloat spacing = (collectionView.bounds.size.width - item.size.width * mapper.numberOfColumns - mapper.inset.left - mapper.inset.right) / (mapper.numberOfColumns - 1);
-            return spacing;
+            if (item.size.width != 0) {
+                CGFloat spacing = (collectionView.bounds.size.width - item.size.width * mapper.numberOfColumns - mapper.inset.left - mapper.inset.right) / (mapper.numberOfColumns - 1);
+                return spacing;
+            }
         }
     }
     
