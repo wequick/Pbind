@@ -56,6 +56,13 @@
         CGFloat diff = view.frame.size.height - height;
         _rowHeights[index] = @(view.frame.size.height);
         
+        for (NSInteger rowIndex = index + 1; rowIndex < _rowViews.count; rowIndex++) {
+            UIView *rowView = _rowViews[rowIndex];
+            CGRect rowRect = rowView.frame;
+            rowRect.origin.y += diff;
+            rowView.frame = rowRect;
+        }
+        
         CGSize size = self.contentSize;
         size.height += diff;
         self.contentSize = size;
