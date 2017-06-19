@@ -104,6 +104,7 @@ static NSMutableArray *kPlistReloaders = nil;
     // Reload the specify views that using the plist.
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
     NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
+    NSMutableArray *reloadedViews = [NSMutableArray array];
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
 //        if (![controller isKindOfClass:[PBViewController class]]) {
 //            return;
@@ -112,11 +113,17 @@ static NSMutableArray *kPlistReloaders = nil;
         // Check the layout configured in the plist
         UIView *rootView = controller.view;
         [self enumerateSubviewsForView:rootView usingBlock:^(UIView *subview, BOOL *stop) {
+            if ([reloadedViews containsObject:subview]) {
+                return;
+            }
+            
             if ([subview.plist isEqualToString:changedPlist]) {
+                [reloadedViews addObject:subview];
                 [subview pb_reloadPlist];
                 *stop = YES;
             } else if ([subview.pb_layoutName isEqualToString:changedPlist]) {
-                [rootView pb_reloadPlist];
+                [reloadedViews addObject:subview];
+                [subview pb_reloadLayout];
             } else if (kPlistReloaders != nil) {
                 for (PBPlistReloader reloader in kPlistReloaders) {
                     reloader(rootView, subview, changedPlist, stop);
