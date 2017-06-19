@@ -13,7 +13,7 @@
 #import "PBDictionary.h"
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
-#import "PBViewResizingDelegate.h"
+#import "PBViewResizing.h"
 #import "PBRowDelegate.h"
 #import "PBRowDataSource.h"
 #import "PBRowPaging.h"
@@ -22,7 +22,7 @@
 /**
  An instance of PBCollectionView displays the collectio data source which can be configured by Plist.
  */
-@interface PBCollectionView : UICollectionView <PBRowPaging, PBDataFetching>
+@interface PBCollectionView : UICollectionView <PBRowPaging, PBDataFetching, PBViewResizing>
 {
     PBMessageInterceptor *_dataSourceInterceptor;
     PBMessageInterceptor *_delegateInterceptor;
@@ -81,20 +81,5 @@
  The data of the previous selected item.
  */
 @property (nonatomic, strong) id deselectedData;
-
-#pragma mark - AutoResizing
-///=============================================================================
-/// @name AutoResizing
-///=============================================================================
-
-/**
- Whether resizes frame by content automatically.
- 
- @discussion Default is NO. If set to YES will reset the frame on content size changed.
- */
-@property (nonatomic, assign, getter=isAutoResize) BOOL autoResize;
-
-/** The delegate used to notify frame changes */
-@property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 @end

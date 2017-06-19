@@ -26,6 +26,7 @@
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize registeredCellIdentifiers, registeredSectionIdentifiers;
+@synthesize resizingDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     _flowLayout = [[UICollectionViewFlowLayout alloc] init];
@@ -132,10 +133,12 @@
             CGSize size = self.collectionViewLayout.collectionViewContentSize;
             self.contentSize = size;
             CGRect frame = self.frame;
-            frame.size = size;
-            self.frame = frame;
-            if (self.resizingDelegate != nil) {
-                [self.resizingDelegate viewDidChangeFrame:self];
+            if (!CGSizeEqualToSize(frame.size, size)) {
+                frame.size = size;
+                self.frame = frame;
+                if (self.resizingDelegate != nil) {
+                    [self.resizingDelegate viewDidChangeFrame:self];
+                }
             }
         }
         
