@@ -41,24 +41,25 @@ FOUNDATION_STATIC_INLINE UIColor *PBColorMake(NSString *hexString)
  @return the scaled value
  */
 UIKIT_STATIC_INLINE CGFloat PBValueByScale(CGFloat value, CGFloat scale) {
-    if (value == 0) {
-        return 0;
-    }
-    
-    value *= scale;
-    if (value < 0) {
-        return value;
-    }
-    
-    int integer = (int) value;
-    int decimal = (value - integer) * 10;
-    if (decimal <= 3) {
-        return integer;
-    } else if (decimal >= 7) {
-        return integer + 1.f;
-    } else {
-        return integer + .5f;
-    }
+    return value;
+//    if (value == 0) {
+//        return 0;
+//    }
+//    
+//    value *= scale;
+//    if (value < 0) {
+//        return value;
+//    }
+//    
+//    int integer = (int) value;
+//    int decimal = (value - integer) * 10;
+//    if (decimal <= 3) {
+//        return integer;
+//    } else if (decimal >= 7) {
+//        return integer + 1.f;
+//    } else {
+//        return integer + .5f;
+//    }
 }
 
 /**
