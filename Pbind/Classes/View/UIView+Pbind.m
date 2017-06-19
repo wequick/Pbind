@@ -99,6 +99,9 @@
             [subview pb_mapData:data underType:type dataTag:tag];
         }
     } else {
+        if (type == PBMapToContext && self.frame.size.height == 0) {
+            return;
+        }
         [(id)self reloadData];
     }
 }
