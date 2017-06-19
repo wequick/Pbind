@@ -17,6 +17,7 @@
 #import "PBInline.h"
 #import "UIView+Pbind.h"
 #import "PBValueParser.h"
+#import "PBDataFetching.h"
 
 @interface _RowDataWrapper : NSObject
 
@@ -185,6 +186,9 @@
             [temp addObject:aRow];
         }
         _rows = temp;
+        if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
+            [(id)self.owner setDataUpdated:YES];
+        }
         return;
     }
     
@@ -240,11 +244,17 @@
         if (hasTitle) {
             _sectionIndexTitles = titles;
         }
+        if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
+            [(id)self.owner setDataUpdated:YES];
+        }
         return;
     }
     
     if (rowSource != nil) {
         _row = [PBRowMapper mapperWithDictionary:rowSource owner:self.owner];
+    }
+    if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
+        [(id)self.owner setDataUpdated:YES];
     }
     return;
 }
