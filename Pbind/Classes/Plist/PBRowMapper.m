@@ -13,6 +13,7 @@
 #import "PBInline.h"
 #import "PBTableViewCell.h"
 #import "PBRowDataSource.h"
+#import "PBCollectionView.h"
 
 static const CGFloat kHeightUnset = -2;
 
@@ -104,6 +105,15 @@ static const CGFloat kHeightUnset = -2;
         return _clazz;
     }
     return _nib;
+}
+
+- (void)initDataForView:(UIView *)view {
+    if (_height == UITableViewAutomaticDimension) {
+        if ([view respondsToSelector:@selector(setAutoResize:)]) {
+            [(id)view setAutoResize:YES];
+        }
+    }
+    [super initDataForView:view];
 }
 
 - (BOOL)hiddenForView:(id)view withData:(id)data
