@@ -201,6 +201,11 @@
     return NO;
 }
 
+- (void)pb_reloadLayout {
+    [self.pb_layoutMapper reload];
+    [self.pb_layoutMapper renderToView:self];
+}
+
 - (void)pb_unbindAll
 {
     [self _pb_unbindView:self];
@@ -684,6 +689,14 @@
 
 - (NSString *)pb_layoutName {
     return [self valueForAdditionKey:@"pb_layoutName"];
+}
+
+- (void)setPb_layoutMapper:(PBLayoutMapper *)mapper {
+    [self setValue:mapper forAdditionKey:@"pb_layoutMapper"];
+}
+
+- (PBLayoutMapper *)pb_layoutMapper {
+    return [self valueForAdditionKey:@"pb_layoutMapper"];
 }
 
 @end

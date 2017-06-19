@@ -12,6 +12,7 @@
 #import <UIKit/UIKit.h>
 #import "PBClient.h"
 #import "PBActionMapper.h"
+#import "PBLayoutMapper.h"
 
 //______________________________________________________________________________
 
@@ -90,6 +91,9 @@
 /** The plist layout file name */
 @property (nonatomic, strong) NSString *pb_layoutName;
 
+/** The plist layout mapper */
+@property (nonatomic, strong) PBLayoutMapper *pb_layoutMapper;
+
 /**
  Set mappable for the key path. 
  
@@ -146,6 +150,7 @@
  @discussion This will search the plist from `[Pbind allResourcesBundles]' and reload it.
  */
 - (void)pb_reloadPlist;
+- (void)pb_reloadLayout;
 - (void)pb_initData; // Init constant properties
 - (void)pb_mapData:(id)data; // Init dynamic properties by data
 - (void)pb_mapData:(id)data forKey:(NSString *)key;

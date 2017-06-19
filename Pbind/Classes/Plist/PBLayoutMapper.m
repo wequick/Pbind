@@ -32,6 +32,7 @@
     }
     
     view.pb_layoutName = self.name;
+    view.pb_layoutMapper = self;
     
     // Check if any view be removed.
     NSArray *aliases = [self.views allKeys];
@@ -139,6 +140,11 @@
     
     // PVFL (Pbind Visual Format Language)
     [PBLayoutConstraint addConstraintsWithPbindFormats:self.constraints metrics:metrics views:views forParentView:view];
+}
+
+- (void)reload {
+    [self unbind];
+    [self setPropertiesWithDictionary:PBPlist(self.name)];
 }
 
 #pragma mark - Helper

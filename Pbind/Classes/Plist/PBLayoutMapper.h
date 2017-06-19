@@ -70,4 +70,9 @@
  */
 - (void)renderToView:(UIView *)view;
 
+/**
+ Reload the mapper with the initial layout plist.
+ */
+- (void)reload;
+
 @end
