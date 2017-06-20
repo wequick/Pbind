@@ -59,5 +59,6 @@
 - (void)unbind;
 
 - (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
+- (BOOL)isExpressiveForKey:(NSString *)key;
 
 @end

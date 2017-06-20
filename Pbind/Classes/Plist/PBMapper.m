@@ -232,6 +232,10 @@
     [_properties setExpression:expression forKey:key];
 }
 
+- (BOOL)isExpressiveForKey:(NSString *)key {
+    return [_properties isExpressiveForKey:key];
+}
+
 - (void)resetForView:(UIView *)view {
     if (_navProperties != nil) {
         UINavigationItem *item = view.supercontroller.navigationItem;

@@ -295,7 +295,11 @@
         count = [self.rows count];
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        [aSection updateValueForKey:@"data" withData:data andView:self.owner];
+        if ([aSection isExpressiveForKey:@"data"]) {
+            [aSection updateValueForKey:@"data" withData:data andView:self.owner];
+        } else {
+            aSection.data = data;
+        }
         count = aSection.rowCount;
     }
     return count;

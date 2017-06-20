@@ -22,7 +22,7 @@
 }
 
 @synthesize listKey, page, pagingParams, needsLoadMore;
-@synthesize row, rows, sections, rowDataSource, rowDelegate;
+@synthesize row, rows, section, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize registeredCellIdentifiers, registeredSectionIdentifiers;
@@ -239,6 +239,20 @@
 
 - (NSArray *)items {
     return rows;
+}
+
+- (NSArray *)sections {
+    if (sections != nil) {
+        return sections;
+    }
+    
+    if (section != nil) {
+        NSMutableDictionary *aSection = [NSMutableDictionary dictionaryWithDictionary:section];
+        if (row != nil) {
+            aSection[@"row"] = row;
+        }
+        return @[aSection];
+    }
 }
 
 #pragma mark - PBRowDelegate

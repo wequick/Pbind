@@ -40,6 +40,8 @@
 /// @name Datasource
 ///=============================================================================
 
+@property (nonatomic, strong) NSDictionary *section;
+
 /** The reusable item for all the sections */
 @property (nonatomic, strong) NSDictionary *item;
 
@@ -56,6 +58,8 @@
 
 /** The insets for all the sections */
 @property (nonatomic, assign) UIEdgeInsets itemInsets;
+
+@property (nonatomic, assign) NSInteger numberOfColumns;
 
 /** 
  The spacing size for the items 
