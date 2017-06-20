@@ -98,6 +98,7 @@
         }
         
         [mapper initDataForView:subview];
+        [mapper mapData:nil forView:subview];
         [views setObject:subview forKey:alias];
     }
     
