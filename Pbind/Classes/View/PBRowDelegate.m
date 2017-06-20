@@ -393,7 +393,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.willSelectActionMapper != nil) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willSelectActionMapper context:cell];
+        [self dispatchAction:row.willSelectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -409,7 +409,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.willDeselectActionMapper != nil) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willDeselectActionMapper context:cell];
+        [self dispatchAction:row.willDeselectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -424,7 +424,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.selectActionMapper != nil) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.selectActionMapper context:cell];
+        [self dispatchAction:row.selectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -436,7 +436,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.deselectActionMapper != nil) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.deselectActionMapper context:cell];
+        [self dispatchAction:row.deselectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -458,7 +458,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         [actionMapper updateWithData:tableView.rootData andView:cell];
         UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
             tableView.editingIndexPath = indexPath;
-            [[PBActionStore defaultStore] dispatchActionWithActionMapper:actionMapper context:cell];
+            [self dispatchAction:actionMapper forCell:cell atIndexPath:indexPath];
         }];
         if (actionMapper.backgroundColor != nil) {
             rowAction.backgroundColor = actionMapper.backgroundColor;
@@ -520,7 +520,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.willSelectActionMapper != nil) {
         UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willSelectActionMapper context:cell];
+        [self dispatchAction:row.willSelectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -534,7 +534,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.selectActionMapper != nil) {
         UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.selectActionMapper context:cell];
+        [self dispatchAction:row.selectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     collectionView.selectedData = [self.dataSource dataAtIndexPath:indexPath];
@@ -551,7 +551,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.willDeselectActionMapper != nil) {
         UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.willDeselectActionMapper context:cell];
+        [self dispatchAction:row.willDeselectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -565,7 +565,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     PBRowMapper *row = [self.dataSource rowAtIndexPath:indexPath];
     if (row.deselectActionMapper != nil) {
         UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:row.deselectActionMapper context:cell];
+        [self dispatchAction:row.deselectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
     collectionView.deselectedData = [self.dataSource dataAtIndexPath:indexPath];
@@ -687,6 +687,11 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         
         subview.alpha = 0;
     }
+}
+
+- (void)dispatchAction:(PBActionMapper *)action forCell:(UIView *)cell atIndexPath:(NSIndexPath *)indexPath {
+    NSDictionary *data = indexPath == nil ? nil : @{@"indexPath": indexPath};
+    [[PBActionStore defaultStore] dispatchActionWithActionMapper:action context:cell data:data];
 }
 
 @end

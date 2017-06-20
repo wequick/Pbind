@@ -29,7 +29,11 @@
 }
 
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context {
-    [mapper updateWithData:context.rootData andView:context];
+    [self dispatchActionWithActionMapper:mapper context:context data:nil];
+}
+
+- (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context data:(id)data {
+    [mapper updateValueForKey:@"type" withData:context.rootData andView:context];
     PBAction *action = [PBAction actionForType:mapper.type];
     if (action == nil) {
         return;
@@ -41,7 +45,12 @@
     if (context != nil) {
         self.state.context = context;
     }
+    if (data != nil) {
+        self.state.data = data;
+    }
     
+    [mapper updateWithData:context.rootData andView:context];
+
     action.type = mapper.type;
     action.disabled = mapper.disabled;
     action.target = mapper.target;

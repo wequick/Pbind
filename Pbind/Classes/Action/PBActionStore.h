@@ -62,4 +62,13 @@
  */
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context;
 
+/**
+ Dispatch an action from action mapper and initialize the context for current state.
+ 
+ @param mapper the mapper for the action to be created and dispatched
+ @param context the context to be stored in current state, all the actions will based on this
+ @param data the data to be stored in current state
+ */
+- (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context data:(id)data;
+
 @end
