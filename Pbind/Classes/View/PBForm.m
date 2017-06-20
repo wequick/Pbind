@@ -639,7 +639,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         return;
     }
     
-    [input setInputAccessoryView:_accessory];
+    if ([input inputAccessoryView] == nil) {
+        [input setInputAccessoryView:_accessory];
+    }
     _presentingInput = input;
     
     if (_availableKeyboardInputs == nil) {
