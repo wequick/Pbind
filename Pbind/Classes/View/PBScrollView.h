@@ -32,9 +32,11 @@
     PBRowMapper *_rowMapper;
     NSMutableArray *_rowMappers;
     NSMutableArray *_rowViews;
-    UIView *_footerView;
+    NSMutableSet *_footerViews;
     NSMutableArray *_rowHeights;
     CGFloat _statusBarHeight;
+    CGFloat _contentHeight;
+    CGFloat _footerHeight;
 }
 
 @property (nonatomic, strong) id data;

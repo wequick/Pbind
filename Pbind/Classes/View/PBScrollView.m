@@ -58,14 +58,18 @@
         
         for (NSInteger rowIndex = index + 1; rowIndex < _rowViews.count; rowIndex++) {
             UIView *rowView = _rowViews[rowIndex];
+            if ([_footerViews containsObject:rowView]) {
+                continue;
+            }
+            
             CGRect rowRect = rowView.frame;
             rowRect.origin.y += diff;
             rowView.frame = rowRect;
         }
         
         CGSize size = self.contentSize;
-        size.height += diff;
-        self.contentSize = size;
+        size.height = _contentHeight + diff;
+        [self __adjustContentSize:size];
     }
 }
 
@@ -270,6 +274,7 @@
         CGFloat x = 0;
         CGFloat y = 0;
         CGFloat w = 0;
+        BOOL footerChanged = NO;
         for (NSInteger index = 0; index < [_rowViews count]; index++)  {
             UIView *view = [_rowViews objectAtIndex:index];
             PBRowMapper *row = [self rowMapperAtIndex:index];
@@ -289,14 +294,13 @@
                 h = MAX(h, 0);
             }
             if (h != 0 && row.floating == PBRowFloatingBottom) {
-                _footerView = view;
-                [view setFrame:CGRectMake(x, self.bounds.size.height - h - row.margin.bottom - row.padding.bottom + self.contentOffset.y, w, h)];
-                UIEdgeInsets insets = self.contentInset;
-                insets.bottom = h;
-                self.contentInset = insets;
-                insets = self.scrollIndicatorInsets;
-                insets.bottom = h;
-                self.scrollIndicatorInsets = insets;
+                if (_footerViews == nil) {
+                    _footerViews = [[NSMutableSet alloc] init];
+                }
+                [_footerViews addObject:view];
+                
+                footerChanged = YES;
+                [view setFrame:CGRectMake(x, 0, w, h)];
                 h = 0;
             } else {
                 if (hidden) {
@@ -314,12 +318,36 @@
             }
         }
         
+        if (footerChanged) {
+            _footerHeight = 0;
+            for (UIView *footerView in _footerViews) {
+                _footerHeight += footerView.frame.size.height;
+            }
+            
+            UIEdgeInsets insets = self.contentInset;
+            insets.bottom = _footerHeight;
+            self.contentInset = insets;
+            insets = self.scrollIndicatorInsets;
+            insets.bottom = _footerHeight;
+            self.scrollIndicatorInsets = insets;
+            
+            [self __adjustFloatingViews];
+        }
+        
         w = self.contentSize.width;
         if (w == 0) {
             w = self.frame.size.width;
         }
-        [self setContentSize:CGSizeMake(w, y)];
+        _contentHeight = y;
+        [self __adjustContentSize:CGSizeMake(w, y)];
     }
+}
+
+- (void)__adjustContentSize:(CGSize)contentSize {
+    if (_footerViews != nil) {
+        contentSize.height = MAX(contentSize.height, self.frame.size.height);
+    }
+    [self setContentSize:contentSize];
 }
 
 - (void)setContentSize:(CGSize)contentSize {
@@ -571,13 +599,25 @@
 #pragma mark - Private
 
 - (void)__adjustFloatingViews {
-    if (_footerView != nil) {
-        CGRect frame = [_footerView frame];
-        frame.origin.y = self.contentOffset.y + self.bounds.size.height - frame.size.height;
-        if ([[UIApplication sharedApplication] isStatusBarHidden]) {
-            frame.origin.y -= _statusBarHeight;
+    if (_footerViews != nil) {
+        NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
+        NSInteger temp = _rowViews.count;
+        for (UIView *footerView in _footerViews) {
+            [indexes addIndex:temp - [_rowViews indexOfObject:footerView]];
         }
-        [_footerView setFrame:frame];
+        __block CGFloat bottom = self.contentOffset.y + self.bounds.size.height;
+        if ([[UIApplication sharedApplication] isStatusBarHidden]) {
+            bottom -= _statusBarHeight;
+        }
+        [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+            NSInteger viewIndex = temp - idx;
+            UIView *footerView = [_rowViews objectAtIndex:viewIndex];
+            CGRect frame = [footerView frame];
+            frame.origin.y = bottom - frame.size.height;
+            [footerView setFrame:frame];
+            
+            bottom -= frame.size.height;
+        }];
     }
 }
 
