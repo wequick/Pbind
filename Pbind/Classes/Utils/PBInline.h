@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "PBValueParser.h"
 #import "Pbind+API.h"
+#import "PBRowMapper.h"
 
 /**
  Create the color with hex string
@@ -389,4 +390,26 @@ UIKIT_STATIC_INLINE UIViewController *PBVisibleController(UIViewController *cont
 UIKIT_STATIC_INLINE UIViewController *PBTopController() {
     UIViewController *rootController = [[UIApplication sharedApplication].delegate window].rootViewController;
     return PBVisibleController(rootController);
+}
+
+/**
+ Create a view from plist
+
+ @param plist the plist for PBRowMapper
+ @return the view created
+ */
+UIKIT_STATIC_INLINE UIView *PBView(NSString *plist) {
+    NSDictionary *viewInfo = PBPlist(plist);
+    if (viewInfo == nil) {
+        return nil;
+    }
+    
+    PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:viewInfo];
+    UIView *view = [mapper createView];
+    
+    // Initilize constants and expressions for the view.
+    // FIXME: the context was not ready now, maybe we should do it later.
+    [mapper initDataForView:view];
+    
+    return view;
 }
