@@ -68,12 +68,17 @@
 + (void)addConstraintsWithPbindFormats:(NSArray *)formats metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
     NSInteger maxMergedViewsCount = views.count / 2; // one merged view requires two subviews as least.
     NSMutableSet *mergedViews = [NSMutableSet setWithCapacity:maxMergedViewsCount];
-    for (NSString *key in views) {
-        UIView *container = [views[key] superview];
-        if (container != parentView && [container isKindOfClass:[_PBMergedWrapperView class]]) {
-            [mergedViews addObject:container];
+    for (UIView *subview in parentView.subviews) {
+        if ([subview isKindOfClass:[_PBMergedWrapperView class]]) {
+            [mergedViews addObject:subview];
         }
     }
+//    for (NSString *key in views) {
+//        UIView *container = [views[key] superview];
+//        if (container != parentView && [container isKindOfClass:[_PBMergedWrapperView class]]) {
+//            [mergedViews addObject:container];
+//        }
+//    }
     NSMutableSet *newMergedViews = [NSMutableSet setWithCapacity:maxMergedViewsCount];
     
     for (NSString *format in formats) {

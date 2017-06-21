@@ -70,7 +70,13 @@
                 // view parent changed
                 UIView *parentView = [subview superview];
                 if (mapper.parent == nil) {
-                    needsCreate = parentView != view;
+                    if (parentView != view) {
+                        if ([[[parentView class] description] isEqualToString:@"_PBMergedWrapperView"]) {
+                            // do nothing if has been merged
+                        } else {
+                            needsCreate = YES;
+                        }
+                    }
                 } else {
                     needsCreate = (parentView == view) || ![mapper.parent isEqualToString:parentView.alias];
                 }
