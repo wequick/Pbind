@@ -91,6 +91,18 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
  */
 @property (nonatomic, assign) PBFormIndicating indicating;
 
+#pragma mark - Forming
+///=============================================================================
+/// @name Forming
+///=============================================================================
+
+/**
+ The parameters directly passing without user input.
+ 
+ @discussion This is typically same as the h5 <input type=hidden>
+ */
+@property (nonatomic, strong) NSDictionary *hiddenParams;
+
 #pragma mark - Resulting
 ///=============================================================================
 /// @name Resulting

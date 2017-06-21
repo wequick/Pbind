@@ -529,7 +529,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 }
 
 - (NSDictionary *)params {
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [self pb_mapData:self.data forKey:@"hiddenParams"];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.hiddenParams];
     for (id<PBInput> input in _inputs) {
         // Check name
         NSString *name = [input name];
