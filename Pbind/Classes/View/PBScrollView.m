@@ -631,6 +631,11 @@
 }
 
 - (void)__adjustContentOffsetForReshowView:(UIView *)reshowView {
+    CGRect rect = [reshowView.superview convertRect:reshowView.frame toView:self];
+    if (CGRectIntersectsRect(self.bounds, rect)) {
+        return;
+    }
+    
     UIEdgeInsets insets = [self contentInset];
     CGFloat minOffsetY = -insets.top;
     CGFloat maxOffsetY = MAX(minOffsetY, [self contentSize].height + insets.top + insets.bottom - [self bounds].size.height);
