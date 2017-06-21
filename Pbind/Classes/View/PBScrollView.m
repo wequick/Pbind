@@ -149,6 +149,7 @@
     _pbFlags.deallocing = 1;
     [self pb_resetMappers];
     _rowViews = nil;
+    _footerViews = nil;
 }
 
 - (UIView *)viewWithRow:(PBRowMapper *)row {
@@ -178,6 +179,7 @@
         [view removeFromSuperview];
     }
     _rowViews = nil;
+    _footerViews = nil;
     [self render:nil];
 }
 
@@ -205,6 +207,7 @@
         _rowMapper = [PBRowMapper mapperWithDictionary:_row owner:self];
         
         if ([self.data isKindOfClass:[NSArray class]]) {
+            _footerViews = nil;
             _rowViews = [NSMutableArray arrayWithCapacity:[self.data count]];
             for (id data in self.data) {
                 UIView *view = [self viewWithRow:_rowMapper];
@@ -225,6 +228,7 @@
         }
         _rowMappers = mappers;
         
+        _footerViews = nil;
         _rowViews = [NSMutableArray arrayWithCapacity:[_rowMappers count]];
         for (PBRowMapper *row in _rowMappers) {
             UIView *view = [self viewWithRow:row];
@@ -603,7 +607,12 @@
         NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
         NSInteger temp = _rowViews.count;
         for (UIView *footerView in _footerViews) {
-            [indexes addIndex:temp - [_rowViews indexOfObject:footerView]];
+            NSInteger index = [_rowViews indexOfObject:footerView];
+            if (index == NSNotFound) {
+                return;
+            }
+            
+            [indexes addIndex:temp - index];
         }
         __block CGFloat bottom = self.contentOffset.y + self.bounds.size.height;
         if ([[UIApplication sharedApplication] isStatusBarHidden]) {
