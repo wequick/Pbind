@@ -22,11 +22,12 @@
         return;
     }
     
-    NSDictionary *params = [controller.form nameValuePairsByVerifying];
-    if (params != nil && [self hasNext:@"done"]) {
-        state.params = params;
-        [self dispatchNext:@"done"];
-    }
+    [controller.form verify:^(BOOL passed, NSDictionary *parameters) {
+        if (passed) {
+            state.params = parameters;
+            [self dispatchNext:@"done"];
+        }
+    }];
 }
 
 @end

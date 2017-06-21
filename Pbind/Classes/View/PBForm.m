@@ -434,6 +434,14 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 #pragma mark - 
 #pragma mark - Actions
 
+- (void)verify:(void (^)(BOOL, NSDictionary *))complection {
+    NSDictionary *params = [self nameValuePairsByVerifying];
+    if (complection) {
+        BOOL passed = params != nil;
+        complection(passed, params);
+    }
+}
+
 - (void)reset
 {
     // TODO: add 'reset' action

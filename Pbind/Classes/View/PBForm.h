@@ -149,11 +149,11 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
 - (BOOL)isInvalidForName:(NSString *)name;
 
 /**
- Verify all the named inputs and add to the name value pairs if the input is valid
+ Verify the form
 
- @return the name value pairs from the valid inputs
+ @param complection the handler to do stuff after verified
  */
-- (NSDictionary *)nameValuePairsByVerifying;
+- (void)verify:(void (^)(BOOL passed, NSDictionary *parameters))complection;
 
 /**
  Reset the value for all the inputs
