@@ -51,6 +51,10 @@
     self.text = nil;
 }
 
+- (BOOL)isEmpty {
+    return value == nil || [value isEqual:[NSNull null]] || [value length] == 0;
+}
+
 - (void)setText:(NSString *)text {
     [super setText:text];
     value = text;
