@@ -207,6 +207,7 @@
 - (void)pb_reloadLayout {
     [self.pb_layoutMapper reload];
     [self.pb_layoutMapper renderToView:self];
+    [self pb_mapData:self.rootData];
 }
 
 - (void)pb_unbindAll
