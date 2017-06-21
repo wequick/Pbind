@@ -40,6 +40,7 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBArray.h"
 #import "Pbind+API.h"
 #import "PBAction.h"
+#import "PBActionStore.h"
 
 #import "PBScrollViewController.h"
 #import "PBFormController.h"
