@@ -115,6 +115,19 @@
 
 @implementation PBPropertyUtils
 
++ (id)valueForKeyPath:(NSString *)keyPath ofObject:(id)object failure:(void (^)(void))failure {
+    id value = nil;
+    @try {
+        value = [object valueForKeyPath:keyPath];
+    } @catch (NSException *exception) {
+        [self printError:exception byAccessingInconsistencyKeyPath:keyPath ofObject:object];
+        if (failure) {
+            failure();
+        }
+    }
+    return value;
+}
+
 + (void)setValue:(id)value forKey:(NSString *)key toObject:(id)object failure:(void (^)(void))failure
 {
     if (value == nil) {
@@ -305,14 +318,46 @@
     if ([exception.name isEqualToString:@"NSUnknownKeyException"]) {
         [self printAvailableKeysForKey:keyPath withValue:value ofObject:object];
     } else if ([exception.name isEqualToString:@"NSInvalidArgumentException"]) {
-        [self printRequiresValueTypeForKey:keyPath butValue:value ofObject:object];
-        id defaultValue = [self defaultValueForKeyPath:keyPath inClass:[object class]];
-        [object setValue:defaultValue forKeyPath:keyPath];
+        id target = object;
+        NSString *key = keyPath;
+        NSArray *keys = [key componentsSeparatedByString:@"."];
+        NSUInteger N = keys.count;
+        if (N > 1) {
+            int i = 0;
+            for (; i < N - 1; i++) {
+                key = keys[i];
+                id temp = [target valueForKey:key];
+                if (temp == nil) {
+                    break;
+                }
+                target = temp;
+            }
+            key = keys[i];
+        }
+        [self printRequiresValueTypeForKey:key butValue:value ofObject:target];
+        id defaultValue = [self defaultValueForKeyPath:key inClass:[target class]];
+        @try {
+            [target setValue:defaultValue forKeyPath:key];
+        } @catch (NSException *exception) {
+            NSLog(@"Pbind: Failed to reset default value for key path '%@' of object '%@'", keyPath, [[object class] description]);
+        }
     } else {
         NSMutableString *error = [[NSMutableString alloc] init];
         [error appendFormat:@"Failed to set value:'%@' for key path:'%@' to the %@, exception: %@", value, keyPath, [[object class] description], exception];
         NSLog(@"Pbind: %@", error);
     }
+}
+
++ (void)printError:(NSException *)exception byAccessingInconsistencyKeyPath:(NSString *)keyPath ofObject:(id)object {
+    UIViewController *controller = PBTopController();
+    NSString *plist = controller.view.plist;
+    if (plist != nil) {
+        NSLog(@"Pbind: ⚠️An error occurs in %@.plist or it's sub layout plist.", plist);
+    }
+    
+    NSMutableString *error = [[NSMutableString alloc] init];
+    [error appendFormat:@"Failed to get value for key path:'%@' from the %@, exception: %@", keyPath, [[object class] description], exception];
+    NSLog(@"Pbind: %@", error);
 }
 
 + (void)collectSimilarKeys:(NSMutableArray *)outKeys

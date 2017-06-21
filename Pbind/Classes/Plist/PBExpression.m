@@ -19,6 +19,7 @@
 #import "PBMutableExpression.h"
 #import "PBArray.h"
 #import "PBActionStore.h"
+#import "PBPropertyUtils.h"
 
 const unsigned char PBDataTagUnset = 0xFF;
 
@@ -378,7 +379,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         }
     }
     
-    return [object valueForKeyPath:key];
+    return [PBPropertyUtils valueForKeyPath:key ofObject:object failure:nil];
 }
 
 - (id)valueByOperatingValue:(id)value
@@ -685,7 +686,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
             [_bindingData pb_setValue:nil forKeyPath:_variable];
         } else {
-            [_bindingData setValue:nil forKeyPath:_variable];
+            [PBPropertyUtils setValue:nil forKeyPath:_variable toObject:_bindingData failure:nil];
         }
     }
     
