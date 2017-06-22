@@ -192,7 +192,14 @@
 
 - (BOOL)pb_reloadClientForView:(UIView *)view {
     if ([view conformsToProtocol:@protocol(PBDataFetching)]) {
-        [[(id<PBDataFetching>)view fetcher] refetchData];
+        id<PBDataFetching> fetchingView = view;
+        PBDataFetcher *fetcher = [fetchingView fetcher];
+        if (fetcher == nil) {
+            fetcher = [[PBDataFetcher alloc] init];
+            fetcher.owner = fetchingView;
+            fetchingView.fetcher = fetcher;
+        }
+        [fetcher refetchData];
         return YES;
     }
     
