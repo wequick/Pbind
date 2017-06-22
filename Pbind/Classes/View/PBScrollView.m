@@ -298,6 +298,7 @@
                 h -= row.padding.top + row.padding.bottom;
                 h = MAX(h, 0);
             }
+            BOOL visible = h > 0;
             if (h != 0 && row.floating == PBRowFloatingBottom) {
                 if (_footerViews == nil) {
                     _footerViews = [[NSMutableSet alloc] init];
@@ -318,17 +319,12 @@
             y += h + row.margin.bottom + row.padding.bottom;
             
             // Map data
-            if (h > 0 && (indexes == nil || [indexes containsIndex:index])) {
+            if (visible && (indexes == nil || [indexes containsIndex:index])) {
                 [row mapData:data forView:view];
             }
         }
         
         if (footerChanged) {
-            _footerHeight = 0;
-            for (UIView *footerView in _footerViews) {
-                _footerHeight += footerView.frame.size.height;
-            }
-            
             [self __adjustContentInset];
             [self __adjustFloatingViews];
         }
@@ -342,12 +338,21 @@
     }
 }
 
+- (CGFloat)footerHeight {
+    CGFloat footerHeight = 0;
+    for (UIView *footerView in _footerViews) {
+        footerHeight += footerView.frame.size.height;
+    }
+    return footerHeight;
+}
+
 - (void)__adjustContentInset {
+    CGFloat footerHeight = [self footerHeight];
     UIEdgeInsets insets = self.contentInset;
-    insets.bottom = _footerHeight;
+    insets.bottom = footerHeight;
     self.contentInset = insets;
     insets = self.scrollIndicatorInsets;
-    insets.bottom = _footerHeight;
+    insets.bottom = footerHeight;
     self.scrollIndicatorInsets = insets;
 }
 

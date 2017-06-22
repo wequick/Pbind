@@ -37,7 +37,6 @@
     NSMutableArray *_rowHeights;
     CGFloat _statusBarHeight;
     CGFloat _contentHeight;
-    CGFloat _footerHeight;
 }
 
 @property (nonatomic, strong) id data;

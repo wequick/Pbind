@@ -55,6 +55,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)didInitRowViews;
 - (UIView *)viewWithRow:(PBRowMapper *)row;
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom;
+- (CGFloat)footerHeight;
 - (void)__adjustContentInset;
 
 @end
@@ -912,7 +913,6 @@ static NSString *kRaisedKey = @"pb_formRaised";
     }
     
     CGFloat diff = raised ? -_keyboardHeight : _keyboardHeight;
-    self->_footerHeight -= diff;
     [self __adjustContentInset];
     
     dispatch_block_t animation = ^{
@@ -928,6 +928,12 @@ static NSString *kRaisedKey = @"pb_formRaised";
     } else {
         animation();
     }
+}
+
+- (CGFloat)footerHeight {
+    CGFloat height = [super footerHeight];
+    height += _keyboardHeight;
+    return height;
 }
 
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom {
