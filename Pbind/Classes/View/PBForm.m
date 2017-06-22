@@ -54,6 +54,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)didInitRowViews;
 - (UIView *)viewWithRow:(PBRowMapper *)row;
+- (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom;
+- (void)__adjustContentInset;
 
 @end
 
@@ -641,42 +643,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self adjustFloatingViewsOffset:NO animated:YES];
 }
 
-- (void)adjustFloatingViewsOffset:(BOOL)raised {
-    [self adjustFloatingViewsOffset:raised animated:NO];
-}
-
-- (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
-    if (_footerViews == nil) {
-        return;
-    }
-    
-    static NSString *kRaisedKey = @"pb_formRaised";
-    UIView *temp = [_footerViews anyObject];
-    BOOL prevRaised = [[temp valueForAdditionKey:kRaisedKey] boolValue];
-    if (prevRaised == raised) {
-        return;
-    }
-    
-    for (UIView *footerView in _footerViews) {
-        [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
-    }
-    
-    CGFloat diff = raised ? -_keyboardHeight : _keyboardHeight;
-    dispatch_block_t animation = ^{
-        for (UIView *footerView in _footerViews) {
-            [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
-            CGRect frame = footerView.frame;
-            frame.origin.y += diff;
-            footerView.frame = frame;
-        }
-    };
-    if (animated) {
-        [self animateAsKeyboardWithAnimations:animation completion:nil];
-    } else {
-        animation();
-    }
-}
-
 - (void)inputDidBegin:(NSNotification *)notification
 {
     // Init input accessory
@@ -920,6 +886,57 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if ([_presentingInput isKindOfClass:[UIControl class]]) {
         [(UIControl *)_presentingInput sendActionsForControlEvents:UIControlEventEditingChanged];
     }
+}
+
+#pragma mark - Floating accessory view
+
+static NSString *kRaisedKey = @"pb_formRaised";
+
+- (void)adjustFloatingViewsOffset:(BOOL)raised {
+    [self adjustFloatingViewsOffset:raised animated:NO];
+}
+
+- (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
+    if (_footerViews == nil) {
+        return;
+    }
+    
+    UIView *temp = [_footerViews anyObject];
+    BOOL prevRaised = [[temp valueForAdditionKey:kRaisedKey] boolValue];
+    if (prevRaised == raised) {
+        return;
+    }
+    
+    for (UIView *footerView in _footerViews) {
+        [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
+    }
+    
+    CGFloat diff = raised ? -_keyboardHeight : _keyboardHeight;
+    self->_footerHeight -= diff;
+    [self __adjustContentInset];
+    
+    dispatch_block_t animation = ^{
+        for (UIView *footerView in _footerViews) {
+            [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
+            CGRect frame = footerView.frame;
+            frame.origin.y += diff;
+            footerView.frame = frame;
+        }
+    };
+    if (animated) {
+        [self animateAsKeyboardWithAnimations:animation completion:nil];
+    } else {
+        animation();
+    }
+}
+
+- (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom {
+    CGRect frame = [super frameForFloatingView:view withBottom:bottom];
+    BOOL raised = [[view valueForAdditionKey:kRaisedKey] boolValue];
+    if (raised) {
+        frame.origin.y -= _keyboardHeight;
+    }
+    return frame;
 }
 
 #pragma mark - UIScrollViewDelegate

@@ -329,13 +329,7 @@
                 _footerHeight += footerView.frame.size.height;
             }
             
-            UIEdgeInsets insets = self.contentInset;
-            insets.bottom = _footerHeight;
-            self.contentInset = insets;
-            insets = self.scrollIndicatorInsets;
-            insets.bottom = _footerHeight;
-            self.scrollIndicatorInsets = insets;
-            
+            [self __adjustContentInset];
             [self __adjustFloatingViews];
         }
         
@@ -346,6 +340,15 @@
         _contentHeight = y;
         [self __adjustContentSize:CGSizeMake(w, y)];
     }
+}
+
+- (void)__adjustContentInset {
+    UIEdgeInsets insets = self.contentInset;
+    insets.bottom = _footerHeight;
+    self.contentInset = insets;
+    insets = self.scrollIndicatorInsets;
+    insets.bottom = _footerHeight;
+    self.scrollIndicatorInsets = insets;
 }
 
 - (void)__adjustContentSize:(CGSize)contentSize {
@@ -603,6 +606,12 @@
 
 #pragma mark - Private
 
+- (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom {
+    CGRect frame = [view frame];
+    frame.origin.y = bottom - frame.size.height;
+    return frame;
+}
+
 - (void)__adjustFloatingViews {
     if (_footerViews != nil) {
         NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
@@ -622,8 +631,7 @@
         [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
             NSInteger viewIndex = temp - idx;
             UIView *footerView = [_rowViews objectAtIndex:viewIndex];
-            CGRect frame = [footerView frame];
-            frame.origin.y = bottom - frame.size.height;
+            CGRect frame = [self frameForFloatingView:footerView withBottom:bottom];
             [footerView setFrame:frame];
             
             bottom -= frame.size.height;
