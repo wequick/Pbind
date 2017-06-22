@@ -821,7 +821,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             [(PBInput *)_presentingInput setSelected:NO];
         }
     } completion:nil];
-    _keyboardHeight = 0;
+//    _keyboardHeight = 0;
     
     return [super endEditing:force];
 }
@@ -984,7 +984,12 @@ static NSString *kRaisedKey = @"pb_formRaised";
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     if (_presentingInput != nil) {
-        [self setContentOffset:CGPointMake(self.contentOffset.x, _offsetYForPresentingInput) animated:YES];
+        if (velocity.y < -0.5) {
+            // Fast swiping to end editing
+            [self endEditing:YES];
+        } else {
+            [self setContentOffset:CGPointMake(self.contentOffset.x, _offsetYForPresentingInput) animated:YES];
+        }
     }
     if ([_delegateInterceptor.receiver respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
         [_delegateInterceptor.receiver scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
