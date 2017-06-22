@@ -525,6 +525,10 @@ const unsigned char PBDataTagUnset = 0xFF;
         _bindingKeyPath = targetKeyPath;
         _bindingData = dataSource;
         _bindingOwner = target;
+        _nilBindingValue = [PBPropertyUtils valueForKeyPath:_variable ofObject:dataSource failure:nil];
+        if (_nilBindingValue != nil && ![_nilBindingValue isKindOfClass:[NSNumber class]]) {
+            _nilBindingValue = nil;
+        }
         [dataSource addObserver:self forKeyPath:_variable options:NSKeyValueObservingOptionNew context:(__bridge void *)target];
         if (_flags.duplexBinding) {
             [target addObserver:self forKeyPath:targetKeyPath options:NSKeyValueObservingOptionNew context:(__bridge void *)dataSource];
@@ -684,10 +688,11 @@ const unsigned char PBDataTagUnset = 0xFF;
     BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != PBDataTagUnset));
     if (!isMapToCustomData) {
         if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
-            [_bindingData pb_setValue:nil forKeyPath:_variable];
+            [_bindingData pb_setValue:_nilBindingValue forKeyPath:_variable];
         } else {
-            [PBPropertyUtils setValue:nil forKeyPath:_variable toObject:_bindingData failure:nil];
+            [PBPropertyUtils setValue:_nilBindingValue forKeyPath:_variable toObject:_bindingData failure:nil];
         }
+        _nilBindingValue = nil;
     }
     
     // Unobserve the property

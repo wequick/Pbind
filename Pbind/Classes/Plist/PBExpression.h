@@ -130,6 +130,7 @@ typedef enum : NSUInteger {
     NSString *_bindingKeyPath;  // the owner's keyPath binding with `_variable'
     __unsafe_unretained id _bindingOwner;
     __unsafe_unretained id _bindingData;
+    id _nilBindingValue;
 }
 
 + (instancetype)expressionWithString:(NSString *)aString;
