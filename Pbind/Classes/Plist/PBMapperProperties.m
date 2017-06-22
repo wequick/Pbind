@@ -29,6 +29,10 @@
 {
     PBMapperProperties *properties = [[self alloc] init];
     for (NSString *key in dictionary) {
+        if ([key rangeOfString:@"//"].location == 0) {
+            continue;
+        }
+        
         id value = [dictionary objectForKey:key];
         if ([value isKindOfClass:[NSDictionary class]]) {
             if ([key isEqualToString:@"actions"]
