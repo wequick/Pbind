@@ -431,6 +431,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     _inputTexts = nil;
     _inputValues = nil;
     _inputErrorTips = nil;
+    [self initInputs];
 }
 
 #pragma mark - 
