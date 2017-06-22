@@ -413,6 +413,7 @@
         if (*p == '\0') {
             break;
         }
+        *p2 = '\0';
         
         NSString *viewName = [[NSString alloc] initWithUTF8String:name];
         free(name);
