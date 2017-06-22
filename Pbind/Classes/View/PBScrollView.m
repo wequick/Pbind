@@ -19,6 +19,7 @@
 @implementation PBScrollView
 
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
+@synthesize resizingDelegate;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {

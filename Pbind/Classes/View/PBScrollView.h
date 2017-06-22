@@ -12,13 +12,14 @@
 #import <UIKit/UIKit.h>
 #import "PBRowMapper.h"
 #import "PBMessageInterceptor.h"
+#import "PBViewResizing.h"
 #import "PBViewResizingDelegate.h"
 #import "PBDataFetching.h"
 
 /**
  The PBScrollView is one of the base components of Pbind. An instance of PBScrollView provides the ability of configuring a group of row views in linear layout.
  */
-@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizingDelegate, PBDataFetching>
+@interface PBScrollView : UIScrollView <UIScrollViewDelegate, PBRowMapperDelegate, PBViewResizing, PBViewResizingDelegate, PBDataFetching>
 {
     struct {
         unsigned int deallocing:1;
@@ -44,11 +45,9 @@
 @property (nonatomic, strong) NSDictionary *row; // for plist, parse as `PRRowMapper'
 
 @property (nonatomic, assign, getter=isHorizontal) BOOL horizontal; // default is NO.
-@property (nonatomic, assign, getter=isAutoResize) BOOL autoResize; // default is NO.
+
 @property (nonatomic, assign, getter=isAnimatedOnRendering) BOOL animatedOnRendering; // default is YES.
 @property (nonatomic, assign, getter=isAnimatedOnValueChanged) BOOL animatedOnValueChanged; // default is YES.
-
-@property (nonatomic, weak) id<PBViewResizingDelegate> resizingDelegate;
 
 - (void)config;
 
