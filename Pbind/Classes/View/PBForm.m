@@ -607,8 +607,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         kKeyboardDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     }
     _keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    if (!_formFlags.isWaitingForKeyboardShow && !_formFlags.hasScrollToInput) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
-        [self scrollToInput:_presentingInput animated:YES];
+    if (!_formFlags.isWaitingForKeyboardShow) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
+        if (!_formFlags.hasScrollToInput) {
+            _formFlags.hasScrollToInput = YES;
+            [self scrollToInput:_presentingInput animated:YES];
+            [self adjustFloatingViewsOffset:YES animated:YES];
+        }
     }
 }
 
@@ -632,6 +636,44 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         [self animateAsKeyboardWithAnimations:^{
             [self setContentOffset:offset];
         } completion:nil];
+    }
+    
+    [self adjustFloatingViewsOffset:NO animated:YES];
+}
+
+- (void)adjustFloatingViewsOffset:(BOOL)raised {
+    [self adjustFloatingViewsOffset:raised animated:NO];
+}
+
+- (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
+    if (_footerViews == nil) {
+        return;
+    }
+    
+    static NSString *kRaisedKey = @"pb_formRaised";
+    UIView *temp = [_footerViews anyObject];
+    BOOL prevRaised = [[temp valueForAdditionKey:kRaisedKey] boolValue];
+    if (prevRaised == raised) {
+        return;
+    }
+    
+    for (UIView *footerView in _footerViews) {
+        [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
+    }
+    
+    CGFloat diff = raised ? -_keyboardHeight : _keyboardHeight;
+    dispatch_block_t animation = ^{
+        for (UIView *footerView in _footerViews) {
+            [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
+            CGRect frame = footerView.frame;
+            frame.origin.y += diff;
+            footerView.frame = frame;
+        }
+    };
+    if (animated) {
+        [self animateAsKeyboardWithAnimations:animation completion:nil];
+    } else {
+        animation();
     }
 }
 
@@ -685,6 +727,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             if (!_formFlags.hasScrollToInput) {
                 _formFlags.hasScrollToInput = YES;
                 [self scrollToInput:_presentingInput animated:YES];
+                [self adjustFloatingViewsOffset:YES animated:YES];
             }
         }
     });
@@ -901,6 +944,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
             _formFlags.hasScrollToInput = YES;
             // Re-scroll the presenting input to the center rect after owner controller re-showed
             [self scrollToInput:_presentingInput animated:YES];
+            [self adjustFloatingViewsOffset:YES animated:YES];
         } else {
             [super setContentOffset:contentOffset];
         }
