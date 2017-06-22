@@ -98,7 +98,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self initInputs];
     [self initAccessory];
     [self initIndicator];
-    [self observeInputNotifications];
     
     // Validate all the inputs to initialize the `invalid' states.
     for (id<PBInput> input in _inputs) {
@@ -112,7 +111,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     if (self.window) {
-        
+        [self observeInputNotifications];
     } else {
         [self unobserveInputNotifications];
     }
