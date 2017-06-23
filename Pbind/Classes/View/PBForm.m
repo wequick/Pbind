@@ -916,7 +916,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
                 h -= row.padding.top + row.padding.bottom;
                 h = MAX(h, 0);
             }
-            y -= row.margin.top + row.padding.top + h;
+            y -= row.margin.bottom + row.padding.bottom + h;
             view.frame = CGRectMake(x, y, w, h);
         }
     }
