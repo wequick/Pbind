@@ -28,7 +28,6 @@
         unsigned int autoResize:1;
         unsigned int animatedOnRendering:1;
         unsigned int animatedOnValueChanged:1;
-        unsigned int viewHierachyChanging:1;
     } _pbFlags;
     PBMessageInterceptor *_delegateInterceptor;
     PBRowMapper *_rowMapper;

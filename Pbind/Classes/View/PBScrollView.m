@@ -118,11 +118,6 @@
 
 - (void)didMoveToWindow {
     [super didMoveToWindow];
-    
-    if (_pbFlags.viewHierachyChanging) {
-        return;
-    }
-    
     if (self.window) {
         [self initRowViewsIfNeeded];
         _statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
@@ -278,6 +273,14 @@
 
 - (void)initAccessoryViews {
     if (_accessories != nil && _accessoryMappers == nil) {
+        UIView *parentView = self.superview;
+        if (parentView == nil) {
+            parentView = self.supercontroller.view;
+            if (parentView == nil) {
+                return;
+            }
+        }
+        
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_accessories count]];
         for (NSDictionary *dict in _accessories) {
             PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
@@ -287,39 +290,10 @@
         _accessoryMappers = mappers;
         
         NSMutableArray *accessoryViews = [NSMutableArray arrayWithCapacity:[mappers count]];
-        UIView *parentView = self.superview;
-        if (parentView == nil) {
-            parentView = self.supercontroller.view;
-            if (parentView == nil) {
-                return;
-            }
-        }
-        
-//        static NSString *kWrapperKey = @"__pbScrollWrapper";
-//        UIView *wrapper = [parentView viewWithAlias:kWrapperKey];
-//        if (wrapper == nil) {
-//            wrapper = [[UIView alloc] initWithFrame:self.frame];
-//            wrapper.alias = kWrapperKey;
-//            [parentView addSubview:wrapper];
-//            
-//            UIView *v1 = [[UIView alloc] initWithFrame:CGRectMake(0, 200, 200, 44)];
-//            v1.backgroundColor = [UIColor colorWithWhite:0 alpha:.2];
-//            [parentView addSubview:v1];
-//        }
-        
-//        _pbFlags.viewHierachyChanging = YES;
-//        {
-//            [self removeFromSuperview];
-//            [wrapper addSubview:self];
-//            self.frame = self.bounds;
-//        }
-//        _pbFlags.viewHierachyChanging = NO;
-//        
         for (PBRowMapper *row in mappers) {
             UIView *view = [self viewWithRow:row];
             [parentView addSubview:view];
-            // FIXME: If add this line we'd got a crash, why?
-//            [row initDataForView:view];
+            [row initDataForView:view];
             [accessoryViews addObject:view];
         }
         _accessoryViews = accessoryViews;
@@ -432,6 +406,9 @@
 - (CGFloat)footerHeight {
     CGFloat footerHeight = 0;
     for (UIView *footerView in _footerViews) {
+        footerHeight += footerView.frame.size.height;
+    }
+    for (UIView *footerView in _accessoryViews) {
         footerHeight += footerView.frame.size.height;
     }
     return footerHeight;
