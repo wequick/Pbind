@@ -128,11 +128,17 @@
 }
 
 - (NSArray *)pb_mappersForBinding {
+    NSMutableArray *mappers = [NSMutableArray array];
     if (_rowMapper != nil) {
-        return @[_rowMapper];
+        [mappers addObject:_rowMapper];
     }
-    
-    return _rowMappers;
+    if (_rowMappers != nil) {
+        [mappers addObjectsFromArray:_rowMappers];
+    }
+    if (_accessoryMappers != nil) {
+        [mappers addObjectsFromArray:_accessoryMappers];
+    }
+    return mappers;
 }
 
 - (void)pb_resetMappers {
@@ -143,6 +149,12 @@
         }
         _rowMappers = nil;
     }
+    if (_accessoryMappers != nil) {
+        for (PBRowMapper *mapper in _accessoryMappers) {
+            mapper.delegate = nil;
+        }
+        _accessoryMappers = nil;
+    }
 }
 
 - (void)dealloc
@@ -151,6 +163,12 @@
     [self pb_resetMappers];
     _rowViews = nil;
     _footerViews = nil;
+    if (_accessoryViews != nil) {
+        for (UIView *view in _accessoryViews) {
+            [view removeFromSuperview];
+        }
+        _accessoryViews = nil;
+    }
 }
 
 - (UIView *)viewWithRow:(PBRowMapper *)row {
@@ -181,7 +199,17 @@
     }
     _rowViews = nil;
     _footerViews = nil;
+    
+    for (UIView *view in _accessoryViews) {
+        [view removeFromSuperview];
+    }
+    _accessoryViews = nil;
+    
     [self render:nil];
+}
+
+- (void)removeFromSuperview {
+    [super removeFromSuperview];
 }
 
 - (void)initRowViewsIfNeeded
@@ -204,6 +232,34 @@
 
 - (void)initRowViews
 {
+    if (_accessories != nil) {
+        NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_accessories count]];
+        for (NSDictionary *dict in _accessories) {
+            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
+            mapper.delegate = self;
+            [mappers addObject:mapper];
+        }
+        _accessoryMappers = mappers;
+        
+        NSMutableArray *accessoryViews = [NSMutableArray arrayWithCapacity:[mappers count]];
+//        CGRect frame = self.frame;
+        UIView *parentView = self.superview;
+        UIView *wrapper = [[UIView alloc] initWithFrame:self.frame];
+        [parentView addSubview:wrapper];
+        [self removeFromSuperview];
+        [wrapper addSubview:self];
+        self.frame = self.bounds;
+        for (PBRowMapper *row in mappers) {
+            UIView *view = [self viewWithRow:row];
+            [self addSubview:view];
+//            [self addSubview:view];
+            [row initDataForView:view];
+            [accessoryViews addObject:view];
+        }
+        _accessoryViews = accessoryViews;
+//        [parentView setValue:accessoryViews forAdditionKey:@"__pb_accessoryViews"];
+    }
+    
     if (_row != nil) {
         _rowMapper = [PBRowMapper mapperWithDictionary:_row owner:self];
         
@@ -336,6 +392,12 @@
         _contentHeight = y;
         [self __adjustContentSize:CGSizeMake(w, y)];
     }
+    
+    [self adjustAccessoryViewsOffset];
+}
+
+- (void)adjustAccessoryViewsOffset {
+    
 }
 
 - (CGFloat)footerHeight {

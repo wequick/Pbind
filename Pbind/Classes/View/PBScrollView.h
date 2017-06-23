@@ -34,6 +34,10 @@
     NSMutableArray *_rowMappers;
     NSMutableArray *_rowViews;
     NSMutableSet *_footerViews;
+    
+    NSMutableArray *_accessoryMappers;
+    NSMutableArray *_accessoryViews;
+    
     NSMutableArray *_rowHeights;
     CGFloat _statusBarHeight;
     CGFloat _contentHeight;
@@ -42,6 +46,7 @@
 @property (nonatomic, strong) id data;
 @property (nonatomic, strong) NSArray *rows; // for plist, parse as `PRRowMapper'
 @property (nonatomic, strong) NSDictionary *row; // for plist, parse as `PRRowMapper'
+@property (nonatomic, strong) NSArray *accessories; // for plist, parse as `PRRowMapper'
 
 @property (nonatomic, assign, getter=isHorizontal) BOOL horizontal; // default is NO.
 

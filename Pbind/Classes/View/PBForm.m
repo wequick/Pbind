@@ -892,35 +892,68 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 #pragma mark - Floating accessory view
 
-static NSString *kRaisedKey = @"pb_formRaised";
+static NSString *kOriginalYKey = @"pb_originalY";
+
+- (void)adjustAccessoryViewsOffset {
+    if (_accessoryViews != nil) {
+        CGFloat keyboardHeight = _presentingInput != nil ? _keyboardHeight : 0;
+        id data = self.rootData;
+        CGFloat x, y, w, h;
+        y = self.superview.frame.size.height - _keyboardHeight;
+        for (NSInteger index = _accessoryViews.count - 1; index >= 0; index--) {
+            UIView *view = [_accessoryViews objectAtIndex:index];
+            PBRowMapper *row = [_accessoryMappers objectAtIndex:index];
+            BOOL hidden = [row hiddenForView:view withData:data];
+            [view setHidden:hidden];
+            h = 0;
+            if (!hidden) {
+                h = [row heightForView:view withData:data];
+            }
+            
+            x = row.margin.left + row.padding.left;
+            w = self.bounds.size.width - row.margin.left - row.padding.left - row.margin.right - row.padding.right;
+            if (h > 0) {
+                h -= row.padding.top + row.padding.bottom;
+                h = MAX(h, 0);
+            }
+            y -= row.margin.top + row.padding.top + h;
+            view.frame = CGRectMake(x, y, w, h);
+        }
+    }
+}
 
 - (void)adjustFloatingViewsOffset:(BOOL)raised {
     [self adjustFloatingViewsOffset:raised animated:NO];
 }
 
+- (NSArray *)accessoryViews {
+    return _accessoryViews ?: _footerViews;
+}
+
 - (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
-    if (_footerViews == nil) {
+    NSArray *accessoryViews = [self accessoryViews];
+    if (accessoryViews.count == 0) {
         return;
     }
     
-    UIView *temp = [_footerViews anyObject];
-    BOOL prevRaised = [[temp valueForAdditionKey:kRaisedKey] boolValue];
-    if (prevRaised == raised) {
-        return;
+    // Record original offset Y
+    for (UIView *footerView in accessoryViews) {
+        NSNumber *originalY = [footerView valueForAdditionKey:kOriginalYKey];
+        if (originalY == nil) {
+            [footerView setValue:@(footerView.frame.origin.y) forAdditionKey:kOriginalYKey];
+        }
     }
     
-    for (UIView *footerView in _footerViews) {
-        [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
-    }
-    
-    CGFloat diff = raised ? -_keyboardHeight : _keyboardHeight;
     [self __adjustContentInset];
     
     dispatch_block_t animation = ^{
-        for (UIView *footerView in _footerViews) {
-            [footerView setValue:@(raised) forAdditionKey:kRaisedKey];
+        for (UIView *footerView in accessoryViews) {
             CGRect frame = footerView.frame;
-            frame.origin.y += diff;
+            CGFloat y = [[footerView valueForAdditionKey:kOriginalYKey] floatValue];
+            if (raised) {
+                y -= _keyboardHeight;
+            }
+            frame.origin.y = y;
             footerView.frame = frame;
         }
     };
@@ -939,10 +972,10 @@ static NSString *kRaisedKey = @"pb_formRaised";
 
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom {
     CGRect frame = [super frameForFloatingView:view withBottom:bottom];
-    BOOL raised = [[view valueForAdditionKey:kRaisedKey] boolValue];
-    if (raised) {
-        frame.origin.y -= _keyboardHeight;
-    }
+//    BOOL raised = [[view valueForAdditionKey:kRaisedKey] boolValue];
+//    if (raised) {
+//        frame.origin.y -= _keyboardHeight;
+//    }
     return frame;
 }
 
