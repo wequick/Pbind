@@ -118,6 +118,11 @@
 
 - (void)didMoveToWindow {
     [super didMoveToWindow];
+    
+    if (_pbFlags.viewHierachyChanging) {
+        return;
+    }
+    
     if (self.window) {
         [self initRowViewsIfNeeded];
         _statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
@@ -232,7 +237,7 @@
 
 - (void)initRowViews
 {
-    if (_accessories != nil) {
+    if (_accessories != nil && _accessoryMappers == nil) {
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_accessories count]];
         for (NSDictionary *dict in _accessories) {
             PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
@@ -242,13 +247,18 @@
         _accessoryMappers = mappers;
         
         NSMutableArray *accessoryViews = [NSMutableArray arrayWithCapacity:[mappers count]];
-//        CGRect frame = self.frame;
-        UIView *parentView = self.superview;
-        UIView *wrapper = [[UIView alloc] initWithFrame:self.frame];
-        [parentView addSubview:wrapper];
-        [self removeFromSuperview];
-        [wrapper addSubview:self];
-        self.frame = self.bounds;
+        
+        _pbFlags.viewHierachyChanging = YES;
+        {
+            UIView *parentView = self.superview;
+            UIView *wrapper = [[UIView alloc] initWithFrame:self.frame];
+            [parentView addSubview:wrapper];
+            [self removeFromSuperview];
+            [wrapper addSubview:self];
+            self.frame = self.bounds;
+        }
+        _pbFlags.viewHierachyChanging = NO;
+        
         for (PBRowMapper *row in mappers) {
             UIView *view = [self viewWithRow:row];
             [self addSubview:view];
