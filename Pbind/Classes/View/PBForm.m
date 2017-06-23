@@ -188,7 +188,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
     
     _inputs = [[NSMutableArray alloc] init];
-    [self addInputsForView:self];
+    [self addInputsFromView:self];
+    if (_accessoryViews != nil) {
+        for (UIView *accessoryView in _accessoryViews) {
+            [self addInputsFromView:accessoryView];
+        }
+    }
     
     // Init input texts and values for observable
     _inputTexts = [PBDictionary dictionaryWithCapacity:_inputs.count];
@@ -247,7 +252,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }];
 }
 
-- (void)addInputsForView:(UIView *)view {
+- (void)addInputsFromView:(UIView *)view {
     for (UIView *subview in view.subviews) {
         if ([subview conformsToProtocol:@protocol(PBInput)]) {
             id<PBInput> input = (id)subview;
@@ -257,7 +262,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
         
         // Recursive
-        [self addInputsForView:subview];
+        [self addInputsFromView:subview];
     }
 }
 
@@ -978,21 +983,6 @@ static NSString *kOriginalYKey = @"pb_originalY";
     } else {
         animation();
     }
-}
-
-- (CGFloat)footerHeight {
-    CGFloat height = [super footerHeight];
-    height += _keyboardHeight;
-    return height;
-}
-
-- (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom {
-    CGRect frame = [super frameForFloatingView:view withBottom:bottom];
-//    BOOL raised = [[view valueForAdditionKey:kRaisedKey] boolValue];
-//    if (raised) {
-//        frame.origin.y -= _keyboardHeight;
-//    }
-    return frame;
 }
 
 #pragma mark - UIScrollViewDelegate
