@@ -237,38 +237,7 @@
 
 - (void)initRowViews
 {
-    if (_accessories != nil && _accessoryMappers == nil) {
-        NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_accessories count]];
-        for (NSDictionary *dict in _accessories) {
-            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
-            mapper.delegate = self;
-            [mappers addObject:mapper];
-        }
-        _accessoryMappers = mappers;
-        
-        NSMutableArray *accessoryViews = [NSMutableArray arrayWithCapacity:[mappers count]];
-        
-        _pbFlags.viewHierachyChanging = YES;
-        {
-            UIView *parentView = self.superview;
-            UIView *wrapper = [[UIView alloc] initWithFrame:self.frame];
-            [parentView addSubview:wrapper];
-            [self removeFromSuperview];
-            [wrapper addSubview:self];
-            self.frame = self.bounds;
-        }
-        _pbFlags.viewHierachyChanging = NO;
-        
-        for (PBRowMapper *row in mappers) {
-            UIView *view = [self viewWithRow:row];
-            [self addSubview:view];
-//            [self addSubview:view];
-            [row initDataForView:view];
-            [accessoryViews addObject:view];
-        }
-        _accessoryViews = accessoryViews;
-//        [parentView setValue:accessoryViews forAdditionKey:@"__pb_accessoryViews"];
-    }
+    [self initAccessoryViews];
     
     if (_row != nil) {
         _rowMapper = [PBRowMapper mapperWithDictionary:_row owner:self];
@@ -304,6 +273,56 @@
             [_rowViews addObject:view];
         }
         [self didInitRowViews];
+    }
+}
+
+- (void)initAccessoryViews {
+    if (_accessories != nil && _accessoryMappers == nil) {
+        NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_accessories count]];
+        for (NSDictionary *dict in _accessories) {
+            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
+            mapper.delegate = self;
+            [mappers addObject:mapper];
+        }
+        _accessoryMappers = mappers;
+        
+        NSMutableArray *accessoryViews = [NSMutableArray arrayWithCapacity:[mappers count]];
+        UIView *parentView = self.superview;
+        if (parentView == nil) {
+            parentView = self.supercontroller.view;
+            if (parentView == nil) {
+                return;
+            }
+        }
+        
+//        static NSString *kWrapperKey = @"__pbScrollWrapper";
+//        UIView *wrapper = [parentView viewWithAlias:kWrapperKey];
+//        if (wrapper == nil) {
+//            wrapper = [[UIView alloc] initWithFrame:self.frame];
+//            wrapper.alias = kWrapperKey;
+//            [parentView addSubview:wrapper];
+//            
+//            UIView *v1 = [[UIView alloc] initWithFrame:CGRectMake(0, 200, 200, 44)];
+//            v1.backgroundColor = [UIColor colorWithWhite:0 alpha:.2];
+//            [parentView addSubview:v1];
+//        }
+        
+//        _pbFlags.viewHierachyChanging = YES;
+//        {
+//            [self removeFromSuperview];
+//            [wrapper addSubview:self];
+//            self.frame = self.bounds;
+//        }
+//        _pbFlags.viewHierachyChanging = NO;
+//        
+        for (PBRowMapper *row in mappers) {
+            UIView *view = [self viewWithRow:row];
+            [parentView addSubview:view];
+            // FIXME: If add this line we'd got a crash, why?
+//            [row initDataForView:view];
+            [accessoryViews addObject:view];
+        }
+        _accessoryViews = accessoryViews;
     }
 }
 
