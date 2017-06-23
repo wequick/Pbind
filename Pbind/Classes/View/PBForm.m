@@ -788,7 +788,23 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
     }
     
+    _formFlags.hittingSelf = [view isEqual:self];
+    
     return view;
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesMoved:touches withEvent:event];
+    if (_formFlags.hittingSelf) {
+        _formFlags.hittingSelf = NO;
+    }
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+    if (_formFlags.hittingSelf) {
+        [self endEditing:YES];
+    }
 }
 
 - (BOOL)touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
