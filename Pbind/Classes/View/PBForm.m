@@ -920,7 +920,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
         CGFloat keyboardHeight = _presentingInput != nil ? _keyboardHeight : 0;
         id data = self.rootData;
         CGFloat x, y, w, h;
-        y = self.superview.frame.size.height - _keyboardHeight;
+        y = self.superview.frame.size.height - keyboardHeight;
         for (NSInteger index = _accessoryViews.count - 1; index >= 0; index--) {
             UIView *view = [_accessoryViews objectAtIndex:index];
             PBRowMapper *row = [_accessoryMappers objectAtIndex:index];
