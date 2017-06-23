@@ -129,18 +129,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         self.dataUpdated = NO;
         
-        if (self.autoResize) {
-            CGSize size = self.collectionViewLayout.collectionViewContentSize;
-            self.contentSize = size;
-            CGRect frame = self.frame;
-            if (!CGSizeEqualToSize(frame.size, size)) {
-                frame.size = size;
-                self.frame = frame;
-                if (self.resizingDelegate != nil) {
-                    [self.resizingDelegate viewDidChangeFrame:self];
-                }
-            }
-        }
+        [self autoresizeWithAnimated:NO];
         
         // Select the item with index path.
         BOOL needsSelectedItem = (selectedIndexPath != nil && [rowDataSource dataAtIndexPath:selectedIndexPath] != nil);
@@ -252,6 +241,41 @@
             aSection[@"row"] = row;
         }
         return @[aSection];
+    }
+}
+
+- (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {
+    [super performBatchUpdates:updates completion:^(BOOL finished) {
+        if (completion) {
+            completion(finished);
+        }
+        
+        [self autoresizeWithAnimated:YES];
+    }];
+}
+
+- (void)autoresizeWithAnimated:(BOOL)animated {
+    if (!self.autoResize) {
+        return;
+    }
+    
+    CGSize size = self.collectionViewLayout.collectionViewContentSize;
+    self.contentSize = size;
+    CGRect frame = self.frame;
+    if (!CGSizeEqualToSize(frame.size, size)) {
+        frame.size = size;
+        dispatch_block_t resizeBlock = ^{
+            self.frame = frame;
+            if (self.resizingDelegate != nil) {
+                [self.resizingDelegate viewDidChangeFrame:self];
+            }
+        };
+        
+        if (animated) {
+            [UIView animateWithDuration:.25f animations:resizeBlock completion:nil];
+        } else {
+            resizeBlock();
+        }
     }
 }
 
