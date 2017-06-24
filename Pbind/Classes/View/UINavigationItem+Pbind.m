@@ -40,6 +40,9 @@
     if (self = [super init]) {
         self.enabled = YES;
         [PBPropertyUtils setValuesForKeysWithDictionary:dictionary toObject:self failure:nil];
+        if (dictionary[@"type"] == nil) {
+            self.type = -1;
+        }
     }
     return self;
 }
@@ -68,7 +71,7 @@
 
 - (instancetype)initWithSpec:(_PBBarButtonItemSpec *)spec {
     do {
-        if (spec.type != 0) {
+        if (spec.type >= 0) {
             self = [super initWithBarButtonSystemItem:spec.type target:nil action:nil];
             break;
         }
