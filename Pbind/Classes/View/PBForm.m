@@ -114,7 +114,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     if (self.window) {
-        [self observeInputNotifications];
+        if ([self isDescendantOfView:self.supercontroller.view]) {
+            [self observeInputNotifications];
+        }
     } else {
         [self unobserveInputNotifications];
     }
@@ -616,6 +618,11 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         kKeyboardDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     }
     _keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+
+    if (_presentingInput == nil) {
+        return;
+    }
+    
     if (!_formFlags.isWaitingForKeyboardShow) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
         if (!_formFlags.hasScrollToInput) {
             _formFlags.hasScrollToInput = YES;
@@ -628,8 +635,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)keyboardWillHide:(NSNotification *)notification
 {
     /*
-     * Restore tableView's content offset
+     * Restore form content offset
      */
+    if (_presentingInput == nil) {
+        return;
+    }
+    
     CGPoint offset = [self contentOffset];
     UIEdgeInsets insets = [self contentInset];
     CGFloat maxY = self.contentSize.height + insets.top + insets.bottom - self.bounds.size.height;
