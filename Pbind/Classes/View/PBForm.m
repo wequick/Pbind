@@ -114,9 +114,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)didMoveToWindow {
     [super didMoveToWindow];
     if (self.window) {
-        if ([self isDescendantOfView:self.supercontroller.view]) {
-            [self observeInputNotifications];
-        }
+        [self observeInputNotifications];
     } else {
         [self unobserveInputNotifications];
     }
@@ -804,23 +802,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
     }
     
-    _formFlags.hittingSelf = [view isEqual:self];
-    
     return view;
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesMoved:touches withEvent:event];
-    if (_formFlags.hittingSelf) {
-        _formFlags.hittingSelf = NO;
-    }
-}
-
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesEnded:touches withEvent:event];
-    if (_formFlags.hittingSelf) {
-        [self endEditing:YES];
-    }
+    [self endEditing:YES];
 }
 
 - (BOOL)touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
@@ -848,13 +835,15 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (BOOL)endEditing:(BOOL)force
 {
     // Dismiss the indicator
-    [self animateAsKeyboardWithAnimations:^{
-        [_indicator setFrame:CGRectZero];
-        [_indicator setText:nil];
-        if ([_presentingInput isKindOfClass:[PBInput class]]) {
-            [(PBInput *)_presentingInput setSelected:NO];
-        }
-    } completion:nil];
+    if (_indicator.alpha != 0) {
+        [self animateAsKeyboardWithAnimations:^{
+            [_indicator setFrame:CGRectZero];
+            [_indicator setText:nil];
+            if ([_presentingInput isKindOfClass:[PBInput class]]) {
+                [(PBInput *)_presentingInput setSelected:NO];
+            }
+        } completion:nil];
+    }
 //    _keyboardHeight = 0;
     
     return [super endEditing:force];

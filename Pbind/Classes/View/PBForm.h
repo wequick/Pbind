@@ -69,8 +69,6 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
         unsigned int isWaitingForAutomaticAdjustOffset:1;
         unsigned int hasScrollToInput:1;
         unsigned int needsInitParams:1;
-        
-        unsigned int hittingSelf:1;
     } _formFlags;
     NSDictionary *_initialParams;
     id _initialData;
