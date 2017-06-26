@@ -19,6 +19,8 @@
 #import "PBValueParser.h"
 #import "PBDataFetching.h"
 
+NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
+
 @interface _RowDataWrapper : NSObject
 
 @property (nonatomic, weak) id data;
@@ -41,6 +43,8 @@
 @implementation PBRowDataSource
 
 @synthesize receiver;
+
+static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 #pragma mark - Base
 
@@ -313,20 +317,24 @@
 
 #pragma mark - PBRowAction
 
-- (void)processRowData:(id)data atIndexPath:(NSIndexPath *)indexPath withHandler:(void (^)(NSMutableArray *list, id newData, NSUInteger index))handler {
+- (NSArray *)processRowDatas:(NSArray *)newDatas atIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withHandler:(void (^)(NSMutableArray *list, NSArray *newDatas, NSIndexSet *indexes))handler {
     // TODO: Parse PBSection
-    NSUInteger index = indexPath.row;
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+    for (NSIndexPath *indexPath in indexPaths) {
+        [indexes addIndex:indexPath.row];
+    }
+    
     id list = self.owner.data;
     if ([list isKindOfClass:[NSArray class]]) {
         if ([list isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray *mutableList = list;
-            handler(mutableList, data, index);
+            handler(mutableList, newDatas, indexes);
         } else {
             NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-            handler(mutableList, data, index);
+            handler(mutableList, newDatas, indexes);
             self.owner.data = list;
         }
-        return;
+        return list;
     }
     
     PBArray *array = nil;
@@ -335,31 +343,33 @@
         list = [array list];
         if ([list isKindOfClass:[NSArray class]]) {
             if ([list isKindOfClass:[NSMutableArray class]]) {
-                handler(list, data, index);
+                handler(list, newDatas, indexes);
+                return list;
             } else {
                 NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-                handler(mutableList, data, index);
+                handler(mutableList, newDatas, indexes);
                 array[array.listElementIndex] = mutableList;
+                return mutableList;
             }
-            return;
         }
     }
     
     if (self.owner.listKey == nil || ![list isKindOfClass:[NSDictionary class]]) {
-        return;
+        return nil;
     }
     
     NSDictionary *listContainer = list;
     list = [list objectForKey:self.owner.listKey];
     if (![list isKindOfClass:[NSArray class]]) {
-        return;
+        return nil;
     }
     
     if ([list isKindOfClass:[NSMutableArray class]]) {
-        handler(list, data, index);
+        handler(list, newDatas, indexes);
+        return list;
     } else {
         NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
-        handler(mutableList, data, index);
+        handler(mutableList, newDatas, indexes);
         
         if ([listContainer isKindOfClass:[NSMutableDictionary class]]) {
             [(NSMutableDictionary *)listContainer setObject:mutableList forKey:self.owner.listKey];
@@ -373,46 +383,95 @@
                 self.owner.data = mutableContainer;
             }
         }
+        return mutableList;
     }
 }
 
 - (void)addRowData:(id)data {
-    NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self insertRowData:data atIndexPath:topIndexPath];
+    if (data == nil) {
+        return;
+    }
+    
+    [self addRowDatas:@[data]];
 }
 
-- (void)insertRowData:(id)data atIndexPath:(NSIndexPath *)indexPath {
+- (void)addRowDatas:(NSArray *)datas {
+    if (datas == nil) {
+        return;
+    }
+    
+    NSUInteger count = datas.count;
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:count];
+    for (NSInteger index = 0; index < count; index++) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+    }
+    [self insertRowDatas:datas atIndexPaths:indexPaths];
+}
+
+- (void)appendRowDatas:(NSArray *)datas {
+    if (datas == nil) {
+        return;
+    }
+    
+    NSUInteger orgCount = [[self list] count];
+    NSUInteger count = datas.count;
+    NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:count];
+    for (NSInteger index = 0; index < count; index++) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:index + orgCount inSection:0]];
+    }
+    [self insertRowDatas:datas atIndexPaths:indexPaths];
+}
+
+- (void)insertRowDatas:(NSArray *)newDatas atIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
     // Process data
-    [self processRowData:data atIndexPath:nil withHandler:^(NSMutableArray *list, id newData, NSUInteger index) {
-        [list insertObject:newData atIndex:index];
+    [self processRowDatas:newDatas atIndexPaths:indexPaths withHandler:^(NSMutableArray *list, NSArray *newDatas, NSIndexSet *indexes) {
+        [list insertObjects:newDatas atIndexes:indexes];
     }];
     
     // Reload view
     if ([self.owner isKindOfClass:[UITableView class]]) {
-        [(UITableView *)self.owner insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [(UITableView *)self.owner insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUITableViewRowAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self notifyDataChangedWithDelay];
+        });
     } else {
         UICollectionView *collectionView = (id) self.owner;
         [collectionView performBatchUpdates:^{
-            [collectionView insertItemsAtIndexPaths:@[indexPath]];
-        } completion:nil];
+            [collectionView insertItemsAtIndexPaths:indexPaths];
+        } completion:^(BOOL finished) {
+            [self notifyDataChanged];
+        }];
     }
 }
 
 - (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath {
     // Process data
-    [self processRowData:nil atIndexPath:indexPath withHandler:^(NSMutableArray *list, id newData, NSUInteger index) {
-        [list removeObjectAtIndex:index];
+    [self processRowDatas:nil atIndexPaths:@[indexPath] withHandler:^(NSMutableArray *list, NSArray *newDatas, NSIndexSet *indexes) {
+        [list removeObjectsAtIndexes:indexes];
     }];
     
     // Reload view
     if ([self.owner isKindOfClass:[UITableView class]]) {
         [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self notifyDataChangedWithDelay];
     } else {
         UICollectionView *collectionView = (id) self.owner;
         [collectionView performBatchUpdates:^{
             [collectionView deleteItemsAtIndexPaths:@[indexPath]];
-        } completion:nil];
+        } completion:^(BOOL finished) {
+            [self notifyDataChanged];
+        }];
     }
+}
+
+- (void)notifyDataChangedWithDelay {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUITableViewRowAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self notifyDataChanged];
+    });
+}
+
+- (void)notifyDataChanged {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBRowDataDidChangeNotification object:self];
 }
 
 //- (void)removeRowData

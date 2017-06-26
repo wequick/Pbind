@@ -77,4 +77,9 @@
 - (void)addRowData:(id)data;
 - (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)addRowDatas:(NSArray *)datas;
+- (void)appendRowDatas:(NSArray *)datas;
+
 @end
+
+FOUNDATION_EXTERN NSNotificationName const PBRowDataDidChangeNotification;
