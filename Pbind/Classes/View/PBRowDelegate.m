@@ -569,6 +569,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
     
     collectionView.deselectedData = [self.dataSource dataAtIndexPath:indexPath];
+    collectionView.selectedIndexPath = nil;
     
     if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
