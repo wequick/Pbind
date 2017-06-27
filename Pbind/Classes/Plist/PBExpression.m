@@ -661,7 +661,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else {
         oldValue = [contextObject valueForKeyPath:contextKeyPath];
     }
-    if ([oldValue isEqual:newValue]) {
+    if ((oldValue == nil && newValue == nil) || [oldValue isEqual:newValue]) {
         return;
     }
     
