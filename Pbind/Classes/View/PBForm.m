@@ -939,6 +939,10 @@ static NSString *kOriginalYKey = @"pb_originalY";
             }
             y -= row.margin.bottom + row.padding.bottom + h;
             view.frame = CGRectMake(x, y, w, h);
+            
+            if (h > 0) {
+                [row mapData:data forView:view];
+            }
         }
     }
 }
