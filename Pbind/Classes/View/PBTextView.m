@@ -151,14 +151,14 @@
     }
     // Re-check text length for auto-correction inputs (Chinese, etc.)
     if (maxchars != 0 && [textView.text charaterLength] > maxchars) {
-        textView.text = value = _originalText;
+        textView.text = self.value = _originalText;
         return;
     }
     if (maxlength != 0 && [textView.text length] > maxlength) {
-        textView.text = value = _originalText;
+        textView.text = self.value = _originalText;
         return;
     }
-    _originalText = value = textView.text;
+    _originalText = self.value = textView.text;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
