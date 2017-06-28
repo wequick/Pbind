@@ -525,10 +525,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         _bindingKeyPath = targetKeyPath;
         _bindingData = dataSource;
         _bindingOwner = target;
-        _nilBindingValue = [PBPropertyUtils valueForKeyPath:_variable ofObject:dataSource failure:nil];
-        if (_nilBindingValue != nil && ![_nilBindingValue isKindOfClass:[NSNumber class]]) {
-            _nilBindingValue = nil;
-        }
+        _initialDataSourceValue = [PBPropertyUtils valueForKeyPath:_variable ofObject:dataSource failure:nil];
         [dataSource addObserver:self forKeyPath:_variable options:NSKeyValueObservingOptionNew context:(__bridge void *)target];
         if (_flags.duplexBinding) {
             [target addObserver:self forKeyPath:targetKeyPath options:NSKeyValueObservingOptionNew context:(__bridge void *)dataSource];
@@ -684,19 +681,22 @@ const unsigned char PBDataTagUnset = 0xFF;
         return;
     }
     
-    // Free the property first if the data source is not from custom
-    BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != PBDataTagUnset));
-    if (!isMapToCustomData) {
-        if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
-            [_bindingData pb_setValue:_nilBindingValue forKeyPath:_variable];
-        } else {
-            [PBPropertyUtils setValue:_nilBindingValue forKeyPath:_variable toObject:_bindingData failure:nil];
+    if (_flags.duplexBinding) {
+        // Reset to the initial value for the key of the data source, with the duplex data binding, this would also reset the value of the binding owner.
+        BOOL isMapToCustomData = (_flags.mapToData && (_flags.dataTag > 9 && _flags.dataTag != PBDataTagUnset));
+        if (!isMapToCustomData) {
+            if ([_bindingData respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
+                [_bindingData pb_setValue:_initialDataSourceValue forKeyPath:_variable];
+            } else {
+                [PBPropertyUtils setValue:_initialDataSourceValue forKeyPath:_variable toObject:_bindingData failure:nil];
+            }
+            _initialDataSourceValue = nil;
         }
-        _nilBindingValue = nil;
     }
     
     // Unobserve the property
     [_bindingData removeObserver:self forKeyPath:_variable];
+    
     if (_flags.duplexBinding) {
         [_bindingOwner removeObserver:self forKeyPath:_bindingKeyPath];
     }
