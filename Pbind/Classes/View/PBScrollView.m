@@ -68,8 +68,9 @@
             rowView.frame = rowRect;
         }
         
+        _contentHeight += diff;
         CGSize size = self.contentSize;
-        size.height = _contentHeight + diff;
+        size.height = _contentHeight;
         [self __adjustContentSize:size];
     }
 }
@@ -384,7 +385,6 @@
         }
         
         if (footerChanged) {
-            [self __adjustContentInset];
             [self __adjustFloatingViews];
         }
         
@@ -397,6 +397,7 @@
     }
     
     [self adjustAccessoryViewsOffset];
+    [self __adjustContentInset];
 }
 
 - (void)adjustAccessoryViewsOffset {
