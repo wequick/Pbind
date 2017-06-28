@@ -426,7 +426,7 @@
 }
 
 - (void)__adjustContentSize:(CGSize)contentSize {
-    if (_footerViews != nil) {
+    if (_footerViews != nil || _accessoryViews != nil) {
         contentSize.height = MAX(contentSize.height, self.frame.size.height);
     }
     [self setContentSize:contentSize];
