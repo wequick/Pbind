@@ -13,6 +13,21 @@
 #import "PBInput.h"
 #import "PBViewResizingDelegate.h"
 
+@interface PBTextLink : NSObject
+
+#pragma mark - Building
+///=============================================================================
+/// @name Building
+///=============================================================================
+
+@property (nonatomic, strong) NSString *pattern;
+
+@property (nonatomic, strong) NSString *text;
+
+@property (nonatomic, strong) NSDictionary *attributes;
+
+@end
+
 /**
  An instance of PBTextView extends the ability of configuring the placeholder.
  */
@@ -20,6 +35,11 @@
 {
     UILabel *_placeholderLabel;
     NSString *_originalText;
+    NSString *_originalValue;
+    UIFont *_originalFont;
+    NSString *_replacingString;
+    NSRange _replacingRange;
+    UITextRange *_previousMarkedTextRange;
     NSLayoutConstraint *_placeholderLeftMarginConstraint;
     NSLayoutConstraint *_placeholderRightMarginConstraint;
     NSLayoutConstraint *_heightConstraint;
@@ -49,6 +69,8 @@
  The maximum frame size height for auto resizing
  */
 @property (nonatomic, assign) CGFloat maxHeight;
+
+@property (nonatomic, strong) NSArray<PBTextLink *> *links; // pattern=>string, value=>string, attributes=>dict
 
 @end
 
