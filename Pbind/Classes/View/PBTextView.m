@@ -25,9 +25,28 @@
 
 @property (nonatomic, strong) NSArray<NSValue *> *valueRanges;
 
+@property (nonatomic, assign) BOOL calculatedRegexp;
+@property (nonatomic, assign) NSRange deletingRange;
+
 @end
 
 @implementation PBTextLink
+
+- (NSRegularExpression *)regexp {
+    if (_regexp == nil) {
+        if (_calculatedRegexp) {
+            return nil;
+        }
+        
+        NSError *error = nil;
+        _regexp = [NSRegularExpression regularExpressionWithPattern:_pattern options:NSRegularExpressionCaseInsensitive error:&error];
+        if (_regexp == nil) {
+            NSLog(@"Pbind: Failed to parse link pattern '%@'. (error: %@)", _pattern, error);
+        }
+        _calculatedRegexp = YES;
+    }
+    return _regexp;
+}
 
 @end
 
@@ -38,8 +57,8 @@
 @synthesize acceptsClearOnAccessory;
 @synthesize errorRow;
 
-- (id)init {
-    if (self = [super init]) {
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
         [self config];
     }
     return self;
@@ -56,6 +75,7 @@
     self.font = [PBInput new].font;
     self.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
     self.acceptsClearOnAccessory = YES;
+    _pbFlags.needsUpdateValue = YES;
 }
 
 - (void)setValue:(id)aValue {
@@ -75,6 +95,19 @@
     }
     
     value = aValue;
+}
+
+- (void)insertValue:(NSString *)aValue {
+    if (self.markedTextRange != nil) {
+        return;
+    }
+    
+    if (value == nil) {
+        [self setValue:aValue];
+        return;
+    }
+    
+    [self replaceValueInTextRange:self.selectedRange withString:aValue textChanged:NO];
 }
 
 - (void)reset {
@@ -196,6 +229,17 @@
     [self saveOriginalText];
 }
 
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if (_deletingLink == nil) {
+        return;
+    }
+    
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+    [attributedText setAttributes:[self mergedAttributes:_deletingLink.attributes] range:_deletingLink.deletingRange];
+    self.attributedText = attributedText;
+    _deletingLink = nil;
+}
+
 - (BOOL)validateText:(NSString *)text {
     // Re-check text length for auto-correction inputs (Chinese, etc.)
     if (maxchars != 0 && [text charaterLength] > maxchars) {
@@ -234,6 +278,10 @@
     
     if (self.links != nil) {
         if (textView.markedTextRange == nil) { // End inputing
+            if (!_pbFlags.needsUpdateValue) {
+                return;
+            }
+            
             NSString *replacingString = _replacingString;
             NSRange replacingRange = _replacingRange;
             if (_previousMarkedTextRange != nil) {
@@ -246,7 +294,6 @@
                 replacingString = [textView textInRange:replacingTextRange];
             }
             if (replacingString == nil) {
-                const char *str1 = [_originalText UTF8String];
                 const char *str2 = [textView.text UTF8String];
                 if (*str2 == '\0') {
                     [self saveOriginalText];
@@ -254,6 +301,12 @@
                     return;
                 }
                 
+                if ([_originalText isKindOfClass:[NSAttributedString class]]) {
+                    [self setValue:_originalValue];
+                    return;
+                }
+                
+                const char *str1 = [_originalText UTF8String];
                 char *p1 = (char *)str1;
                 char *p2 = (char *)str2;
                 int pos = 0;
@@ -266,8 +319,11 @@
                 
                 replacingRange = NSMakeRange(pos, strlen(str1) - pos);
                 replacingString = [[NSString alloc] initWithUTF8String:p2-1];
+            } else if (replacingRange.location == 0 && replacingRange.length == 0 && replacingString.length == 0) {
+                replacingString = self.text;
             }
-            [self updateValueAfterChangeCharactersInRange:replacingRange replacementString:replacingString];
+            [self replaceValueInTextRange:replacingRange withString:replacingString textChanged:YES];
+//            [self updateValueAfterChangeCharactersInRange:replacingRange replacementString:replacingString];
             _replacingString = nil;
             _previousMarkedTextRange = textView.markedTextRange;
         } else {
@@ -294,6 +350,7 @@
     BOOL shouldChange = YES;
     do {
         if ([string isEqualToString:@""]) { // Backspace
+            shouldChange = [self canDeleteTextInRange:range];
             break;
         }
         
@@ -325,14 +382,91 @@
     return shouldChange;
 }
 
+- (BOOL)canDeleteTextInRange:(NSRange)range {
+    if (self.links == nil) {
+        return YES;
+    }
+    
+    if (range.length != 1) {
+        return YES;
+    }
+    
+    if (_deletingLink != nil) {
+        // User had confirmed yet, delete it
+        _deletingLink = nil;
+        return YES;
+    }
+    
+    // We take a #link# as a whole part which can not be delete only while it had been select
+    PBTextLink *deletingLink = nil;
+    for (PBTextLink *link in self.links) {
+        if (link.deletingAttributes == nil) {
+            // If missing the style of deleting, directly delete it
+            continue;
+        }
+        
+        for (NSValue *wrapper in link.textRanges) {
+            NSRange textRange = [wrapper rangeValue];
+            if (textRange.location + textRange.length == range.location + 1) {
+                link.deletingRange = textRange;
+                deletingLink = link;
+                break;
+            }
+        }
+        if (deletingLink != nil) {
+            break;
+        }
+    }
+    
+    if (deletingLink == nil) {
+        return YES;
+    }
+    
+    // If the #link# has been selected then it can be delete
+    NSRange deletingRange = deletingLink.deletingRange;
+    NSRange selectedRange = self.selectedRange;
+    if (NSEqualRanges(selectedRange, deletingRange)) {
+        return YES;
+    }
+    
+    // Select the #link# to give a chance for user to confirm
+    UITextRange *bak = self.selectedTextRange;
+    
+    // Update the selection style
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+    [attributedText setAttributes:[self mergedAttributes:deletingLink.deletingAttributes] range:deletingRange];
+    self.attributedText = attributedText;
+    
+    // TODO: Let the keyboard accessory view displays the auto-complection tips
+//    UITextPosition *start = [self positionFromPosition:self.beginningOfDocument offset:deletingRange.location];
+//    UITextPosition *end = [self positionFromPosition:start offset:deletingRange.length];
+//    UITextRange *deletingTextRange = [self textRangeFromPosition:start toPosition:end];
+//
+//    [self.inputDelegate selectionWillChange:self];
+//    self.selectedTextRange = deletingTextRange;
+//    [self.inputDelegate selectionDidChange:self];
+//    
+    self.selectedTextRange = bak;
+    
+    // Mark confirmed
+    _deletingLink = deletingLink;
+    
+    return NO;
+}
+
 - (void)textViewDidChangeSelection:(UITextView *)textView {
-    if (self.links != nil) {
-        NSRange selectedRange = textView.selectedRange;
-        for (PBTextLink *link in self.links) {
-            for (NSValue *wrapper in link.textRanges) {
-                NSRange textRange = [wrapper rangeValue];
-                // We take a #tag# as a whole part which can not put cursor in the middle of it.
-                if (NSLocationInRange(selectedRange.location, textRange)) {
+    if (self.links == nil) {
+        return;
+    }
+    
+    NSRange selectedRange = textView.selectedRange;
+    for (PBTextLink *link in self.links) {
+        for (NSValue *wrapper in link.textRanges) {
+            NSRange textRange = [wrapper rangeValue];
+            // We take a #link# as a whole part which can not put cursor in the middle of it.
+            if (NSLocationInRange(selectedRange.location, textRange)) {
+                if (selectedRange.length == 0) {
+                    // move the cursor to the edge of the #link#
                     NSInteger edgeLocation = textRange.location;
                     if (selectedRange.location >= textRange.location + textRange.length / 2) {
                         edgeLocation = MIN(textRange.location + textRange.length, textView.text.length);
@@ -341,8 +475,25 @@
                         selectedRange.location = edgeLocation;
                         textView.selectedRange = selectedRange;
                     }
-                    return;
+                } else {
+                    // select the whole #link#
+                    BOOL changed = NO;
+                    NSUInteger selectedRangeRight = NSMaxRange(selectedRange);
+                    if (selectedRange.location > textRange.location) {
+                        selectedRange.location = textRange.location;
+                        selectedRange.length = selectedRangeRight - selectedRange.location;
+                        changed = YES;
+                    }
+                    NSUInteger textRangeRight = NSMaxRange(textRange);
+                    if (selectedRangeRight < textRangeRight) {
+                        selectedRange.length = textRangeRight - selectedRange.location;
+                        changed = YES;
+                    }
+                    if (changed) {
+                        textView.selectedRange = selectedRange;
+                    }
                 }
+                return;
             }
         }
     }
@@ -399,11 +550,12 @@
     NSInteger valueLoc = textLoc;
     NSRange deletingValueRange = NSMakeRange(0, 0);
     BOOL deleting = NO;
+    BOOL empty = [string length] == 0;
     for (PBTextLink *link in _links) {
         for (NSInteger index = link.textRanges.count - 1; index >= 0; index--) {
             NSRange textRange = [link.textRanges[index] rangeValue];
             NSRange valueRange = [link.valueRanges[index] rangeValue];
-            if (NSLocationInRange(range.location, textRange)) {
+            if (empty && range.location > textRange.location && NSMaxRange(range) <= NSMaxRange(textRange)) {
                 deletingValueRange = valueRange;
                 deleting = YES;
                 break;
@@ -431,7 +583,7 @@
     
     if (length == 0) {
         if (valueLoc >= [mutableValue length]) {
-            if ([string length] == 0) {
+            if (empty) {
                 if (valueLoc == 0) {
                     // ??? If the text is empty -> Delete -> Append, go to this.
                     [mutableValue setString:self.text];
@@ -467,37 +619,35 @@
     }
     
     self.value = [mutableValue copy];
+    if (!empty) {
+        self.selectedRange = NSMakeRange(range.location - range.length + string.length, 0);
+    }
 }
 
-- (BOOL)updateTextWithValue:(NSString *)value {
-    if (value == nil || self.links == nil) {
+- (BOOL)updateTextWithValue:(NSString *)aValue {
+    if (aValue == nil || self.links == nil) {
         return YES;
     }
     
-    NSString *text = value;
+    NSString *text = aValue;
     NSInteger patternLoc = 0;
     NSInteger textLoc = 0;
     NSInteger offset = 0;
     for (PBTextLink *link in self.links) {
         NSRegularExpression *reg = link.regexp;
         if (reg == nil) {
-            NSError *error = nil;
-            NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:link.pattern options:NSRegularExpressionCaseInsensitive error:&error];
-            if (reg == nil) {
-                continue;
-            }
-            link.regexp = reg;
+            continue;
         }
         
         NSMutableArray *valueRanges = [NSMutableArray array];
         NSMutableArray *textRanges = [NSMutableArray array];
-        NSArray<NSTextCheckingResult *> *results = [reg matchesInString:value options:0 range:NSMakeRange(0,  text.length)];
+        NSArray<NSTextCheckingResult *> *results = [reg matchesInString:aValue options:0 range:NSMakeRange(0,  aValue.length)];
         for (NSTextCheckingResult *result in results) {
             NSRange range = result.range;
             [valueRanges addObject:[NSValue valueWithRange:range]];
             
-            NSString *matchment = [value substringWithRange:range];
-            NSString *replacement = [reg replacementStringForResult:result inString:value offset:0 template:link.text];
+            NSString *matchment = [aValue substringWithRange:range];
+            NSString *replacement = [reg replacementStringForResult:result inString:aValue offset:0 template:link.text];
             
             range.location += offset;
             text = [text stringByReplacingCharactersInRange:range withString:replacement];
@@ -519,20 +669,122 @@
     [attributedText addAttributes:@{NSFontAttributeName: _originalFont} range:NSMakeRange(0, text.length)];
     for (PBTextLink *link in self.links) {
         for (NSValue *value in link.textRanges) {
-            NSDictionary *attributes = link.attributes;
-            if (attributes[NSFontAttributeName] == nil) {
-                NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:attributes];
-                temp[NSFontAttributeName] = _originalFont;
-                attributes = temp;
-            }
-            NSLog(@"!!!!! %@", attributes);
-            [attributedText addAttributes:attributes range:[value rangeValue]];
+            [attributedText addAttributes:[self mergedAttributes:link.attributes] range:[value rangeValue]];
         }
     }
-    // TODO: update the selectedRange
+    
+    _pbFlags.needsUpdateValue = NO;
     [self setAttributedText:attributedText];
-    _originalText = attributedText;
+    _pbFlags.needsUpdateValue = YES;
+    
+    _originalText = self.attributedText;
     return YES;
+}
+
+- (NSDictionary *)mergedAttributes:(NSDictionary *)attributes {
+    if (attributes[NSFontAttributeName] == nil) {
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:attributes];
+        temp[NSFontAttributeName] = _originalFont;
+        return temp;
+    }
+    return attributes;
+}
+
+- (void)replaceValueInTextRange:(NSRange)range withString:(NSString *)string textChanged:(BOOL)textChanged {
+    NSUInteger rangeLeft = range.location;
+    NSUInteger rangeRight = NSMaxRange(range);
+    __block NSInteger start = rangeLeft;
+    __block NSInteger end = start + [value length] - [self.text length] + (textChanged ? string.length : 0);
+    BOOL deleting = string.length == 0;
+    [self reverseEnumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+        if (textRange.location < rangeLeft) {
+            if (NSMaxRange(textRange) > rangeLeft) {
+                start = valueRange.location;
+                *stopped = YES;
+                return;
+            }
+        } else {
+            *stopped = YES;
+            return;
+        }
+        start += valueRange.length - textRange.length;
+    }];
+    [self enumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+        NSUInteger right = NSMaxRange(textRange);
+        if (right > rangeRight) {
+            if (textRange.location < rangeLeft) {
+                end = NSMaxRange(valueRange);
+                *stopped = YES;
+                return;
+            }
+        } else {
+            *stopped = YES;
+            return;
+        }
+        end -= valueRange.length - textRange.length;
+    }];
+    
+    NSRange replacedValueRange = NSMakeRange(start, end - start);
+    NSMutableString *mutableValue = value ? [NSMutableString stringWithString:value] : [NSMutableString string];
+    [mutableValue replaceCharactersInRange:replacedValueRange withString:string];
+    
+    self.value = [mutableValue copy];
+    
+    __block NSInteger offset = 0;
+    rangeRight = replacedValueRange.location + string.length;
+    NSRange selectedRange = NSMakeRange(rangeRight, 0);
+    [self enumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+        if (valueRange.location >= rangeRight) {
+            *stopped = YES;
+            return;
+        }
+        offset += valueRange.length - textRange.length;
+    }];
+    selectedRange.location -= offset;
+    self.selectedRange = selectedRange;
+}
+
+- (void)enumerateLinkRanges:(void (^)(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped))operation {
+    if (self.links == nil) {
+        return;
+    }
+    
+    BOOL stopped = NO;
+    for (PBTextLink *link in self.links) {
+        for (NSInteger index = 0; index < link.textRanges.count; index++) {
+            NSRange textRange = [link.textRanges[index] rangeValue];
+            NSRange valueRange = [link.valueRanges[index] rangeValue];
+            operation(link, textRange, valueRange, &stopped);
+            if (stopped) {
+                break;
+            }
+        }
+        if (stopped) {
+            break;
+        }
+    }
+}
+
+- (void)reverseEnumerateLinkRanges:(void (^)(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped))operation {
+    if (self.links == nil) {
+        return;
+    }
+    
+    BOOL stopped = NO;
+    for (NSInteger linkIndex = self.links.count - 1; linkIndex >= 0; linkIndex--) {
+        PBTextLink *link = self.links[linkIndex];
+        for (NSInteger index = 0; index < link.textRanges.count; index++) {
+            NSRange textRange = [link.textRanges[index] rangeValue];
+            NSRange valueRange = [link.valueRanges[index] rangeValue];
+            operation(link, textRange, valueRange, &stopped);
+            if (stopped) {
+                break;
+            }
+        }
+        if (stopped) {
+            break;
+        }
+    }
 }
 
 @end
