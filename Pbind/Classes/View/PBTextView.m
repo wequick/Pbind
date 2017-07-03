@@ -696,7 +696,7 @@
     __block NSInteger start = rangeLeft;
     __block NSInteger end = start + [value length] - [self.text length] + (textChanged ? string.length : 0);
     BOOL deleting = string.length == 0;
-    [self reverseEnumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+    [self enumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
         if (textRange.location < rangeLeft) {
             if (NSMaxRange(textRange) > rangeLeft) {
                 start = valueRange.location;
@@ -709,7 +709,7 @@
         }
         start += valueRange.length - textRange.length;
     }];
-    [self enumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+    [self reverseEnumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
         NSUInteger right = NSMaxRange(textRange);
         if (right > rangeRight) {
             if (textRange.location < rangeLeft) {
@@ -771,9 +771,8 @@
     }
     
     BOOL stopped = NO;
-    for (NSInteger linkIndex = self.links.count - 1; linkIndex >= 0; linkIndex--) {
-        PBTextLink *link = self.links[linkIndex];
-        for (NSInteger index = 0; index < link.textRanges.count; index++) {
+    for (PBTextLink *link in self.links) {
+        for (NSInteger index = link.textRanges.count - 1; index >= 0; index--) {
             NSRange textRange = [link.textRanges[index] rangeValue];
             NSRange valueRange = [link.valueRanges[index] rangeValue];
             operation(link, textRange, valueRange, &stopped);
