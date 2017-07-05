@@ -499,6 +499,13 @@
     }
 }
 
+#pragma mark - User interaction
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesMoved:touches withEvent:event];
+    [self endEditing:YES];
+}
+
 #pragma mark - AutoResizing
 
 - (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
