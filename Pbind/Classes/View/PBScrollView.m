@@ -53,9 +53,17 @@
     }
     
     CGFloat height = [_rowHeights[index] floatValue];
-    if (height != view.frame.size.height) {
-        CGFloat diff = view.frame.size.height - height;
-        _rowHeights[index] = @(view.frame.size.height);
+    CGFloat newHeight = view.frame.size.height;
+    if (height != newHeight) {
+        CGFloat diff = newHeight - height;
+        if (newHeight == 0) {
+            PBRowMapper *row = [self rowMapperAtIndex:index];
+            diff -= row.margin.top + row.padding.top + row.margin.bottom + row.padding.bottom;
+        } else if (height == 0) {
+            PBRowMapper *row = [self rowMapperAtIndex:index];
+            diff += row.margin.top + row.padding.top + row.margin.bottom + row.padding.bottom;
+        }
+        _rowHeights[index] = @(newHeight);
         
         for (NSInteger rowIndex = index + 1; rowIndex < _rowViews.count; rowIndex++) {
             UIView *rowView = _rowViews[rowIndex];
@@ -339,6 +347,7 @@
         CGFloat x = 0;
         CGFloat y = 0;
         CGFloat w = 0;
+        CGFloat hiddenMargin = 0;
         BOOL footerChanged = NO;
         for (NSInteger index = 0; index < [_rowViews count]; index++)  {
             UIView *view = [_rowViews objectAtIndex:index];
@@ -370,16 +379,18 @@
                 h = 0;
             } else {
                 if (hidden) {
-                    [view setFrame:CGRectMake(x, y, w, view.frame.size.height)];
+                    [view setFrame:CGRectMake(x, y - hiddenMargin, w, view.frame.size.height)];
                 } else {
-                    [view setFrame:CGRectMake(x, y, w, h)];
+                    [view setFrame:CGRectMake(x, y - hiddenMargin, w, h)];
                 }
             }
             _rowHeights[index] = @(view.frame.size.height);
             y += h + row.margin.bottom + row.padding.bottom;
             
-            // Map data
-            if (visible && (indexes == nil || [indexes containsIndex:index])) {
+            if (!visible) {
+                hiddenMargin += row.margin.top + row.padding.top + row.margin.bottom + row.padding.bottom;
+            } else if (indexes == nil || [indexes containsIndex:index]) {
+                // Map data
                 [row mapData:data forView:view];
             }
         }
