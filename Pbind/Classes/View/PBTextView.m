@@ -713,8 +713,6 @@
     NSUInteger rangeLeft = range.location;
     NSUInteger rangeRight = NSMaxRange(range);
     __block NSInteger start = rangeLeft;
-    __block NSInteger end = start + [value length] - [self.text length] + (textChanged ? string.length : 0);
-    BOOL deleting = string.length == 0;
     [self enumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
         if (textRange.location < rangeLeft) {
             if (NSMaxRange(textRange) > rangeLeft) {
@@ -728,20 +726,24 @@
         }
         start += valueRange.length - textRange.length;
     }];
-    [self reverseEnumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
-        NSUInteger right = NSMaxRange(textRange);
-        if (right > rangeRight) {
-            if (textRange.location < rangeLeft) {
-                end = NSMaxRange(valueRange);
+    
+    __block NSInteger end = start + range.length;//[value length];//start - [self.text length] + (textChanged ? string.length : 0);
+    if (range.length > 0) {
+        [self reverseEnumerateLinkRanges:^(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped) {
+            NSUInteger right = NSMaxRange(textRange);
+            if (right > rangeRight) {
+                if (textRange.location < rangeLeft) {
+                    end = NSMaxRange(valueRange);
+                    *stopped = YES;
+                    return;
+                }
+            } else {
+                end = NSMaxRange(valueRange) + rangeRight - right;
                 *stopped = YES;
                 return;
             }
-        } else {
-            *stopped = YES;
-            return;
-        }
-        end -= valueRange.length - textRange.length;
-    }];
+        }];
+    }
     
     NSRange replacedValueRange = NSMakeRange(start, end - start);
     NSMutableString *mutableValue = value ? [NSMutableString stringWithString:value] : [NSMutableString string];
