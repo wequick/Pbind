@@ -76,6 +76,10 @@
     self.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
     self.acceptsClearOnAccessory = YES;
     _pbFlags.needsUpdateValue = YES;
+    
+    UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeDown:)];
+    swipe.direction = UISwipeGestureRecognizerDirectionDown;
+    [self addGestureRecognizer:swipe];
 }
 
 - (void)didMoveToWindow {
@@ -513,12 +517,25 @@
 
 #pragma mark - User interaction
 
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesMoved:touches withEvent:event];
-    [self endEditing:YES];
+//- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    [super touchesMoved:touches withEvent:event];
+//    [self endEditing:YES];
+//}
+
+- (void)onSwipeDown:(id)sender {
+    if (!self.scrollEnabled) {
+        [self endEditing:YES];
+    }
 }
 
 #pragma mark - AutoResizing
+
+- (void)setMinHeight:(CGFloat)minHeight {
+    _minHeight = minHeight;
+    if (minHeight > 0) {
+        self.scrollEnabled = NO;
+    }
+}
 
 - (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
     CGSize size;
@@ -546,7 +563,11 @@
     }
     
     if (self.maxHeight > 0) {
-        size.height = MIN(size.height, self.maxHeight);
+        BOOL reachesMaxHeight = size.height > self.maxHeight;
+        self.scrollEnabled = reachesMaxHeight;
+        if (reachesMaxHeight) {
+            size.height = self.maxHeight;
+        }
     }
     return size;
 }
