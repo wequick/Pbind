@@ -54,6 +54,7 @@
     
     struct {
         unsigned int needsUpdateValue: 1;
+        unsigned int lazyPostChangedNotification: 1;
     } _pbFlags;
 }
 

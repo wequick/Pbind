@@ -78,6 +78,14 @@
     _pbFlags.needsUpdateValue = YES;
 }
 
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    if (_pbFlags.lazyPostChangedNotification && self.window) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
+        _pbFlags.lazyPostChangedNotification = 0;
+    }
+}
+
 - (void)setValue:(id)aValue {
     if ([aValue isEqual:[NSNull null]]) {
         aValue = nil;
@@ -131,7 +139,11 @@
 
 - (void)onTextChanged:(NSString *)text {
     [self updateValueWithText:text notifyChanged:NO];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
+    if (self.window == nil) {
+        _pbFlags.lazyPostChangedNotification = 1;
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:self];
+    }
     
     if (![text isEqual:[NSNull null]] && text.length != 0) {
         if (!_placeholderLabel.hidden) {

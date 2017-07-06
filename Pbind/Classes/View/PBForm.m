@@ -57,6 +57,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom;
 - (CGFloat)footerHeight;
 - (void)__adjustContentInset;
+- (PBRowMapper *)rowMapperAtIndex:(NSInteger)index;
 
 @end
 
@@ -111,9 +112,9 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self initErrorRowViews];
 }
 
-- (void)didMoveToWindow {
-    [super didMoveToWindow];
-    if (self.window) {
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    [super willMoveToWindow:newWindow];
+    if (newWindow) {
         [self observeInputNotifications];
     } else {
         [self unobserveInputNotifications];
@@ -718,6 +719,10 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (void)inputDidChange:(NSNotification *)notification
 {
     id input = notification.object;
+    if ([input isKindOfClass:[PBTextView class]]) {
+        [self textViewDidChange:input];
+    }
+    
     if (![_presentingInput isEqual:input]) {
         return;
     }
@@ -735,6 +740,38 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     
     // Update the observed values
     [self updateObservedTextsAndValuesForInput:input];
+}
+
+- (void)textViewDidChange:(PBTextView *)textView {
+    if (![textView isDescendantOfView:self]) {
+        return;
+    }
+    
+    CGPoint point = [textView convertPoint:textView.frame.origin toView:self];
+    NSInteger row = [self indexForRowAtPoint:point];
+    if (row == NSNotFound) {
+        return;
+    }
+    
+    PBRowMapper *mapper = [self rowMapperAtIndex:row];
+    if (mapper.hidden) {
+        return;
+    }
+    if (mapper.height != -1) { // TODO: define magic number
+        return;
+    }
+    
+    UIView *view = [self viewForRowAtIndex:row];
+    CGFloat height = view.frame.size.height;
+    CGFloat newHeight = [mapper heightForView:view withData:self.data];
+    if (height != newHeight) {
+        [textView setMappable:NO forKeyPath:@"text"];
+        [textView setMappable:NO forKeyPath:@"value"];
+        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:YES];
+        [textView scrollRangeToVisible:NSMakeRange(0, 1)];
+        [textView setMappable:YES forKeyPath:@"text"];
+        [textView setMappable:YES forKeyPath:@"value"];
+    }
 }
 
 - (void)inputDidEnd:(NSNotification *)notification

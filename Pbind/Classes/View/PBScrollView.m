@@ -130,9 +130,6 @@
     if (self.window) {
         [self initRowViewsIfNeeded];
         _statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewDidChange:) name:UITextViewTextDidChangeNotification object:nil];
-    } else {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:nil];
     }
 }
 
@@ -611,49 +608,6 @@
                 }
             }];
         }
-    }
-}
-
-#pragma mark - Notification
-
-- (void)textViewDidChange:(NSNotification *)note {
-    PBTextView *textView = note.object;
-    if (![textView isKindOfClass:[PBTextView class]]) {
-        return;
-    }
-    
-//    if (textView.markedTextRange != nil) {
-//        return;
-//    }
-    
-    if (![textView isDescendantOfView:self]) {
-        return;
-    }
-    
-    CGPoint point = [textView convertPoint:textView.frame.origin toView:self];
-    NSInteger row = [self indexForRowAtPoint:point];
-    if (row == NSNotFound) {
-        return;
-    }
-    
-    PBRowMapper *mapper = [self rowMapperAtIndex:row];
-    if (mapper.hidden) {
-        return;
-    }
-    if (mapper.height != -1) { // TODO: define magic number
-        return;
-    }
-    
-    UIView *view = [self viewForRowAtIndex:row];
-    CGFloat height = view.frame.size.height;
-    CGFloat newHeight = [mapper heightForView:view withData:self.data];
-    if (height != newHeight) {
-        [textView setMappable:NO forKeyPath:@"text"];
-        [textView setMappable:NO forKeyPath:@"value"];
-        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:YES];
-        [textView scrollRangeToVisible:NSMakeRange(0, 1)];
-        [textView setMappable:YES forKeyPath:@"text"];
-        [textView setMappable:YES forKeyPath:@"value"];
     }
 }
 
