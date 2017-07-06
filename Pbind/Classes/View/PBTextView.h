@@ -41,7 +41,7 @@
 @interface PBTextView : UITextView <PBInput, PBTextInputValidator, UITextViewDelegate>
 {
     UILabel *_placeholderLabel;
-    NSString *_originalText;
+    id/*NSString|NSAttributedString*/ _originalText;
     NSString *_originalValue;
     UIFont *_originalFont;
     NSString *_replacingString;

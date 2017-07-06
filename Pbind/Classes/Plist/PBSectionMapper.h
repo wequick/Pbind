@@ -68,7 +68,7 @@
 /**
  The row count for the section.
  
- @discussion
+ @discussion the row count is calculated by following cases:
  
  - If rows was specified, return the rows count
  - If row was specified, return the data count

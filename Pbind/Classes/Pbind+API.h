@@ -42,7 +42,7 @@ typedef void(^PBPlistReloader)(UIView *rootView, UIView *view, NSString *changed
 /**
  Reload all the views who are using the `plist`.
 
- @param plistPath the path of the plist
+ @param plist the path of the plist
  */
 + (void)reloadViewsOnPlistUpdate:(NSString *)plist;
 

@@ -249,6 +249,7 @@
         }
         return @[aSection];
     }
+    return nil;
 }
 
 - (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {

@@ -138,7 +138,7 @@
 
 - (void)setAttributedText:(NSAttributedString *)attributedText {
     [super setAttributedText:attributedText];
-    [self onTextChanged:attributedText];
+    [self onTextChanged:attributedText.string];
 }
 
 - (void)onTextChanged:(NSString *)text {
@@ -344,7 +344,7 @@
             _previousMarkedTextRange = textView.markedTextRange;
         } else {
             _previousMarkedTextRange = textView.markedTextRange;
-            NSInteger len1 = _originalText.length;
+            NSInteger len1 = [_originalText length];
             NSInteger len2 = self.text.length;
             if (len2 > len1) {
                 NSMutableString *previewValue = value ? [NSMutableString stringWithString:value] : [NSMutableString string];
@@ -370,7 +370,7 @@
             break;
         }
         
-        if (maxchars != 0 && strlen([textView.text charaterLength]) == maxchars) {
+        if (maxchars != 0 && [textView.text charaterLength] == maxchars) {
             shouldChange = NO;
             break;
         }
@@ -576,7 +576,6 @@
 
 - (void)updateValueAfterChangeCharactersInRange:(NSRange)range replacementString:(nonnull NSString *)string {
     NSInteger length = range.length;
-    NSInteger index = 0;
     
     NSMutableString *mutableValue;
     if (value == nil) {
@@ -670,8 +669,6 @@
     }
     
     NSString *text = aValue;
-    NSInteger patternLoc = 0;
-    NSInteger textLoc = 0;
     NSInteger offset = 0;
     for (PBTextLink *link in self.links) {
         NSRegularExpression *reg = link.regexp;
@@ -708,8 +705,8 @@
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text];
     [attributedText addAttributes:@{NSFontAttributeName: _originalFont} range:NSMakeRange(0, text.length)];
     for (PBTextLink *link in self.links) {
-        for (NSValue *value in link.textRanges) {
-            [attributedText addAttributes:[self mergedAttributes:link.attributes] range:[value rangeValue]];
+        for (NSValue *wrapper in link.textRanges) {
+            [attributedText addAttributes:[self mergedAttributes:link.attributes] range:[wrapper rangeValue]];
         }
     }
     

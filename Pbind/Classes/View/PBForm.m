@@ -840,7 +840,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     }
     
     if (self.spacingInput != nil && [view isEqual:self]) {
-        UIView *input = [self inputForName:self.spacingInput];
+        id input = [self inputForName:self.spacingInput];
         if (input != nil && ![input isFirstResponder]) {
             return input;
         }
@@ -996,7 +996,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
 }
 
 - (NSArray *)accessoryViews {
-    return _accessoryViews ?: _footerViews;
+    return _accessoryViews ?: _footerViews.allObjects;
 }
 
 - (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
