@@ -172,6 +172,11 @@ typedef NS_ENUM(NSInteger, PBFormMode) {
  */
 - (void)reset;
 
+/**
+ The name of the input to be presented while click the spacing of the form
+ */
+@property (nonatomic, strong) NSString *spacingInput;
+
 @end
 
 FOUNDATION_EXPORT NSString *const PBFormWillSubmitNotification;

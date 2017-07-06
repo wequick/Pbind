@@ -839,6 +839,13 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
         }
     }
     
+    if (self.spacingInput != nil && [view isEqual:self]) {
+        UIView *input = [self inputForName:self.spacingInput];
+        if (input != nil) {
+            return input;
+        }
+    }
+    
     return view;
 }
 
@@ -862,7 +869,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (![view canBecomeFirstResponder] && ![view isKindOfClass:[UIControl class]]) {
         if (_presentingInput != nil && ![view isDescendantOfView:_presentedInput]) {
             [self endEditing:YES];
-            return ret;
+            return NO;
         }
     }
     
