@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>views</key>
+	<dict>
+		<key>avatar</key>
+		<dict>
+			<key>clazz</key>
+			<string>UIImageView</string>
+			<key>properties</key>
+			<dict>
+				<key>layer.cornerRadius</key>
+				<integer>13</integer>
+				<key>clipsToBounds</key>
+				<true/>
+			</dict>
+		</dict>
+		<key>name</key>
+		<dict>
+			<key>clazz</key>
+			<string>UILabel</string>
+			<key>properties</key>
+			<dict>
+				<key>font</key>
+				<string>{F:13}</string>
+				<key>textAlignment</key>
+				<string>:center</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>formats</key>
+	<array>
+		<string>|[avatar]|</string>
+		<string>V:|[avatar]-8-[name]|</string>
+		<string>|[name]|</string>
+	</array>
+	<key>constraints</key>
+	<array>
+		<string>R:avatar=1:1</string>
+	</array>
+</dict>
+</plist>

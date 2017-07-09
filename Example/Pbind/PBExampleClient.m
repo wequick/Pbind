@@ -14,7 +14,7 @@
 - (void)loadRequest:(PBRequest *)request success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSString *action = request.action;
-    NSString *group = request.params[@"group"];
+//    NSString *group = request.params[@"group"];
     if ([action isEqualToString:@"GetGroupInfo"]) {
         
         id data = @{@"groupName": @"My Group",
@@ -25,9 +25,9 @@
     } else if ([action isEqualToString:@"GetGroupMembers"]) {
         NSMutableArray *members = [NSMutableArray arrayWithCapacity:12];
         for (int i = 0; i < 12; i++) {
-            NSDictionary *member = @{@"nameCard": [NSString stringWithFormat:@"Hello%i", i],
+            NSDictionary *member = @{@"nameCard": [NSString stringWithFormat:@"Hello%i", i + 1],
                                      @"customInfo": @{
-                                             @"avatar": [NSString stringWithFormat:@"https://placehold.it/165/78b8fc/f0f0f0/?text=%i", i]
+                                             @"avatar": [NSString stringWithFormat:@"https://placehold.it/165/78b8fc/f0f0f0/?text=%i", i + 1]
                                              }};
             [members addObject:member];
         }

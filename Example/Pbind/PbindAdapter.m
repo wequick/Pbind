@@ -19,7 +19,7 @@
 
 + (void)applicationDidFinishLaunching:(NSNotification *)note {
     // 标注图宽度，用于Plist配置自动换算尺寸
-    [Pbind setSketchWidth:1080];
+//    [Pbind setSketchWidth:1080];
     
     // MBProgressHUD
     [[UIActivityIndicatorView appearanceWhenContainedIn:[MBProgressHUD class], nil] setColor:[UIColor whiteColor]];

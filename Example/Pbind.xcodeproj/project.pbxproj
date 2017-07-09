@@ -43,16 +43,14 @@
 		F8039C2F1E47780C009C5372 /* example.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8039C2E1E47780C009C5372 /* example.plist */; };
 		F8039C311E47781F009C5372 /* example.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8039C301E47781F009C5372 /* example.xml */; };
 		F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F80D432F1D8E667D00FF298B /* PBExpressionTests.m */; };
-		F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */; };
-		F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */; };
-		F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CC1D87AB9C0038A3E5 /* PBExample.plist */; };
-		F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D01D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m */; };
-		F89500D31D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F89500D11D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib */; };
+		F80FB22D1D913E2400DD48F4 /* table.members.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* table.members.plist */; };
+		F89500CD1D87AB9C0038A3E5 /* form.addgroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */; };
+		F89500CE1D87AB9C0038A3E5 /* table.group.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CC1D87AB9C0038A3E5 /* table.group.plist */; };
 		F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D51D87ABC00038A3E5 /* PBExampleClient.m */; };
 		F89500DB1D87ABCC0038A3E5 /* UIImageView+PBExample.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D81D87ABCC0038A3E5 /* UIImageView+PBExample.m */; };
 		F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500DA1D87ABCC0038A3E5 /* PbindAdapter.m */; };
-		F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */; };
 		F89500E11D87B0C20038A3E5 /* PBValueParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */; };
+		F8A02BEB1F1217D30058028E /* item.member.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8A02BEA1F1217D30058028E /* item.member.plist */; };
 		F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A839531E02A73A0014F259 /* PBCustomUIAction.m */; };
 		FE50A3432F6734450BC03D04 /* PBDirectoryWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9E56CB1A4C0F743D3C3233 /* PBDirectoryWatcher.h */; };
 /* End PBXBuildFile section */
@@ -116,21 +114,17 @@
 		F8039C2E1E47780C009C5372 /* example.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = example.plist; sourceTree = "<group>"; };
 		F8039C301E47781F009C5372 /* example.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = example.xml; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
-		F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBGroupMembers.plist; sourceTree = "<group>"; };
-		F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBCreateGroup.plist; sourceTree = "<group>"; };
-		F89500CC1D87AB9C0038A3E5 /* PBExample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PBExample.plist; sourceTree = "<group>"; };
-		F89500CF1D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleGroupMemberAvatarCell.h; sourceTree = "<group>"; };
-		F89500D01D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExampleGroupMemberAvatarCell.m; sourceTree = "<group>"; };
-		F89500D11D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBExampleGroupMemberAvatarCell.xib; sourceTree = "<group>"; };
+		F80FB22C1D913E2400DD48F4 /* table.members.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.members.plist; sourceTree = "<group>"; };
+		F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = form.addgroup.plist; sourceTree = "<group>"; };
+		F89500CC1D87AB9C0038A3E5 /* table.group.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.group.plist; sourceTree = "<group>"; };
 		F89500D41D87ABC00038A3E5 /* PBExampleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleClient.h; sourceTree = "<group>"; };
 		F89500D51D87ABC00038A3E5 /* PBExampleClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExampleClient.m; sourceTree = "<group>"; };
 		F89500D71D87ABCC0038A3E5 /* UIImageView+PBExample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+PBExample.h"; sourceTree = "<group>"; };
 		F89500D81D87ABCC0038A3E5 /* UIImageView+PBExample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+PBExample.m"; sourceTree = "<group>"; };
 		F89500D91D87ABCC0038A3E5 /* PbindAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PbindAdapter.h; sourceTree = "<group>"; };
 		F89500DA1D87ABCC0038A3E5 /* PbindAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PbindAdapter.m; sourceTree = "<group>"; };
-		F89500DD1D87AC0E0038A3E5 /* PBCreateGroupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCreateGroupController.h; sourceTree = "<group>"; };
-		F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCreateGroupController.m; sourceTree = "<group>"; };
 		F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBValueParserTests.m; sourceTree = "<group>"; };
+		F8A02BEA1F1217D30058028E /* item.member.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = item.member.plist; sourceTree = "<group>"; };
 		F8A839521E02A73A0014F259 /* PBCustomUIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCustomUIAction.h; sourceTree = "<group>"; };
 		F8A839531E02A73A0014F259 /* PBCustomUIAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCustomUIAction.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -216,8 +210,6 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* PBGroupInfoController.h */,
 				6003F5A6195388D20070C39A /* PBGroupInfoController.m */,
-				F89500DD1D87AC0E0038A3E5 /* PBCreateGroupController.h */,
-				F89500DE1D87AC0E0038A3E5 /* PBCreateGroupController.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
@@ -316,9 +308,6 @@
 		F89500C91D87AB880038A3E5 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				F89500CF1D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.h */,
-				F89500D01D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m */,
-				F89500D11D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -326,9 +315,10 @@
 		F89500CA1D87AB8E0038A3E5 /* Plist */ = {
 			isa = PBXGroup;
 			children = (
-				F89500CB1D87AB9C0038A3E5 /* PBCreateGroup.plist */,
-				F89500CC1D87AB9C0038A3E5 /* PBExample.plist */,
-				F80FB22C1D913E2400DD48F4 /* PBGroupMembers.plist */,
+				F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */,
+				F89500CC1D87AB9C0038A3E5 /* table.group.plist */,
+				F80FB22C1D913E2400DD48F4 /* table.members.plist */,
+				F8A02BEA1F1217D30058028E /* item.member.plist */,
 			);
 			name = Plist;
 			sourceTree = "<group>";
@@ -456,16 +446,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F89500CD1D87AB9C0038A3E5 /* PBCreateGroup.plist in Resources */,
+				F89500CD1D87AB9C0038A3E5 /* form.addgroup.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				F8039BE21E3437EB009C5372 /* level1.xml in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				F8039C2F1E47780C009C5372 /* example.plist in Resources */,
 				F8039C311E47781F009C5372 /* example.xml in Resources */,
-				F89500CE1D87AB9C0038A3E5 /* PBExample.plist in Resources */,
-				F89500D31D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.xib in Resources */,
-				F80FB22D1D913E2400DD48F4 /* PBGroupMembers.plist in Resources */,
+				F89500CE1D87AB9C0038A3E5 /* table.group.plist in Resources */,
+				F80FB22D1D913E2400DD48F4 /* table.members.plist in Resources */,
+				F8A02BEB1F1217D30058028E /* item.member.plist in Resources */,
 				F8039BE41E343871009C5372 /* level1.json in Resources */,
 				F8039BE01E3437DC009C5372 /* level1.plist in Resources */,
 			);
@@ -538,10 +528,8 @@
 				F89500DB1D87ABCC0038A3E5 /* UIImageView+PBExample.m in Sources */,
 				F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */,
 				F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */,
-				F89500DF1D87AC0E0038A3E5 /* PBCreateGroupController.m in Sources */,
 				F8039BE81E343995009C5372 /* BMXMLParser.m in Sources */,
 				6003F5A7195388D20070C39A /* PBGroupInfoController.m in Sources */,
-				F89500D21D87ABAA0038A3E5 /* PBExampleGroupMemberAvatarCell.m in Sources */,
 				F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				7A52F96D7F21FC1393BACAE2 /* NSInputStream+Reader.m in Sources */,

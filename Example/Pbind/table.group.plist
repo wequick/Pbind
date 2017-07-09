@@ -2,6 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>nav</key>
+	<dict>
+		<key>right</key>
+		<dict>
+			<key>type</key>
+			<string>:add</string>
+			<key>action</key>
+			<dict>
+				<key>type</key>
+				<string>push</string>
+				<key>target</key>
+				<string>PBFormController</string>
+				<key>params</key>
+				<dict>
+					<key>plist</key>
+					<string>form.addgroup</string>
+					<key>title</key>
+					<string>Add group</string>
+				</dict>
+			</dict>
+		</dict>
+	</dict>
 	<key>properties</key>
 	<dict>
 		<key>backgroundColor</key>
@@ -31,45 +53,44 @@
 				<key>clazz</key>
 				<string>PBCollectionView</string>
 				<key>height</key>
-				<string>-1</string>
+				<string>:auto</string>
 				<key>properties</key>
 				<dict>
 					<key>data</key>
 					<string>$1.list</string>
-					<key>backgroundColor</key>
-					<string>#fff</string>
 					<key>autoResize</key>
 					<true/>
-					<key>contentSize</key>
-					<string>{1080,573}</string>
+					<key>backgroundColor</key>
+					<string>#ffffff</string>
+					<key>section</key>
+					<dict>
+						<key>inset</key>
+						<string>{13,17,15,17}</string>
+						<key>numberOfColumns</key>
+						<integer>4</integer>
+						<key>inner</key>
+						<string>{6,6}</string>
+					</dict>
 					<key>item</key>
 					<dict>
-						<key>clazz</key>
-						<string>PBExampleGroupMemberAvatarCell</string>
+						<key>layout</key>
+						<string>item.member</string>
+						<key>additionalHeight</key>
+						<string>30</string>
 						<key>properties</key>
 						<dict>
-							<key>@1.avatarUrl</key>
+							<key>@avatar.avatarUrl</key>
 							<string>.$customInfo.avatar</string>
-							<key>@2.text</key>
+							<key>@name.text</key>
 							<string>.$nameCard</string>
-							<key>@2.font</key>
-							<string>{F:42}</string>
 						</dict>
 					</dict>
-					<key>itemSize</key>
-					<string>{165,221}</string>
-					<key>itemInsets</key>
-					<string>{40,52,46,52}</string>
-					<key>spacingSize</key>
-					<string>{100,45}</string>
 				</dict>
 			</dict>
 		</array>
 		<key>sections</key>
 		<array>
 			<dict>
-				<key>height</key>
-				<string>0</string>
 				<key>rows</key>
 				<array>
 					<dict>
@@ -86,7 +107,7 @@
 									<key>title</key>
 									<string>%(%@ ( %@ )),$groupName,$memberNum</string>
 									<key>plist</key>
-									<string>PBGroupMembers</string>
+									<string>table.members</string>
 									<key>data</key>
 									<string>$1.fullList</string>
 								</dict>
@@ -95,7 +116,7 @@
 						<key>properties</key>
 						<dict>
 							<key>textLabel.attributedText</key>
-							<string>%AT(全部群成员 ( |%@| )),$memberNum;|#FF00FF-{F:60}</string>
+							<string>%AT(全部群成员 ( |%@| )),$memberNum;|#FF00FF-{F:24}</string>
 							<key>backgroundColor</key>
 							<string>#fff</string>
 							<key>accessoryType</key>
@@ -106,7 +127,7 @@
 			</dict>
 			<dict>
 				<key>height</key>
-				<string>30</string>
+				<string>10</string>
 				<key>rows</key>
 				<array>
 					<dict>
@@ -162,7 +183,7 @@
 			</dict>
 			<dict>
 				<key>height</key>
-				<string>30</string>
+				<string>10</string>
 				<key>rows</key>
 				<array>
 					<dict>
@@ -203,7 +224,7 @@
 			</dict>
 			<dict>
 				<key>height</key>
-				<string>30</string>
+				<string>10</string>
 				<key>rows</key>
 				<array>
 					<dict>
@@ -236,9 +257,9 @@
 				<key>clazz</key>
 				<string>PBButton</string>
 				<key>height</key>
-				<string>132</string>
+				<string>44</string>
 				<key>margin</key>
-				<string>{70,37,70,37}</string>
+				<string>{23,12,23,12}</string>
 				<key>properties</key>
 				<dict>
 					<key>backgroundColor</key>

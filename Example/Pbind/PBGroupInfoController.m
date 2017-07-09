@@ -26,17 +26,13 @@
 	// Do any additional setup after loading the view, typically from a nib.
     _groupId = @"111";
     _groupParams = @{@"group": @"@TGS"};
-    [self.tableView setPlist:@"PBExample"];
+    [self setPlist:@"table.group"];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (IBAction)joinGroup:(id)sender {
-    [self.navigationController pushViewController:[[NSClassFromString(@"PBCreateGroupController") alloc] init] animated:YES];
 }
 
 - (void)clearChat:(id)sender {

@@ -13,7 +13,7 @@
 			<key>clazz</key>
 			<string>PBTableViewCell</string>
 			<key>height</key>
-			<string>184</string>
+			<string>60</string>
 			<key>actions</key>
 			<dict>
 				<key>select</key>
@@ -29,9 +29,9 @@
 				<key>separatorInset</key>
 				<string>{0,0,0,0}</string>
 				<key>imageMargin</key>
-				<string>{24,36,30,36}</string>
+				<string>{8,12,10,12}</string>
 				<key>imageSize</key>
-				<string>{130,130}</string>
+				<string>{44,44}</string>
 				<key>imageView.clipsToBounds</key>
 				<true/>
 				<key>imageView.layer.cornerRadius</key>

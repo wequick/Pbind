@@ -10,7 +10,7 @@
 				<key>clazz</key>
 				<string>PBInput</string>
 				<key>margin</key>
-				<string>{48,48,0,48}</string>
+				<string>{16,16,0,16}</string>
 				<key>properties</key>
 				<dict>
 					<key>name</key>
@@ -25,7 +25,7 @@
 				<key>height</key>
 				<string>=&gt;$groupName?20:0</string>
 				<key>margin</key>
-				<string>{0,48,0,48}</string>
+				<string>{0,16,0,16}</string>
 				<key>properties</key>
 				<dict>
 					<key>text</key>
@@ -36,7 +36,7 @@
 				<key>clazz</key>
 				<string>PBInput</string>
 				<key>margin</key>
-				<string>{48,48,48,48}</string>
+				<string>{16,16,16,16}</string>
 				<key>properties</key>
 				<dict>
 					<key>name</key>
@@ -68,7 +68,7 @@
 				<key>clazz</key>
 				<string>PBButton</string>
 				<key>height</key>
-				<string>132</string>
+				<string>44</string>
 				<key>properties</key>
 				<dict>
 					<key>title</key>
