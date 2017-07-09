@@ -386,6 +386,13 @@
             
             if (!visible) {
                 hiddenMargin += row.margin.top + row.padding.top + row.margin.bottom + row.padding.bottom;
+                if (view.data == nil && [view respondsToSelector:@selector(reloadData)]) {
+                    // Map data
+                    [view pb_mapData:data forKey:@"data"];
+                    if (view.data != nil) {
+                        [(id)view reloadData];
+                    }
+                }
             } else if (indexes == nil || [indexes containsIndex:index]) {
                 // Map data
                 [row mapData:data forView:view];
