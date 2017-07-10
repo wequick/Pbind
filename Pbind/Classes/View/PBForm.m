@@ -58,6 +58,7 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 - (CGFloat)footerHeight;
 - (void)__adjustContentInset;
 - (PBRowMapper *)rowMapperAtIndex:(NSInteger)index;
+- (void)reloadRowAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
 
 @end
 
@@ -767,8 +768,15 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (height != newHeight) {
         [textView setMappable:NO forKeyPath:@"text"];
         [textView setMappable:NO forKeyPath:@"value"];
-        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:YES];
-        [textView scrollRangeToVisible:NSMakeRange(0, 1)];
+        
+        [self reloadRowAtIndexes:[NSIndexSet indexSetWithIndex:row] animated:YES completion:^(BOOL finished) {
+            if ([textView isScrollEnabled]) {
+                [textView scrollRangeToVisible:NSMakeRange(0, 1)];
+            } else {
+                [self scrollToInput:textView animated:YES];
+            }
+        }];
+        
         [textView setMappable:YES forKeyPath:@"text"];
         [textView setMappable:YES forKeyPath:@"value"];
     }
@@ -1107,15 +1115,31 @@ static NSString *kOriginalYKey = @"pb_originalY";
     /*
      * Center the presenting input to form's visible rect
      */
-    CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - _keyboardHeight;
+    CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - _keyboardHeight - [self footerHeight];
     CGRect formRect = [self convertRect:self.bounds toView:self.window];
-    CGFloat visibleCenterY = (keyboardY - formRect.origin.y) / 2;
     CGRect inputRect = [input convertRect:input.bounds toView:self];
     CGPoint offset = [self contentOffset];
+    CGFloat visibleHeight = keyboardY - formRect.origin.y;
+    
+    CGFloat inputHeight = inputRect.size.height;
+    CGFloat targetY = inputHeight / 2;
+    if ([input conformsToProtocol:@protocol(UITextInput)]) {
+        id<UITextInput> textInput = (id)input;
+        CGRect caretRect = [textInput caretRectForPosition:[textInput selectedTextRange].end];
+        CGFloat caretY = CGRectGetMaxY(caretRect);
+        targetY = caretY;
+    }
+    
+    if (targetY > visibleHeight) {
+        // scroll to the bottom
+        offset.y = inputRect.origin.y + targetY - visibleHeight + 4.f;
+    } else {
+        // scroll to the center
+        offset.y = inputRect.origin.y + targetY - visibleHeight / 2;
+        offset.y = MIN(offset.y, inputRect.origin.y);
+    }
+    
     UIEdgeInsets insets = [self contentInset];
-//    CGFloat maxOffsetY = [self contentSize].height + insets.top + insets.bottom - [self bounds].size.height + _keyboardHeight;
-    offset.y = inputRect.origin.y + inputRect.size.height / 2 - visibleCenterY;
-    offset.y = MIN(offset.y, inputRect.origin.y);
     offset.y = MAX(offset.y , -insets.top);
     
     // Move indicator
