@@ -77,8 +77,8 @@
     self.acceptsClearOnAccessory = YES;
     _pbFlags.needsUpdateValue = YES;
     
-    UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeDown:)];
-    swipe.direction = UISwipeGestureRecognizerDirectionDown;
+    UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeUpDown:)];
+    swipe.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
     [self addGestureRecognizer:swipe];
 }
 
@@ -522,7 +522,7 @@
 //    [self endEditing:YES];
 //}
 
-- (void)onSwipeDown:(id)sender {
+- (void)onSwipeUpDown:(id)sender {
     if (!self.scrollEnabled) {
         [self endEditing:YES];
     }
