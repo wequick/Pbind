@@ -763,6 +763,7 @@
         }];
     }
     
+    end = MIN(end, [value length]);
     NSRange replacedValueRange = NSMakeRange(start, end - start);
     NSMutableString *mutableValue = value ? [NSMutableString stringWithString:value] : [NSMutableString string];
     [mutableValue replaceCharactersInRange:replacedValueRange withString:string];
