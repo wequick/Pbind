@@ -15,15 +15,33 @@
 
 @synthesize type, name, value, required, requiredTips;
 
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self addTarget:self action:@selector(onValueChanged:) forControlEvents:UIControlEventValueChanged];
+    }
+    return self;
+}
+
 - (void)reset {
     [super setOn:NO];
-    self.value = nil;
+    value = @(NO);
 }
 
 - (void)setOn:(BOOL)on {
     [super setOn:on];
     [self willChangeValueForKey:@"value"];
-    self.value = on ? @(on) : nil;
+    value = @(on);
+    [self didChangeValueForKey:@"value"];
+}
+
+- (void)setValue:(id)aValue {
+    value = aValue;
+    [super setOn:[aValue boolValue]];
+}
+
+- (void)onValueChanged:(PBSwitch *)sender {
+    [self willChangeValueForKey:@"value"];
+    value = @(sender.on);
     [self didChangeValueForKey:@"value"];
 }
 
