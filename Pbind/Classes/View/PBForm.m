@@ -48,7 +48,6 @@ NSString *const PBFormHasHandledSubmitErrorKey = @"PBFormHasHandledSubmitError";
 
 static CGFloat kKeyboardDuration = 0;
 static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
-static NSInteger kMinKeyboardHeightToScroll = 200;
 
 @interface PBScrollView (Private)
 
@@ -161,10 +160,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     // TextField
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputWillBegin:) name:PBInputTextWillBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidBegin:) name:UITextFieldTextDidBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidChange:) name:UITextFieldTextDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidEnd:) name:UITextFieldTextDidEndEditingNotification object:nil];
     // TextView
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputWillBegin:) name:PBTextViewTextWillBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidBegin:) name:UITextViewTextDidBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidChange:) name:UITextViewTextDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inputDidEnd:) name:UITextViewTextDidEndEditingNotification object:nil];
@@ -175,10 +176,12 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     // TextField
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PBInputTextWillBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidEndEditingNotification object:nil];
     // TextView
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PBTextViewTextWillBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:nil];
@@ -611,33 +614,22 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    if (kKeyboardAnimationOptions == 0) {
-        kKeyboardAnimationOptions = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16;
-    }
-    if (kKeyboardDuration == 0) {
-        kKeyboardDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    }
-    CGFloat keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    if (keyboardHeight == 0) { // Not really show
+    kKeyboardAnimationOptions = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16;
+    kKeyboardDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    _keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    if (_keyboardHeight == 0) { // Not really show
         return;
     }
-    
-    BOOL heightChanged = (keyboardHeight != _keyboardHeight);
-    _keyboardHeight = keyboardHeight;
 
     if (_presentingInput == nil) {
         return;
     }
     
-    if (!_formFlags.isWaitingForKeyboardShow) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
-        if (heightChanged) {
-            if (!_formFlags.hasScrollToInput) {
-                _formFlags.hasScrollToInput = YES;
-            }
-            [self scrollToInput:_presentingInput animated:YES];
-            [self adjustFloatingViewsOffset:YES animated:YES];
-        }
+    if (!_formFlags.hasScrollToInput) {
+        _formFlags.hasScrollToInput = YES;
     }
+    [self scrollToInput:_presentingInput animated:YES];
+    [self adjustFloatingViewsOffset:YES animated:YES];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
@@ -669,9 +661,8 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     [self adjustFloatingViewsOffset:NO animated:YES];
 }
 
-- (void)inputDidBegin:(NSNotification *)notification
-{
-    // Init input accessory
+- (void)inputWillBegin:(NSNotification *)notification {
+    // Record the presenting input
     id input = notification.object;
     if (![_inputs containsObject:input]) {
         return;
@@ -680,12 +671,25 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (type == nil) {
         return;
     }
-    
-    if ([input inputAccessoryView] == nil) {
-        [input setInputAccessoryView:_accessory];
+    _presentingInput = input;
+}
+
+- (void)inputDidBegin:(NSNotification *)notification
+{
+    id input = notification.object;
+    if (![_inputs containsObject:input]) {
+        return;
+    }
+    NSString *type = ((id<PBInput>) input).type;
+    if (type == nil) {
+        return;
     }
     _presentingInput = input;
     
+    // Init input accessory
+    if ([input inputAccessoryView] == nil) {
+        [input setInputAccessoryView:_accessory];
+    }
     if (_availableKeyboardInputs == nil) {
         [self initAvailableKeyboardInputs];
         NSInteger inputIndex = [_availableKeyboardInputs indexOfObject:input];
@@ -708,21 +712,6 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     } else {
         _indicator.alpha = 0;
     }
-    
-    // Wait for `keyboardWillShow' calling to center the input to visible rect
-    _formFlags.isWaitingForKeyboardShow = YES;
-    _formFlags.hasScrollToInput = NO;
-    CGFloat seconds = _formFlags.isWaitingForAutomaticAdjustOffset ? .5 : .05;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        _formFlags.isWaitingForKeyboardShow = NO;
-        if (_keyboardHeight > kMinKeyboardHeightToScroll) { // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking on scrolling
-            if (!_formFlags.hasScrollToInput) {
-                _formFlags.hasScrollToInput = YES;
-                [self scrollToInput:_presentingInput animated:YES];
-                [self adjustFloatingViewsOffset:YES animated:YES];
-            }
-        }
-    });
 }
 
 - (void)inputDidChange:(NSNotification *)notification
@@ -1065,7 +1054,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset {
-    if (_formFlags.isWaitingForAutomaticAdjustOffset && _formFlags.isWaitingForKeyboardShow) {
+    if (_formFlags.isWaitingForAutomaticAdjustOffset) {
         _formFlags.isWaitingForAutomaticAdjustOffset = NO;
         if (!_formFlags.hasScrollToInput) {
             _formFlags.hasScrollToInput = YES;
@@ -1192,6 +1181,16 @@ static NSString *kOriginalYKey = @"pb_originalY";
 }
 
 - (void)animateAsKeyboardWithAnimations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion {
+    if (kKeyboardDuration == 0) {
+        if (animations) {
+            animations();
+        }
+        if (completion) {
+            completion(YES);
+        }
+        return;
+    }
+    
     [UIView animateWithDuration:kKeyboardDuration delay:0 options:kKeyboardAnimationOptions animations:animations completion:completion];
 }
 

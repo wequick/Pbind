@@ -12,6 +12,8 @@
 #import "PBTextView.h"
 #import "NSString+PBInput.h"
 
+NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextViewTextWillBeginEditingNotification";
+
 @interface PBTextLink ()
 
 #pragma mark - Caching
@@ -240,6 +242,11 @@
 }
 
 #pragma mark - UITextViewDelegate
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBTextViewTextWillBeginEditingNotification object:self];
+    return YES;
+}
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self saveOriginalText];

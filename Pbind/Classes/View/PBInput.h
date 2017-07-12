@@ -242,3 +242,5 @@ UIKIT_EXTERN NSString *const PBInputTypeDateAndTime;
 UIKIT_EXTERN NSString *const PBInputTypeMonth;
 UIKIT_EXTERN NSString *const PBInputTypeSelect;
 UIKIT_EXTERN NSString *const PBInputTypeCustom;
+
+UIKIT_EXTERN NSNotificationName const PBInputTextWillBeginEditingNotification;

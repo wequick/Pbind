@@ -17,6 +17,8 @@
 #import "PBTextView.h"
 #import "NSString+PBInput.h"
 
+NSNotificationName const PBInputTextWillBeginEditingNotification = @"PBInputTextWillBeginEditingNotification";
+
 //______________________________________________________________________________
 // input type
 NSString *const PBInputTypeText = @"text";
@@ -345,6 +347,11 @@ static NSMutableDictionary *kInitializations = nil;
 }
 
 #pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBInputTextWillBeginEditingNotification object:self];
+    return YES;
+}
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     if (self.inputView != nil) {

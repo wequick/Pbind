@@ -105,3 +105,5 @@ UIKIT_STATIC_INLINE CGFloat PBTextViewLeftMargin()
     }
     return kTextViewLeftMargin;
 }
+
+UIKIT_EXTERN NSNotificationName const PBTextViewTextWillBeginEditingNotification;
