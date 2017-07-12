@@ -617,15 +617,23 @@ static NSInteger kMinKeyboardHeightToScroll = 200;
     if (kKeyboardDuration == 0) {
         kKeyboardDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     }
-    _keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    CGFloat keyboardHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    if (keyboardHeight == 0) { // Not really show
+        return;
+    }
+    
+    BOOL heightChanged = (keyboardHeight != _keyboardHeight);
+    _keyboardHeight = keyboardHeight;
 
     if (_presentingInput == nil) {
         return;
     }
     
     if (!_formFlags.isWaitingForKeyboardShow) {  // with some 3rd input method, keyboard was presented up slowly, add this to avoid shaking with scrolling
-        if (!_formFlags.hasScrollToInput) {
-            _formFlags.hasScrollToInput = YES;
+        if (heightChanged) {
+            if (!_formFlags.hasScrollToInput) {
+                _formFlags.hasScrollToInput = YES;
+            }
             [self scrollToInput:_presentingInput animated:YES];
             [self adjustFloatingViewsOffset:YES animated:YES];
         }
