@@ -61,6 +61,9 @@
             self.separatorInset = insets;
         }
     }
+    if (_accessoryMapper != nil) {
+        [_accessoryMapper mapData:nil forView:self.accessoryView];
+    }
 }
 
 - (void)setAccessoryView:(UIView *)accessoryView {
