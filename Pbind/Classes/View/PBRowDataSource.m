@@ -18,6 +18,7 @@
 #import "UIView+Pbind.h"
 #import "PBValueParser.h"
 #import "PBDataFetching.h"
+#import "PBHeaderFooterMapper.h"
 
 NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
 
@@ -227,7 +228,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             }
             
             if (aSection.footer != nil) {
-                aSection.footer = [PBRowMapper mapperWithDictionary:aSection.footer owner:self.owner];
+                aSection.footer = [PBHeaderFooterMapper mapperWithDictionary:aSection.footer owner:self.owner];
             }
             [temp addObject:aSection];
         }

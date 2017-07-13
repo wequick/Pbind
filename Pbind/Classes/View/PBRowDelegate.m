@@ -16,6 +16,7 @@
 #import "PBCollectionView.h"
 #import "PBDataFetcher.h"
 #import "PBDataFetching.h"
+#import "PBHeaderFooterMapper.h"
 
 @implementation PBRowDelegate
 
@@ -296,11 +297,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
     
     PBRowMapper *footerMapper = (id) mapper.footer;
-    CGFloat height = [footerMapper heightForData:tableView.data];
-    if (height >= 0) {
-        return height;
-    }
-    return tableView.sectionFooterHeight;
+    return [footerMapper heightForData:tableView.data];
 }
 
 // Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.
@@ -328,8 +325,54 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     return row.estimatedHeight;
 }
-//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
-//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0) {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        return [self.receiver tableView:tableView estimatedHeightForHeaderInSection:section];
+    }
+    
+    PBRowMapper *row = [self.dataSource.sections objectAtIndex:section];
+    if (row == nil) {
+        return tableView.estimatedSectionHeaderHeight;
+    }
+    
+    if (row.hidden) {
+        return 0;
+    }
+    
+    if (row.estimatedHeight == UITableViewAutomaticDimension) {
+        if (tableView.estimatedSectionHeaderHeight > 0) {
+            return tableView.estimatedSectionHeaderHeight;
+        }
+        return UITableViewAutomaticDimension;
+    }
+    
+    return row.estimatedHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0) {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        return [self.receiver tableView:tableView estimatedHeightForFooterInSection:section];
+    }
+    
+    PBRowMapper *row = [self.dataSource.sections objectAtIndex:section].footer;
+    if (row == nil) {
+        return tableView.estimatedSectionHeaderHeight;
+    }
+    
+    if (row.hidden) {
+        return 0;
+    }
+    
+    if (row.estimatedHeight == UITableViewAutomaticDimension) {
+        if (tableView.estimatedSectionHeaderHeight > 0) {
+            return tableView.estimatedSectionHeaderHeight;
+        }
+        return UITableViewAutomaticDimension;
+    }
+    
+    return row.estimatedHeight;
+}
 
 // Section header & footer information. Views are preferred over title should you decide to provide both
 
@@ -343,8 +386,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return nil;
     }
     
-    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, mapper.height);
-    UIView *view = [[mapper.viewClass alloc] initWithFrame:frame];
+//    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, mapper.height);
+    UIView *view = [[mapper.viewClass alloc] init];
     [mapper initDataForView:view];
     [mapper mapData:tableView.data forView:view];
     
@@ -362,15 +405,44 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
     if (mapper.footer == nil) {
-        return 0;
+        return nil;
     }
     
-    PBRowMapper *footerMapper = (id) mapper.footer;
-    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, footerMapper.height);
-    UIView *view = [[footerMapper.viewClass alloc] initWithFrame:frame];
-    [footerMapper initDataForView:view];
-    [footerMapper mapData:tableView.data forView:view];
-    return view;
+    UIView *footerView = nil;
+    PBHeaderFooterMapper *footerMapper = (id) mapper.footer;
+    NSString *title = footerMapper.title;
+    if (title != nil) {
+        footerView = [[UIView alloc] init];
+        UILabel *titleLabel = [[UILabel alloc] init];
+        titleLabel.text = title;
+        titleLabel.numberOfLines = 0;
+        if (footerMapper.titleFont != nil) {
+            titleLabel.font = footerMapper.titleFont;
+        }
+        if (footerMapper.titleColor != nil) {
+            titleLabel.textColor = footerMapper.titleColor;
+        }
+        [footerView addSubview:titleLabel];
+        
+        UIEdgeInsets margin = footerMapper.margin;
+        titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
+        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
+        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
+        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:footerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:titleLabel attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
+    } else {
+        // Custom footer view
+        footerView = [[footerMapper.viewClass alloc] init];
+        if (footerMapper.layoutMapper != nil) {
+            [footerMapper.layoutMapper renderToView:footerView];
+        }
+        
+        [footerMapper initDataForView:footerView];
+        [footerMapper mapData:tableView.data forView:footerView];
+    }
+    
+    [footerView setValue:@(section) forAdditionKey:@"pbSection"];
+    return footerView;
 }// custom view for footer. will be adjusted to default or specified footer height
 
 //#pragma mark - Accessories (disclosures).
