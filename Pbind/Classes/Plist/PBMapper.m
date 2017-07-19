@@ -213,17 +213,22 @@
 
 - (void)mapData:(id)data forView:(UIView *)view
 {
+    [self mapData:data forView:view withContext:view];
+}
+
+- (void)mapData:(id)data forView:(UIView *)view withContext:(UIView *)context
+{
     /* for self */
     /*----------*/
-    [self _mapValuesForKeysWithData:data andView:view];
+    [self _mapValuesForKeysWithData:data andView:context];
     
     /* for view */
     /*----------*/
-    [view pb_mapData:data];
+    [view pb_mapData:data withContext:context];
     
     /* for navigation */
     if (_navProperties != nil) {
-        [_navProperties mapData:view.rootData toTarget:view.supercontroller.navigationItem withContext:view];
+        [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withContext:context];
     }
 }
 

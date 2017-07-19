@@ -281,8 +281,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 - (void)updateSections {
     if (_sections != nil) {
+        id data = self.owner.data;
         for (PBSectionMapper *mapper in _sections) {
-            [mapper updateWithData:self.owner.data andView:nil];
+            [mapper updateWithData:data andView:self.owner];
+            if (mapper.footer != nil) {
+                [mapper.footer updateWithData:data andView:self.owner];
+            }
         }
     }
 }
@@ -564,7 +568,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Init data for cell
     [cell setData:data];
     [row initDataForView:cell];
-    [row mapData:tableView.data forView:cell];
+    [row mapData:tableView.data forView:cell withContext:tableView];
     
     return cell;
 }

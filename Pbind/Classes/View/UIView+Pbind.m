@@ -88,15 +88,37 @@
     }
 }
 
+- (void)pb_mapData:(id)data
+{
+    [self pb_mapData:data underType:PBMapToAll dataTag:PBDataTagUnset];
+}
+
+- (void)pb_mapData:(id)data forKey:(NSString *)key
+{
+    if (key == nil) {
+        return;
+    }
+    [self pb_mapData:data forKeys:@[key] withContext:self underType:PBMapToAll dataTag:PBDataTagUnset];
+}
+
+- (void)pb_mapData:(id)data withContext:(UIView *)context {
+    [self pb_mapData:data withContext:context underType:PBMapToAll dataTag:PBDataTagUnset];
+}
+
 - (void)pb_mapData:(id)data underType:(PBMapType)type dataTag:(unsigned char)tag
 {
-    [self pb_mapData:data forKeys:nil underType:type dataTag:tag];
+    [self pb_mapData:data withContext:self underType:type dataTag:tag];
+}
+
+- (void)pb_mapData:(id)data withContext:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
+{
+    [self pb_mapData:data forKeys:nil withContext:context underType:type dataTag:tag];
     
     // Recursive
     BOOL canReload = [self respondsToSelector:@selector(reloadData)];
     if (!canReload) {
         for (UIView *subview in [self subviews]) {
-            [subview pb_mapData:data underType:type dataTag:tag];
+            [subview pb_mapData:data withContext:context underType:type dataTag:tag];
         }
     } else {
         if (type == PBMapToContext && self.frame.size.height == 0) {
@@ -106,7 +128,7 @@
     }
 }
 
-- (void)pb_mapData:(id)data forKeys:(NSArray *)keys underType:(PBMapType)type dataTag:(unsigned char)tag
+- (void)pb_mapData:(id)data forKeys:(NSArray *)keys withContext:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
 {
     NSDictionary *expressions = [self pb_expressions];
     if (keys == nil) {
@@ -123,21 +145,8 @@
             continue;
         }
         
-        [exp mapData:data toTarget:self forKeyPath:key inContext:self];
+        [exp mapData:data toTarget:self forKeyPath:key inContext:context];
     }
-}
-
-- (void)pb_mapData:(id)data
-{
-    [self pb_mapData:data underType:PBMapToAll dataTag:PBDataTagUnset];
-}
-
-- (void)pb_mapData:(id)data forKey:(NSString *)key
-{
-    if (key == nil) {
-        return;
-    }
-    [self pb_mapData:data forKeys:@[key] underType:PBMapToAll dataTag:PBDataTagUnset];
 }
 
 - (void)pb_loadData:(id)data

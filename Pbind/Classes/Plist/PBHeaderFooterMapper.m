@@ -13,16 +13,19 @@
 
 @implementation PBHeaderFooterMapper
 
-- (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
-    [super setPropertiesWithDictionary:dictionary];
-    if (self.title != nil) {
-        self.height = UITableViewAutomaticDimension;
-        self.estimatedHeight = 21.f;
-    }
-}
-
 - (void)initDefaultViewClass {
     self.clazz = @"UIView";
+}
+
+- (void)setTitle:(NSString *)title {
+    _title = title;
+    if (title != nil) {
+        self.height = UITableViewAutomaticDimension;
+        self.estimatedHeight = 21.f;
+    } else {
+        self.height = 0.f;
+        self.estimatedHeight = 0.f;
+    }
 }
 
 @end
