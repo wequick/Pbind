@@ -280,6 +280,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (void)updateSections {
+    [self initRowMapper];
     if (_sections != nil) {
         id data = self.owner.data;
         for (PBSectionMapper *mapper in _sections) {
