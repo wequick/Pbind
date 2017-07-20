@@ -46,3 +46,5 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBFormController.h"
 #import "PBTableViewController.h"
 #import "PBCollectionViewController.h"
+
+#import "PBPropertyUtils.h"
