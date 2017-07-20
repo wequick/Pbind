@@ -14,6 +14,7 @@
 @implementation PBSwitch
 
 @synthesize type, name, value, required, requiredTips;
+@synthesize valueDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -40,8 +41,16 @@
 }
 
 - (void)onValueChanged:(PBSwitch *)sender {
+    NSNumber *newValue = @(sender.on);
+    if ([valueDelegate respondsToSelector:@selector(input:canChangeValue:)]) {
+        if (![valueDelegate input:self canChangeValue:newValue]) {
+            [super setOn:!sender.on];
+            return;
+        }
+    }
+    
     [self willChangeValueForKey:@"value"];
-    value = @(sender.on);
+    value = newValue;
     [self didChangeValueForKey:@"value"];
 }
 

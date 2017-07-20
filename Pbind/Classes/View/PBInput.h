@@ -45,6 +45,16 @@
 
 //___________________________________________________________________________________________________
 
+@protocol PBInput;
+
+@protocol PBInputValueDelegate <NSObject>
+
+- (BOOL)input:(id<PBInput>)input canChangeValue:(id)value;
+
+@end
+
+//___________________________________________________________________________________________________
+
 @protocol PBInput <NSObject>
 
 @required
@@ -65,6 +75,8 @@
 
 - (BOOL)isEmpty; // default returns `value != nil'
 - (CGRect)invalidIndicatorRect; // the rect for displaying a red box while validating failed
+
+@property (nonatomic, weak) id<PBInputValueDelegate> valueDelegate;
 
 @end
 
