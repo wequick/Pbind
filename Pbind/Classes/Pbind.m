@@ -137,9 +137,9 @@ static NSMutableArray *kPlistReloaders = nil;
     // Reload the specify views that using the API.
     UIViewController *topController = PBTopController();
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
-        if (![controller isKindOfClass:[PBViewController class]]) {
-            return;
-        }
+//        if (![controller isKindOfClass:[PBViewController class]]) {
+//            return;
+//        }
         
         __block PBDataFetcher *fetcher = nil;
         [self enumerateSubviewsForView:controller.view usingBlock:^(UIView *subview, BOOL *stop) {
@@ -165,7 +165,9 @@ static NSMutableArray *kPlistReloaders = nil;
         
         BOOL lazyReload = (controller != topController);
         if (lazyReload) {
-            [(PBViewController *)controller setNeedsReloadData];
+            if ([controller isKindOfClass:[PBViewController class]]) {
+                [(PBViewController *)controller setNeedsReloadData];
+            }
         } else {
             [fetcher fetchData];
         }
