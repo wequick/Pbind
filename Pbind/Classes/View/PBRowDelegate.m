@@ -682,7 +682,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     CGFloat itemWidth = item.size.width;
     CGFloat itemHeight = item.size.height;
     if (itemWidth == -1) {
-        itemWidth = collectionView.bounds.size.width;
+        itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right;
     }
     if (itemWidth != 0) {
         return CGSizeMake(itemWidth, itemHeight);
