@@ -664,7 +664,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (CGSize)referenceSizeForCollectionView:(UICollectionView *)collectionView withElementMapper:(PBRowMapper *)element {
-    if (element.layout == nil && element.viewClass == [UICollectionReusableView class]) {
+    if (element == nil || (element.layout == nil && element.viewClass == [UICollectionReusableView class])) {
         return CGSizeZero;
     }
     return CGSizeMake(collectionView.bounds.size.width, element.height);
