@@ -124,14 +124,6 @@ static NSMutableArray *kPlistReloaders = nil;
             } else if ([subview.pb_layoutName isEqualToString:changedPlist]) {
                 [reloadedViews addObject:subview];
                 [subview pb_reloadLayout];
-                NSNumber *sectionNumber = [subview valueForAdditionKey:@"pbSection"];
-                if (sectionNumber != nil) {
-                    UITableView *tableView = [subview superviewWithClass:[UITableView class]];
-                    if (tableView != nil) {
-                        NSUInteger section = [sectionNumber unsignedIntegerValue];
-                        [tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
-                    }
-                }
             } else if (kPlistReloaders != nil) {
                 for (PBPlistReloader reloader in kPlistReloaders) {
                     reloader(rootView, subview, changedPlist, stop);

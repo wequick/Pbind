@@ -17,6 +17,7 @@
 #import "PBDataFetcher.h"
 #import "PBDataFetching.h"
 #import "PBHeaderFooterMapper.h"
+#import "PBSectionView.h"
 
 @implementation PBRowDelegate
 
@@ -408,11 +409,13 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return nil;
     }
     
-    UIView *footerView = nil;
+    PBSectionView *footerView = [[PBSectionView alloc] init];
+    
+    // Create content view
+    UIView *contentView = nil;
     PBHeaderFooterMapper *footerMapper = (id) mapper.footer;
     NSString *title = footerMapper.title;
     if (title != nil) {
-        footerView = [[UIView alloc] init];
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.text = title;
         titleLabel.numberOfLines = 0;
@@ -422,26 +425,28 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         if (footerMapper.titleColor != nil) {
             titleLabel.textColor = footerMapper.titleColor;
         }
-        [footerView addSubview:titleLabel];
-        
-        UIEdgeInsets margin = footerMapper.margin;
-        titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
-        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
-        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:titleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
-        [footerView addConstraint:[NSLayoutConstraint constraintWithItem:footerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:titleLabel attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
+        contentView = titleLabel;
     } else {
         // Custom footer view
-        footerView = [[footerMapper.viewClass alloc] init];
+        contentView = [[footerMapper.viewClass alloc] init];
         if (footerMapper.layoutMapper != nil) {
-            [footerMapper.layoutMapper renderToView:footerView];
+            [footerMapper.layoutMapper renderToView:contentView];
         }
         
-        [footerMapper initDataForView:footerView];
-        [footerMapper mapData:tableView.data forView:footerView];
+        [footerMapper initDataForView:contentView];
+        [footerMapper mapData:tableView.data forView:contentView];
     }
     
-    [footerView setValue:@(section) forAdditionKey:@"pbSection"];
+    // Set content view margin
+    [footerView addSubview:contentView];
+    UIEdgeInsets margin = footerMapper.margin;
+    contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
+    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
+    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
+    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:footerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
+    
+    footerView.section = section;
     return footerView;
 }// custom view for footer. will be adjusted to default or specified footer height
 
