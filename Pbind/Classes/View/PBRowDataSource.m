@@ -308,7 +308,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         if ([aSection isExpressiveForKey:@"data"]) {
             [aSection updateValueForKey:@"data" withData:data andView:self.owner];
         } else {
-            aSection.data = data;
+            aSection.data = [self listForData:data key:key];
         }
         count = aSection.rowCount;
     }
