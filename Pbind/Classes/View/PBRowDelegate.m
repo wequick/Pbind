@@ -723,7 +723,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (self.dataSource.sections != nil) {
         PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
         CGSize size = mapper.inner;
-        if (size.width != 0) {
+        if (size.width >= 0) {
             return size.width;
         }
         
@@ -747,7 +747,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (self.dataSource.sections != nil) {
         PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
         CGSize size = mapper.inner;
-        if (size.height != 0) {
+        if (size.height >= 0) {
             return size.height;
         }
     }

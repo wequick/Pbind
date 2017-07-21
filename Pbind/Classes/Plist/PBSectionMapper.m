@@ -21,6 +21,11 @@
 
 @implementation PBSectionMapper
 
+- (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
+    self.inner = CGSizeMake(-1, -1);
+    [super setPropertiesWithDictionary:dictionary];
+}
+
 - (void)initDefaultViewClass {
     if ([self.owner isKindOfClass:[UICollectionView class]]) {
         self.clazz = @"UICollectionReusableView";
