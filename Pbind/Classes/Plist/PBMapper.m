@@ -241,6 +241,10 @@
     return [_properties isExpressiveForKey:key];
 }
 
+- (void)setMappable:(BOOL)mappable forKey:(NSString *)key {
+    [_properties setMappable:mappable forKey:key];
+}
+
 - (void)resetForView:(UIView *)view {
     if (_navProperties != nil) {
         UINavigationItem *item = view.supercontroller.navigationItem;

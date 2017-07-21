@@ -509,6 +509,10 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 - (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
+    if (_flags.disabled) {
+        return;
+    }
+    
     if (_bindingOwner != nil) {
         return;
     }
@@ -578,6 +582,10 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
+    if (_flags.disabled) {
+        return;
+    }
+    
     char flag = [targetKeyPath characterAtIndex:0];
     switch (flag) {
         case '!': { // Event
@@ -704,6 +712,16 @@ const unsigned char PBDataTagUnset = 0xFF;
     _bindingKeyPath = nil;
     _bindingOwner = nil;
     _bindingData = nil;
+}
+
+#pragma mark - Properties
+
+- (BOOL)isEnabled {
+    return !_flags.disabled;
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    _flags.disabled = !enabled;
 }
 
 #pragma mark - Debug

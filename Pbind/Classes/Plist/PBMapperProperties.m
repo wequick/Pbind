@@ -189,6 +189,15 @@
     [self mapData:data toTarget:target forKeyPaths:keyPaths withContext:context];
 }
 
+- (void)setMappable:(BOOL)mappable forKey:(NSString *)key {
+    PBExpression *exp = _expressions[key];
+    if (exp == nil) {
+        return;
+    }
+    
+    exp.enabled = mappable;
+}
+
 - (void)unbind:(id)target
 {
     if (_expressions == nil) return;

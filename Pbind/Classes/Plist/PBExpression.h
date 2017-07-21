@@ -119,6 +119,11 @@ typedef enum : NSUInteger {
         unsigned int mapToActionStateData:1;    // '#$' <==> '#.data'
         
         unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
+        
+        unsigned int disabled:1;
+        unsigned int reserved1:1;
+        unsigned int reserved2:1;
+        unsigned int reserved3:1;
     } _flags;
     
     NSString *_format;
@@ -144,6 +149,16 @@ typedef enum : NSUInteger {
  if the `$name` changed to be 'someone', then the parent value should be 'hello someone!'.
  */
 @property (nonatomic, strong) PBExpression *parent;
+
+/**
+ Whether the expression can be map or bound.
+ 
+ @discussion Default is YES. If set to NO, then will abort on following methods:
+ 
+ - `mapData:toTarget:forKeyPath:inContext`
+ - `bindData:toTarget:forKeyPath:inContext`
+ */
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 - (instancetype)initWithString:(NSString *)aString;
 

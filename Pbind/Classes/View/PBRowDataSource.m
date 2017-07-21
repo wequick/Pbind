@@ -25,6 +25,7 @@ NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNo
 @interface _RowDataWrapper : NSObject
 
 @property (nonatomic, weak) id data;
+@property (nonatomic, copy) NSIndexPath *indexPath;
 
 - (instancetype)initWithData:(id)data;
 
@@ -525,9 +526,8 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Initialize the row mapper
     id data = [self dataAtIndexPath:indexPath];
-    id dataWrapper = data != nil ? [[_RowDataWrapper alloc] initWithData:data] : nil;
     PBRowMapper *row = [self rowAtIndexPath:indexPath];
-    [row updateWithData:tableView.rootData andView:dataWrapper];
+    [self updateRowMapper:row forRowAtIndexPath:indexPath inView:tableView withData:data];
     
     // Lazy register reusable cell
     NSString *identifier = row.id;
@@ -572,6 +572,22 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     [row mapData:tableView.data forView:cell withContext:tableView];
     
     return cell;
+}
+
+- (void)updateRowMapper:(PBRowMapper *)row forRowAtIndexPath:(NSIndexPath *)indexPath inView:(UIView *)view withData:(id)data {
+    NSArray *keys = @[@"layout", @"id", @"clazz"];
+    
+    for (NSString *key in keys) {
+        [row setMappable:YES forKey:key];
+    }
+    
+    _RowDataWrapper *dataWrapper = [[_RowDataWrapper alloc] initWithData:data];
+    dataWrapper.indexPath = indexPath;
+    [row updateWithData:view.rootData andView:dataWrapper];
+    
+    for (NSString *key in keys) {
+        [row setMappable:NO forKey:key];
+    }
 }
 
 #pragma mark - @optional
@@ -715,9 +731,8 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Initialize the row mapper
     id data = [self dataAtIndexPath:indexPath];
-    id dataWrapper = data != nil ? [[_RowDataWrapper alloc] initWithData:data] : nil;
     PBRowMapper *item = [self rowAtIndexPath:indexPath];
-    [item updateWithData:collectionView.rootData andView:dataWrapper];
+    [self updateRowMapper:item forRowAtIndexPath:indexPath inView:collectionView withData:data];
     
     // Lazy register reusable cell
     NSString *identifier = item.id;

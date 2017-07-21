@@ -62,4 +62,6 @@
 - (void)setExpression:(PBExpression *)expression forKey:(NSString *)key;
 - (BOOL)isExpressiveForKey:(NSString *)key;
 
+- (void)setMappable:(BOOL)mappable forKey:(NSString *)key;
+
 @end

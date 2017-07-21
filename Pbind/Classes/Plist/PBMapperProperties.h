@@ -69,4 +69,9 @@
  */
 - (void)unbind:(id)target;
 
+/**
+ The switch to enable the mapping for the key.
+ */
+- (void)setMappable:(BOOL)mappable forKey:(NSString *)key;
+
 @end

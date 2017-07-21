@@ -220,6 +220,10 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 
 - (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
+    if (_flags.disabled) {
+        return;
+    }
+    
     if (_expressions == nil) {
         return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
     }
@@ -257,6 +261,10 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
 {
+    if (_flags.disabled) {
+        return;
+    }
+    
     if (_format != nil) {
         [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context];
         [self bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
