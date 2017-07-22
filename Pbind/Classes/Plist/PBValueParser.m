@@ -177,6 +177,12 @@ static NSMutableDictionary *kEnums = nil;
         else if ([aString isEqualToString:@"changed"]) {
             enumValue = PBFormValidatingChanged;
         }
+        // UIViewContentMode
+        else if ([aString isEqualToString:@"fit"]) {
+            enumValue = UIViewContentModeScaleAspectFit;
+        } else if ([aString isEqualToString:@"fill"]) {
+            enumValue = UIViewContentModeScaleAspectFill;
+        }
         // User defined enums
         else {
             NSNumber *number = [kEnums objectForKey:aString];
