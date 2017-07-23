@@ -328,7 +328,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else if (_flags.mapToAliasView) {
         UIView *rootView = [context supercontroller].view;
         if (rootView == nil) {
-            return nil;
+            rootView = context;
         }
         
         UIView *taggedView = [rootView viewWithAlias:_alias];
