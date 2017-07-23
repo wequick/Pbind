@@ -21,6 +21,16 @@
         return [NSNumber numberWithFloat:[self CGSizeValue].height];
     } else if ([keyPath isEqualToString:@"width"]) {
         return [NSNumber numberWithFloat:[self CGSizeValue].width];
+    } else if ([keyPath isEqualToString:@"x"]) {
+        return [NSNumber numberWithFloat:[self CGPointValue].x];
+    } else if ([keyPath isEqualToString:@"y"]) {
+        return [NSNumber numberWithFloat:[self CGPointValue].y];
+    } else if ([keyPath isEqualToString:@"scale"]) {
+        CGAffineTransform transform = [self CGAffineTransformValue];
+        return [NSNumber numberWithDouble:(transform.a + transform.d) / 2];
+    } else if ([keyPath isEqualToString:@"translation"]) {
+        CGAffineTransform transform = [self CGAffineTransformValue];
+        return [NSValue valueWithCGPoint:CGPointMake(transform.tx, transform.ty)];
     }
     return [super valueForKeyPath:keyPath];
 }

@@ -309,6 +309,8 @@
         id target = self;
         NSArray *keys = [key componentsSeparatedByString:@"."];
         NSUInteger N = keys.count;
+        NSValue *structValue = nil;
+        NSUInteger structKeyIndex = 0;
         if (N > 1) {
             int i = 0;
             for (; i < N - 1; i++) {
@@ -317,10 +319,20 @@
                     key = [key substringFromIndex:1];
                     target = [target viewWithAlias:key];
                 } else {
-                    target = [target valueForKey:key];
+                    id temp = [target valueForKey:key];
+                    if ([temp isKindOfClass:[NSValue class]]) {
+                        structValue = temp;
+                        structKeyIndex = i + 1;
+                        break;
+                    }
+                    target = temp;
                 }
             }
             key = keys[i];
+        }
+        
+        if (structValue != nil) {
+            value = [self pb_valueByRewrapValue:structValue withSubvalue:value forKeys:keys index:structKeyIndex];
         }
         
         // Safely set value for key
@@ -345,6 +357,96 @@
     }
 }
 
+- (NSValue *)pb_valueByRewrapValue:(NSValue *)value withSubvalue:(id)subvalue forKeys:(NSArray *)keys index:(NSUInteger)index {
+    NSUInteger N = keys.count - index;
+    const char *type = [value objCType];
+    if (N == 1) {
+        if (strcmp(type, @encode(CGPoint)) == 0) {
+            CGPoint point = [value CGPointValue];
+            NSString *key = keys[index];
+            if ([key isEqualToString:@"x"]) {
+                // center.x
+                point.x = [subvalue doubleValue];
+            } else {
+                // center.y
+                point.y = [subvalue doubleValue];
+            }
+            return [NSValue valueWithCGPoint:point];
+        } else if (strcmp(type, @encode(CGRect)) == 0) {
+            CGRect rect = [value CGRectValue];
+            NSString *key = keys[index];
+            if ([key isEqualToString:@"origin"]) {
+                // frame.origin
+                rect.origin = [subvalue CGPointValue];
+            } else if ([key isEqualToString:@"size"]) {
+                // frame.size
+                rect.size = [subvalue CGSizeValue];
+            }
+            return [NSValue valueWithCGRect:rect];
+        } else if (strcmp(type, @encode(CGAffineTransform)) == 0) {
+            CGAffineTransform transform = [value CGAffineTransformValue];
+            NSString *key = keys[index];
+            if ([key isEqualToString:@"scale"]) {
+                // transform.scale
+                transform.a = transform.d = [subvalue doubleValue];
+            } else if ([key isEqualToString:@"translation"]) {
+                // transform.translation
+                CGPoint translation = [subvalue CGPointValue];
+                transform.tx = translation.x;
+                transform.ty = translation.y;
+            }
+            return [NSValue valueWithCGAffineTransform:transform];
+        }
+    } else if (N == 2) {
+        if (strcmp(type, @encode(CGRect)) == 0) {
+            CGRect rect = [value CGRectValue];
+            NSString *key = keys[index];
+            NSString *key2 = keys[index + 1];
+            if ([key isEqualToString:@"origin"]) {
+                if ([key2 isEqualToString:@"x"]) {
+                    // frame.origin.x
+                    rect.origin.x = [subvalue doubleValue];
+                } else if ([key2 isEqualToString:@"y"]) {
+                    // frame.origin.y
+                    rect.origin.y = [subvalue doubleValue];
+                }
+            } else if ([key isEqualToString:@"size"]) {
+                if ([key2 isEqualToString:@"width"]) {
+                    // frame.size.width
+                    rect.size.width = [subvalue doubleValue];
+                } else if ([key2 isEqualToString:@"height"]) {
+                    // frame.size.height
+                    rect.size.height = [subvalue doubleValue];
+                }
+            }
+            return [NSValue valueWithCGRect:rect];
+        } else if (strcmp(type, @encode(CGAffineTransform)) == 0) {
+            CGAffineTransform transform = [value CGAffineTransformValue];
+            NSString *key = keys[index];
+            NSString *key2 = keys[index + 1];
+            if ([key isEqualToString:@"scale"]) {
+                if ([key2 isEqualToString:@"x"]) {
+                    // transform.scale.x
+                    transform.a = [subvalue doubleValue];
+                } else if ([key2 isEqualToString:@"y"]) {
+                    // transform.scale.x
+                    transform.d = [subvalue doubleValue];
+                }
+            } else if ([key isEqualToString:@"translation"]) {
+                if ([key2 isEqualToString:@"x"]) {
+                    // transform.translation.x
+                    transform.tx = [subvalue doubleValue];
+                } else if ([key2 isEqualToString:@"y"]) {
+                    // transform.translation.x
+                    transform.ty = [subvalue doubleValue];
+                }
+            }
+            return [NSValue valueWithCGAffineTransform:transform];
+        }
+    }
+    return value;
+}
+
 - (id)pb_valueForKeyPath:(NSString *)key
 {
     id target = self;
@@ -358,13 +460,13 @@
                 key = [key substringFromIndex:1];
                 target = [target viewWithAlias:key];
             } else {
-                target = [target valueForKey:key];
+                target = [target valueForKeyPath:key];
             }
         }
         key = keys[i];
     }
     
-    return [target valueForKey:key];
+    return [target valueForKeyPath:key];
 }
 
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath
