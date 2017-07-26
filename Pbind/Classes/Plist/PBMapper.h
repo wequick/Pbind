@@ -47,6 +47,7 @@
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary;
 
 - (void)setPropertiesToObject:(id)object transform:(id (^)(NSString *key, id value))transform;
+- (void)mapPropertiesToObject:(id)object withData:(id)data context:(UIView *)context;
 
 - (void)initDataForView:(UIView *)view;
 - (void)mapData:(id)data forView:(UIView *)view;

@@ -140,6 +140,11 @@
     [_viewProperties initDataForOwner:object transform:transform];
 }
 
+- (void)mapPropertiesToObject:(id)object withData:(id)data context:(UIView *)context
+{
+    [_viewProperties mapData:data toTarget:object withContext:context];
+}
+
 - (void)initDataForView:(UIView *)view
 {
     if (_viewProperties == nil) {
