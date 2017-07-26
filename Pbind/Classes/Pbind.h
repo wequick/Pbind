@@ -48,3 +48,6 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBCollectionViewController.h"
 
 #import "PBPropertyUtils.h"
+
+#import "PBLayoutConstraint.h"
+#import "UIView+PBLayoutConstraint.h"
