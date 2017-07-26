@@ -583,7 +583,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     _RowDataWrapper *dataWrapper = [[_RowDataWrapper alloc] initWithData:data];
     dataWrapper.indexPath = indexPath;
-    [row updateWithData:view.rootData andView:dataWrapper];
+    [row updateWithData:view.rootData andView:(id)dataWrapper];
     
     for (NSString *key in keys) {
         [row setMappable:NO forKey:key];
