@@ -22,6 +22,12 @@
 #import "PBDataFetching.h"
 #import "PBDataFetcher.h"
 
+@interface Pbind (UIView)
+
++ (NSArray *)viewValueSetters;
+
+@end
+
 @implementation UIView (Pbind)
 
 @dynamic data;
@@ -303,6 +309,17 @@
 
 - (void)pb_setValue:(id)value forKeyPath:(NSString *)key
 {
+    NSArray *valueSetters = [Pbind viewValueSetters];
+    if (valueSetters != nil) {
+        BOOL canceld = NO;
+        for (PBViewValueSetter setter in valueSetters) {
+            value = setter(self, key, value, &canceld);
+            if (canceld) {
+                return;
+            }
+        }
+    }
+    
     if ([key length] > 1 && [key characterAtIndex:0] == '+') {
         [self setValue:value forAdditionKey:[key substringFromIndex:1]];
     } else {

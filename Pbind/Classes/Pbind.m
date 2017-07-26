@@ -22,6 +22,7 @@ static const CGFloat kDefaultSketchWidth = 320.f;
 static CGFloat kValueScale = 0;
 static NSMutableArray *kResourcesBundles = nil;
 static NSMutableArray *kPlistReloaders = nil;
+static NSMutableArray *kViewValueSetters = nil;
 
 + (void)setSketchWidth:(CGFloat)sketchWidth {
     kValueScale = [UIScreen mainScreen].bounds.size.width / sketchWidth;
@@ -179,6 +180,17 @@ static NSMutableArray *kPlistReloaders = nil;
         kPlistReloaders = [[NSMutableArray alloc] init];
     }
     [kPlistReloaders addObject:reloader];
+}
+
++ (void)registerViewValueSetter:(PBViewValueSetter)setter {
+    if (kViewValueSetters == nil) {
+        kViewValueSetters = [[NSMutableArray alloc] init];
+    }
+    [kViewValueSetters addObject:setter];
+}
+
++ (NSArray *)viewValueSetters {
+    return kViewValueSetters;
 }
 
 @end

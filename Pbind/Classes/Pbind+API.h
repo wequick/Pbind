@@ -12,6 +12,7 @@
 #import <UIKit/UIKit.h>
 
 typedef void(^PBPlistReloader)(UIView *rootView, UIView *view, NSString *changedPlist, BOOL *stop);
+typedef id(^PBViewValueSetter)(UIView *view, NSString *keyPath, id value, BOOL *canceld);
 
 @interface Pbind : NSObject
 
@@ -54,5 +55,7 @@ typedef void(^PBPlistReloader)(UIView *rootView, UIView *view, NSString *changed
  @param action the action of the API
  */
 + (void)reloadViewsOnAPIUpdate:(NSString *)action;
+
++ (void)registerViewValueSetter:(PBViewValueSetter)setter;
 
 @end
