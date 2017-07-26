@@ -773,7 +773,11 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     end = MIN(end, [value length]);
     NSRange replacedValueRange = NSMakeRange(start, end - start);
     NSMutableString *mutableValue = value ? [NSMutableString stringWithString:value] : [NSMutableString string];
-    [mutableValue replaceCharactersInRange:replacedValueRange withString:string];
+    @try {
+        [mutableValue replaceCharactersInRange:replacedValueRange withString:string];
+    } @catch (NSException *exception) {
+        NSLog(@"Pbind: Failed to update PBTextView value. (%@)", exception);
+    }
     
     self.value = [mutableValue copy];
     
