@@ -64,6 +64,10 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
     [kAliasNames setObject:[[self class] description] forKey:alias];
 }
 
++ (NSString *)alias {
+    return nil;
+}
+
 + (void)registerDebugServer:(void (^)(PBClient *client, PBRequest *request, void (^complection)(PBResponse *response)))server {
     kDebugServer = server;
 }
