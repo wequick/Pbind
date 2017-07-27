@@ -21,10 +21,13 @@
 #import "PBViewController.h"
 #import "PBDataFetching.h"
 #import "PBDataFetcher.h"
+#import "UIView+PBLayoutConstraint.h"
 
 @interface Pbind (UIView)
 
 + (NSArray *)viewValueSetters;
+
++ (NSArray *)viewValueAsyncSetters;
 
 @end
 
@@ -307,27 +310,22 @@
 #pragma mark -
 #pragma mark - KVC
 
-- (void)pb_setValue:(id)value forKeyPath:(NSString *)key
+- (void)pb_setValue:(id)value forKeyPath:(NSString *)keyPath
 {
-    NSArray *valueSetters = [Pbind viewValueSetters];
-    if (valueSetters != nil) {
-        BOOL canceld = NO;
-        for (PBViewValueSetter setter in valueSetters) {
-            value = setter(self, key, value, &canceld);
-            if (canceld) {
-                return;
-            }
-        }
+    char initial = 0;
+    if (keyPath.length > 1) {
+        initial = [keyPath characterAtIndex:0];
     }
     
-    if ([key length] > 1 && [key characterAtIndex:0] == '+') {
-        [self setValue:value forAdditionKey:[key substringFromIndex:1]];
+    if (initial == '+') {
+        [self setValue:value forAdditionKey:[keyPath substringFromIndex:1]];
     } else {
         id target = self;
-        NSArray *keys = [key componentsSeparatedByString:@"."];
+        NSArray *keys = [keyPath componentsSeparatedByString:@"."];
         NSUInteger N = keys.count;
         NSValue *structValue = nil;
         NSUInteger structKeyIndex = 0;
+        NSString *key = keyPath;
         if (N > 1) {
             int i = 0;
             for (; i < N - 1; i++) {
@@ -350,6 +348,35 @@
         
         if (structValue != nil) {
             value = [self pb_valueByRewrapValue:structValue withSubvalue:value forKeys:keys index:structKeyIndex];
+        }
+        
+        // Check if needs set value asynchronously
+        initial = 0;
+        if (key.length > 1) {
+            initial = [key characterAtIndex:0];
+        }
+        if (initial == '~') {
+            [target setValue:value forAdditionKey:key];
+            
+            NSArray *asyncSetters = [Pbind viewValueAsyncSetters];
+            key = [key substringFromIndex:1];
+            CGSize size = [target pb_constraintSize];
+            for (PBViewValueAsyncSetter asyncSetter in asyncSetters) {
+                asyncSetter(target, key, value, size, self, keyPath);
+            }
+            return;
+        }
+        
+        // Invoke user-defined value setter
+        NSArray *valueSetters = [Pbind viewValueSetters];
+        if (valueSetters != nil) {
+            BOOL canceld = NO;
+            for (PBViewValueSetter setter in valueSetters) {
+                value = setter(target, key, value, &canceld, self, keyPath);
+                if (canceld) {
+                    return;
+                }
+            }
         }
         
         // Safely set value for key
@@ -481,6 +508,16 @@
             }
         }
         key = keys[i];
+    }
+    
+    char initial = 0;
+    if (key.length > 1) {
+        initial = [key characterAtIndex:0];
+    }
+    if (initial == '~') {
+        return [target valueForAdditionKey:key];
+    } else if (initial == '+') {
+        return [target valueForAdditionKey:[key substringFromIndex:1]];
     }
     
     return [target valueForKeyPath:key];

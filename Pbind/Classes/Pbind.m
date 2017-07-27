@@ -23,6 +23,7 @@ static CGFloat kValueScale = 0;
 static NSMutableArray *kResourcesBundles = nil;
 static NSMutableArray *kPlistReloaders = nil;
 static NSMutableArray *kViewValueSetters = nil;
+static NSMutableArray *kViewValueAsyncSetters = nil;
 
 + (void)setSketchWidth:(CGFloat)sketchWidth {
     kValueScale = [UIScreen mainScreen].bounds.size.width / sketchWidth;
@@ -191,6 +192,17 @@ static NSMutableArray *kViewValueSetters = nil;
 
 + (NSArray *)viewValueSetters {
     return kViewValueSetters;
+}
+
++ (void)registerViewValueAsyncSetter:(PBViewValueAsyncSetter)asyncSetter {
+    if (kViewValueAsyncSetters == nil) {
+        kViewValueAsyncSetters = [[NSMutableArray alloc] init];
+    }
+    [kViewValueAsyncSetters addObject:asyncSetter];
+}
+
++ (NSArray *)viewValueAsyncSetters {
+    return kViewValueAsyncSetters;
 }
 
 @end
