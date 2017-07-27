@@ -19,6 +19,8 @@
 #import "PBValueParser.h"
 #import "PBDataFetching.h"
 #import "PBHeaderFooterMapper.h"
+#import "UITableViewCell+PBIndexing.h"
+#import "UICollectionViewCell+PBIndexing.h"
 
 NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
 
@@ -553,6 +555,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     if (cell == nil) {
         cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
     }
+    cell.indexPath = indexPath;
     
     // Add custom layout
     if (row.layoutMapper != nil) {
@@ -755,6 +758,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Dequeue reusable cell
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
+    cell.indexPath = indexPath;
     
     // Add custom layout
     if (item.layoutMapper != nil) {
