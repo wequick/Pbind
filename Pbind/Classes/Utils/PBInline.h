@@ -413,3 +413,70 @@ UIKIT_STATIC_INLINE UIView *PBView(NSString *plist) {
     
     return view;
 }
+
+#pragma mark - Pixel
+///=============================================================================
+/// @name Pixel
+///=============================================================================
+
+/**
+ Calculate the scaled value.
+ 
+ @discussion This will round the decimal value with following rules:
+ 
+ * <= 0.3   down to  0
+ * >= 0.7   up to    1
+ * 0.4-0.6  as       0.5
+ 
+ @param value the original value
+ @scale the scale coefficient
+ @return the scaled value
+ */
+UIKIT_STATIC_INLINE CGFloat PBPixelByScale(CGFloat value, CGFloat scale) {
+    if (value == 0) {
+        return 0;
+    }
+    
+    value *= scale;
+    if (value < 0) {
+        return value;
+    }
+    
+    int integer = (int) value;
+    int decimal = (value - integer) * 10;
+    if (decimal <= 3) {
+        return integer;
+    } else if (decimal >= 7) {
+        return integer + 1.f;
+    } else {
+        return integer + .5f;
+    }
+}
+
+UIKIT_STATIC_INLINE CGFloat PBPixel(CGFloat value) {
+    return PBPixelByScale(value, [Pbind valueScale]);
+}
+
+UIKIT_STATIC_INLINE CGFloat PBPixelFromUTF8String(const char *str) {
+    BOOL needsScale = NO;
+    char *p = (char *) str;
+    if (*p == '~') {
+        needsScale = YES;
+        p++;
+    }
+    
+    CGFloat value = atof(p);
+    if (needsScale) {
+        return PBPixel(value);
+    }
+    return value;
+}
+
+UIKIT_STATIC_INLINE CGFloat PBPixelFromString(NSString *string) {
+    if (string == nil || string.length == 0) {
+        return 0;
+    }
+    
+    const char *str = [string UTF8String];
+    return PBPixelFromUTF8String(str);
+}

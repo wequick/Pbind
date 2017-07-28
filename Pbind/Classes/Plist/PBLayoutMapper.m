@@ -129,7 +129,7 @@
     if (self.metrics != nil) {
         NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithCapacity:self.metrics.count];
         for (NSString *key in self.metrics) {
-            [temp setObject:@(PBValue([self.metrics[key] floatValue])) forKey:key];
+            [temp setObject:@(PBPixelFromString(self.metrics[key])) forKey:key];
         }
         metrics = temp;
     }

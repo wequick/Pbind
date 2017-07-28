@@ -18,7 +18,7 @@
 
 @implementation Pbind : NSObject
 
-static const CGFloat kDefaultSketchWidth = 320.f;
+static const CGFloat kDefaultSketchWidth = 375.f;
 static CGFloat kValueScale = 0;
 static NSMutableArray *kResourcesBundles = nil;
 static NSMutableArray *kPlistReloaders = nil;

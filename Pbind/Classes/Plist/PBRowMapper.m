@@ -45,7 +45,7 @@ static const CGFloat kHeightUnset = -2;
                 components = [heightString componentsSeparatedByString:@"@"];
             }
             if (components.count == 2) {
-                _height = PBValue2([components[0] floatValue], [components[1] floatValue]);
+                _height = PBPixelByScale([components[0] floatValue], [components[1] floatValue]);
             } else {
                 if (_height == UITableViewAutomaticDimension) {
                     if (_estimatedHeight <= 0) {

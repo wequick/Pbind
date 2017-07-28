@@ -355,7 +355,7 @@ static float readcolor(char **str, int len) {
     switch (i) {
         case 3:
             name = [NSString stringWithUTF8String:components[0]];
-            size = PBValue(atoi(components[2]));
+            size = PBPixelFromUTF8String(components[2]);
             temp = components[1];
             if (strcmp(temp, "bold") == 0) {
                 traits = UIFontDescriptorTraitBold;
@@ -368,7 +368,7 @@ static float readcolor(char **str, int len) {
         case 2:
             temp = components[1];
             if (*temp >= '0' && *temp <= '9') {
-                size = PBValue(atoi(temp));
+                size = PBPixelFromUTF8String(temp);
                 temp = components[0];
                 if (strcmp(temp, "bold") == 0) {
                     traits = UIFontDescriptorTraitBold;
@@ -393,7 +393,7 @@ static float readcolor(char **str, int len) {
         case 1:
             temp = components[0];
             if (*temp >= '0' && *temp <= '9') {
-                size = PBValue(atoi(temp));
+                size = PBPixelFromUTF8String(temp);
             } else if (strcmp(temp, "bold") == 0) {
                 traits = UIFontDescriptorTraitBold;
             } else if (strcmp(temp, "italic") == 0) {

@@ -33,7 +33,7 @@
 /**
  The metrics for auto-layout.
  
- @discussion Each metric will be re-calculated by `PBValue()'.
+ @discussion Each metric will be re-calculated by `PBPixel()'.
  */
 @property (nonatomic, strong) NSDictionary *metrics;
 
