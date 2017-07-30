@@ -215,13 +215,17 @@
 
 - (NSString *)description
 {
+    return [[self source] description];
+}
+
+- (NSDictionary *)source {
     NSMutableDictionary *value = [[NSMutableDictionary alloc] initWithCapacity:self.count];
     [self initDataForOwner:value];
     for (NSString *key in _expressions) {
         PBExpression *exp = _expressions[key];
-        [value setObject:[exp stringValue] forKey:key];
+        [value setObject:[exp source] forKey:key];
     }
-    return [value description];
+    return value;
 }
 
 @end

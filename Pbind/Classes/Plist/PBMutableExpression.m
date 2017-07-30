@@ -489,13 +489,13 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 
 #pragma mark - Debug
 
-- (NSString *)stringValue {
+- (id)source {
     if (_format == nil) {
         if (_properties == nil) {
-            return [super stringValue];
+            return [super source];
         }
         
-        return [_properties description];
+        return [_properties source];
     }
     
     NSMutableString *s = [NSMutableString stringWithString:@"%"];

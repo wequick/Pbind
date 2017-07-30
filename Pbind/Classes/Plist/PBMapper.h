@@ -65,4 +65,7 @@
 
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key;
 
+/** The source dictionary of `_viewProperties' */
+- (NSDictionary *)targetSource;
+
 @end

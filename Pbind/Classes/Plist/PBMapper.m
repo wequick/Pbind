@@ -276,4 +276,10 @@
     }
 }
 
+#pragma mark - Debugging
+
+- (NSDictionary *)targetSource {
+    return [_viewProperties source];
+}
+
 @end

@@ -172,16 +172,22 @@ typedef enum : NSUInteger {
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 
 /**
- The expression text, for debugger output.
- */
-- (NSString *)stringValue;
-
-/**
  Unobserve the target.
 
  @param target the observed target
  */
 - (void)unbind:(id)target forKeyPath:(NSString *)keyPath;
+
+#pragma mark - Debugging
+///=============================================================================
+/// @name Debugging
+///=============================================================================
+
+/** The expression text, for debugger output. */
+- (NSString *)stringValue;
+
+/** The expression source (string or dictionary) */
+- (id)source;
 
 @end
 

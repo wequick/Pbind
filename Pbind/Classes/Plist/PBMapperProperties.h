@@ -74,4 +74,14 @@
  */
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key;
 
+#pragma mark - Debugging
+///=============================================================================
+/// @name Debugging
+///=============================================================================
+
+/**
+ The source dictionary
+ */
+- (NSDictionary *)source;
+
 @end

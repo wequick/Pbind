@@ -726,7 +726,7 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 #pragma mark - Debug
 
-- (NSString *)stringValue {
+- (id)source {
     NSMutableString *s = [[NSMutableString alloc] init];
     
     // Binding flags
@@ -831,6 +831,14 @@ const unsigned char PBDataTagUnset = 0xFF;
         [s appendString:_rvalue];
     }
     return s;
+}
+
+- (NSString *)stringValue {
+    id source = [self source];
+    if ([source isKindOfClass:[NSString class]]) {
+        return source;
+    }
+    return [NSString stringWithFormat:@"%@", source];
 }
 
 - (NSString *)debugDescription
