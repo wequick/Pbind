@@ -473,6 +473,10 @@ UIKIT_STATIC_INLINE CGFloat PBPixelFromUTF8String(const char *str) {
 }
 
 UIKIT_STATIC_INLINE CGFloat PBPixelFromString(NSString *string) {
+    if ([string isKindOfClass:[NSNumber class]]) {
+        return [string doubleValue];
+    }
+    
     if (string == nil || string.length == 0) {
         return 0;
     }
