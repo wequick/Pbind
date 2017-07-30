@@ -39,66 +39,90 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
 }
 
 - (instancetype)initWithUTF8String:(const char *)str {
-    if (*str != '%') {
-        return [super initWithUTF8String:str];
+    char *p = (char *)str;
+    BOOL hasFormat = YES;
+    char fmtStart = 0, fmtEnd = 0;
+    switch (*str) {
+        case '%':
+            p++;
+            if (*p == '=') {
+                // Mutable variable binding
+                p++;
+                if (*p == '=') {
+                    p++;
+                    _flags.duplexBinding = 1;
+                } else {
+                    _flags.onewayBinding = 1;
+                }
+                hasFormat = NO;
+            } else {
+                fmtStart = '(';
+                fmtEnd = ')';
+            }
+            break;
+        case '`':
+            p++;
+            fmtEnd = '`';
+            _formatFlags.javascript = 1;
+            break;
+        case '@':
+            p++;
+            if (*p != '"') {
+                return [super initWithUTF8String:str];
+            }
+            p++;
+            fmtEnd = '"';
+        default:
+            return [super initWithUTF8String:str];
     }
     
-    char *p = (char *)(str + 1);
     NSUInteger len = strlen(str) + 1;
     char *temp;
     char *p2;
     
-    if (*p == '=') {
-        // Mutable variable binding
-        p++;
-        if (*p == '=') {
-            p++;
-            _flags.duplexBinding = 1;
-        } else {
-            _flags.onewayBinding = 1;
+    if (fmtStart != 0 && *p != fmtStart) {
+        // Parse format tag before `fmtStart'
+        char *tag_pos = NULL;
+        p2 = temp = (char *)malloc(len - (p - str));
+        while (*p != '\0' && *p != fmtStart) {
+            if (*p == ':') {
+                tag_pos = p2;
+            }
+            *p2++ = *p++;
         }
-    } else {
-        if (*p != '(') {
-            // Format tag
-            char *tag_pos = NULL;
-            p2 = temp = (char *)malloc(len - (p - str));
-            while (*p != '\0' && *p != '(') {
-                if (*p == ':') {
-                    tag_pos = p2;
-                }
-                *p2++ = *p++;
-            }
-            if (*p == '\0') return nil;
-            
-            *p2 = '\0';
-            if (tag_pos != NULL) {
-                *tag_pos = '\0';
-                tag_pos++;
-                _formatterTag = [NSString stringWithUTF8String:tag_pos];
-            }
-            NSString *tag = [NSString stringWithUTF8String:temp];
-            free(temp);
-            if ([tag isEqualToString:@"!"]) {
-                _formatFlags.testEmpty = 1;
-            } else if ([tag isEqualToString:@"JS"]) {
-                _formatFlags.javascript = 1;
-            } else if ([tag isEqualToString:@"AT"]) {
-                _formatFlags.attributedText = 1;
+        if (*p == '\0') return nil;
+        
+        *p2 = '\0';
+        if (tag_pos != NULL) {
+            *tag_pos = '\0';
+            tag_pos++;
+            _formatterTag = [NSString stringWithUTF8String:tag_pos];
+        }
+        NSString *tag = [NSString stringWithUTF8String:temp];
+        free(temp);
+        if ([tag isEqualToString:@"!"]) {
+            _formatFlags.testEmpty = 1;
+        } else if ([tag isEqualToString:@"JS"]) {
+            _formatFlags.javascript = 1;
+        } else if ([tag isEqualToString:@"AT"]) {
+            _formatFlags.attributedText = 1;
+        } else {
+            _formatter = [PBVariableEvaluator evaluatorForTag:tag];
+            if (_formatter != nil) {
+                _formatFlags.customized = 1;
             } else {
-                _formatter = [PBVariableEvaluator evaluatorForTag:tag];
-                if (_formatter != nil) {
-                    _formatFlags.customized = 1;
-                } else {
-                    NSLog(@"PBMutableExpression: Unknown format tag:`%@'", tag);
-                    return nil;
-                }
+                NSLog(@"PBMutableExpression: Unknown format tag:`%@'", tag);
+                return nil;
             }
         }
         
-        // Format text
-        p++;
+        p++; // bypass `fmtStart'
+    }
+    
+    if (fmtEnd != 0) {
+        // Parse format text between `fmtStart' and `fmtEnd'
         p2 = temp = (char *)malloc(len - (p - str));
-        while (*p != '\0' && !(*p == ')' && *(p + 1) == ',')) {
+        while (*p != '\0' && !(*p == fmtEnd && *(p + 1) == ',')) {
             *p2++ = *p++;
         }
         if (*p == '\0') {
@@ -110,12 +134,14 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         _format = [NSString stringWithUTF8String:temp];
         free(temp);
         
-        p += 2; // bypass '),'
+        p += 2; // bypass `fmtEnd' and ','
     }
+    
+    char attrStart = ';';
     
     // Variable args
     p2 = temp = (char *)malloc(len - (p - str));
-    while (*p != '\0' && *p != ';') {
+    while (*p != '\0' && *p != attrStart) {
         *p2++ = *p++;
     }
     *p2 = '\0';
@@ -498,28 +524,45 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
         return [_properties source];
     }
     
-    NSMutableString *s = [NSMutableString stringWithString:@"%"];
-    if (_formatFlags.testEmpty) {
-        [s appendString:@"!"];
-    } else if (_formatFlags.javascript) {
-        [s appendString:@"JS"];
-    } else if (_formatFlags.attributedText) {
-        [s appendString:@"AT"];
-    } else if (_formatFlags.customized) {
-        NSArray *allTags = [PBVariableEvaluator allTags];
-        for (NSString *tag in allTags) {
-            if (_formatter == [PBVariableEvaluator evaluatorForTag:tag]) {
-                [s appendString:tag];
-                break;
+    NSMutableString *s = [NSMutableString string];
+    BOOL hasTag = YES;
+    NSString *fmtStart = nil;
+    NSString *fmtEnd = nil;
+    if (_formatFlags.javascript) {
+        hasTag = NO;
+        fmtStart = fmtEnd = @"`";
+    } else {
+        fmtStart = @"(";
+        fmtEnd = @")";
+    }
+    
+    if (hasTag) {
+        if (_formatFlags.testEmpty) {
+            [s appendString:@"!"];
+        } else if (_formatFlags.attributedText) {
+            [s appendString:@"AT"];
+        } else if (_formatFlags.customized) {
+            NSArray *allTags = [PBVariableEvaluator allTags];
+            for (NSString *tag in allTags) {
+                if (_formatter == [PBVariableEvaluator evaluatorForTag:tag]) {
+                    [s appendString:tag];
+                    break;
+                }
             }
         }
+        if (_formatterTag != nil) {
+            [s appendFormat:@":%@", _formatterTag];
+        }
     }
-    if (_formatterTag != nil) {
-        [s appendFormat:@":%@", _formatterTag];
+    
+    if (fmtStart != nil) {
+        [s appendString:fmtStart];
     }
-    [s appendString:@"("];
     [s appendString:_format];
-    [s appendString:@")"];
+    if (fmtEnd != nil) {
+        [s appendString:fmtEnd];
+    }
+    
     for (PBExpression *exp in _expressions) {
         [s appendString:@","];
         [s appendString:[exp stringValue]];

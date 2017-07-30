@@ -20,7 +20,7 @@
  
  * %(%@: %@),$a,$b  -> String formater
  * %!(%@: %@),$a,$b -> Format the string only if arguments are not empty
- * %JS($2/$1),$a,$b -> Javascript evaluator
+ * `$2/$1`,$a,$b -> Javascript evaluator
  * %AT(%@|%@),$a,$b -> Attribute string
  
  */
@@ -28,7 +28,7 @@
 {
     struct {
         unsigned int testEmpty:1; // '%!'
-        unsigned int javascript:1; // '%JS'
+        unsigned int javascript:1; // `script`
         unsigned int attributedText:1; // '%AT'
         unsigned int customized:1; // user customization
     } _formatFlags;
