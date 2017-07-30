@@ -19,7 +19,6 @@
 
 @protocol PBAction <NSObject>
 
-- (BOOL)shouldRunAfterAction:(PBAction *)action;
 - (void)run:(PBActionState *)state;
 
 @end
@@ -37,14 +36,18 @@
 + (void)registerType:(NSString *)type;
 + (void)registerTypes:(NSArray *)types;
 + (PBAction *)actionForType:(NSString *)type;
++ (PBAction *)actionWithMapper:(PBActionMapper *)mapper;
 
-#pragma mark - Matching
+#pragma mark - Caching
 ///=============================================================================
-/// @name Matching
+/// @name Caching
 ///=============================================================================
 
 /** The type for the action to be triggered */
 @property (nonatomic, strong) NSString *type;
+
+/** The mapper to update properties at runtime */
+@property (nonatomic, strong) PBActionMapper *mapper;
 
 #pragma mark - Triggering
 ///=============================================================================
@@ -64,7 +67,7 @@
 @property (nonatomic, assign) BOOL disabled;
 
 /** The mappers to create the next actions */
-@property (nonatomic, strong) NSDictionary *nextMappers;
+@property (nonatomic, strong) NSDictionary<NSString *, PBAction *> *nextActions;
 
 /** The store of current action */
 @property (nonatomic, weak) PBActionStore *store;

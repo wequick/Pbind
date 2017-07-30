@@ -13,6 +13,15 @@
 #import "UIView+Pbind.h"
 #import "PBVariableMapper.h"
 
+NSNotificationName const PBActionStoreWillDispatchActionNotification = @"PBActionStoreWillDispatchAction";
+NSNotificationName const PBActionStoreDidDispatchActionNotification = @"PBActionStoreDidDispatchAction";
+
+@interface PBAction (Private)
+
+- (void)_internalRun:(PBActionState *)state;
+
+@end
+
 @implementation PBActionStore
 
 + (instancetype)defaultStore {
@@ -33,41 +42,34 @@
 }
 
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context data:(id)data {
-    [mapper updateValueForKey:@"type" withData:context.rootData andView:context];
-    PBAction *action = [PBAction actionForType:mapper.type];
+    [self dispatchActionWithActionMapper:mapper sender:context context:context data:data];
+}
+
+- (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper sender:(UIView *)sender context:(UIView *)context data:(id)data {
+    PBAction *action = [PBAction actionWithMapper:mapper];
     if (action == nil) {
         return;
     }
     
-    if (self.state == nil) {
-        self.state = [[PBActionState alloc] init];
-    }
-    if (context != nil) {
-        self.state.context = context;
-    }
-    if (data != nil) {
-        self.state.data = data;
-    }
-    
-    [mapper updateWithData:context.rootData andView:context];
-
-    action.type = mapper.type;
-    action.disabled = mapper.disabled;
-    action.target = mapper.target;
-    action.name = mapper.name;
-    action.params = mapper.params;
-    action.nextMappers = mapper.nextMappers;
-    action.store = self;
-    
-    [self dispatchAction:action];
+    [self dispatchAction:action sender:sender withContext:context data:data];
 }
 
 - (void)dispatchAction:(PBAction *)action {
-    if (action.disabled) {
-        return;
-    }
+    [self dispatchAction:action sender:nil withContext:nil data:nil];
+}
+
+- (void)dispatchAction:(PBAction *)action sender:(UIView *)sender withContext:(UIView *)context data:(id)data {
+    self.state = [[PBActionState alloc] init];
+    self.state.sender = sender;
+    self.state.context = context;
+    self.state.data = data;
+    action.store = self;
     
-    [action run:self.state];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreWillDispatchActionNotification object:action];
+    
+    [action _internalRun:self.state];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreDidDispatchActionNotification object:action];
 }
 
 @end

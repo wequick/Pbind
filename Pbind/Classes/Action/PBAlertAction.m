@@ -24,6 +24,11 @@
     NSString *title = self.params[@"title"];
     NSString *message = self.params[@"message"];
     NSArray *buttons = self.params[@"buttons"];
+    if (title == nil && message == nil && buttons == nil) {
+        // UIAlertController must have a title, a message or an action to display
+        return;
+    }
+    
     if (title != nil && ![title isKindOfClass:[NSString class]]) {
         title = [title description];
     }
@@ -31,7 +36,7 @@
         message = [message description];
     }
     
-    UIAlertControllerStyle alertStyle = [self.type isEqualToString:@"alert"] ? UIAlertControllerStyleAlert : UIAlertControllerStyleActionSheet;
+    UIAlertControllerStyle alertStyle = [self.type isEqualToString:@"sheet"] ? UIAlertControllerStyleActionSheet : UIAlertControllerStyleAlert;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:alertStyle];
     
     for (NSInteger index = 0; index < buttons.count; index++) {

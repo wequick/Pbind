@@ -46,6 +46,16 @@
 - (void)dispatchAction:(PBAction *)action;
 
 /**
+ Dispatch an action with initial `context' and `data'.
+ 
+ @param action the action to be dispatched
+ @param sender the sender dispatching this `action'
+ @param context the context to be stored in current state, all the actions will based on this
+ @param data the data to be stored in current state
+ */
+- (void)dispatchAction:(PBAction *)action sender:(UIView *)sender withContext:(UIView *)context data:(id)data;
+
+/**
  Dispatch an action from action mapper.
  
  @discussion we will create an action from the mapper and dispatch it
@@ -71,4 +81,17 @@
  */
 - (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper context:(UIView *)context data:(id)data;
 
+/**
+ Dispatch an action from action mapper and initialize the context for current state.
+ 
+ @param mapper the mapper for the action to be created and dispatched
+ @param sender the sender dispatching this action
+ @param context the context to be stored in current state, all the actions will based on this
+ @param data the data to be stored in current state
+ */
+- (void)dispatchActionWithActionMapper:(PBActionMapper *)mapper sender:(UIView *)sender context:(UIView *)context data:(id)data;
+
 @end
+
+FOUNDATION_EXPORT NSNotificationName const PBActionStoreWillDispatchActionNotification;
+FOUNDATION_EXPORT NSNotificationName const PBActionStoreDidDispatchActionNotification;

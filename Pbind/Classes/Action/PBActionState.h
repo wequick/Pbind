@@ -25,6 +25,9 @@
 /** The view context for the action */
 @property (nonatomic, weak) UIView *context;
 
+/** The sender dispatches the action */
+@property (nonatomic, weak) UIView *sender;
+
 #pragma mark - Resulting
 ///=============================================================================
 /// @name Resulting

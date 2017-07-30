@@ -14,19 +14,10 @@
 @implementation PBActionMapper
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
-    self.next = [[NSMutableDictionary alloc] init];
+    self.type = dictionary[@"type"];
     
-    [super setPropertiesWithDictionary:dictionary];
-    
-    NSUInteger nextCount = self.next.count;
-    if (nextCount > 0) {
-        NSMutableDictionary *nextMappers = [NSMutableDictionary dictionaryWithCapacity:nextCount];
-        for (NSString *key in self.next) {
-            PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:self.next[key]];
-            [nextMappers setObject:mapper forKey:key];
-        }
-        self.nextMappers = nextMappers;
-    }
+    NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
 }
 
 @end

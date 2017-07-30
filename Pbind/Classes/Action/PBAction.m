@@ -53,30 +53,71 @@ static NSMutableDictionary *kActionClasses;
     return [[actionClass alloc] init];
 }
 
++ (PBAction *)actionWithMapper:(PBActionMapper *)mapper {
+    PBAction *action = [self actionForType:mapper.type];
+    if (action == nil) {
+        return nil;
+    }
+    action.mapper = mapper;
+    [mapper setPropertiesToObject:action transform:nil];
+    return action;
+}
+
 - (BOOL)hasNext:(NSString *)key {
-    if (self.nextMappers == nil) {
+    if (self.nextActions == nil) {
         return NO;
     }
-    return [self.nextMappers objectForKey:key] != nil;
+    return [self.nextActions objectForKey:key] != nil;
 }
 
 - (void)dispatchNext:(NSString *)key {
-    if (self.nextMappers == nil) {
+    if (self.nextActions == nil) {
         return;
     }
     
-    PBActionMapper *mapper = [self.nextMappers objectForKey:key];
-    if (mapper == nil) {
+    PBAction *nextAction = [self.nextActions objectForKey:key];
+    if (nextAction == nil) {
         return;
     }
     
-    [self.store dispatchActionWithActionMapper:mapper];
+    [nextAction _internalRun:self.store.state];
+}
+
+#pragma mark - Mapping
+
+- (void)setNext:(NSDictionary *)next {
+    NSUInteger count = next.count;
+    if (count == 0) {
+        self.nextActions = nil;
+        return;
+    }
+    
+    NSMutableDictionary *nextActions = nil;
+    for (NSString *key in next) {
+        NSDictionary *subInfo = next[key];
+        PBActionMapper *subMapper = [PBActionMapper mapperWithDictionary:subInfo];
+        PBAction *subAction = [[self class] actionWithMapper:subMapper];
+        if (subAction != nil) {
+            if (nextActions == nil) {
+                nextActions = [NSMutableDictionary dictionaryWithCapacity:count];
+            }
+            nextActions[key] = subAction;
+        }
+    }
+    self.nextActions = nextActions;
 }
 
 #pragma mark - Default delegate
 
-- (BOOL)shouldRunAfterAction:(PBAction *)action {
-    return YES;
+- (void)_internalRun:(PBActionState *)state {
+    if (self.mapper) {
+        [self.mapper mapPropertiesToObject:self withData:state.data context:state.context];
+    }
+    
+    if (self.disabled) {
+        return;
+    }
+    [self run:state];
 }
 
 - (void)run:(PBActionState *)state {
