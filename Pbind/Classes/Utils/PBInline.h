@@ -368,6 +368,9 @@ UIKIT_STATIC_INLINE UINib *PBNib(NSString *nibName) {
 UIKIT_STATIC_INLINE UIViewController *PBVisibleController(UIViewController *controller) {
     UIViewController *presentedController = [controller presentedViewController];
     if (presentedController != nil) {
+        if (presentedController.popoverPresentationController != nil) {
+            return controller;
+        }
         return PBVisibleController(presentedController);
     }
     
