@@ -17,7 +17,30 @@
     self.type = dictionary[@"type"];
     
     NSMutableDictionary *properties = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    
+    NSMutableDictionary *next = [[NSMutableDictionary alloc] init];
+    for (NSString *key in dictionary) {
+        NSRange range = [key rangeOfString:@"next."];
+        if (range.location == NSNotFound) {
+            continue;
+        }
+        
+        NSString *actionKey = [key substringFromIndex:range.location + range.length];
+        next[actionKey] = dictionary[key];
+        [properties removeObjectForKey:key];
+    }
+    
     _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
+    
+    NSUInteger nextCount = next.count;
+    if (nextCount > 0) {
+        NSMutableDictionary *nextMappers = [NSMutableDictionary dictionaryWithCapacity:nextCount];
+        for (NSString *key in next) {
+            PBActionMapper *mapper = [PBActionMapper mapperWithDictionary:next[key] owner:nil];
+            [nextMappers setObject:mapper forKey:key];
+        }
+        self.nextMappers = nextMappers;
+    }
 }
 
 @end

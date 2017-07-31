@@ -14,6 +14,12 @@
 #import "UIView+Pbind.h"
 #import "PBActionStore.h"
 
+@interface PBAction (PBMapping)
+
+@property (nonatomic, strong) NSMutableDictionary *next;
+
+@end
+
 @implementation PBAction
 
 static NSMutableDictionary *kActionClasses;
@@ -59,7 +65,19 @@ static NSMutableDictionary *kActionClasses;
         return nil;
     }
     action.mapper = mapper;
+    
     [mapper setPropertiesToObject:action transform:nil];
+    
+    // Link
+    if (mapper.nextMappers != nil) {
+        NSMutableDictionary *nextActions = [NSMutableDictionary dictionaryWithCapacity:mapper.nextMappers.count];
+        for (NSString *nextKey in mapper.nextMappers) {
+            PBActionMapper *subMapper = mapper.nextMappers[nextKey];
+            PBAction *subAction = [PBAction actionWithMapper:subMapper];
+            nextActions[nextKey] = subAction;
+        }
+        action.nextActions = nextActions;
+    }
     return action;
 }
 
@@ -81,30 +99,6 @@ static NSMutableDictionary *kActionClasses;
     }
     
     [nextAction _internalRun:self.store.state];
-}
-
-#pragma mark - Mapping
-
-- (void)setNext:(NSDictionary *)next {
-    NSUInteger count = next.count;
-    if (count == 0) {
-        self.nextActions = nil;
-        return;
-    }
-    
-    NSMutableDictionary *nextActions = nil;
-    for (NSString *key in next) {
-        NSDictionary *subInfo = next[key];
-        PBActionMapper *subMapper = [PBActionMapper mapperWithDictionary:subInfo];
-        PBAction *subAction = [[self class] actionWithMapper:subMapper];
-        if (subAction != nil) {
-            if (nextActions == nil) {
-                nextActions = [NSMutableDictionary dictionaryWithCapacity:count];
-            }
-            nextActions[key] = subAction;
-        }
-    }
-    self.nextActions = nextActions;
 }
 
 #pragma mark - Default delegate

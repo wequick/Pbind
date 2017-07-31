@@ -25,13 +25,18 @@
 /** The type for the action */
 @property (nonatomic, strong) NSString *type;
 
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+/** The next mappers */
+@property (nonatomic, strong) NSDictionary *nextMappers;
+
 #pragma mark - Mapping
 ///=============================================================================
 /// @name Mapping
 ///=============================================================================
-
-/** The next actions dictionary to be parsed as mappers */
-//mapping @property (nonatomic, strong) NSDictionary *next;
 
 /** The expression to map as a target for the action */
 //mapping @property (nonatomic, strong) NSString *target;
