@@ -51,6 +51,7 @@
 		F89500DC1D87ABCC0038A3E5 /* PbindAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500DA1D87ABCC0038A3E5 /* PbindAdapter.m */; };
 		F89500E11D87B0C20038A3E5 /* PBValueParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */; };
 		F8A02BEB1F1217D30058028E /* item.member.plist in Resources */ = {isa = PBXBuildFile; fileRef = F8A02BEA1F1217D30058028E /* item.member.plist */; };
+		F8A02C081F2F7E5C0058028E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8A02C071F2F7E5C0058028E /* LaunchScreen.storyboard */; };
 		F8A839541E02A73A0014F259 /* PBCustomUIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A839531E02A73A0014F259 /* PBCustomUIAction.m */; };
 		FE50A3432F6734450BC03D04 /* PBDirectoryWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9E56CB1A4C0F743D3C3233 /* PBDirectoryWatcher.h */; };
 /* End PBXBuildFile section */
@@ -125,6 +126,7 @@
 		F89500DA1D87ABCC0038A3E5 /* PbindAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PbindAdapter.m; sourceTree = "<group>"; };
 		F89500E01D87B0C20038A3E5 /* PBValueParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBValueParserTests.m; sourceTree = "<group>"; };
 		F8A02BEA1F1217D30058028E /* item.member.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = item.member.plist; sourceTree = "<group>"; };
+		F8A02C071F2F7E5C0058028E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F8A839521E02A73A0014F259 /* PBCustomUIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCustomUIAction.h; sourceTree = "<group>"; };
 		F8A839531E02A73A0014F259 /* PBCustomUIAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCustomUIAction.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -207,6 +209,7 @@
 				F89500C71D87AB7B0038A3E5 /* Adapter */,
 				6003F59C195388D20070C39A /* PBAppDelegate.h */,
 				6003F59D195388D20070C39A /* PBAppDelegate.m */,
+				F8A02C071F2F7E5C0058028E /* LaunchScreen.storyboard */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* PBGroupInfoController.h */,
 				6003F5A6195388D20070C39A /* PBGroupInfoController.m */,
@@ -453,6 +456,7 @@
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				F8039C2F1E47780C009C5372 /* example.plist in Resources */,
 				F8039C311E47781F009C5372 /* example.xml in Resources */,
+				F8A02C081F2F7E5C0058028E /* LaunchScreen.storyboard in Resources */,
 				F89500CE1D87AB9C0038A3E5 /* table.group.plist in Resources */,
 				F80FB22D1D913E2400DD48F4 /* table.members.plist in Resources */,
 				F8A02BEB1F1217D30058028E /* item.member.plist in Resources */,
