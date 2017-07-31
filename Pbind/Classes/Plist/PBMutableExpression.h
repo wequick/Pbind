@@ -18,20 +18,35 @@
  
  @discussion Supports:
  
- * %(%@: %@),$a,$b  -> String formater
- * %!(%@: %@),$a,$b -> Format the string only if arguments are not empty
- * `$2/$1`,$a,$b -> Javascript evaluator
- * %AT(%@|%@),$a,$b -> Attribute string
+ * String formatter
+    - @"%@: %@",$a,$b
+    - %(%@: %@),$a,$b
+ 
+ * Format the string only if arguments are not empty
+    - %!(%@: %@),$a,$b
+
+ * Javascript evaluator
+    - `$2/$1`,$a,$b
+    - %JS($2/$1),$a,$b
+    - %JS:[return_type]($1+$2),$a,$b
+ 
+ * Attributed string formatter
+    - %AT(%@|%@),$a,$b
  
  */
 @interface PBMutableExpression : PBExpression
 {
     struct {
         unsigned int testEmpty:1; // '%!'
-        unsigned int javascript:1; // `script`
+        unsigned int javascript:1; // '%JS'
         unsigned int attributedText:1; // '%AT'
         unsigned int customized:1; // user customization
     } _formatFlags;
+    
+    struct {
+        unsigned int backticks:1; // ``
+        unsigned int string:1; // @""
+    } _keywordFlags;
     
     NSString *_formatterTag;
     NSString *(^_formatter)(NSString *tag, NSString *format, NSArray *args);
