@@ -72,6 +72,7 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             p++;
             fmtEnd = '"';
             _keywordFlags.string = 1;
+            break;
         default:
             return [super initWithUTF8String:str];
     }
