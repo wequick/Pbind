@@ -142,6 +142,7 @@
 - (void)testCanParseJSDictionary {
     id target = @{@"awesome": @1, @"repo": @"wequick/Pbind"};
     id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"`{awesome:1, repo:$1}`,$repo" toValue:target withData:data];
     [self shouldParse:@"%JS({awesome:1, repo:$1}),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:dictionary({awesome:1, repo:$1}),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:dictionary(var t={awesome:1, repo:$1};t;),$repo" toValue:target withData:data];
@@ -150,6 +151,7 @@
 - (void)testCanParseJSArray {
     id target = @[@"awesome", @"wequick/Pbind"];
     id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"`['awesome', $1]`,$repo" toValue:target withData:data];
     [self shouldParse:@"%JS(['awesome', $1]),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:array(['awesome', $1]),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:array(var t=['awesome', $1];t;),$repo" toValue:target withData:data];
@@ -158,6 +160,7 @@
 - (void)testCanParseJSArrayWithDictionary {
     id target = @[@"awesome", @{@"repo": @"wequick/Pbind"}];
     id data = @{@"repo": @"wequick/Pbind"};
+    [self shouldParse:@"`['awesome', {repo: $1}]`,$repo" toValue:target withData:data];
     [self shouldParse:@"%JS(['awesome', {repo: $1}]),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:array(['awesome', {repo: $1}]),$repo" toValue:target withData:data];
     [self shouldParse:@"%JS:array(var t=['awesome', {repo: $1}];t;),$repo" toValue:target withData:data];
@@ -199,6 +202,16 @@
 - (void)testCanParseEmpty {
     [self shouldParse:@"%!(hello %@!),$greet" toValue:nil withData:nil];
     [self shouldParse:@"%!(hello %@!),$greet" toValue:@"hello Pbind!" withData:@{@"greet": @"Pbind"}];
+}
+
+#pragma mrk - String format
+
+- (void)testCanFormatString {
+    id data = @{@"num": @(2.3f)};
+    [self shouldParse:@"@\"num is %@\",$num" toValue:@"num is 2.3" withData:data];
+    [self shouldParse:@"%(num is %@),$num" toValue:@"num is 2.3" withData:data];
+    [self shouldParse:@"@\"num is %#.2f\",$num" toValue:@"num is 2.30" withData:data];
+    [self shouldParse:@"%(num is %#.2f),$num" toValue:@"num is 2.30" withData:data];
 }
 
 #pragma mark - Attributed string tag: '%AT'
