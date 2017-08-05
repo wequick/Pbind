@@ -289,18 +289,20 @@ static float readcolor(char **str, int len) {
 }
 
 + (UIColor *)colorWithUTF8String:(const char *)str {
-    CGFloat a, r, g, b;
+    CGFloat a = 1.f, r, g, b;
     char *p = (char *)str;
-    size_t len = strlen(p);
+    char *p2 = p;
+    while (*p2 != '@' && *p2 != '\0') {
+        p2++;
+    }
+    size_t len = p2 - p;
     switch (len) {
         case 3: // RGB
-            a = 1.f;
             r = readcolor(&p, 1);
             g = readcolor(&p, 1);
             b = readcolor(&p, 1);
             break;
         case 6: // RRGGBB
-            a = 1.f;
             r = readcolor(&p, 2);
             g = readcolor(&p, 2);
             b = readcolor(&p, 2);
@@ -314,6 +316,17 @@ static float readcolor(char **str, int len) {
         default:
 //            NSLog(@"PBValueParser: Invalid color format '%s'", str);
             return nil;
+    }
+    
+    if (*p2 == '@') {
+        // alpha
+        p2++;
+        char *p3;
+        a = strtof(p2, &p3);
+        if (p2 == p3) {
+            // failed to read alpha value
+            a = 1.f;
+        }
     }
     
     return [UIColor colorWithRed:r green:g blue:b alpha:a];
