@@ -60,8 +60,13 @@
 /// @name Caching
 ///=============================================================================
 
-/** The layout name */
-@property (nonatomic, strong) NSString *name;
+/** The alias of views which has been rendered by current layout */
+@property (nonatomic, strong) NSArray<NSString *> *renderedAliases;
+
+#pragma mark - API
+///=============================================================================
+/// @name API
+///=============================================================================
 
 /**
  Create all the subviews and add to the parent view.

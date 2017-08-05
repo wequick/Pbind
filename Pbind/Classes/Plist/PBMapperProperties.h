@@ -13,6 +13,8 @@
 #import <UIKit/UIKit.h>
 #import "PBExpression.h"
 
+@class PBMapper;
+
 /**
  An instance of PBMapperProperties stores the parsing result of the PBMapper's 
  `properties`, `tagproperties` and `subproperties`.
@@ -25,7 +27,20 @@
  */
 @interface PBMapperProperties : NSObject
 
+#pragma mark - Creating
+///=============================================================================
+/// @name Creating
+///=============================================================================
+
 + (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary;
++ (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary mapper:(PBMapper *)mapper;
+
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+@property (nonatomic, weak) PBMapper *mapper;
 
 - (BOOL)initPropertiesForOwner:(id)owner; // UIView
 

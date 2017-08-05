@@ -83,16 +83,25 @@
 ///=============================================================================
 
 /** The constant properties from the parsed plist */
-@property (nonatomic, strong) NSDictionary *pb_constants;
+@property (nonatomic, strong, readonly) NSDictionary *pb_constants;
 
 /** The dynamic expressions from the parsed plist */
-@property (nonatomic, strong) NSDictionary *pb_expressions;
+@property (nonatomic, strong, readonly) NSDictionary *pb_expressions;
 
 /** The plist layout file name */
 @property (nonatomic, strong) NSString *pb_layoutName;
 
 /** The plist layout mapper */
 @property (nonatomic, strong) PBLayoutMapper *pb_layoutMapper;
+
+#pragma mark - Mapping
+///=============================================================================
+/// @name Mapping
+///=============================================================================
+
+- (void)pb_setConstants:(NSDictionary *)constants fromPlist:(NSString *)plist;
+
+- (void)pb_setExpressions:(NSDictionary *)expressions fromPlist:(NSString *)plist;
 
 /**
  Set mappable for the key path. 

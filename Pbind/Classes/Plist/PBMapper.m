@@ -13,6 +13,7 @@
 #import <UIKit/UIKit.h>
 #import "UIView+Pbind.h"
 #import "PBExpression.h"
+#import "PBInline.h"
 
 @interface PBMapperProperties (Private)
 
@@ -36,6 +37,17 @@
     }
     
     return [self mapperWithDictionary:dictionary];
+}
+
++ (instancetype)mapperNamed:(NSString *)plistName {
+    NSDictionary *dictionary = PBPlist(plistName);
+    if (dictionary == nil) {
+        return nil;
+    }
+    
+    PBMapper *mapper = [self mapperWithDictionary:dictionary];
+    mapper.plist = plistName;
+    return mapper;
 }
 
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary
@@ -94,7 +106,7 @@
             properties = temp;
         }
         
-        _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
+        _viewProperties = [PBMapperProperties propertiesWithDictionary:properties mapper:self];
         [selfProperties removeObjectForKey:@"properties"];
     }
     
@@ -103,7 +115,7 @@
         _subviewProperties = [[NSMutableArray alloc] initWithCapacity:[subproperties count]];
         for (NSInteger index = 0; index < [subproperties count]; index++) {
             properties = [subproperties objectAtIndex:index];
-            [_subviewProperties addObject:[PBMapperProperties propertiesWithDictionary:properties]];
+            [_subviewProperties addObject:[PBMapperProperties propertiesWithDictionary:properties mapper:self]];
         }
         [selfProperties removeObjectForKey:@"subproperties"];
     }
@@ -111,7 +123,7 @@
     if (aliasProperties != nil) {
         _aliasProperties = [NSMutableDictionary dictionaryWithCapacity:aliasProperties.count];
         for (NSString *tag in aliasProperties) {
-            PBMapperProperties *p = [PBMapperProperties propertiesWithDictionary:aliasProperties[tag]];
+            PBMapperProperties *p = [PBMapperProperties propertiesWithDictionary:aliasProperties[tag] mapper:self];
             [_aliasProperties setObject:p forKey:tag];
         }
     }
@@ -121,17 +133,17 @@
         for (NSString *key in outletProperties) {
             NSString *aKey = [key substringFromIndex:1]; // bypass '.'
             NSDictionary *properties = [outletProperties objectForKey:key];
-            [_outletProperties setObject:[PBMapperProperties propertiesWithDictionary:properties] forKey:aKey];
+            [_outletProperties setObject:[PBMapperProperties propertiesWithDictionary:properties mapper:self] forKey:aKey];
         }
     }
     
     NSDictionary *navProperties = [dictionary objectForKey:@"nav"];
     if (navProperties != nil) {
-        _navProperties = [PBMapperProperties propertiesWithDictionary:navProperties];
+        _navProperties = [PBMapperProperties propertiesWithDictionary:navProperties mapper:self];
         [selfProperties removeObjectForKey:@"nav"];
     }
     
-    _properties = [PBMapperProperties propertiesWithDictionary:selfProperties];
+    _properties = [PBMapperProperties propertiesWithDictionary:selfProperties mapper:self];
     [_properties initDataForOwner:self];
 }
 
@@ -149,8 +161,8 @@
 {
     if (_viewProperties == nil) {
         // Reset the view properties
-        [view setPb_constants:nil];
-        [view setPb_expressions:nil];
+        [view pb_setConstants:nil fromPlist:self.plist];
+        [view pb_setExpressions:nil fromPlist:self.plist];
     } else {
         // Init owner's properties
         if (![_viewProperties initPropertiesForOwner:view]) {

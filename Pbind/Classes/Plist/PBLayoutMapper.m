@@ -31,20 +31,20 @@
         view = [(id)view contentView];
     }
     
-    view.pb_layoutName = self.name;
+    view.pb_layoutName = self.plist;
     view.pb_layoutMapper = self;
     
     // Check if any view be removed.
     NSArray *aliases = [self.views allKeys];
-    NSMutableArray *addedAliases = [NSMutableArray arrayWithCapacity:aliases.count];
-    [self collectSubviewAliases:addedAliases ofView:view];
-    NSArray *removedAliases = [addedAliases filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", aliases]];
+    NSArray *renderedAliases = self.renderedAliases;
+    NSArray *removedAliases = [renderedAliases filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", aliases]];
     if (removedAliases.count > 0) {
         for (NSString *alias in removedAliases) {
             UIView *subview = [view viewWithAlias:alias];
             [subview removeFromSuperview];
         }
     }
+    self.renderedAliases = aliases;
     
     NSMutableDictionary<NSString *, UIView *> *views = [NSMutableDictionary dictionaryWithCapacity:viewCount];
     [views setObject:view forKey:@"super"];
@@ -151,7 +151,7 @@
 
 - (void)reload {
     [self unbind];
-    [self setPropertiesWithDictionary:PBPlist(self.name)];
+    [self setPropertiesWithDictionary:PBPlist(self.plist)];
 }
 
 #pragma mark - Helper

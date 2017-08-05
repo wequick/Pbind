@@ -30,7 +30,7 @@
         [properties removeObjectForKey:key];
     }
     
-    _viewProperties = [PBMapperProperties propertiesWithDictionary:properties];
+    _viewProperties = [PBMapperProperties propertiesWithDictionary:properties mapper:self];
     
     NSUInteger nextCount = next.count;
     if (nextCount > 0) {

@@ -27,6 +27,11 @@
 
 + (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary
 {
+    return [self propertiesWithDictionary:dictionary mapper:nil];
+}
+
++ (instancetype)propertiesWithDictionary:(NSDictionary *)dictionary mapper:(PBMapper *)mapper
+{
     PBMapperProperties *properties = [[self alloc] init];
     for (NSString *key in dictionary) {
         if ([key rangeOfString:@"//"].location == 0) {
@@ -50,7 +55,7 @@
             }
             
             // Nested
-            PBMapperProperties *subproperties = [self propertiesWithDictionary:value];
+            PBMapperProperties *subproperties = [self propertiesWithDictionary:value mapper:mapper];
             if (subproperties->_expressions == nil) {
                 if (subproperties->_constants != nil) {
                     value = subproperties->_constants;
@@ -76,6 +81,7 @@
         [properties setConstant:value forKey:key];
     }
     
+    properties.mapper = mapper;
     return properties;
 }
 
@@ -110,12 +116,12 @@
     BOOL changed = NO;
     
     if (![[owner pb_constants] isEqual:_constants]) {
-        [owner setPb_constants:_constants];
+        [owner pb_setConstants:_constants fromPlist:self.mapper.plist];
         changed = YES;
     }
     
     if (![[owner pb_expressions] isEqual:_expressions]) {
-        [owner setPb_expressions:_expressions];
+        [owner pb_setExpressions:_expressions fromPlist:self.mapper.plist];
         changed = YES;
     }
     

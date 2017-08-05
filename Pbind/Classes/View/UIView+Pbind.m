@@ -23,6 +23,18 @@
 #import "PBDataFetcher.h"
 #import "UIView+PBLayoutConstraint.h"
 
+@interface _PBPlistProperties : NSObject
+
+@property (nonatomic, copy) NSString *plist;
+@property (nonatomic, strong) NSDictionary *constants;
+@property (nonatomic, strong) NSDictionary *expressions;
+
+@end
+
+@implementation _PBPlistProperties
+
+@end
+
 @interface Pbind (UIView)
 
 + (NSArray *)viewValueSetters;
@@ -41,6 +53,7 @@
     if (self.PB_internalMapper == nil) {
         if (self._pbPlistURL != nil) {
             self.PB_internalMapper = [PBMapper mapperWithContentsOfURL:self._pbPlistURL];
+            self.PB_internalMapper.plist = self.plist;
         }
     }
     return self.PB_internalMapper;
@@ -520,7 +533,7 @@
         return [target valueForAdditionKey:[key substringFromIndex:1]];
     }
     
-    return [target valueForKeyPath:key];
+    return [PBPropertyUtils valueForKeyPath:key ofObject:target failure:nil];
 }
 
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath
@@ -581,12 +594,11 @@
     NSMutableDictionary *expressions;
     if (self.pb_expressions == nil) {
         expressions = [[NSMutableDictionary alloc] init];
-        self.pb_expressions = expressions;
+        [self setValue:expressions forAdditionKey:@"pb_expressions"];
     } else {
         expressions = [NSMutableDictionary dictionaryWithDictionary:self.pb_expressions];
     }
     [expressions setObject:aExpression forKey:keyPath];
-    [self setValue:@(YES) forAdditionKey:@"pb_expressible"];
 }
 
 - (BOOL)hasExpressionForKeyPath:(NSString *)keyPath
@@ -652,23 +664,36 @@
         return [self viewWithTag:tag];
     }
     
-    return [self _lookupViewWithAlias:alias];
+    return [self _pb_lookupViewWithAlias:alias];
 }
 
-- (UIView *)_lookupViewWithAlias:(NSString *)alias {
-    if ([self.alias isEqualToString:alias]) {
-        return self;
-    }
-    for (UIView *subview in self.subviews) {
-        UIView *theView = [subview _lookupViewWithAlias:alias];
-        if (theView != nil) {
-            return theView;
-        }
-    }
-    return nil;
+#pragma mark - Mapping
+
+- (void)pb_setConstants:(NSDictionary *)constants fromPlist:(NSString *)plist {
+    [self _pb_setProperties:constants expressive:NO fromPlist:plist];
+}
+
+- (void)pb_setExpressions:(NSDictionary *)expressions fromPlist:(NSString *)plist {
+    [self _pb_setProperties:expressions expressive:YES fromPlist:plist];
 }
 
 #pragma mark - Addition properties
+
+- (NSMutableDictionary *)pb_constantKeys {
+    return [self valueForAdditionKey:@"pb_constantKeys"];
+}
+
+- (void)setPb_constantKeys:(NSMutableDictionary *)keys {
+    [self setValue:keys forAdditionKey:@"pb_constantKeys"];
+}
+
+- (NSMutableDictionary *)pb_expressionKeys {
+    return [self valueForAdditionKey:@"pb_expressionKeys"];
+}
+
+- (void)setPb_expressionKeys:(NSMutableDictionary *)keys {
+    [self setValue:keys forAdditionKey:@"pb_expressionKeys"];
+}
 
 - (void)setPb_unmappableKeys:(NSMutableArray *)keys {
     [self setValue:keys forAdditionKey:@"pb_unmappableKeys"];
@@ -678,70 +703,32 @@
     return [self valueForAdditionKey:@"pb_unmappableKeys"];
 }
 
-- (void)setPb_constants:(NSDictionary *)constants {
-    NSDictionary *orgConstants = self.pb_constants;
-    if (orgConstants != nil) {
-        // Check if any key has been removed.
-        NSArray *orgKeys = [orgConstants allKeys];
-        NSArray *newKeys = [constants allKeys];
-        NSArray *removedKeys;
-        if (constants == nil || newKeys.count == 0) {
-            removedKeys = orgKeys;
-        } else {
-            NSPredicate *pd = [NSPredicate predicateWithFormat:@"NOT SELF IN %@", [constants allKeys]];
-            removedKeys = [[orgConstants allKeys] filteredArrayUsingPredicate:pd];
-        }
-        
-        if (removedKeys.count > 0) {
-            // Reset the default value for the key removed.
-            [self setDefaultValueForKeys:removedKeys];
-        }
-    }
-    
-    [self setValue:constants forAdditionKey:@"pb_constants"];
-}
-
 - (NSDictionary *)pb_constants {
-    return [self valueForAdditionKey:@"pb_constants"];
-}
-
-- (void)setDefaultValueForKeys:(NSArray *)keys {
-    UIView *temp = [[[self class] alloc] init];
-    for (NSString *key in keys) {
-        id defaultValue = [temp pb_valueForKeyPath:key];
-        [self pb_setValue:defaultValue forKeyPath:key];
-    }
-}
-
-- (void)setPb_expressions:(NSDictionary *)expressions {
-    NSDictionary *orgExpressions = self.pb_expressions;
-    if (orgExpressions != nil) {
-        // Check if any key has been removed.
-        NSArray *orgKeys = [orgExpressions allKeys];
-        NSArray *newKeys = [expressions allKeys];
-        NSArray *removedKeys;
-        if (expressions == nil || newKeys.count == 0) {
-            removedKeys = orgKeys;
-        } else {
-            NSPredicate *pd = [NSPredicate predicateWithFormat:@"NOT SELF IN %@", [expressions allKeys]];
-            removedKeys = [[orgExpressions allKeys] filteredArrayUsingPredicate:pd];
-        }
-        
-        if (removedKeys.count > 0) {
-            // Clear the value for the key removed.
-            for (NSString *key in removedKeys) {
-                PBExpression *expression = [orgExpressions objectForKey:key];
-                [expression unbind:self forKeyPath:key];
-            }
-            [self setDefaultValueForKeys:removedKeys];
-        }
+    NSArray *properties = [self valueForAdditionKey:@"pb_properties"];
+    if (properties.count == 0) {
+        return nil;
     }
     
-    [self setValue:expressions forAdditionKey:@"pb_expressions"];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    for (_PBPlistProperties *pp in properties) {
+        [dict addEntriesFromDictionary:pp.constants];
+    }
+    return dict.count > 0 ? dict : nil;
+//    return [self valueForAdditionKey:@"pb_constants"];
 }
 
 - (NSDictionary *)pb_expressions {
-    return [self valueForAdditionKey:@"pb_expressions"];
+    NSArray *properties = [self valueForAdditionKey:@"pb_properties"];
+    if (properties.count == 0) {
+        return nil;
+    }
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    for (_PBPlistProperties *pp in properties) {
+        [dict addEntriesFromDictionary:pp.expressions];
+    }
+    return dict.count > 0 ? dict : nil;
+//    return [self valueForAdditionKey:@"pb_expressions"];
 }
 
 - (void)set_pbPlistURL:(NSURL *)value {
@@ -873,6 +860,128 @@
 
 - (PBLayoutMapper *)pb_layoutMapper {
     return [self valueForAdditionKey:@"pb_layoutMapper"];
+}
+
+#pragma mark - Internal
+
+- (void)_pb_setProperties:(NSDictionary *)properties expressive:(BOOL)expressive fromPlist:(NSString *)plist {
+    if (plist == nil || [plist isEqual:[NSNull null]]) {
+        plist = @"";
+    }
+    
+    _PBPlistProperties *pp = nil;
+    NSMutableArray *pps = [self valueForAdditionKey:@"pb_properties"];
+    if (pps != nil) {
+        // 已经创建
+        NSArray *filters = [pps filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"plist = %@", plist]];
+        if (filters.count > 0) {
+            pp = [filters firstObject];
+        }
+        
+        if (pp == nil) {
+            // 未添加该 plist 对应的属性
+            pp = [[_PBPlistProperties alloc] init];
+            pp.plist = plist;
+            if (expressive) {
+                pp.expressions = properties;
+            } else {
+                pp.constants = properties;
+            }
+            [pps addObject:pp];
+        } else {
+            // 已添加该 plist 对应的属性，更新之
+            NSDictionary *oldProperties;
+            if (expressive) {
+                oldProperties = pp.expressions;
+                pp.expressions = properties;
+            } else {
+                oldProperties = pp.constants;
+                pp.constants = properties;
+            }
+            
+            // 检查是否有 删除 发生
+            NSArray *newKeys = [properties allKeys];
+            NSArray *oldKeys = [oldProperties allKeys];
+            if (oldKeys.count > 0) {
+                NSArray *removedKeys;
+                if (newKeys.count == 0) {
+                    removedKeys = oldKeys;
+                } else {
+                    NSPredicate *pd = [NSPredicate predicateWithFormat:@"NOT SELF IN %@", newKeys];
+                    removedKeys = [oldKeys filteredArrayUsingPredicate:pd];
+                }
+                
+                if (removedKeys.count > 0) {
+                    // 部分属性在当前 plist 被移除了，检查其他 plist 是否存在该配置，如果全部不存在，将该属性赋予初始值
+                    NSMutableArray *realRemovedKeys = [NSMutableArray arrayWithArray:removedKeys];
+                    NSPredicate *pd = [NSPredicate predicateWithFormat:@"SELF IN %@", removedKeys];
+                    for (_PBPlistProperties *temp in pps) {
+                        if (temp == pp) {
+                            continue;
+                        }
+                        
+                        NSDictionary *tempProperties = expressive ? temp.expressions : temp.constants;
+                        NSArray *existedKeys = [[tempProperties allKeys] filteredArrayUsingPredicate:pd];
+                        if (existedKeys.count > 0) {
+                            [realRemovedKeys removeObjectsInArray:existedKeys];
+                            pd = [NSPredicate predicateWithFormat:@"SELF IN %@", realRemovedKeys];
+                        }
+                    }
+                    
+                    if (realRemovedKeys.count > 0) {
+                        if (expressive) {
+                            // Unbind expression
+                            for (NSString *key in realRemovedKeys) {
+                                PBExpression *expression = [oldProperties objectForKey:key];
+                                [expression unbind:self forKeyPath:key];
+                            }
+                        }
+                        // Reset the default value for the key removed.
+                        [self _pb_setDefaultValueForKeys:realRemovedKeys];
+                    }
+                }
+            }
+        }
+
+    } else {
+        // 首次创建
+        if (properties == nil) {
+            return;
+        }
+        
+        pp = [[_PBPlistProperties alloc] init];
+        pp.plist = plist;
+        if (expressive) {
+            pp.expressions = properties;
+        } else {
+            pp.constants = properties;
+        }
+        pps = [[NSMutableArray alloc] init];
+        [pps addObject:pp];
+        
+        [self setValue:pps forAdditionKey:@"pb_properties"];
+    }
+}
+
+- (void)_pb_setDefaultValueForKeys:(NSArray *)keys {
+    UIView *temp = [[[self class] alloc] init];
+    for (NSString *key in keys) {
+        id defaultValue = [temp pb_valueForKeyPath:key];
+        [self pb_setValue:defaultValue forKeyPath:key];
+    }
+}
+
+- (UIView *)_pb_lookupViewWithAlias:(NSString *)alias {
+    if ([self.alias isEqualToString:alias]) {
+        return self;
+    }
+    for (UIView *subview in self.subviews) {
+        UIView *theView = [subview _pb_lookupViewWithAlias:alias];
+        if (theView != nil) {
+            return theView;
+        }
+    }
+    return nil;
 }
 
 @end

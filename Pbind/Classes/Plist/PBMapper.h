@@ -37,14 +37,37 @@
     NSMutableDictionary *_outletProperties;// for view's outlet subview
 }
 
+#pragma mark - Creating
+///=============================================================================
+/// @name Creating
+///=============================================================================
+
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url;
++ (instancetype)mapperNamed:(NSString *)plistName;
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary;
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
 
+- (id)initWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
+
+#pragma mark - Caching
+///=============================================================================
+/// @name Caching
+///=============================================================================
+
+@property (nonatomic, strong) NSString *plist;
 @property (nonatomic, weak) UIView *owner;
 
-- (id)initWithDictionary:(NSDictionary *)dictionary owner:(UIView *)owner;
+#pragma mark - Inheriting
+///=============================================================================
+/// @name Inheriting
+///=============================================================================
+
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary;
+
+#pragma mark - API
+///=============================================================================
+/// @name API
+///=============================================================================
 
 - (void)setPropertiesToObject:(id)object transform:(id (^)(NSString *key, id value))transform;
 - (void)mapPropertiesToObject:(id)object withData:(id)data context:(UIView *)context;
@@ -64,6 +87,11 @@
 - (BOOL)isExpressiveForKey:(NSString *)key;
 
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key;
+
+#pragma mark - Debugging
+///=============================================================================
+/// @name Debugging
+///=============================================================================
 
 /** The source dictionary of `_viewProperties' */
 - (NSDictionary *)targetSource;

@@ -243,9 +243,7 @@ static const CGFloat kHeightUnset = -2;
     }
     
     _layout = layout;
-    NSDictionary *dict = PBPlist(layout);
-    _layoutMapper = [PBLayoutMapper mapperWithDictionary:dict];
-    _layoutMapper.name = layout;
+    _layoutMapper = [PBLayoutMapper mapperNamed:layout];
 }
 
 - (void)setActions:(NSDictionary *)as {
