@@ -872,7 +872,7 @@
     _PBPlistProperties *pp = nil;
     NSMutableArray *pps = [self valueForAdditionKey:@"pb_properties"];
     if (pps != nil) {
-        // 已经创建
+        // 已经缓存，根据 plist 找出其对应的属性集
         NSArray *filters = [pps filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"plist = %@", plist]];
         if (filters.count > 0) {
             pp = [filters firstObject];
@@ -944,7 +944,7 @@
         }
 
     } else {
-        // 首次创建
+        // 首次添加
         if (properties == nil) {
             return;
         }
