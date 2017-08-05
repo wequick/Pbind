@@ -80,6 +80,10 @@ static NSMutableArray *kViewValueAsyncSetters = nil;
         for (UIViewController *vc in tc.viewControllers) {
             [self enumerateControllersUsingBlock:block withController:vc];
         }
+    } else if (controller.childViewControllers != nil) {
+        for (UIViewController *vc in controller.childViewControllers) {
+            [self enumerateControllersUsingBlock:block withController:vc];
+        }
     }
 }
 
