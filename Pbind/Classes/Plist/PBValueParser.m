@@ -314,8 +314,8 @@ static float readcolor(char **str, int len) {
             a = readcolor(&p, 2);
             break;
         default:
-//            NSLog(@"PBValueParser: Invalid color format '%s'", str);
-            return nil;
+            NSLog(@"Pbind: Invalid color format '%s', must be #RGB(@alpha), #RRGGBB(@alpha) or #RRGGBBAA.", str);
+            return [UIColor blackColor];
     }
     
     if (*p2 == '@') {
