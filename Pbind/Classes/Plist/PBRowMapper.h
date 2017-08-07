@@ -94,6 +94,11 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, strong) NSString *parent;
 
+/**
+ The order adds to parent view, lower order will be added firstly.
+ */
+@property (nonatomic, assign) NSInteger order;
+
 #pragma mark - Styling
 ///=============================================================================
 /// @name Styling
@@ -223,6 +228,9 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  Whether the height is defined by an expression.
  */
 @property (nonatomic, assign, readonly, getter=isHeightExpressive) BOOL heightExpressive;
+
+/** The view alias */
+@property (nonatomic, strong) NSString *alias;
 
 - (BOOL)hiddenForView:(id)view withData:(id)data;
 - (CGFloat)heightForView:(id)view withData:(id)data;

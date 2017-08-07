@@ -53,9 +53,21 @@
     NSMutableArray<UIView *> *nestedViews = [NSMutableArray arrayWithCapacity:viewCount];
     BOOL needsReset = NO;
     
+    // Sort the views by order
+    NSMutableArray *orderedMappers = [[NSMutableArray alloc] initWithCapacity:viewCount];
     for (NSString *alias in self.views) {
         NSDictionary *properties = [self.views objectForKey:alias];
         PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:properties];
+        mapper.alias = alias;
+        [orderedMappers addObject:mapper];
+    }
+    [orderedMappers sortUsingComparator:^NSComparisonResult(PBRowMapper *obj1, PBRowMapper *obj2) {
+        NSInteger diff = obj2.order - obj1.order;
+        return diff == 0 ? NSOrderedSame : (diff > 0 ? NSOrderedAscending : NSOrderedDescending);
+    }];
+    
+    for (PBRowMapper *mapper in orderedMappers) {
+        NSString *alias = mapper.alias;
         UIView *subview = [view viewWithAlias:alias];
         
         // Support for instant updating.
