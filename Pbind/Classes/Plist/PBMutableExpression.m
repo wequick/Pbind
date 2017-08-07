@@ -17,7 +17,11 @@
 #import "Pbind+API.h"
 #import "PBDictionary.h"
 
-typedef id (*JSValueConvertorFunc)(id, SEL);
+@interface Pbind (Private)
+
++ (void (^)(JSContext *))jsContextInitializer;
+
+@end
 
 @interface PBExpression (Private)
 
@@ -34,6 +38,10 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         context = [[JSContext alloc] init];
+        void (^initializer)(JSContext *) = [Pbind jsContextInitializer];
+        if (initializer != nil) {
+            initializer(context);
+        }
     });
     return context;
 }
@@ -129,8 +137,18 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             *p2++ = *p++;
         }
         if (*p == '\0') {
-            NSLog(@"PBMutableExpression: '%%(),' should keep up with as least as 1 expression.");
-            return nil;
+            if ([self requiresExpression]) {
+                NSLog(@"Pbind: the expression %s should takes 1 expression as least.");
+                return nil;
+            } else if (*(p - 1) != fmtEnd) {
+                NSLog(@"Pbind: the expression %s should ends with %c.", str, fmtEnd);
+                return nil;
+            } else {
+                *(p2 - 1) = '\0';
+                _format = [NSString stringWithUTF8String:temp];
+                free(temp);
+                return self;
+            }
         }
         
         *p2 = '\0';
@@ -229,6 +247,10 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
     return [super _dataSourceWithData:data target:target context:context];
 }
 
+- (BOOL)requiresExpression {
+    return !_keywordFlags.backticks && !_formatFlags.customized;
+}
+
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag
 {
     if (_properties != nil) {
@@ -242,6 +264,11 @@ typedef id (*JSValueConvertorFunc)(id, SEL);
             }
         }
         return NO;
+    }
+    
+    if (![self requiresExpression]) {
+        // Always match literals
+        return YES;
     }
     
     return [super matchesType:type dataTag:dataTag];

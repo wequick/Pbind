@@ -24,6 +24,7 @@ static NSMutableArray *kResourcesBundles = nil;
 static NSMutableArray *kPlistReloaders = nil;
 static NSMutableArray *kViewValueSetters = nil;
 static NSMutableArray *kViewValueAsyncSetters = nil;
+static void (^kJSContextInitializer)(JSContext *context) = nil;
 
 + (void)setSketchWidth:(CGFloat)sketchWidth {
     kValueScale = [UIScreen mainScreen].bounds.size.width / sketchWidth;
@@ -207,6 +208,14 @@ static NSMutableArray *kViewValueAsyncSetters = nil;
 
 + (NSArray *)viewValueAsyncSetters {
     return kViewValueAsyncSetters;
+}
+
++ (void)registerJSContextInitializer:(void (^)(JSContext *))initializer {
+    kJSContextInitializer = initializer;
+}
+
++ (void (^)(JSContext *))jsContextInitializer {
+    return kJSContextInitializer;
 }
 
 @end

@@ -10,6 +10,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
 typedef void(^PBPlistReloader)(UIView *rootView, UIView *view, NSString *changedPlist, BOOL *stop);
 typedef id(^PBViewValueSetter)(UIView *view, NSString *keyPath, id value, BOOL *canceld, UIView *contextView, NSString *contextKeyPath);
@@ -60,5 +61,7 @@ typedef void(^PBViewValueAsyncSetter)(UIView *view, NSString *keyPath, id value,
 + (void)registerViewValueSetter:(PBViewValueSetter)setter;
 
 + (void)registerViewValueAsyncSetter:(PBViewValueAsyncSetter)asyncSetter;
+
++ (void)registerJSContextInitializer:(void (^)(JSContext *context))initializer;
 
 @end
