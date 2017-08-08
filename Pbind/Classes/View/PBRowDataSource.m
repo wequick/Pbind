@@ -230,6 +230,9 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                 aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:self.owner];
             }
             
+            if (aSection.header != nil) {
+                aSection.header = [PBHeaderFooterMapper mapperWithDictionary:aSection.header owner:self.owner];
+            }
             if (aSection.footer != nil) {
                 aSection.footer = [PBHeaderFooterMapper mapperWithDictionary:aSection.footer owner:self.owner];
             }
@@ -601,8 +604,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     if (self.sections != nil) {
-        PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        return aSection.title;
+        if (self.sections.count <= section) {
+            return nil;
+        }
+        PBHeaderFooterMapper *header = [self.sections objectAtIndex:section].header;
+        return header.title;
     } else if ([tableView.data isKindOfClass:[PBSection class]]) {
         return [(PBSection *)tableView.data titleOfSection:section];
     }
@@ -612,6 +618,14 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 - (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver tableView:tableView titleForFooterInSection:section];
+    }
+    
+    if (self.sections != nil) {
+        if (self.sections.count <= section) {
+            return nil;
+        }
+        PBHeaderFooterMapper *footer = [self.sections objectAtIndex:section].footer;
+        return footer.title;
     }
     return nil;
 }
