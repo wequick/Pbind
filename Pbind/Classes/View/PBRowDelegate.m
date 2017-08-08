@@ -450,7 +450,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:sectionView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
     [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:sectionView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
-    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sectionView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
+    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:sectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
     [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:sectionView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
     
     sectionView.section = section;
