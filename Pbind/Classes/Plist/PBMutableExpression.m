@@ -215,6 +215,10 @@
     NSMutableArray *expressions = [[NSMutableArray alloc] initWithCapacity:[components count]];
     for (NSString *exp in components) {
         PBExpression *expression = [[PBExpression alloc] initWithString:exp];
+        if (expression == nil) {
+            NSLog(@"Pbind: Failed to parse expression '%@'.", exp);
+            continue;
+        }
         expression.parent = self;
         [expressions addObject:expression];
     }
