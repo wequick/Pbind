@@ -40,8 +40,6 @@
 /// @name Datasource
 ///=============================================================================
 
-@property (nonatomic, strong) NSDictionary *section;
-
 /** The reusable item for all the sections */
 @property (nonatomic, strong) NSDictionary *item;
 

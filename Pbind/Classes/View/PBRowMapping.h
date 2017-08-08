@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSDictionary *row; // body cell as repeated
 @property (nonatomic, strong) NSArray *rows; // array with PBRowMapper for body cells
 @property (nonatomic, strong) NSArray *sections; // array with PBSectionMapper for body cells
+@property (nonatomic, strong) NSDictionary *section; // common configuration for sections
 
 /**
  The index path selected by user.
