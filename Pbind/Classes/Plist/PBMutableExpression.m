@@ -248,7 +248,7 @@
 }
 
 - (BOOL)requiresExpression {
-    return !_keywordFlags.backticks && !_formatFlags.customized;
+    return !_keywordFlags.backticks && !_keywordFlags.string && !_formatFlags.customized;
 }
 
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag
