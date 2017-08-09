@@ -7,12 +7,20 @@
 //
 
 #import "PBAppDelegate.h"
+#import <Pbind/Pbind.h>
 
 @implementation PBAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    PBTableViewController *rootVC = [[PBTableViewController alloc] init];
+    rootVC.plist = @"table.main";
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:rootVC];
+    UIWindow *window = [[UIWindow alloc] init];
+    window.rootViewController = nav;
+    self.window = window;
+    [window makeKeyAndVisible];
     return YES;
 }
 

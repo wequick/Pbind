@@ -28,7 +28,7 @@
 @implementation PBTableView
 
 @synthesize listKey, page, pagingParams, needsLoadMore;
-@synthesize row, rows, sections, rowDataSource, rowDelegate;
+@synthesize row, rows, section, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize registeredCellIdentifiers, registeredSectionIdentifiers;

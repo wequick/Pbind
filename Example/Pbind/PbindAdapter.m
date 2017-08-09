@@ -9,6 +9,7 @@
 #import "PbindAdapter.h"
 #import <Pbind/Pbind.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import "MyStyle.h"
 
 @implementation PbindAdapter
 
@@ -18,8 +19,10 @@
 }
 
 + (void)applicationDidFinishLaunching:(NSNotification *)note {
-    // 标注图宽度，用于Plist配置自动换算尺寸
-//    [Pbind setSketchWidth:1080];
+    // 变量映射
+    [PBVariableMapper registerTag:'S' withMapper:^id(id data, id target, UIView *context) {
+        return [MyStyle defaultStyle];
+    }];
     
     // MBProgressHUD
     [[UIActivityIndicatorView appearanceWhenContainedIn:[MBProgressHUD class], nil] setColor:[UIColor whiteColor]];

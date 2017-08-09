@@ -265,12 +265,15 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
     
     if (self.dataSource.sections != nil) {
-        PBSectionMapper *aSection = [self.dataSource.sections objectAtIndex:section];
-        CGFloat height = [aSection heightForData:tableView.data];
-        if (height >= 0) {
-            return height;
+        if (self.dataSource.sections.count <= section) {
+            return 0;
         }
-        return tableView.sectionHeaderHeight;
+        
+        PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
+        if (mapper.header == nil) {
+            return 0;
+        }
+        return [mapper.header heightForData:tableView.data];
     } else if ([tableView.data isKindOfClass:[PBSection class]]) {
         return tableView.sectionHeaderHeight;
     } else if (self.dataSource.row != nil || self.dataSource.rows != nil) {
@@ -296,9 +299,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (mapper.footer == nil) {
         return 0;
     }
-    
-    PBRowMapper *footerMapper = (id) mapper.footer;
-    return [footerMapper heightForData:tableView.data];
+    return [mapper.footer heightForData:tableView.data];
 }
 
 // Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.
@@ -332,7 +333,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return [self.receiver tableView:tableView estimatedHeightForHeaderInSection:section];
     }
     
-    PBRowMapper *row = [self.dataSource.sections objectAtIndex:section];
+    PBRowMapper *row = [self.dataSource.sections objectAtIndex:section].header;
     if (row == nil) {
         return tableView.estimatedSectionHeaderHeight;
     }
@@ -382,17 +383,16 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return [self.receiver tableView:tableView viewForHeaderInSection:section];
     }
     
-    PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
-    if (mapper == nil || mapper.viewClass == nil) {
+    if (self.dataSource.sections.count <= section) {
         return nil;
     }
     
-//    CGRect frame = CGRectMake(0, 0, tableView.bounds.size.width, mapper.height);
-    UIView *view = [[mapper.viewClass alloc] init];
-    [mapper initDataForView:view];
-    [mapper mapData:tableView.data forView:view];
+    PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
+    if (mapper.header == nil) {
+        return nil;
+    }
     
-    return view;
+    return [self tableView:tableView viewForHeaderFooterInSection:section withMapper:mapper.header isHeader:YES];
 }// custom view for header. will be adjusted to default or specified header height
 
 - (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
@@ -409,46 +409,53 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return nil;
     }
     
-    PBSectionView *footerView = [[PBSectionView alloc] init];
+    return [self tableView:tableView viewForHeaderFooterInSection:section withMapper:mapper.footer isHeader:NO];
+}// custom view for footer. will be adjusted to default or specified footer height
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderFooterInSection:(NSInteger)section withMapper:(PBHeaderFooterMapper *)mapper isHeader:(BOOL)isHeader {
+    PBSectionView *sectionView = [[PBSectionView alloc] init];
+    [mapper updateWithData:tableView.data andView:tableView];
     
     // Create content view
     UIView *contentView = nil;
-    PBHeaderFooterMapper *footerMapper = (id) mapper.footer;
-    NSString *title = footerMapper.title;
+    NSString *title = mapper.title;
     if (title != nil) {
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.text = title;
         titleLabel.numberOfLines = 0;
-        if (footerMapper.titleFont != nil) {
-            titleLabel.font = footerMapper.titleFont;
+        if (mapper.titleFont != nil) {
+            titleLabel.font = mapper.titleFont;
         }
-        if (footerMapper.titleColor != nil) {
-            titleLabel.textColor = footerMapper.titleColor;
+        if (mapper.titleColor != nil) {
+            titleLabel.textColor = mapper.titleColor;
+        }
+        if (mapper.backgroundColor != nil) {
+            sectionView.backgroundColor = mapper.backgroundColor;
         }
         contentView = titleLabel;
     } else {
         // Custom footer view
-        contentView = [[footerMapper.viewClass alloc] init];
-        if (footerMapper.layoutMapper != nil) {
-            [footerMapper.layoutMapper renderToView:contentView];
+        contentView = [[mapper.viewClass alloc] init];
+        if (mapper.layoutMapper != nil) {
+            [mapper.layoutMapper renderToView:contentView];
         }
         
-        [footerMapper initDataForView:contentView];
-        [footerMapper mapData:tableView.data forView:contentView];
+        [mapper initDataForView:contentView];
+        [mapper mapData:tableView.data forView:contentView];
     }
     
     // Set content view margin
-    [footerView addSubview:contentView];
-    UIEdgeInsets margin = footerMapper.margin;
+    [sectionView addSubview:contentView];
+    UIEdgeInsets margin = mapper.margin;
     contentView.translatesAutoresizingMaskIntoConstraints = NO;
-    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
-    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
-    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:footerView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
-    [footerView addConstraint:[NSLayoutConstraint constraintWithItem:footerView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
+    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:sectionView attribute:NSLayoutAttributeTop multiplier:1 constant:margin.top]];
+    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:sectionView attribute:NSLayoutAttributeLeft multiplier:1 constant:margin.left]];
+    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:sectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:margin.bottom]];
+    [sectionView addConstraint:[NSLayoutConstraint constraintWithItem:sectionView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeRight multiplier:1 constant:margin.right]];
     
-    footerView.section = section;
-    return footerView;
-}// custom view for footer. will be adjusted to default or specified footer height
+    sectionView.section = section;
+    return sectionView;
+}
 
 //#pragma mark - Accessories (disclosures).
 

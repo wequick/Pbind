@@ -59,9 +59,16 @@
 @property (nonatomic, strong) id emptyRow;
 
 /**
+ The header view of the section.
+ 
+ @discussion the dictionary here will be parsed to a PBHeaderFooterMapper.
+ */
+@property (nonatomic, strong) id header;
+
+/**
  The footer view of the section.
  
- @discussion the dictionary here will be parsed to a PBRowMapper.
+ @discussion the dictionary here will be parsed to a PBHeaderFooterMapper.
  */
 @property (nonatomic, strong) id footer;
 

@@ -45,6 +45,7 @@
                 || [key isEqualToString:@"item"]
                 || [key isEqualToString:@"emptyRow"]
                 || [key isEqualToString:@"errorRow"]
+                || [key isEqualToString:@"header"]
                 || [key isEqualToString:@"footer"]
                 || [key isEqualToString:@"accessoryView"]
                 || [key isEqualToString:@"views"]

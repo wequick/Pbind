@@ -201,11 +201,37 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     // Parsing sections: NSArray<NSDcitionary> to NSArray<PBSectionMapper>
+    NSDictionary *section = self.owner.section;
+    if (section != nil) {
+        if (rowSource != nil) {
+            section = [self dictionaryByMergingDictionary:@{@"row": rowSource} withAnother:section];
+        }
+    }
+    
     NSArray *sections = self.owner.sections;
-    if ([sections count] > 0) {
-        NSMutableArray *temp = [NSMutableArray arrayWithCapacity:[sections count]];
-        for (NSInteger section = 0; section < [sections count]; section++) {
-            NSDictionary *dict = [sections objectAtIndex:section];
+    NSUInteger sectionCount = 0;
+    if (sections == nil) {
+        if (section != nil) {
+            sections = @[section];
+            sectionCount = 1;
+        }
+    } else {
+        sectionCount = sections.count;
+        if (sectionCount > 0 && section != nil) {
+            // Take the `section' as base
+            NSMutableArray *mergedSections = [NSMutableArray arrayWithCapacity:sectionCount];
+            for (NSDictionary *aSection in sections) {
+                NSDictionary *mergedSection = [self dictionaryByMergingDictionary:section withAnother:aSection];
+                [mergedSections addObject:mergedSection];
+            }
+            sections = mergedSections;
+        }
+    }
+    
+    if (sectionCount > 0) {
+        NSMutableArray *temp = [NSMutableArray arrayWithCapacity:sectionCount];
+        for (NSInteger sectionIndex = 0; sectionIndex < sectionCount; sectionIndex++) {
+            NSDictionary *dict = [sections objectAtIndex:sectionIndex];
             PBSectionMapper *aSection = [PBSectionMapper mapperWithDictionary:dict owner:self.owner];
             NSDictionary *aRowSource = (id)aSection.row;
             
@@ -230,6 +256,9 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                 aSection.emptyRow = [PBRowMapper mapperWithDictionary:aSection.emptyRow owner:self.owner];
             }
             
+            if (aSection.header != nil) {
+                aSection.header = [PBHeaderFooterMapper mapperWithDictionary:aSection.header owner:self.owner];
+            }
             if (aSection.footer != nil) {
                 aSection.footer = [PBHeaderFooterMapper mapperWithDictionary:aSection.footer owner:self.owner];
             }
@@ -601,8 +630,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     if (self.sections != nil) {
-        PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        return aSection.title;
+        if (self.sections.count <= section) {
+            return nil;
+        }
+        PBHeaderFooterMapper *header = [self.sections objectAtIndex:section].header;
+        return header.title;
     } else if ([tableView.data isKindOfClass:[PBSection class]]) {
         return [(PBSection *)tableView.data titleOfSection:section];
     }
@@ -612,6 +644,14 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 - (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if ([self.receiver respondsToSelector:_cmd]) {
         return [self.receiver tableView:tableView titleForFooterInSection:section];
+    }
+    
+    if (self.sections != nil) {
+        if (self.sections.count <= section) {
+            return nil;
+        }
+        PBHeaderFooterMapper *footer = [self.sections objectAtIndex:section].footer;
+        return footer.title;
     }
     return nil;
 }

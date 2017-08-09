@@ -237,21 +237,6 @@
     return rows;
 }
 
-- (NSArray *)sections {
-    if (sections != nil) {
-        return sections;
-    }
-    
-    if (section != nil) {
-        NSMutableDictionary *aSection = [NSMutableDictionary dictionaryWithDictionary:section];
-        if (row != nil) {
-            aSection[@"row"] = row;
-        }
-        return @[aSection];
-    }
-    return nil;
-}
-
 - (void)performBatchUpdates:(void (^)(void))updates completion:(void (^)(BOOL))completion {
     [super performBatchUpdates:updates completion:^(BOOL finished) {
         if (completion) {

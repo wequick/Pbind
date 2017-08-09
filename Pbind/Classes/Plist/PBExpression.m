@@ -299,9 +299,10 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else if (_flags.mapToActionStateData) {
         return [PBActionStore defaultStore].state.data;
     } else if (_flags.mapToOwnerView) {
-        return context;
+        return [target isKindOfClass:[UIView class]] ? target : context;
     } else if (_flags.mapToOwnerViewData) {
-        return [self _dataSourceWithData:[context data] atIndex:0];
+        UIView *targetView = [target isKindOfClass:[UIView class]] ? target : context;
+        return [self _dataSourceWithData:[targetView data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
     } else if (_flags.mapToForm) {
