@@ -5,7 +5,7 @@
 	<key>properties</key>
 	<dict>
 		<key>backgroundColor</key>
-		<string>#fefefe</string>
+		<string>#eee</string>
 		<key>row</key>
 		<dict>
 			<key>layout</key>
@@ -108,14 +108,6 @@
 					<key>title</key>
 					<string>font</string>
 				</dict>
-				<key>row</key>
-				<dict>
-					<key>properties</key>
-					<dict>
-						<key>textLabel.textColor</key>
-						<string>#333</string>
-					</dict>
-				</dict>
 				<key>rows</key>
 				<array>
 					<dict>
@@ -159,6 +151,43 @@
 							<string>{F:Zapfino,14}</string>
 							<key>textLabel.text</key>
 							<string>@&quot;{F:Zapfino,14}&quot;</string>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
+					<string>textAlignment</string>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.textAlignment</key>
+							<string>:left</string>
+							<key>textLabel.text</key>
+							<string>@&quot;:left&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.textAlignment</key>
+							<string>:center</string>
+							<key>textLabel.text</key>
+							<string>@&quot;:center&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.textAlignment</key>
+							<string>:right</string>
+							<key>textLabel.text</key>
+							<string>@&quot;:right&quot;</string>
 						</dict>
 					</dict>
 				</array>

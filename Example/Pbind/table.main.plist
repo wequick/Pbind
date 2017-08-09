@@ -25,6 +25,8 @@
 						<string>.textLabel.text</string>
 						<key>plist</key>
 						<string>.$plist</string>
+						<key>grouped</key>
+						<true/>
 					</dict>
 				</dict>
 			</dict>

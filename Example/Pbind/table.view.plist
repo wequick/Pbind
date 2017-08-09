@@ -5,7 +5,7 @@
 	<key>properties</key>
 	<dict>
 		<key>backgroundColor</key>
-		<string>#fefefe</string>
+		<string>#eee</string>
 		<key>row</key>
 		<dict>
 			<key>layout</key>
@@ -38,9 +38,9 @@
 				<key>height</key>
 				<string>:auto</string>
 				<key>titleFont</key>
-				<string>{F:14}</string>
+				<string>{F:12}</string>
 				<key>margin</key>
-				<string>{0,16,12,0}</string>
+				<string>{8,12,12,0}</string>
 				<key>titleColor</key>
 				<string>#666</string>
 			</dict>
