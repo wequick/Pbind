@@ -365,7 +365,7 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
     
     UIView *errorView = [self viewWithRow:mapper];
     [self insertSubview:errorView belowSubview:rowViewForInput];
-    [mapper initDataForView:errorView];
+    [mapper initPropertiesForTarget:errorView];
     [_rowViews insertObject:errorView atIndex:index + 1];
     
     // Bind the 'hidden' to 'error'
@@ -990,7 +990,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
             view.frame = CGRectMake(x, y, w, h);
             
             if (h > 0) {
-                [row mapData:data forView:view];
+                [row mapPropertiesToTarget:view withData:data owner:view context:self];
             }
         }
     }

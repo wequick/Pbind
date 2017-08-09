@@ -26,7 +26,7 @@
 @interface PBExpression (Private)
 
 - (instancetype)initWithUTF8String:(const char *)str;
-- (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context;
+- (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data owner:(UIView *)owner context:(UIView *)context;
 - (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context;
 
 @end
@@ -278,26 +278,26 @@
     return [super matchesType:type dataTag:dataTag];
 }
 
-- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
+- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context
 {
     if (_flags.disabled) {
         return;
     }
     
     if (_expressions == nil) {
-        return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+        return [super bindData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context];
     }
     
     if (_flags.onewayBinding || _flags.duplexBinding) {
-        if (![self initMutableVariableWithData:data keyPath:targetKeyPath target:target context:context]) {
+        if (![self initMutableVariableWithData:data keyPath:targetKeyPath target:target owner:owner context:context]) {
             return;
         }
         
-        return [super bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+        return [super bindData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context];
     }
     
     for (PBExpression *exp in _expressions) {
-        [exp bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+        [exp bindData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context];
     }
 }
 
@@ -319,26 +319,26 @@
     return [super unbind:target forKeyPath:keyPath];
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context
 {
     if (_flags.disabled) {
         return;
     }
     
     if (_format != nil) {
-        [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context];
-        [self bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+        [self setValueToTarget:target forKeyPath:targetKeyPath withData:data owner:owner context:context];
+        [self bindData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context];
     } else {
-        [super mapData:data toTarget:target forKeyPath:targetKeyPath inContext:context];
+        [super mapData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context];
     }
 }
 
-- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target context:(UIView *)context
+- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target owner:(UIView *)owner context:(UIView *)context
 {
     if (_format != nil) {
         NSMutableArray *arguments = [[NSMutableArray alloc] init];
         for (PBExpression *exp in _expressions) {
-            id value = [exp valueWithData:data target:target context:context];
+            id value = [exp valueWithData:data target:target owner:owner context:context];
             if (value == nil) {
                 if (_formatFlags.testEmpty) {
                     value = [NSNull null];
@@ -356,19 +356,20 @@
             [target setValue:value forKeyPath:keyPath];
         }
         
-        [_properties mapData:data toTarget:value withContext:context];
+        [_properties mapData:data toTarget:value withOwner:owner context:context];
         return value;
     } else if ((_flags.onewayBinding || _flags.duplexBinding) && _variable == nil) {
-        if (![self initMutableVariableWithData:data keyPath:keyPath target:target context:context]) {
+        if (![self initMutableVariableWithData:data keyPath:keyPath target:target owner:owner context:context]) {
             return nil;
         }
     }
-    return [super valueWithData:data keyPath:keyPath target:target context:context];
+    return [super valueWithData:data keyPath:keyPath target:target owner:owner context:context];
 }
 
 - (BOOL)initMutableVariableWithData:(id)data
                             keyPath:(NSString *)keyPath
                              target:(id)target
+                              owner:(UIView *)owner
                             context:(UIView *)context {
     if (_variable != nil) {
         return YES;
@@ -378,7 +379,7 @@
     NSMutableArray *keys = [NSMutableArray arrayWithCapacity:numberOfExpressions - 1];
     for (NSInteger index = 1; index < numberOfExpressions; index++) {
         PBExpression *keyExpression = _expressions[index];
-        NSString *key = [keyExpression valueWithData:data keyPath:keyPath target:target context:context];
+        NSString *key = [keyExpression valueWithData:data keyPath:keyPath target:target owner:owner context:context];
         if (key == nil) {
             // Something was not ready, hold on...
             return NO;

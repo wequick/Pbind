@@ -250,7 +250,7 @@
                 UIView *view = [self viewWithRow:_rowMapper];
                 [view setData:data];
                 [self addSubview:view];
-                [_rowMapper initDataForView:view];
+                [_rowMapper initPropertiesForTarget:view];
                 [_rowViews addObject:view];
             }
             
@@ -270,7 +270,7 @@
         for (PBRowMapper *row in _rowMappers) {
             UIView *view = [self viewWithRow:row];
             [self addSubview:view];
-            [row initDataForView:view];
+            [row initPropertiesForTarget:view];
             [_rowViews addObject:view];
         }
         [self didInitRowViews];
@@ -299,7 +299,7 @@
         for (PBRowMapper *row in mappers) {
             UIView *view = [self viewWithRow:row];
             [parentView addSubview:view];
-            [row initDataForView:view];
+            [row initPropertiesForTarget:view];
             [accessoryViews addObject:view];
         }
         _accessoryViews = accessoryViews;
@@ -317,7 +317,7 @@
             UIView *view = [_rowViews objectAtIndex:index];
             PBRowMapper *row = [self rowMapperAtIndex:index];
             if (indexes == nil || [indexes containsIndex:index]) {
-                [row mapData:data forView:view];
+                [row mapPropertiesToTarget:view withData:data owner:view context:self];
             }
             
             BOOL hidden = [row hiddenForView:view withData:data];
@@ -395,7 +395,7 @@
                 }
             } else if (indexes == nil || [indexes containsIndex:index]) {
                 // Map data
-                [row mapData:data forView:view];
+                [row mapPropertiesToTarget:view withData:data owner:view context:self];
             }
         }
         

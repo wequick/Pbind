@@ -69,16 +69,13 @@
 /// @name API
 ///=============================================================================
 
-- (void)setPropertiesToObject:(id)object transform:(id (^)(NSString *key, id value))transform;
-- (void)mapPropertiesToObject:(id)object withData:(id)data context:(UIView *)context;
+- (void)initPropertiesForTarget:(id)target;
+- (void)initPropertiesForTarget:(id)target transform:(id (^)(NSString *key, id value))transform;
+- (void)mapPropertiesToTarget:(id)object withData:(id)data owner:(UIView *)owner context:(UIView *)context;
 
-- (void)initDataForView:(UIView *)view;
-- (void)mapData:(id)data forView:(UIView *)view;
-- (void)mapData:(id)data forView:(UIView *)view withContext:(UIView *)context;
-
-- (void)updateWithData:(id)data andView:(UIView *)view;
-- (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view;
-- (void)updateValuesForKeys:(NSArray *)keys withData:(id)data andView:(UIView *)view;
+- (void)updateWithData:(id)data owner:(UIView *)owner context:(UIView *)context;
+- (void)updateValueForKey:(NSString *)key withData:(id)data owner:(UIView *)owner context:(UIView *)context;
+- (void)updateValuesForKeys:(NSArray *)keys withData:(id)data owner:(UIView *)owner context:(UIView *)context;
 
 - (void)resetForView:(UIView *)view;
 - (void)unbind;
@@ -95,5 +92,9 @@
 
 /** The source dictionary of `_viewProperties' */
 - (NSDictionary *)targetSource;
+
+#pragma mark - Depreciated
+
+- (void)updateWithData:(id)data andView:(UIView *)view;
 
 @end

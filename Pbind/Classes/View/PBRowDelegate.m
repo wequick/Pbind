@@ -414,7 +414,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderFooterInSection:(NSInteger)section withMapper:(PBHeaderFooterMapper *)mapper isHeader:(BOOL)isHeader {
     PBSectionView *sectionView = [[PBSectionView alloc] init];
-    [mapper updateWithData:tableView.data andView:tableView];
+    [mapper updateWithData:tableView.data owner:nil context:tableView];
     
     // Create content view
     UIView *contentView = nil;
@@ -440,8 +440,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             [mapper.layoutMapper renderToView:contentView];
         }
         
-        [mapper initDataForView:contentView];
-        [mapper mapData:tableView.data forView:contentView];
+        [mapper initPropertiesForTarget:contentView];
+        [mapper mapPropertiesToTarget:contentView withData:tableView.data owner:contentView context:tableView];
     }
     
     // Set content view margin
@@ -539,7 +539,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     NSMutableArray *editActions = [[NSMutableArray alloc] initWithCapacity:row.editActionMappers.count];
     for (PBRowActionMapper *actionMapper in row.editActionMappers) {
-        [actionMapper updateWithData:tableView.rootData andView:cell];
+        [actionMapper updateWithData:tableView.rootData owner:cell context:tableView];
         UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
             tableView.editingIndexPath = indexPath;
             [self dispatchAction:actionMapper forCell:cell atIndexPath:indexPath];
@@ -595,7 +595,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
     
     PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
-    [item mapData:[collectionView data] forView:cell];
+    [item mapPropertiesToTarget:cell withData:collectionView.data owner:cell context:collectionView];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {

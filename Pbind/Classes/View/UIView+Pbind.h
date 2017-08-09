@@ -164,6 +164,7 @@
 - (void)pb_mapData:(id)data; // Init dynamic properties by data
 - (void)pb_mapData:(id)data forKey:(NSString *)key;
 - (void)pb_mapData:(id)data withContext:(UIView *)context;
+- (void)pb_mapData:(id)data withOwner:(UIView *)owner context:(UIView *)context;
 - (void)pb_mapData:(id)data underType:(PBMapType)type dataTag:(unsigned char)tag;
 - (void)pb_loadData:(id)data;
 

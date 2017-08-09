@@ -62,7 +62,7 @@
         }
     }
     if (_accessoryMapper != nil) {
-        [_accessoryMapper mapData:nil forView:self.accessoryView];
+        [_accessoryMapper mapPropertiesToTarget:self.accessoryView withData:nil owner:self context:self];
     }
 }
 
@@ -71,7 +71,7 @@
         PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:(id) accessoryView];
         _accessoryMapper = mapper;
         UIView *view = [[mapper.viewClass alloc] init];
-        [mapper initDataForView:view];
+        [mapper initPropertiesForTarget:view];
         [super setAccessoryView:view];
     } else {
         [super setAccessoryView:accessoryView];

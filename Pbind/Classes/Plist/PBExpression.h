@@ -164,11 +164,11 @@ typedef enum : NSUInteger {
 
 - (id)valueWithData:(id)data;
 - (id)valueWithData:(id)data target:(id)target;
-- (id)valueWithData:(id)data target:(id)target context:(UIView *)context;
-- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target context:(UIView *)context;
+- (id)valueWithData:(id)data target:(id)target owner:(UIView *)owner context:(UIView *)context;
+- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target owner:(UIView *)owner context:(UIView *)context;
 
-- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context;
-- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context;
+- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context;
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 
 /**

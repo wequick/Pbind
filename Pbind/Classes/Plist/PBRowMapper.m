@@ -107,13 +107,13 @@ static const CGFloat kHeightUnset = -2;
     return _nib;
 }
 
-- (void)initDataForView:(UIView *)view {
+- (void)initPropertiesForTarget:(UIView *)view {
     if (_height == UITableViewAutomaticDimension) {
         if ([view respondsToSelector:@selector(setAutoResize:)]) {
             [(id)view setAutoResize:YES];
         }
     }
-    [super initDataForView:view];
+    [super initPropertiesForTarget:view];
 }
 
 - (BOOL)hiddenForView:(id)view withData:(id)data
@@ -199,14 +199,14 @@ static const CGFloat kHeightUnset = -2;
 - (CGFloat)heightForData:(id)data
 {
     if (_pbFlags.hiddenExpressive) {
-        [self updateValueForKey:@"hidden" withData:data andView:nil];
+        [self updateValueForKey:@"hidden" withData:data owner:nil context:nil];
     }
     if (self.hidden) {
         return 0;
     }
     
     if (_pbFlags.heightExpressive) {
-        [self updateValueForKey:@"height" withData:data andView:nil];
+        [self updateValueForKey:@"height" withData:data owner:nil context:nil];
     }
     return self.height;
 }
@@ -221,18 +221,18 @@ static const CGFloat kHeightUnset = -2;
         }
     }
     
-    id rowViewWrapper;
+    id rowViewWrapper = nil;
     id rowData = [dataSource dataAtIndexPath:indexPath];
     if (rowData != nil) {
         rowViewWrapper = @{@"data": rowData};
     }
-    [self updateValueForKey:@"hidden" withData:data andView:rowData];
+    [self updateValueForKey:@"hidden" withData:data owner:rowViewWrapper context:nil];
     if (self.hidden) {
         return 0;
     }
     
     if (_pbFlags.heightExpressive) {
-        [self updateValueForKey:@"height" withData:data andView:rowData];
+        [self updateValueForKey:@"height" withData:data owner:rowViewWrapper context:nil];
     }
     return self.height;
 }

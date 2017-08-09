@@ -61,9 +61,9 @@
 - (void)setDataToOwner:(id)owner;
 
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
-- (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context;
-- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context;
-- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withContext:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target withOwner:(UIView *)owner context:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withOwner:(UIView *)owner context:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context;
 
 - (BOOL)isExpressiveForKey:(NSString *)key;
 

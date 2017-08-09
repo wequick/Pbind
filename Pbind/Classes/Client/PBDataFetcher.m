@@ -80,7 +80,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         [client cancel];
         
         PBClientMapper *mapper = [self.clientMappers objectAtIndex:i];
-        [mapper updateWithData:_owner.data andView:_owner];
+        [mapper updateWithData:_owner.data owner:_owner context:_owner];
         
         Class requestClass = [client.class requestClass];
         PBRequest *request = [[requestClass alloc] init];

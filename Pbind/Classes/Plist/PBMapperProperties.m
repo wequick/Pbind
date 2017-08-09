@@ -167,23 +167,23 @@
     return NO;
 }
 
-- (void)mapData:(id)data toTarget:(id)target withContext:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target withOwner:(UIView *)owner context:(UIView *)context
 {
-    [self mapData:data toTarget:target forKeyPath:nil withContext:context];
+    [self mapData:data toTarget:target forKeyPath:nil withOwner:owner context:context];
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withContext:(UIView *)context {
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context {
     for (NSString *key in keyPaths) {
         PBExpression *exp = _expressions[key];
         if (exp == nil) {
             continue;
         }
         
-        [exp mapData:data toTarget:target forKeyPath:key inContext:context];
+        [exp mapData:data toTarget:target forKeyPath:key withOwner:owner inContext:context];
     }
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withContext:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withOwner:(UIView *)owner context:(UIView *)context
 {
     NSArray *keyPaths = nil;
     if (keyPath == nil) {
@@ -193,7 +193,7 @@
         keyPaths = @[keyPath];
     }
     
-    [self mapData:data toTarget:target forKeyPaths:keyPaths withContext:context];
+    [self mapData:data toTarget:target forKeyPaths:keyPaths withOwner:owner context:context];
 }
 
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key {

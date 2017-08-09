@@ -66,7 +66,7 @@ static NSMutableDictionary *kActionClasses;
     }
     action.mapper = mapper;
     
-    [mapper setPropertiesToObject:action transform:nil];
+    [mapper initPropertiesForTarget:action transform:nil];
     
     // Link
     if (mapper.nextMappers != nil) {
@@ -105,7 +105,7 @@ static NSMutableDictionary *kActionClasses;
 
 - (void)_internalRun:(PBActionState *)state {
     if (self.mapper) {
-        [self.mapper mapPropertiesToObject:self withData:state.data context:state.context];
+        [self.mapper mapPropertiesToTarget:self withData:state.data owner:state.sender context:state.context];
     }
     
     if (self.disabled) {

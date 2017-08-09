@@ -147,18 +147,43 @@
     [_properties initDataForOwner:self];
 }
 
-- (void)setPropertiesToObject:(id)object transform:(id (^)(NSString *key, id value))transform
+#pragma mark - Update self
+
+- (void)updateWithData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
-    [_viewProperties initDataForOwner:object transform:transform];
+    [self _mapValuesForKeysWithData:data owner:owner context:context];
 }
 
-- (void)mapPropertiesToObject:(id)object withData:(id)data context:(UIView *)context
+- (void)_mapValuesForKeysWithData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
-    [_viewProperties mapData:data toTarget:object withContext:context];
+    [_properties mapData:data toTarget:self withOwner:owner context:context];
 }
 
-- (void)initDataForView:(UIView *)view
+- (void)updateValueForKey:(NSString *)key withData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
+    [_properties mapData:data toTarget:self forKeyPath:key withOwner:owner context:context];
+}
+
+- (void)updateValuesForKeys:(NSArray *)keys withData:(id)data owner:(UIView *)owner context:(UIView *)context
+{
+    [_properties mapData:data toTarget:self forKeyPaths:keys withOwner:owner context:context];
+}
+
+#pragma mark - Update target
+
+- (void)initPropertiesForTarget:(id)target
+{
+    [self initPropertiesForTarget:target transform:nil];
+}
+
+- (void)initPropertiesForTarget:(id)target transform:(id (^)(NSString *key, id value))transform
+{
+    if (![target isKindOfClass:[UIView class]]) {
+        [_viewProperties initDataForOwner:target transform:transform];
+        return;
+    }
+    
+    UIView *view = target;
     if (_viewProperties == nil) {
         // Reset the view properties
         [view pb_setConstants:nil fromPlist:self.plist];
@@ -208,46 +233,29 @@
     [view pb_initData];
 }
 
-- (void)updateWithData:(id)data andView:(UIView *)view
-{
-    return [self _mapValuesForKeysWithData:data andView:view];
-}
-
-- (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
-{
-    [_properties mapData:data toTarget:self withContext:view];
-}
-
-- (void)updateValueForKey:(NSString *)key withData:(id)data andView:(UIView *)view
-{
-    [_properties mapData:data toTarget:self forKeyPath:key withContext:view];
-}
-
-- (void)updateValuesForKeys:(NSArray *)keys withData:(id)data andView:(UIView *)view
-{
-    [_properties mapData:data toTarget:self forKeyPaths:keys withContext:view];
-}
-
-- (void)mapData:(id)data forView:(UIView *)view
-{
-    [self mapData:data forView:view withContext:view];
-}
-
-- (void)mapData:(id)data forView:(UIView *)view withContext:(UIView *)context
+- (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
     /* for self */
     /*----------*/
-    [self _mapValuesForKeysWithData:data andView:context];
+    [self _mapValuesForKeysWithData:data owner:owner context:context];
     
-    /* for view */
-    /*----------*/
-    [view pb_mapData:data withContext:context];
-    
-    /* for navigation */
-    if (_navProperties != nil) {
-        [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withContext:context];
+    if ([target isKindOfClass:[UIView class]]) {
+        /* for view */
+        /*----------*/
+        [target pb_mapData:data withOwner:owner context:context];
+        
+        /* for navigation */
+        if (_navProperties != nil) {
+            [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withOwner:owner context:context];
+        }
+    } else {
+        /* for any object */
+        /*----------------*/
+        [_viewProperties mapData:data toTarget:target withOwner:owner context:context];
     }
 }
+
+#pragma mark - Properties
 
 - (void)setExpression:(PBExpression *)expression forKey:(NSString *)key
 {
@@ -261,6 +269,8 @@
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key {
     [_properties setMappable:mappable forKey:key];
 }
+
+#pragma mark - Reset
 
 - (void)resetForView:(UIView *)view {
     if (_navProperties != nil) {
@@ -292,6 +302,13 @@
 
 - (NSDictionary *)targetSource {
     return [_viewProperties source];
+}
+
+#pragma mark - Depreciated
+
+- (void)updateWithData:(id)data andView:(UIView *)view
+{
+    [self updateWithData:data owner:view context:view];
 }
 
 @end

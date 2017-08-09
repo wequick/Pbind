@@ -66,7 +66,7 @@
         return;
     }
     
-    [mapper initDataForView:self];
+    [mapper initPropertiesForTarget:self];
 }
 
 - (void)_pb_mapData:(id)data {
@@ -76,7 +76,7 @@
         return;
     }
     
-    [mapper mapData:data forView:self];
+    [mapper mapPropertiesToTarget:self withData:data owner:self context:self];
 }
 
 - (void)pb_initData
@@ -106,7 +106,7 @@
     NSDictionary *properties = [self pb_expressions];
     for (NSString *key in properties) {
         PBExpression *exp = [properties objectForKey:key];
-        [exp bindData:nil toTarget:self forKeyPath:key inContext:self];
+        [exp bindData:nil toTarget:self forKeyPath:key withOwner:self inContext:self];
     }
 }
 
@@ -120,27 +120,31 @@
     if (key == nil) {
         return;
     }
-    [self pb_mapData:data forKeys:@[key] withContext:self underType:PBMapToAll dataTag:PBDataTagUnset];
+    [self pb_mapData:data forKeys:@[key] withOwner:self context:self underType:PBMapToAll dataTag:PBDataTagUnset];
 }
 
 - (void)pb_mapData:(id)data withContext:(UIView *)context {
-    [self pb_mapData:data withContext:context underType:PBMapToAll dataTag:PBDataTagUnset];
+    [self pb_mapData:data withOwner:self context:context underType:PBMapToAll dataTag:PBDataTagUnset];
+}
+
+- (void)pb_mapData:(id)data withOwner:(UIView *)owner context:(UIView *)context {
+    [self pb_mapData:data withOwner:owner context:context underType:PBMapToAll dataTag:PBDataTagUnset];
 }
 
 - (void)pb_mapData:(id)data underType:(PBMapType)type dataTag:(unsigned char)tag
 {
-    [self pb_mapData:data withContext:self underType:type dataTag:tag];
+    [self pb_mapData:data withOwner:self context:self underType:type dataTag:tag];
 }
 
-- (void)pb_mapData:(id)data withContext:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
+- (void)pb_mapData:(id)data withOwner:(UIView *)owner context:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
 {
-    [self pb_mapData:data forKeys:nil withContext:context underType:type dataTag:tag];
+    [self pb_mapData:data forKeys:nil withOwner:owner context:context underType:type dataTag:tag];
     
     // Recursive
     BOOL canReload = [self respondsToSelector:@selector(reloadData)];
     if (!canReload) {
         for (UIView *subview in [self subviews]) {
-            [subview pb_mapData:data withContext:context underType:type dataTag:tag];
+            [subview pb_mapData:data withOwner:owner context:context underType:type dataTag:tag];
         }
     } else {
         if (type == PBMapToContext && self.frame.size.height == 0) {
@@ -150,7 +154,7 @@
     }
 }
 
-- (void)pb_mapData:(id)data forKeys:(NSArray *)keys withContext:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
+- (void)pb_mapData:(id)data forKeys:(NSArray *)keys withOwner:(UIView *)owner context:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
 {
     NSDictionary *expressions = [self pb_expressions];
     if (keys == nil) {
@@ -167,14 +171,14 @@
             continue;
         }
         
-        [exp mapData:data toTarget:self forKeyPath:key inContext:context];
+        [exp mapData:data toTarget:self forKeyPath:key withOwner:owner inContext:context];
     }
 }
 
 - (void)pb_loadData:(id)data
 {
     [self setData:data];
-    [[self pb_mapper] mapData:self.rootData forView:self];
+    [self.pb_mapper mapPropertiesToTarget:self withData:self.rootData owner:self context:self];
     
     [self layoutIfNeeded];
 }
@@ -209,11 +213,11 @@
     // Reset all the PBMapper properties for self and subviews
     [self _pb_resetMappersForView:view];
     
-    [mapper initDataForView:view];
+    [mapper initPropertiesForTarget:view];
     if ([view conformsToProtocol:@protocol(PBDataFetching)]) {
         [(id<PBDataFetching>)view setDataUpdated:YES];
     }
-    [mapper mapData:view.rootData forView:view];
+    [mapper mapPropertiesToTarget:view withData:view.rootData owner:view context:view];
 }
 
 - (void)pb_reloadClient

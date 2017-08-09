@@ -272,18 +272,18 @@ const unsigned char PBDataTagUnset = 0xFF;
     }
 }
 
-- (id)valueWithData:(id)data target:(id)target context:(UIView *)context
+- (id)valueWithData:(id)data target:(id)target owner:(UIView *)owner context:(UIView *)context
 {
-    return [self valueWithData:data keyPath:nil target:target context:context];
+    return [self valueWithData:data keyPath:nil target:target owner:owner context:context];
 }
 
-- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target context:(UIView *)context
+- (id)valueWithData:(id)data keyPath:(NSString *)keyPath target:(id)target owner:(UIView *)owner context:(UIView *)context
 {
-    id dataSource = [self _dataSourceWithData:data target:target context:context];
+    id dataSource = [self _dataSourceWithData:data target:target owner:owner context:context];
     return [self _valueWithData:dataSource];
 }
 
-- (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context {
+- (id)_dataSourceWithData:(id)data target:(id)target owner:(UIView *)owner context:(UIView *)context {
     if (_flags.mapToData) {
         int dataIndex = 0;
         if (_flags.dataTag >= 0 && _flags.dataTag <= 9) {
@@ -299,9 +299,9 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else if (_flags.mapToActionStateData) {
         return [PBActionStore defaultStore].state.data;
     } else if (_flags.mapToOwnerView) {
-        return context;
+        return owner;
     } else if (_flags.mapToOwnerViewData) {
-        return [self _dataSourceWithData:[context data] atIndex:0];
+        return [self _dataSourceWithData:[owner data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
     } else if (_flags.mapToForm) {
@@ -350,7 +350,7 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 - (id)valueWithData:(id)data target:(id)target
 {
-    return [self valueWithData:data target:target context:nil];
+    return [self valueWithData:data target:target owner:nil context:nil];
 }
 
 - (id)valueWithData:(id)data
@@ -507,7 +507,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     return value;
 }
 
-- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
+- (void)bindData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context
 {
     if (_flags.disabled) {
         return;
@@ -522,7 +522,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     }
     
     if (_flags.duplexBinding || _flags.onewayBinding) {
-        id dataSource = [self _dataSourceWithData:data target:target context:context];
+        id dataSource = [self _dataSourceWithData:data target:target owner:owner context:context];
         if (dataSource == nil) {
             return;
         }
@@ -580,7 +580,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     return NO;
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath inContext:(UIView *)context
+- (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)targetKeyPath withOwner:(UIView *)owner inContext:(UIView *)context
 {
     if (_flags.disabled) {
         return;
@@ -592,7 +592,7 @@ const unsigned char PBDataTagUnset = 0xFF;
             if (![target isKindOfClass:[UIControl class]]) {
                 return;
             }
-            id actionTarget = [self _dataSourceWithData:data target:target context:context];
+            id actionTarget = [self _dataSourceWithData:data target:target owner:owner context:context];
             if (actionTarget == nil) {
                 return;
             }
@@ -614,20 +614,20 @@ const unsigned char PBDataTagUnset = 0xFF;
             break;
         case '+': {
             NSString *keyPath = [targetKeyPath substringFromIndex:1];
-            [self setValueToTarget:target forKeyPath:keyPath withData:data context:context]; // map value
-            [self bindData:data toTarget:target forKeyPath:keyPath inContext:context]; // binding data
+            [self setValueToTarget:target forKeyPath:keyPath withData:data owner:owner context:context]; // map value
+            [self bindData:data toTarget:target forKeyPath:keyPath withOwner:owner inContext:context]; // binding data
         }
             break;
         default: {
-            [self setValueToTarget:target forKeyPath:targetKeyPath withData:data context:context]; // map value
-            [self bindData:data toTarget:target forKeyPath:targetKeyPath inContext:context]; // binding data
+            [self setValueToTarget:target forKeyPath:targetKeyPath withData:data owner:owner context:context]; // map value
+            [self bindData:data toTarget:target forKeyPath:targetKeyPath withOwner:owner inContext:context]; // binding data
         }
             break;
     }
 }
 
-- (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data context:(UIView *)context {
-    id value = [self valueWithData:data keyPath:targetKeyPath target:target context:context];
+- (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data owner:(UIView *)owner context:(UIView *)context {
+    id value = [self valueWithData:data keyPath:targetKeyPath target:target owner:owner context:context];
     [self setValue:value toTarget:target forKeyPath:targetKeyPath];
 }
 

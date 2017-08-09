@@ -412,7 +412,7 @@ UIKIT_STATIC_INLINE UIView *PBView(NSString *plist) {
     
     // Initilize constants and expressions for the view.
     // FIXME: the context was not ready now, maybe we should do it later.
-    [mapper initDataForView:view];
+    [mapper initPropertiesForTarget:view];
     
     return view;
 }

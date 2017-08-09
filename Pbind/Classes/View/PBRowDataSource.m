@@ -316,9 +316,9 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     if (_sections != nil) {
         id data = self.owner.data;
         for (PBSectionMapper *mapper in _sections) {
-            [mapper updateWithData:data andView:self.owner];
+            [mapper updateWithData:data owner:self.owner context:self.owner];
             if (mapper.footer != nil) {
-                [mapper.footer updateWithData:data andView:self.owner];
+                [mapper.footer updateWithData:data owner:self.owner context:self.owner];
             }
         }
     }
@@ -338,7 +338,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
         if ([aSection isExpressiveForKey:@"data"]) {
-            [aSection updateValueForKey:@"data" withData:data andView:self.owner];
+            [aSection updateValueForKey:@"data" withData:data owner:self.owner context:self.owner];
         } else {
             aSection.data = [self listForData:data key:key];
         }
@@ -600,8 +600,8 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Init data for cell
     [cell setData:data];
-    [row initDataForView:cell];
-    [row mapData:tableView.data forView:cell withContext:tableView];
+    [row initPropertiesForTarget:cell];
+    [row mapPropertiesToTarget:cell withData:tableView.data owner:cell context:tableView];
     
     return cell;
 }
@@ -615,7 +615,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     _RowDataWrapper *dataWrapper = [[_RowDataWrapper alloc] initWithData:data];
     dataWrapper.indexPath = indexPath;
-    [row updateWithData:view.rootData andView:(id)dataWrapper];
+    [row updateWithData:view.rootData owner:(id)dataWrapper context:self.owner];
     
     for (NSString *key in keys) {
         [row setMappable:NO forKey:key];
@@ -807,7 +807,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Init data for cell
     [cell setData:data];
-    [item initDataForView:cell];
+    [item initPropertiesForTarget:cell];
     
     return cell;
 }
@@ -849,8 +849,8 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     // Map data
-    [element initDataForView:view];
-    [element mapData:collectionView.data forView:view];
+    [element initPropertiesForTarget:view];
+    [element mapPropertiesToTarget:view withData:collectionView.data owner:view context:collectionView];
     
     return view;
 }

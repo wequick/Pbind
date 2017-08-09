@@ -27,12 +27,13 @@
         return;
     }
     
-    if ([view isKindOfClass:[UITableViewCell class]] || [view isKindOfClass:[UICollectionViewCell class]]) {
-        view = [(id)view contentView];
+    UIView *contentView = view;
+    if ([contentView isKindOfClass:[UITableViewCell class]] || [contentView isKindOfClass:[UICollectionViewCell class]]) {
+        contentView = [(id)contentView contentView];
     }
     
-    view.pb_layoutName = self.plist;
-    view.pb_layoutMapper = self;
+    contentView.pb_layoutName = self.plist;
+    contentView.pb_layoutMapper = self;
     
     // Check if any view be removed.
     NSArray *aliases = [self.views allKeys];
@@ -40,14 +41,14 @@
     NSArray *removedAliases = [renderedAliases filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF IN %@", aliases]];
     if (removedAliases.count > 0) {
         for (NSString *alias in removedAliases) {
-            UIView *subview = [view viewWithAlias:alias];
+            UIView *subview = [contentView viewWithAlias:alias];
             [subview removeFromSuperview];
         }
     }
     self.renderedAliases = aliases;
     
     NSMutableDictionary<NSString *, UIView *> *views = [NSMutableDictionary dictionaryWithCapacity:viewCount];
-    [views setObject:view forKey:@"super"];
+    [views setObject:contentView forKey:@"super"];
     NSMutableArray<UIView *> *originalViews = [NSMutableArray arrayWithCapacity:viewCount];
     NSMutableArray<NSString *> *nestedViewParents = [NSMutableArray arrayWithCapacity:viewCount];
     NSMutableArray<UIView *> *nestedViews = [NSMutableArray arrayWithCapacity:viewCount];
@@ -68,7 +69,7 @@
     
     for (PBRowMapper *mapper in orderedMappers) {
         NSString *alias = mapper.alias;
-        UIView *subview = [view viewWithAlias:alias];
+        UIView *subview = [contentView viewWithAlias:alias];
         
         // Support for instant updating.
         BOOL needsCreate = NO;
@@ -82,7 +83,7 @@
                 // view parent changed
                 UIView *parentView = [subview superview];
                 if (mapper.parent == nil) {
-                    if (parentView != view) {
+                    if (parentView != contentView) {
                         if ([[[parentView class] description] isEqualToString:@"_PBMergedWrapperView"]) {
                             // do nothing if has been merged
                         } else {
@@ -90,7 +91,7 @@
                         }
                     }
                 } else {
-                    needsCreate = (parentView == view) || ![mapper.parent isEqualToString:parentView.alias];
+                    needsCreate = (parentView == contentView) || ![mapper.parent isEqualToString:parentView.alias];
                 }
             }
             
@@ -107,7 +108,7 @@
                 [nestedViews addObject:subview];
                 [nestedViewParents addObject:mapper.parent];
             } else {
-                [view addSubview:subview];
+                [contentView addSubview:subview];
             }
             
             needsReset = YES;
@@ -115,8 +116,8 @@
             [originalViews addObject:subview];
         }
         
-        [mapper initDataForView:subview];
-        [mapper mapData:nil forView:subview];
+        [mapper initPropertiesForTarget:subview];
+        [mapper mapPropertiesToTarget:subview withData:nil owner:view context:view];
         [views setObject:subview forKey:alias];
     }
     
@@ -124,7 +125,7 @@
         for (NSInteger index = 0; index < nestedViews.count; index++) {
             UIView *subview = nestedViews[index];
             NSString *parent = nestedViewParents[index];
-            UIView *parentView = [view viewWithAlias:parent];
+            UIView *parentView = [contentView viewWithAlias:parent];
             [parentView addSubview:subview];
         }
     }
@@ -132,7 +133,7 @@
     // Remove the related constraints if needed.
     if (originalViews.count > 0) {
         for (UIView *subview in originalViews) {
-            [PBLayoutConstraint removeAllConstraintsOfSubview:subview fromParentView:view];
+            [PBLayoutConstraint removeAllConstraintsOfSubview:subview fromParentView:contentView];
         }
     }
     
@@ -150,7 +151,7 @@
     for (NSString *format in self.formats) {
         @try {
             NSArray *constraints = [PBLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:metrics views:views];
-            [view addConstraints:constraints];
+            [contentView addConstraints:constraints];
         } @catch (NSException *exception) {
             NSLog(@"Pbind: %@", exception);
             continue;
@@ -158,7 +159,7 @@
     }
     
     // PVFL (Pbind Visual Format Language)
-    [PBLayoutConstraint addConstraintsWithPbindFormats:self.constraints metrics:metrics views:views forParentView:view];
+    [PBLayoutConstraint addConstraintsWithPbindFormats:self.constraints metrics:metrics views:views forParentView:contentView];
 }
 
 - (void)reload {
