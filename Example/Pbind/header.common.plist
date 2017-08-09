@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>views</key>
+	<dict>
+		<key>title</key>
+		<dict>
+			<key>clazz</key>
+			<string>UILabel</string>
+			<key>properties</key>
+			<dict>
+				<key>textColor</key>
+				<string>#fff</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>formats</key>
+	<array>
+		<string>|-8-[title]</string>
+		<string>V:|[title]</string>
+	</array>
+</dict>
+</plist>

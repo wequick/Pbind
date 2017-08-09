@@ -28,8 +28,6 @@
 	<string>$(SRCROOT)/PBLocalhost</string>
 	<key>PBResourcesPath</key>
 	<string>$(SRCROOT)/Pbind_Example</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
