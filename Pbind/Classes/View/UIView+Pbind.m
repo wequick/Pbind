@@ -22,6 +22,7 @@
 #import "PBDataFetching.h"
 #import "PBDataFetcher.h"
 #import "UIView+PBLayoutConstraint.h"
+#import "UIView+PBAction.h"
 
 @interface _PBPlistProperties : NSObject
 
@@ -274,6 +275,8 @@
             [mapper unbind];
         }
     }
+    
+    [self pb_unbindActionMappers];
 }
 
 - (void)pb_didUnbind
@@ -373,6 +376,7 @@
             initial = [key characterAtIndex:0];
         }
         if (initial == '~') {
+            // Async
             [target setValue:value forAdditionKey:key];
             
             NSArray *asyncSetters = [Pbind viewValueAsyncSetters];
@@ -394,6 +398,11 @@
                     return;
                 }
             }
+        }
+        
+        if (initial == '!' && [target isKindOfClass:[UIView class]]) {
+            [target pb_registerAction:value forEvent:[key substringFromIndex:1]];
+            return;
         }
         
         // Safely set value for key
@@ -535,6 +544,10 @@
         return [target valueForAdditionKey:key];
     } else if (initial == '+') {
         return [target valueForAdditionKey:[key substringFromIndex:1]];
+    } else if (initial == '!') {
+        NSString *event = [key substringFromIndex:1];
+        NSDictionary *actionSources = [target valueForAdditionKey:@"pb_actionSources"];
+        return [actionSources objectForKey:event];
     }
     
     return [PBPropertyUtils valueForKeyPath:key ofObject:target failure:nil];
