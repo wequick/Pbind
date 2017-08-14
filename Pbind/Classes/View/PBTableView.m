@@ -32,6 +32,7 @@
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize registeredCellIdentifiers, registeredSectionIdentifiers;
+@synthesize resizingDelegate;
 
 - (void)awakeFromNib
 {
@@ -277,6 +278,10 @@
         [super reloadData];
         dispatch_async(dispatch_get_main_queue(), ^{
             self.dataUpdated = NO;
+            if (self.autoResize) {
+                [self invalidateIntrinsicContentSize];
+                [self setNeedsLayout];
+            }
         });
     }
 }
@@ -287,6 +292,25 @@
     _dataSourceInterceptor = nil;
     _delegateInterceptor = nil;
     _pbTableViewFlags.deallocing = 1;
+}
+
+#pragma mark - Auto Resizing
+
+- (void)setAutoResize:(BOOL)autoResize {
+    _pbTableViewFlags.autoResize = autoResize ? 1 : 0;
+    self.scrollEnabled = !autoResize;
+}
+
+- (BOOL)isAutoResize {
+    return (_pbTableViewFlags.autoResize == 1);
+}
+
+- (CGSize)intrinsicContentSize {
+    if (self.autoResize) {
+        [self layoutIfNeeded];
+        return CGSizeMake(UIViewNoIntrinsicMetric, self.contentSize.height);
+    }
+    return [super intrinsicContentSize];
 }
 
 #pragma mark - Paging

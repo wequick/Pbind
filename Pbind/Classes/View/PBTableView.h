@@ -18,13 +18,14 @@
 #import "PBRowDataSource.h"
 #import "PBRowPaging.h"
 #import "PBDataFetching.h"
+#import "PBViewResizing.h"
 
 //______________________________________________________________________________
 
 /**
  The PBTableView is one of the base components of Pbind. An instance of PBTableView provides the ability of configuring a group of reusable views and displays as a scrollable list.
  */
-@interface PBTableView : UITableView <PBRowPaging, PBDataFetching>
+@interface PBTableView : UITableView <PBRowPaging, PBDataFetching, PBViewResizing>
 {
     NSMutableArray *_hasRegisteredCellClasses;
     NSArray *_sectionIndexTitles;
@@ -46,6 +47,7 @@
         unsigned int horizontal:1;
         unsigned int indexViewHidden:1;
         unsigned int deselectsRowOnReturn:1;
+        unsigned int autoResize:1;
     } _pbTableViewFlags;
 }
 
@@ -59,7 +61,5 @@
  If we'd push a controller by selected a row, then while it return, we maybe needs to deselects the row.
  */
 @property (nonatomic, getter=isDeselectsRowOnReturn) BOOL deselectsRowOnReturn;
-
-@property (nonatomic, strong) id data;
 
 @end

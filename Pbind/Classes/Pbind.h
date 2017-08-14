@@ -98,3 +98,4 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBString.h"
 #import "PBArray.h"
 #import "PBPropertyUtils.h"
+#import "PBDataFetcher.h"

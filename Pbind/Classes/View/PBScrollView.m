@@ -618,6 +618,16 @@
     }
 }
 
+#pragma mark - Auto Resizing
+
+- (CGSize)intrinsicContentSize {
+    if (self.autoResize) {
+        [self layoutIfNeeded];
+        return CGSizeMake(UIViewNoIntrinsicMetric, self.contentSize.height);
+    }
+    return [super intrinsicContentSize];
+}
+
 #pragma mark - Properties
 
 - (void)setHorizontal:(BOOL)horizontal {

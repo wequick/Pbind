@@ -52,6 +52,10 @@
     [self config];
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+}
+
 - (void)config {
     /* Message interceptor to intercept tableView dataSource messages */
     [self initDataSource];
@@ -137,6 +141,7 @@
         self.dataUpdated = NO;
         
         [self autoresizeWithAnimated:NO];
+//        [_flowLayout invalidateLayout];
         
         // Select the item with index path.
 //        BOOL needsSelectedItem = (selectedIndexPath != nil && [rowDataSource dataAtIndexPath:selectedIndexPath] != nil);
@@ -164,14 +169,6 @@
 }
 
 #pragma mark - Properties
-
-- (void)setAutoResize:(BOOL)autoResize {
-    _pbCollectionViewFlags.autoResize = autoResize ? 1 : 0;
-}
-
-- (BOOL)isAutoResize {
-    return (_pbCollectionViewFlags.autoResize == 1);
-}
 
 - (void)setHorizontal:(BOOL)horizontal {
     UICollectionViewFlowLayout *layout = (id) self.collectionViewLayout;
@@ -247,6 +244,25 @@
     }];
 }
 
+#pragma mark - Auto Resizing
+
+- (void)setAutoResize:(BOOL)autoResize {
+    _pbCollectionViewFlags.autoResize = autoResize ? 1 : 0;
+    self.scrollEnabled = !autoResize;
+}
+
+- (BOOL)isAutoResize {
+    return (_pbCollectionViewFlags.autoResize == 1);
+}
+
+- (CGSize)intrinsicContentSize {
+    if (self.autoResize) {
+        [self layoutIfNeeded];
+        return CGSizeMake(UIViewNoIntrinsicMetric, self.contentSize.height);
+    }
+    return [super intrinsicContentSize];
+}
+
 - (void)autoresizeWithAnimated:(BOOL)animated {
     if (!self.autoResize) {
         return;
@@ -269,6 +285,15 @@
         } else {
             resizeBlock();
         }
+    }
+}
+
+- (void)setAutoItemSizing:(BOOL)autoItemSizing {
+    _autoItemSizing = autoItemSizing;
+    if (autoItemSizing) {
+        _flowLayout.estimatedItemSize = CGSizeMake(1.f, 1.f);
+    } else {
+        _flowLayout.estimatedItemSize = CGSizeZero;
     }
 }
 

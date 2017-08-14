@@ -75,6 +75,13 @@
 @property (nonatomic, assign, getter=isHorizontal) BOOL horizontal;
 
 /**
+ Whether auto sizing the item. Default is NO.
+ 
+ @discussion This will set the estimatedItemSize to collection view layout.
+ */
+@property (nonatomic, assign, getter=isAutoItemSizing) BOOL autoItemSizing;
+
+/**
  The data of the selected item.
  */
 @property (nonatomic, strong) id selectedData;

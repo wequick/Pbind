@@ -677,7 +677,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     return CGSizeMake(collectionView.bounds.size.width, element.height);
 }
 
-#pragma mark - UICollectionViewDelegateLayout
+#pragma mark - UICollectionViewDelegateFlowLayout
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     if ([self.receiver respondsToSelector:_cmd]) {
@@ -686,12 +686,18 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     PBSectionMapper *section = [self.dataSource.sections objectAtIndex:indexPath.section];
     PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
-    CGFloat itemWidth = item.size.width;
-    CGFloat itemHeight = item.size.height;
+    collectionViewLayout.estimatedItemSize;
+    CGFloat itemWidth = item.width;
+    CGFloat itemHeight = item.height;
     if (itemWidth == -1) {
         itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right;
     }
     if (itemWidth != 0) {
+        if (itemHeight == -1) {
+            // Auto height
+            itemWidth = 1.f; // the width is ignored here, after the cell created it will be set as a width  constraint.
+            itemHeight = 1.f;//collectionView.bounds.size.height;
+        }
         return CGSizeMake(itemWidth, itemHeight);
     }
     
@@ -736,8 +742,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         
         if (mapper.numberOfColumns != 0) {
             PBRowMapper *item = [self.dataSource rowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-            if (item.size.width != 0) {
-                CGFloat spacing = (collectionView.bounds.size.width - item.size.width * mapper.numberOfColumns - mapper.inset.left - mapper.inset.right) / (mapper.numberOfColumns - 1);
+            if (item.width != 0) {
+                CGFloat spacing = (collectionView.bounds.size.width - item.width * mapper.numberOfColumns - mapper.inset.left - mapper.inset.right) / (mapper.numberOfColumns - 1);
                 return spacing;
             }
         }

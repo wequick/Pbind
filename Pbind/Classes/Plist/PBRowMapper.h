@@ -118,11 +118,11 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @property (nonatomic, assign) CGFloat estimatedHeight;
 
 /**
- The size for the item(UICollectionViewCell) in the row.
+ The width for the item(UICollectionViewCell). Default is -1 (full-screen).
  
  @discussion This property if only for PBCollectionView.
  */
-@property (nonatomic, assign) CGSize size;
+@property (nonatomic, assign) CGFloat width;
 
 /**
  The additional height from with. 

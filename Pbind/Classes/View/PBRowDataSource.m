@@ -322,6 +322,35 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             }
         }
     }
+    if ([self.owner respondsToSelector:@selector(setAutoItemSizing:)]) {
+        [(id) self.owner setAutoItemSizing:[self isAutoItemSizing]];
+    }
+}
+
+- (BOOL)isAutoItemSizing {
+    if (_row != nil) {
+        return _row.estimatedHeight != 0;
+    } else if (_rows != nil) {
+        for (PBRowMapper *row in _rows) {
+            if (row.estimatedHeight != 0) {
+                return YES;
+            }
+        }
+    } else if (_sections != nil) {
+        for (PBSectionMapper *section in _sections) {
+            if (section.row != nil) {
+                return [section.row estimatedHeight] != 0;
+            }
+            
+            for (PBRowMapper *row in section.rows) {
+                if (row.estimatedHeight != 0) {
+                    return YES;
+                }
+            }
+        }
+    }
+    
+    return NO;
 }
 
 - (NSInteger)numberOfRowsInSection:(NSInteger)section withData:(id)data key:(NSString *)key {
@@ -799,6 +828,30 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Dequeue reusable cell
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
     cell.indexPath = indexPath;
+    
+    // Auto size
+    if (item.height == -1) {
+        CGFloat width = item.width;
+        if (width == -1) {
+            PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
+            width = collectionView.bounds.size.width - section.inset.left - section.inset.right;
+        }
+        
+        static NSString *kWidthConstraintId = @"PBAutoItemSizing";
+        UIView *contentView = cell.contentView;
+        NSLayoutConstraint *widthConstraint = nil;
+        NSArray *filters = [contentView.constraints filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", kWidthConstraintId]];
+        if (filters.count > 0) {
+            widthConstraint = [filters firstObject];
+        }
+        if (widthConstraint == nil) {
+            widthConstraint = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:width];
+            widthConstraint.identifier = kWidthConstraintId;
+            [contentView addConstraint:widthConstraint];
+        } else {
+            widthConstraint.constant = width;
+        }
+    }
     
     // Add custom layout
     if (item.layoutMapper != nil) {

@@ -19,7 +19,7 @@ static const CGFloat kHeightUnset = -2;
 
 @interface PBMapper (Private)
 
-- (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view;
+- (void)_mapValuesForKeysWithData:(id)data owner:(UIView *)owner context:(UIView *)context;
 
 @end
 
@@ -33,6 +33,7 @@ static const CGFloat kHeightUnset = -2;
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
     _estimatedHeight = UITableViewAutomaticDimension;
     _height = UITableViewAutomaticDimension;
+    _width = UITableViewAutomaticDimension;
     
     [super setPropertiesWithDictionary:dictionary];
     
@@ -118,13 +119,13 @@ static const CGFloat kHeightUnset = -2;
 
 - (BOOL)hiddenForView:(id)view withData:(id)data
 {
-    [self _mapValuesForKeysWithData:data andView:view];
+    [self _mapValuesForKeysWithData:data owner:view context:view];
     return _hidden;
 }
 
 - (CGFloat)heightForView:(id)view withData:(id)data
 {
-    [self _mapValuesForKeysWithData:data andView:view];
+    [self _mapValuesForKeysWithData:data owner:view context:view];
     CGFloat height = _height;
     if (height == UITableViewAutomaticDimension) {
         // Auto layout
@@ -181,10 +182,10 @@ static const CGFloat kHeightUnset = -2;
     return _pbFlags.heightExpressive;
 }
 
-- (void)_mapValuesForKeysWithData:(id)data andView:(UIView *)view
+- (void)_mapValuesForKeysWithData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
     _pbFlags.mapping = YES;
-    [super _mapValuesForKeysWithData:data andView:view];
+    [super _mapValuesForKeysWithData:data owner:owner context:context];
     _pbFlags.mapping = NO;
 }
 
