@@ -250,7 +250,20 @@
 - (void)pb_reloadLayout {
     [self.pb_layoutMapper reload];
     [self.pb_layoutMapper renderToView:self];
+    [self enumerateAllSubviewsWithBlock:^(UIView *subview) {
+        if ([subview respondsToSelector:@selector(setDataUpdated:)]) {
+            [subview pb_resetMappers];
+            [(id)subview setDataUpdated:YES];
+        }
+    }];
     [self pb_mapData:self.rootData];
+}
+
+- (void)enumerateAllSubviewsWithBlock:(void (^)(UIView *subview))block {
+    block(self);
+    for (UIView *subview in self.subviews) {
+        [subview enumerateAllSubviewsWithBlock:block];
+    }
 }
 
 - (void)pb_unbindAll
