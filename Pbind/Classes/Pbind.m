@@ -111,7 +111,7 @@ static void (^kJSContextInitializer)(JSContext *context) = nil;
     // Reload the specify views that using the plist.
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
     NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
-    NSMutableArray *reloadedViews = [NSMutableArray array];
+    NSMutableSet *reloadedViews = [NSMutableSet set];
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
 //        if (![controller isKindOfClass:[PBViewController class]]) {
 //            return;
@@ -133,7 +133,13 @@ static void (^kJSContextInitializer)(JSContext *context) = nil;
                 [subview pb_reloadLayout];
             } else if (kPlistReloaders != nil) {
                 for (PBPlistReloader reloader in kPlistReloaders) {
-                    reloader(rootView, subview, changedPlist, stop);
+                    BOOL handled = reloader(rootView, subview, changedPlist, stop);
+                    if (*stop) {
+                        return;
+                    }
+                    if (handled) {
+                        [reloadedViews addObject:subview];
+                    }
                 }
             }
         }];
