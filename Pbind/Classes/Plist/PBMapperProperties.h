@@ -42,6 +42,11 @@
 
 @property (nonatomic, weak) PBMapper *mapper;
 
+#pragma mark - API
+///=============================================================================
+/// @name API
+///=============================================================================
+
 - (BOOL)initPropertiesForOwner:(id)owner; // UIView
 
 /**
@@ -65,24 +70,26 @@
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withOwner:(UIView *)owner context:(UIView *)context;
 - (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context;
 
-- (BOOL)isExpressiveForKey:(NSString *)key;
+/**
+ Unobserve keyed-value of the target.
+ 
+ @param target the observed target
+ */
+- (void)unbind:(id)target;
+
+#pragma mark - Properties
+///=============================================================================
+/// @name Properties
+///=============================================================================
 
 /**
  The initial dictionary count, also is the sum of the parsed constants count and expressions count
  */
 - (NSInteger)count;
 
-/**
- The initial dictionay description
- */
-- (NSString *)description;
+- (id)constantForKey:(NSString *)key;
 
-/**
- Unobserve keyed-value of the target.
-
- @param target the observed target
- */
-- (void)unbind:(id)target;
+- (BOOL)isExpressiveForKey:(NSString *)key;
 
 /**
  The switch to enable the mapping for the key.
@@ -98,5 +105,10 @@
  The source dictionary
  */
 - (NSDictionary *)source;
+
+/**
+ The description of the `source'
+ */
+- (NSString *)description;
 
 @end

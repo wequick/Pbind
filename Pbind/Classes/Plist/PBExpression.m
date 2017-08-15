@@ -588,30 +588,6 @@ const unsigned char PBDataTagUnset = 0xFF;
     
     char flag = [targetKeyPath characterAtIndex:0];
     switch (flag) {
-        case '!': { // Event
-            if (![target isKindOfClass:[UIControl class]]) {
-                return;
-            }
-            id actionTarget = [self _dataSourceWithData:data target:target owner:owner context:context];
-            if (actionTarget == nil) {
-                return;
-            }
-            NSString *act = _variable;
-            if ([act characterAtIndex:[act length] - 1] != ':') {
-                act = [act stringByAppendingString:@":"];
-            }
-            SEL action = NSSelectorFromString(act);
-            if (![actionTarget respondsToSelector:action]) {
-                return;
-            }
-            NSString *event = [targetKeyPath substringFromIndex:1];
-            if ([event isEqualToString:@"click"]) {
-                [target addTarget:actionTarget action:action forControlEvents:UIControlEventTouchUpInside];
-            } else if ([event isEqualToString:@"change"]) {
-                [target addTarget:actionTarget action:action forControlEvents:UIControlEventValueChanged];
-            }
-        }
-            break;
         case '+': {
             NSString *keyPath = [targetKeyPath substringFromIndex:1];
             [self setValueToTarget:target forKeyPath:keyPath withData:data owner:owner context:context]; // map value
@@ -626,6 +602,8 @@ const unsigned char PBDataTagUnset = 0xFF;
     }
 }
 
+#pragma mark - KVC
+
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data owner:(UIView *)owner context:(UIView *)context {
     id value = [self valueWithData:data keyPath:targetKeyPath target:target owner:owner context:context];
     [self setValue:value toTarget:target forKeyPath:targetKeyPath];
@@ -636,9 +614,18 @@ const unsigned char PBDataTagUnset = 0xFF;
     if ([target respondsToSelector:@selector(pb_setValue:forKeyPath:)]) {
         [target pb_setValue:value forKeyPath:targetKeyPath];
     } else {
-        [target setValue:value forKeyPath:targetKeyPath]; // map value
+        [PBPropertyUtils setValue:value forKeyPath:targetKeyPath toObject:target failure:nil];
     }
 }
+
+- (id)valueForKeyPath:(NSString *)keyPath ofTarget:(id)target {
+    if ([target respondsToSelector:@selector(pb_valueForKeyPath:)]) {
+        return [target pb_valueForKeyPath:keyPath];
+    }
+    return [PBPropertyUtils valueForKeyPath:keyPath ofObject:target failure:nil];
+}
+
+#pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -660,12 +647,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         contextKeyPath = _variable;
     }
     
-    id oldValue;
-    if ([contextObject respondsToSelector:@selector(pb_valueForKeyPath:)]) {
-        oldValue = [contextObject pb_valueForKeyPath:contextKeyPath];
-    } else {
-        oldValue = [contextObject valueForKeyPath:contextKeyPath];
-    }
+    id oldValue = [self valueForKeyPath:contextKeyPath ofTarget:contextObject];
     if ((oldValue == nil && newValue == nil) || [oldValue isEqual:newValue]) {
         return;
     }

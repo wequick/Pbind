@@ -86,6 +86,13 @@
     return properties;
 }
 
+- (id)constantForKey:(NSString *)key {
+    if (_constants == nil || key == nil) {
+        return nil;
+    }
+    return [_constants objectForKey:key];
+}
+
 - (void)setConstant:(id)value forKey:(NSString *)key
 {
     if (_constants == nil) {

@@ -29,6 +29,9 @@
 - (void)setValueToTarget:(id)target forKeyPath:(NSString *)targetKeyPath withData:(id)data owner:(UIView *)owner context:(UIView *)context;
 - (id)_dataSourceWithData:(id)data target:(id)target context:(UIView *)context;
 
+- (void)setValue:(id)value toTarget:(id)target forKeyPath:(NSString *)targetKeyPath;
+- (id)valueForKeyPath:(NSString *)keyPath ofTarget:(id)target;
+
 @end
 
 @implementation PBMutableExpression
@@ -242,7 +245,7 @@
         PBExpression *mainExpression = _expressions[0];
         id dataSource = [mainExpression _dataSourceWithData:data target:target context:context];
         if (mainExpression->_variable != nil) {
-            return [dataSource valueForKeyPath:mainExpression->_variable];
+            return [self valueForKeyPath:mainExpression->_variable ofTarget:dataSource];
         } else {
             return dataSource;
         }
@@ -349,11 +352,11 @@
         }
         return [self formatedValueWithArguments:arguments];
     } else if (_properties != nil) {
-        id value = [target valueForKeyPath:keyPath];
+        id value = [self valueForKeyPath:keyPath ofTarget:target];
         if (value == nil) {
             value = [NSMutableDictionary dictionaryWithCapacity:_properties.count];
             [_properties initDataForOwner:value];
-            [target setValue:value forKeyPath:keyPath];
+            [self setValue:value toTarget:target forKeyPath:keyPath];
         }
         
         [_properties mapData:data toTarget:value withOwner:owner context:context];
