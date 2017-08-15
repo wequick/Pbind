@@ -23,9 +23,8 @@
 
 @interface _PBViewActionEvent : NSObject
 
-@property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, weak) NSDictionary *source;
+@property (nonatomic, strong) NSDictionary *source;
 @property (nonatomic, strong) PBActionMapper *mapper;
 
 @end
@@ -88,18 +87,20 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
             } else {
                 for (_PBViewActionEvent *temp in events) {
                     if ([temp.name isEqualToString:name]) {
-                        temp.mapper = nil;
-                        temp.source = action;
                         event = temp;
                         break;
                     }
                 }
             }
+            
             if (event == nil) {
                 event = [[_PBViewActionEvent alloc] init];
                 event.name = name;
                 event.source = action;
                 [events addObject:event];
+            } else {
+                event.mapper = nil;
+                event.source = action;
             }
         }
     }
