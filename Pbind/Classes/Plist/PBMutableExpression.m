@@ -141,7 +141,7 @@
         }
         if (*p == '\0') {
             if ([self requiresExpression]) {
-                NSLog(@"Pbind: the expression %s should takes 1 expression as least.");
+                NSLog(@"Pbind: the expression %s should takes 1 expression as least.", str);
                 return nil;
             } else if (*(p - 1) != fmtEnd) {
                 NSLog(@"Pbind: the expression %s should ends with %c.", str, fmtEnd);
