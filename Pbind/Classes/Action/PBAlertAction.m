@@ -35,6 +35,9 @@
     if (message != nil && ![message isKindOfClass:[NSString class]]) {
         message = [message description];
     }
+    if (buttons == nil) {
+        buttons = @[@"OK"];
+    }
     
     UIAlertControllerStyle alertStyle = [self.type isEqualToString:@"sheet"] ? UIAlertControllerStyleActionSheet : UIAlertControllerStyleAlert;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:alertStyle];
