@@ -340,21 +340,23 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 - (BOOL)isAutoItemSizing {
     if (_row != nil) {
-        return _row.estimatedHeight > 0;
+        return [_row isAutofit];
     } else if (_rows != nil) {
         for (PBRowMapper *row in _rows) {
-            if (row.estimatedHeight > 0) {
+            if ([row isAutofit]) {
                 return YES;
             }
         }
     } else if (_sections != nil) {
         for (PBSectionMapper *section in _sections) {
             if (section.row != nil) {
-                return [section.row estimatedHeight] > 0;
+                if ([section.row isAutofit]) {
+                    return YES;
+                }
             }
             
             for (PBRowMapper *row in section.rows) {
-                if (row.estimatedHeight > 0) {
+                if ([row isAutofit]) {
                     return YES;
                 }
             }
@@ -839,7 +841,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     cell.indexPath = indexPath;
     
     // Auto size
-    if (item.height == -1) {
+    if ([item isAutoHeight]) {
         CGFloat width = item.width;
         if (width == -1) {
             PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];

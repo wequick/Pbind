@@ -182,6 +182,18 @@ static const CGFloat kHeightUnset = -2;
     return _pbFlags.heightExpressive;
 }
 
+- (BOOL)isAutoWidth {
+    return _estimatedWidth > 0;
+}
+
+- (BOOL)isAutoHeight {
+    return _estimatedHeight > 0;
+}
+
+- (BOOL)isAutofit {
+    return [self isAutoHeight] || [self isAutoWidth];
+}
+
 - (void)_mapValuesForKeysWithData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
     _pbFlags.mapping = YES;

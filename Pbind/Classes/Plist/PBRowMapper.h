@@ -113,16 +113,33 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  The estimated height for the row. Default is -1 (do not estimated).
  
  @discussion This property is only for PBTableView and PBCollectionView.
- If the `height` was explicitly set as `:auto`(-1) then default to 44.
+ If the `height` is explicitly set as `:auto`(-1) then estimates the height as 44.
  */
 @property (nonatomic, assign) CGFloat estimatedHeight;
 
 /**
- The width for the item(UICollectionViewCell). Default is -1 (full-screen).
+ The width for the item(UICollectionViewCell). Default is -1 (auto-width).
  
  @discussion This property if only for PBCollectionView.
  */
 @property (nonatomic, assign) CGFloat width;
+
+/**
+ The estimated width for the item. Default is -1 (do not estimated).
+ 
+ @discussion This property is only for PBCollectionView.
+ If the `width` is explicitly set as `:auto`(-1) then estimates the width as 44.
+ */
+@property (nonatomic, assign) CGFloat estimatedWidth;
+
+/** Whether the `width' is explicitly set as `:auto' */
+- (BOOL)isAutoWidth;
+
+/** Whether the `height' is explicitly set as `:auto' */
+- (BOOL)isAutoHeight;
+
+/** `isAutoWidth' or `isAutoHeight' */
+- (BOOL)isAutofit;
 
 /**
  The additional height from with. 
