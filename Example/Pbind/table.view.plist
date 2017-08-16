@@ -210,6 +210,50 @@
 					</dict>
 				</array>
 			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
+					<string>layer.shadow*</string>
+				</dict>
+				<key>row</key>
+				<dict>
+					<key>height</key>
+					<string>:auto</string>
+					<key>properties</key>
+					<dict>
+						<key>@view.layer.borderWidth</key>
+						<string>1</string>
+						<key>@view.layer.borderColor</key>
+						<string>##000</string>
+						<key>@view.layer.cornerRadius</key>
+						<string>5</string>
+					</dict>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view</key>
+							<dict>
+								<key>layer.shadowColor</key>
+								<string>##ff0000</string>
+								<key>layer.shadowOffset</key>
+								<string>{0,0}</string>
+								<key>layer.shadowRadius</key>
+								<string>4</string>
+								<key>layer.shadowOpacity</key>
+								<string>1</string>
+							</dict>
+							<key>@tips.text</key>
+							<string>layer.shadowColor=##ff0000\nlayer.shadowOffset={0,0}\nlayer.shadowRadius=4\nlayer.shadowOpacity=1</string>
+							<key>@tips.numberOfLines</key>
+							<integer>0</integer>
+						</dict>
+					</dict>
+				</array>
+			</dict>
 		</array>
 	</dict>
 </dict>

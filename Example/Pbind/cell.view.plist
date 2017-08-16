@@ -9,11 +9,20 @@
 			<key>clazz</key>
 			<string>UIView</string>
 		</dict>
+		<key>tips</key>
+		<dict>
+			<key>clazz</key>
+			<string>UILabel</string>
+			<key>parent</key>
+			<string>view</string>
+		</dict>
 	</dict>
 	<key>formats</key>
 	<array>
 		<string>|-8-[view]-8-|</string>
 		<string>V:|-8-[view]-8-|</string>
+		<string>|-8-[tips]-8-|</string>
+		<string>V:|-4-[tips]-4-|</string>
 	</array>
 </dict>
 </plist>

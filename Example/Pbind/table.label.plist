@@ -51,6 +51,68 @@
 				<key>header</key>
 				<dict>
 					<key>title</key>
+					<string>font</string>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:%#d} (Default)&quot;,.textLabel.font.pointSize</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.font</key>
+							<string>{F:14}</string>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:14}&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.font</key>
+							<string>{F:bold,18}</string>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:bold,18}&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.font</key>
+							<string>{F:italic,18}</string>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:italic,18}&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.font</key>
+							<string>{F:italic,18}</string>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:italic,18}&quot;</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.font</key>
+							<string>{F:Zapfino,14}</string>
+							<key>textLabel.text</key>
+							<string>@&quot;{F:Zapfino,14}&quot;</string>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
 					<string>textColor</string>
 				</dict>
 				<key>rows</key>
@@ -98,59 +160,6 @@
 							<string>#000@0.2</string>
 							<key>textLabel.text</key>
 							<string>@&quot;#000@0.2 (#RGB@alpha)&quot;</string>
-						</dict>
-					</dict>
-				</array>
-			</dict>
-			<dict>
-				<key>header</key>
-				<dict>
-					<key>title</key>
-					<string>font</string>
-				</dict>
-				<key>rows</key>
-				<array>
-					<dict>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.text</key>
-							<string>@&quot;{F:%#d} (Default)&quot;,.textLabel.font.pointSize</string>
-						</dict>
-					</dict>
-					<dict>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.font</key>
-							<string>{F:14}</string>
-							<key>textLabel.text</key>
-							<string>@&quot;{F:14}&quot;</string>
-						</dict>
-					</dict>
-					<dict>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.font</key>
-							<string>{F:bold,18}</string>
-							<key>textLabel.text</key>
-							<string>@&quot;{F:bold,18}&quot;</string>
-						</dict>
-					</dict>
-					<dict>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.font</key>
-							<string>{F:italic,18}</string>
-							<key>textLabel.text</key>
-							<string>@&quot;{F:italic,18}&quot;</string>
-						</dict>
-					</dict>
-					<dict>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.font</key>
-							<string>{F:Zapfino,14}</string>
-							<key>textLabel.text</key>
-							<string>@&quot;{F:Zapfino,14}&quot;</string>
 						</dict>
 					</dict>
 				</array>
