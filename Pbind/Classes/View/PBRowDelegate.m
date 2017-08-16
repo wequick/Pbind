@@ -588,16 +588,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 #pragma mark - UICollectionViewDelegate
 
-- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {  // Called on iOS8+
-    // Forward delegate
-    if ([self.receiver respondsToSelector:_cmd]) {
-        [self.receiver collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
-    }
-    
-    PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
-    [item mapPropertiesToTarget:cell withData:collectionView.data owner:cell context:collectionView];
-}
-
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     BOOL shouldSelect = YES;
     

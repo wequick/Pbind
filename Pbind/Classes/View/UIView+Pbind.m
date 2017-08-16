@@ -248,11 +248,11 @@
 }
 
 - (void)pb_reloadLayout {
+    [self _pb_resetMappersForView:self];
     [self.pb_layoutMapper reload];
     [self.pb_layoutMapper renderToView:self];
     [self enumerateAllSubviewsWithBlock:^(UIView *subview) {
         if ([subview respondsToSelector:@selector(setDataUpdated:)]) {
-            [subview pb_resetMappers];
             [(id)subview setDataUpdated:YES];
         }
     }];

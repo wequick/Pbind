@@ -259,6 +259,8 @@
     if (rowDelegate.pulling) {
         [rowDelegate endPullingForPagingView:self];
     } else {
+        [rowDataSource updateSections];
+
         if (!self.dataUpdated) {
             return;
         }
@@ -272,8 +274,6 @@
             PBScrollView *footerView = (id) self.tableFooterView;
             [footerView reloadData];
         }
-        
-        [rowDataSource updateSections];
         
         [super reloadData];
         dispatch_async(dispatch_get_main_queue(), ^{

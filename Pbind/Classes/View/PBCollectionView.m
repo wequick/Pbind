@@ -129,11 +129,11 @@
         return;
     }
     
+    [rowDataSource updateSections];
+
     if (!self.dataUpdated) {
         return;
     }
-    
-    [rowDataSource updateSections];
     
     [super reloadData];
     

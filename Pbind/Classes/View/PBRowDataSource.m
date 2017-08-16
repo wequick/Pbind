@@ -122,14 +122,13 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    id _data = [self.owner data];
-    if (_data == nil) {
-        return nil;
-    }
-    
+    id data = [self.owner data];
     if (self.row != nil) {
         // Repeated row
-        id data = _data;
+        if (data == nil) {
+            return nil;
+        }
+        
         if ([data isKindOfClass:[NSArray class]]) {
             return [data objectAtIndex:indexPath.row];
         } else if ([data isKindOfClass:[PBSection class]]) {
@@ -139,16 +138,23 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
     } else if (self.rows != nil) {
         // Distinct row configured by `rows'
-        if ([_data isKindOfClass:[PBArray class]]) {
-            return [_data list];
+        if (data == nil) {
+            return nil;
         }
-        return _data;
+        
+        if ([data isKindOfClass:[PBArray class]]) {
+            return [data list];
+        }
+        return data;
     } else if (self.sections != nil) {
         // Distinct row configured by `sections'
-        id data = _data;
         PBSectionMapper *mapper = [self.sections objectAtIndex:indexPath.section];
         if (mapper != nil && mapper.data != nil) {
             data = mapper.data;
+        }
+        
+        if (data == nil) {
+            return nil;
         }
         
         if ([data isKindOfClass:[PBArray class]]) {
@@ -314,9 +320,14 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 - (void)updateSections {
     [self initRowMapper];
     if (_sections != nil) {
-        id data = self.owner.data;
+        id data = self.owner.rootData;
+        BOOL needsCheckDataUpdated = [self.owner respondsToSelector:@selector(setDataUpdated:)];
         for (PBSectionMapper *mapper in _sections) {
+            id oldSectionData = mapper.data;
             [mapper updateWithData:data owner:self.owner context:self.owner];
+            if (needsCheckDataUpdated && ![oldSectionData isEqual:mapper.data]) {
+                [(id)self.owner setDataUpdated:YES];
+            }
             if (mapper.footer != nil) {
                 [mapper.footer updateWithData:data owner:self.owner context:self.owner];
             }
@@ -329,21 +340,21 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 - (BOOL)isAutoItemSizing {
     if (_row != nil) {
-        return _row.estimatedHeight != 0;
+        return _row.estimatedHeight > 0;
     } else if (_rows != nil) {
         for (PBRowMapper *row in _rows) {
-            if (row.estimatedHeight != 0) {
+            if (row.estimatedHeight > 0) {
                 return YES;
             }
         }
     } else if (_sections != nil) {
         for (PBSectionMapper *section in _sections) {
             if (section.row != nil) {
-                return [section.row estimatedHeight] != 0;
+                return [section.row estimatedHeight] > 0;
             }
             
             for (PBRowMapper *row in section.rows) {
-                if (row.estimatedHeight != 0) {
+                if (row.estimatedHeight > 0) {
                     return YES;
                 }
             }
@@ -366,9 +377,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         count = [self.rows count];
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        if ([aSection isExpressiveForKey:@"data"]) {
-            [aSection updateValueForKey:@"data" withData:data owner:self.owner context:self.owner];
-        } else {
+        if (![aSection isExpressiveForKey:@"data"]) {
             aSection.data = [self listForData:data key:key];
         }
         count = aSection.rowCount;
@@ -861,6 +870,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Init data for cell
     [cell setData:data];
     [item initPropertiesForTarget:cell];
+    [item mapPropertiesToTarget:cell withData:collectionView.data owner:cell context:collectionView];
     
     return cell;
 }
