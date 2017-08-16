@@ -676,7 +676,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     PBSectionMapper *section = [self.dataSource.sections objectAtIndex:indexPath.section];
     PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
-    collectionViewLayout.estimatedItemSize;
     CGFloat itemWidth = item.width;
     CGFloat itemHeight = item.height;
     if (itemWidth == -1) {
