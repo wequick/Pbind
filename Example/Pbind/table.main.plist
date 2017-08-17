@@ -72,7 +72,14 @@
 				<key>properties</key>
 				<dict>
 					<key>textLabel.text</key>
-					<string>UIButton</string>
+					<string>PBButton</string>
+					<key>data</key>
+					<dict>
+						<key>target</key>
+						<string>PBTableViewController</string>
+						<key>plist</key>
+						<string>table.button</string>
+					</dict>
 				</dict>
 			</dict>
 		</array>

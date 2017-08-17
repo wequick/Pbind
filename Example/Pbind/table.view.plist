@@ -174,6 +174,65 @@
 				<key>header</key>
 				<dict>
 					<key>title</key>
+					<string>layer.borderWidth</string>
+				</dict>
+				<key>row</key>
+				<dict>
+					<key>properties</key>
+					<dict>
+						<key>@view.layer.borderColor</key>
+						<string>##ff0000</string>
+					</dict>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view.layer.borderWidth</key>
+							<string>1</string>
+							<key>textLabel.text</key>
+							<string>1</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view.layer.borderWidth</key>
+							<string>2</string>
+							<key>textLabel.text</key>
+							<string>2</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view.layer.borderWidth</key>
+							<string>3</string>
+							<key>textLabel.text</key>
+							<string>3</string>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view.layer.borderWidth</key>
+							<string>5</string>
+							<key>textLabel.text</key>
+							<string>5</string>
+						</dict>
+					</dict>
+				</array>
+				<key>footer</key>
+				<dict>
+					<key>title</key>
+					<string>supports inner border only</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
 					<string>layer.cornerRadius</string>
 				</dict>
 				<key>row</key>
@@ -222,12 +281,12 @@
 					<string>:auto</string>
 					<key>properties</key>
 					<dict>
-						<key>@view.layer.borderWidth</key>
-						<string>1</string>
-						<key>@view.layer.borderColor</key>
-						<string>##000</string>
+						<key>@view.backgroundColor</key>
+						<string>#fff</string>
 						<key>@view.layer.cornerRadius</key>
 						<string>5</string>
+						<key>@tips.textColor</key>
+						<string>#333</string>
 					</dict>
 				</dict>
 				<key>rows</key>
@@ -248,6 +307,26 @@
 							</dict>
 							<key>@tips.text</key>
 							<string>layer.shadowColor=##ff0000\nlayer.shadowOffset={0,0}\nlayer.shadowRadius=4\nlayer.shadowOpacity=1</string>
+							<key>@tips.numberOfLines</key>
+							<integer>0</integer>
+						</dict>
+					</dict>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@view</key>
+							<dict>
+								<key>layer.shadowColor</key>
+								<string>##333</string>
+								<key>layer.shadowOffset</key>
+								<string>{0,4}</string>
+								<key>layer.shadowRadius</key>
+								<string>4</string>
+								<key>layer.shadowOpacity</key>
+								<string>0.5</string>
+							</dict>
+							<key>@tips.text</key>
+							<string>layer.shadowColor=##333\nlayer.shadowOffset={0,4}\nlayer.shadowRadius=4\nlayer.shadowOpacity=0.5</string>
 							<key>@tips.numberOfLines</key>
 							<integer>0</integer>
 						</dict>
