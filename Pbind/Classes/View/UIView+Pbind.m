@@ -543,7 +543,10 @@
                 key = [key substringFromIndex:1];
                 target = [target viewWithAlias:key];
             } else {
-                target = [target valueForKeyPath:key];
+                target = [PBPropertyUtils valueForKeyPath:key ofObject:target failure:nil];
+            }
+            if (target == nil) {
+                return nil;
             }
         }
         key = keys[i];
@@ -596,7 +599,10 @@
                 key = [key substringFromIndex:1];
                 target = [target viewWithAlias:key];
             } else {
-                id temp = [target valueForKey:key];
+                id temp = [PBPropertyUtils valueForKeyPath:key ofObject:target failure:nil];
+                if (temp == nil) {
+                    return NO;
+                }
                 if (![temp isKindOfClass:[UIView class]]) {
                     break;
                 }
