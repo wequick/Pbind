@@ -221,4 +221,22 @@
     [self setBackgroundImage:PBImage(selectedImage) forState:UIControlStateSelected];
 }
 
+#pragma mark - Labeling
+
+- (NSTextAlignment)textAlignment {
+    return self.titleLabel.textAlignment;
+}
+
+- (void)setTextAlignment:(NSTextAlignment)textAlignment {
+    self.titleLabel.textAlignment = textAlignment;
+}
+
+- (NSAttributedString *)attributedText {
+    return [self attributedTitleForState:UIControlStateNormal];
+}
+
+- (void)setAttributedText:(NSAttributedString *)attributedText {
+    [self setAttributedTitle:attributedText forState:UIControlStateNormal];
+}
+
 @end

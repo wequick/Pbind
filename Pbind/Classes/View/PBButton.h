@@ -35,7 +35,6 @@
 
 /** The title color for the normal state */
 @property (nonatomic, strong) UIColor *titleColor;
-@property (nonatomic, strong) UIColor *textColor; // same to titleColor
 
 /** The title color for the disabled state */
 @property (nonatomic, strong) UIColor *disabledTitleColor;
@@ -80,5 +79,16 @@
  @discussion If not specified, use the background color with 0.8 opacity.
  */
 @property (nonatomic, strong) UIColor *highlightedBackgroundColor;
+
+#pragma mark - Labeling
+///=============================================================================
+/// @name Labeling
+///=============================================================================
+
+@property (nonatomic, strong) UIColor *textColor;
+
+@property (nonatomic, assign) NSTextAlignment textAlignment;
+
+@property (nonatomic, strong) NSAttributedString *attributedText;
 
 @end
