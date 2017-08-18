@@ -1,17 +1,6 @@
 PODS:
   - MBProgressHUD (1.0.0)
-  - Pbind (1.3.6)
-  - PBKit (0.5.4):
-    - Pbind
-    - PBKit/PBAnimation (= 0.5.4)
-    - PBKit/PBDropdownMenu (= 0.5.4)
-    - PBKit/PBImageView (= 0.5.4)
-  - PBKit/PBAnimation (0.5.4):
-    - Pbind
-  - PBKit/PBDropdownMenu (0.5.4):
-    - Pbind
-  - PBKit/PBImageView (0.5.4):
-    - Pbind
+  - Pbind (1.3.7)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
@@ -19,21 +8,17 @@ PODS:
 DEPENDENCIES:
   - MBProgressHUD (= 1.0.0)
   - Pbind (from `../`)
-  - PBKit (from `/Users/galen/Projects/github/wequick/PBKit`)
   - SDWebImage (= 3.8.2)
 
 EXTERNAL SOURCES:
   Pbind:
     :path: "../"
-  PBKit:
-    :path: "/Users/galen/Projects/github/wequick/PBKit"
 
 SPEC CHECKSUMS:
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
-  Pbind: f035618f407e79ea95f9daf144f4229546e23e79
-  PBKit: 7f9fc4d2ea8c418ba0ea89d5fb5215af94b00e6a
+  Pbind: 6342f16b03bf8078a11679fdfaa4728978396958
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
-PODFILE CHECKSUM: 7044663fa28d4fffd5f04b4cffa1f6608bbfad81
+PODFILE CHECKSUM: 9939facbb1b23fcddc969f99bedf272968b08f80
 
 COCOAPODS: 1.2.1
