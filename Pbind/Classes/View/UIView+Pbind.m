@@ -367,7 +367,7 @@
                     key = [key substringFromIndex:1];
                     target = [target viewWithAlias:key];
                 } else {
-                    id temp = [target valueForKey:key];
+                    id temp = [PBPropertyUtils valueForKey:key ofObject:target failure:nil];
                     if ([temp isKindOfClass:[NSValue class]]) {
                         structValue = temp;
                         structKeyIndex = i + 1;

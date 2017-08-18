@@ -115,6 +115,19 @@
 
 @implementation PBPropertyUtils
 
++ (id)valueForKey:(NSString *)key ofObject:(id)object failure:(void (^)(void))failure {
+    id value = nil;
+    @try {
+        value = [object valueForKey:key];
+    } @catch (NSException *exception) {
+        [self printError:exception byAccessingInconsistencyKeyPath:key ofObject:object];
+        if (failure) {
+            failure();
+        }
+    }
+    return value;
+}
+
 + (id)valueForKeyPath:(NSString *)keyPath ofObject:(id)object failure:(void (^)(void))failure {
     id value = nil;
     @try {
