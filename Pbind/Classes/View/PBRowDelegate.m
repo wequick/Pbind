@@ -676,6 +676,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     PBSectionMapper *section = [self.dataSource.sections objectAtIndex:indexPath.section];
     PBRowMapper *item = [self.dataSource rowAtIndexPath:indexPath];
+    
+    // Average
+    if (section.numberOfColumns != 0) {
+        NSInteger numberOfGaps = section.numberOfColumns - 1;
+        CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
+        CGFloat height = item.height;
+        if (height < 0) {
+            CGFloat ratio = item.ratio == 0 ? 1 : item.ratio;
+            height = width / ratio + item.additionalHeight;
+        }
+        return CGSizeMake(width, height);
+    }
+
+    // Explicit
     CGFloat itemWidth = item.width;
     CGFloat itemHeight = item.height;
     if (itemWidth == -1) {
@@ -688,14 +702,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             itemHeight = 1.f;//collectionView.bounds.size.height;
         }
         return CGSizeMake(itemWidth, itemHeight);
-    }
-    
-    if (section.numberOfColumns != 0) {
-        NSInteger numberOfGaps = section.numberOfColumns - 1;
-        CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
-        CGFloat ratio = item.ratio == 0 ? 1 : item.ratio;
-        CGFloat height = width / ratio + item.additionalHeight;
-        return CGSizeMake(width, height);
     }
     
     return collectionViewLayout.itemSize;
