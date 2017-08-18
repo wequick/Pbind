@@ -274,8 +274,9 @@
 
 - (void)resetForView:(UIView *)view {
     if (_navProperties != nil) {
-        UINavigationItem *item = view.supercontroller.navigationItem;
-        item.title = nil;
+        UIViewController *vc = view.supercontroller;
+        UINavigationItem *item = vc.navigationItem;
+        item.title = vc.title;
         item.leftBarButtonItem = nil;
         item.leftBarButtonItems = nil;
         item.rightBarButtonItem = nil;
