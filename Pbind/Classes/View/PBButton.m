@@ -221,15 +221,39 @@
     [self setBackgroundImage:PBImage(selectedImage) forState:UIControlStateSelected];
 }
 
+- (NSAttributedString *)attributedTitle {
+    return [self attributedTitleForState:UIControlStateNormal];
+}
+
+- (void)setAttributedTitle:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+}
+
+- (NSAttributedString *)highlightedAttributedTitle {
+    return [self attributedTitleForState:UIControlStateHighlighted];
+}
+
+- (void)setHighlightedAttributedTitle:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateHighlighted];
+}
+
+- (NSAttributedString *)selectedAttributedTitle {
+    return [self attributedTitleForState:UIControlStateSelected];
+}
+
+- (void)seSelectedAttributedTitle:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateSelected];
+}
+
+- (NSAttributedString *)disabledAttributedTitle {
+    return [self attributedTitleForState:UIControlStateDisabled];
+}
+
+- (void)setDisabledAttributedTitle:(NSAttributedString *)attributedTitle {
+    [self setAttributedTitle:attributedTitle forState:UIControlStateDisabled];
+}
+
 #pragma mark - Labeling
-
-- (NSTextAlignment)textAlignment {
-    return self.titleLabel.textAlignment;
-}
-
-- (void)setTextAlignment:(NSTextAlignment)textAlignment {
-    self.titleLabel.textAlignment = textAlignment;
-}
 
 - (NSAttributedString *)attributedText {
     return [self attributedTitleForState:UIControlStateNormal];

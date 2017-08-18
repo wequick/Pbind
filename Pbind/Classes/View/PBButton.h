@@ -35,7 +35,6 @@
 
 /** The title color for the normal state */
 @property (nonatomic, strong) UIColor *titleColor;
-
 /** The title color for the disabled state */
 @property (nonatomic, strong) UIColor *disabledTitleColor;
 /** The title color for the selected state */
@@ -80,15 +79,24 @@
  */
 @property (nonatomic, strong) UIColor *highlightedBackgroundColor;
 
+/** The attributed title for the normal state */
+@property (nonatomic, strong) NSAttributedString *attributedTitle;
+/** The attributed title for the disabled state */
+@property (nonatomic, strong) NSAttributedString *disabledAttributedTitle;
+/** The attributed title for the selected state */
+@property (nonatomic, strong) NSAttributedString *selectedAttributedTitle;
+/** The attributed title for the highlighted state */
+@property (nonatomic, strong) NSAttributedString *highlightedAttributedTitle;
+
 #pragma mark - Labeling
 ///=============================================================================
 /// @name Labeling
 ///=============================================================================
 
+/** same to `titleColor' */
 @property (nonatomic, strong) UIColor *textColor;
 
-@property (nonatomic, assign) NSTextAlignment textAlignment;
-
+/** same to `attributedTitle' */
 @property (nonatomic, strong) NSAttributedString *attributedText;
 
 @end
