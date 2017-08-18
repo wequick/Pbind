@@ -67,13 +67,6 @@
 					<dict>
 						<key>properties</key>
 						<dict>
-							<key>@button.text</key>
-							<string>@&quot;{F:%#d} (Default)&quot;,@button.font.pointSize</string>
-						</dict>
-					</dict>
-					<dict>
-						<key>properties</key>
-						<dict>
 							<key>@button.font</key>
 							<string>{F:14}</string>
 							<key>@button.text</key>
@@ -122,7 +115,7 @@
 				<key>header</key>
 				<dict>
 					<key>title</key>
-					<string>textColor</string>
+					<string>titleColor (textColor)</string>
 				</dict>
 				<key>row</key>
 				<dict>
@@ -177,6 +170,23 @@
 							<string>#000@0.2</string>
 							<key>@button.text</key>
 							<string>@&quot;#000@0.2 (#RGB@alpha)&quot;</string>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
+					<string>text</string>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>properties</key>
+						<dict>
+							<key>@button.text</key>
+							<string>The quick brown fox jumps over the lazy dog</string>
 						</dict>
 					</dict>
 				</array>

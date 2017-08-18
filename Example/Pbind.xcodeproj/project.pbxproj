@@ -51,6 +51,7 @@
 		F86CC7A21F3A263600DA9FFD /* table.label.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC7A11F3A263600DA9FFD /* table.label.plist */; };
 		F86CC7A51F46027400DA9FFD /* table.button.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC7A41F46027400DA9FFD /* table.button.plist */; };
 		F86CC7A71F46029C00DA9FFD /* cell.button.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC7A61F46029C00DA9FFD /* cell.button.plist */; };
+		F86CC7AA1F47082700DA9FFD /* scroll.action.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC7A91F47082700DA9FFD /* scroll.action.plist */; };
 		F89500CD1D87AB9C0038A3E5 /* form.addgroup.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */; };
 		F89500CE1D87AB9C0038A3E5 /* table.group.plist in Resources */ = {isa = PBXBuildFile; fileRef = F89500CC1D87AB9C0038A3E5 /* table.group.plist */; };
 		F89500D61D87ABC00038A3E5 /* PBExampleClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F89500D51D87ABC00038A3E5 /* PBExampleClient.m */; };
@@ -133,6 +134,7 @@
 		F86CC7A11F3A263600DA9FFD /* table.label.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.label.plist; sourceTree = "<group>"; };
 		F86CC7A41F46027400DA9FFD /* table.button.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.button.plist; sourceTree = "<group>"; };
 		F86CC7A61F46029C00DA9FFD /* cell.button.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = cell.button.plist; sourceTree = "<group>"; };
+		F86CC7A91F47082700DA9FFD /* scroll.action.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = scroll.action.plist; sourceTree = "<group>"; };
 		F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = form.addgroup.plist; sourceTree = "<group>"; };
 		F89500CC1D87AB9C0038A3E5 /* table.group.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.group.plist; sourceTree = "<group>"; };
 		F89500D41D87ABC00038A3E5 /* PBExampleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBExampleClient.h; sourceTree = "<group>"; };
@@ -340,6 +342,14 @@
 			path = PBButtonDemo;
 			sourceTree = "<group>";
 		};
+		F86CC7A81F4707F400DA9FFD /* PBActionDemo */ = {
+			isa = PBXGroup;
+			children = (
+				F86CC7A91F47082700DA9FFD /* scroll.action.plist */,
+			);
+			path = PBActionDemo;
+			sourceTree = "<group>";
+		};
 		F89500C71D87AB7B0038A3E5 /* Adapter */ = {
 			isa = PBXGroup;
 			children = (
@@ -374,15 +384,16 @@
 		F89500CA1D87AB8E0038A3E5 /* Plist */ = {
 			isa = PBXGroup;
 			children = (
+				F86CC7A81F4707F400DA9FFD /* PBActionDemo */,
 				F86CC7A31F46026600DA9FFD /* PBButtonDemo */,
 				F86CC7A01F3A261600DA9FFD /* UILabelDemo */,
 				F86CC7981F3A0ACF00DA9FFD /* UIViewDemo */,
 				F86CC7991F3A0AF500DA9FFD /* Base */,
+				F8A02C0B1F30C5A80058028E /* table.main.plist */,
 				F89500CB1D87AB9C0038A3E5 /* form.addgroup.plist */,
 				F89500CC1D87AB9C0038A3E5 /* table.group.plist */,
 				F80FB22C1D913E2400DD48F4 /* table.members.plist */,
 				F8A02BEA1F1217D30058028E /* item.member.plist */,
-				F8A02C0B1F30C5A80058028E /* table.main.plist */,
 				F8A02C0F1F30DC770058028E /* abc.plist */,
 			);
 			name = Plist;
@@ -515,6 +526,7 @@
 				F89500CD1D87AB9C0038A3E5 /* form.addgroup.plist in Resources */,
 				F86CC79B1F3A0B1100DA9FFD /* header.common.plist in Resources */,
 				F86CC7A51F46027400DA9FFD /* table.button.plist in Resources */,
+				F86CC7AA1F47082700DA9FFD /* scroll.action.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				F8039BE21E3437EB009C5372 /* level1.xml in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,

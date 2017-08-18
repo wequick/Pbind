@@ -205,6 +205,27 @@
 				<key>header</key>
 				<dict>
 					<key>title</key>
+					<string>text</string>
+				</dict>
+				<key>rows</key>
+				<array>
+					<dict>
+						<key>height</key>
+						<string>60</string>
+						<key>properties</key>
+						<dict>
+							<key>textLabel.text</key>
+							<string>The quick brown fox jumps over the lazy dog</string>
+							<key>textLabel.numberOfLines</key>
+							<string>0</string>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>header</key>
+				<dict>
+					<key>title</key>
 					<string>attributedText</string>
 				</dict>
 				<key>rows</key>

@@ -82,6 +82,20 @@
 					</dict>
 				</dict>
 			</dict>
+			<dict>
+				<key>properties</key>
+				<dict>
+					<key>textLabel.text</key>
+					<string>PBAction</string>
+					<key>data</key>
+					<dict>
+						<key>target</key>
+						<string>PBScrollViewController</string>
+						<key>plist</key>
+						<string>scroll.action</string>
+					</dict>
+				</dict>
+			</dict>
 		</array>
 	</dict>
 </dict>

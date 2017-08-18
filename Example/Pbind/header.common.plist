@@ -17,8 +17,8 @@
 	</dict>
 	<key>formats</key>
 	<array>
-		<string>|-8-[title]</string>
-		<string>V:|[title]</string>
+		<string>|-[title]-|</string>
+		<string>V:|[title]|</string>
 	</array>
 </dict>
 </plist>
