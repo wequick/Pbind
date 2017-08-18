@@ -307,7 +307,7 @@
 - (void)unbind:(id)target forKeyPath:(NSString *)keyPath
 {
     if (_properties != nil) {
-        target = [target valueForKey:keyPath];
+        target = [self valueForKeyPath:keyPath ofTarget:target];
         [_properties unbind:target];
         return;
     }
