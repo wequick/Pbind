@@ -159,7 +159,7 @@ void appendCStrWithFormat(char **pFormat_to_go, NSMutableString *result, NSArray
                         mode=atsign_pos[1];
                         *atsign_pos = '\0';
                         char *spec_pos = strpbrk(atsign_pos+2, "dioxXucsfeEgGpn");
-                        if (*spec_pos != 0) {
+                        if (spec_pos != NULL && *spec_pos != 0) {
                             long len = spec_pos - atsign_pos + 1;
                             usertag_pos = (char *)malloc(len);
                             usertag_pos[0] = '%';
