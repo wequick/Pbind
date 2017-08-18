@@ -30,6 +30,13 @@
         [properties removeObjectForKey:key];
     }
     
+    NSDictionary *selfProperties = [properties objectForKey:@"properties"];
+    if (selfProperties != nil) {
+        [properties removeObjectForKey:@"properties"];
+        _properties = [PBMapperProperties propertiesWithDictionary:selfProperties mapper:self];
+        [_properties initDataForOwner:self];
+    }
+    
     _viewProperties = [PBMapperProperties propertiesWithDictionary:properties mapper:self];
     
     NSUInteger nextCount = next.count;
