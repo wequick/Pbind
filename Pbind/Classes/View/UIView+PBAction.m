@@ -171,14 +171,12 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
 }
 
 - (void)pb_unbindActionMappers {
-    NSArray *events = [self.pb_actionEvents allValues];
-    if (events == nil) {
-        return;
-    }
-    
-    for (_PBViewActionEvent *event in events) {
-        if (event.mapper != nil) {
-            [event.mapper unbind];
+    for (NSString *key in self.pb_actionEvents) {
+        NSArray *events = [self.pb_actionEvents objectForKey:key];
+        for (_PBViewActionEvent *event in events) {
+            if (event.mapper != nil) {
+                [event.mapper unbind];
+            }
         }
     }
     self.pb_actionEvents = nil;
