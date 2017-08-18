@@ -538,7 +538,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     NSMutableArray *editActions = [[NSMutableArray alloc] initWithCapacity:row.editActionMappers.count];
-    for (PBRowActionMapper *actionMapper in row.editActionMappers) {
+    for (PBRowActionMapper *actionMapper in [row.editActionMappers reverseObjectEnumerator]) {
         [actionMapper updateWithData:tableView.rootData owner:cell context:tableView];
         UITableViewRowAction *rowAction = [UITableViewRowAction rowActionWithStyle:actionMapper.style title:actionMapper.title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
             tableView.editingIndexPath = indexPath;
