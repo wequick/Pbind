@@ -19,7 +19,7 @@
 					<key>layer.borderWidth</key>
 					<string>1</string>
 					<key>layer.borderColor</key>
-					<string>##333</string>
+					<string>##000@.2</string>
 					<key>layer.cornerRadius</key>
 					<string>4</string>
 				</dict>
@@ -49,7 +49,7 @@
 				<key>titleFont</key>
 				<string>{F:14}</string>
 				<key>margin</key>
-				<string>{0,16,12,0}</string>
+				<string>{4,16,12,0}</string>
 				<key>titleColor</key>
 				<string>#666</string>
 			</dict>
@@ -173,12 +173,17 @@
 						</dict>
 					</dict>
 				</array>
+				<key>footer</key>
+				<dict>
+					<key>title</key>
+					<string>highlightedTitleColor, selectedTitleColor, disabledTitleColor for other states.</string>
+				</dict>
 			</dict>
 			<dict>
 				<key>header</key>
 				<dict>
 					<key>title</key>
-					<string>text</string>
+					<string>title (text)</string>
 				</dict>
 				<key>rows</key>
 				<array>
@@ -190,12 +195,17 @@
 						</dict>
 					</dict>
 				</array>
+				<key>footer</key>
+				<dict>
+					<key>title</key>
+					<string>highlightedTitle, selectedTitle, disabledTitle for other states.</string>
+				</dict>
 			</dict>
 			<dict>
 				<key>header</key>
 				<dict>
 					<key>title</key>
-					<string>attributedText</string>
+					<string>attributedTitle (attributedText)</string>
 				</dict>
 				<key>rows</key>
 				<array>
@@ -227,6 +237,11 @@
 						</dict>
 					</dict>
 				</array>
+				<key>footer</key>
+				<dict>
+					<key>title</key>
+					<string>highlightedAttributedTitle, selectedAttributedTitle, disabledAttributedTitle for other states.</string>
+				</dict>
 			</dict>
 		</array>
 	</dict>

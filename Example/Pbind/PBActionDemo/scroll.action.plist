@@ -2,6 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>nav</key>
+	<dict>
+		<key>right</key>
+		<dict>
+			<key>type</key>
+			<string>:share</string>
+			<key>action</key>
+			<dict>
+				<key>type</key>
+				<string>sheet</string>
+				<key>params</key>
+				<dict>
+					<key>title</key>
+					<string>Pbind</string>
+					<key>message</key>
+					<string>Click navigation right item!</string>
+					<key>buttons</key>
+					<array>
+						<string>Cancel</string>
+						<string>OK</string>
+					</array>
+				</dict>
+			</dict>
+		</dict>
+	</dict>
 	<key>properties</key>
 	<dict>
 		<key>backgroundColor</key>
@@ -30,7 +55,7 @@
 						<key>params</key>
 						<dict>
 							<key>title</key>
-							<string>@&quot;%@ clicked!&quot;,.class</string>
+							<string>@&quot;Click %@!&quot;,.class</string>
 						</dict>
 					</dict>
 				</dict>
@@ -59,7 +84,7 @@
 						<key>params</key>
 						<dict>
 							<key>title</key>
-							<string>@&quot;%@ clicked!&quot;,.class</string>
+							<string>@&quot;Click %@!&quot;,.class</string>
 						</dict>
 					</dict>
 				</dict>
@@ -79,11 +104,6 @@
 					<dict>
 						<key>height</key>
 						<string>44</string>
-						<key>properties</key>
-						<dict>
-							<key>textLabel.text</key>
-							<string>actions.select for cell in UITableView</string>
-						</dict>
 						<key>actions</key>
 						<dict>
 							<key>select</key>
@@ -93,19 +113,25 @@
 								<key>params</key>
 								<dict>
 									<key>title</key>
-									<string>@&quot;click cell at [%#i, %#i]&quot;,.indexPath.section,.indexPath.row</string>
+									<string>@&quot;Click cell at [%#i, %#i]!&quot;,.indexPath.section,.indexPath.row</string>
 								</dict>
 							</dict>
 						</dict>
 					</dict>
 					<key>rows</key>
 					<array>
-						<dict/>
 						<dict>
 							<key>properties</key>
 							<dict>
 								<key>textLabel.text</key>
-								<string>← Swipe left to show delete action</string>
+								<string>select action for UITableViewCell</string>
+							</dict>
+						</dict>
+						<dict>
+							<key>properties</key>
+							<dict>
+								<key>textLabel.text</key>
+								<string>Swipe left to show delete action</string>
 							</dict>
 							<key>actions</key>
 							<dict>
@@ -125,7 +151,7 @@
 							<key>properties</key>
 							<dict>
 								<key>textLabel.text</key>
-								<string>← Swipe left to show custom actions</string>
+								<string>Swipe left to show custom actions</string>
 							</dict>
 							<key>actions</key>
 							<dict>
@@ -177,7 +203,7 @@
 				<key>height</key>
 				<string>104</string>
 				<key>margin</key>
-				<string>{8,8,0,8}</string>
+				<string>{8,0,0,0}</string>
 				<key>properties</key>
 				<dict>
 					<key>backgroundColor</key>
@@ -186,16 +212,14 @@
 					<true/>
 					<key>data</key>
 					<array>
-						<string>actions.select</string>
-						<string>for item</string>
-						<string>in UICollectionView</string>
+						<string>select action</string>
+						<string>for item in</string>
+						<string>UICollectionView</string>
 					</array>
 					<key>section</key>
 					<dict>
 						<key>inset</key>
 						<string>{8,8,8,8}</string>
-						<key>numberOfColumns</key>
-						<integer>3</integer>
 						<key>inner</key>
 						<string>{8,8}</string>
 					</dict>
@@ -203,6 +227,8 @@
 					<dict>
 						<key>height</key>
 						<string>88</string>
+						<key>width</key>
+						<string>200</string>
 						<key>layout</key>
 						<string>header.common</string>
 						<key>properties</key>
@@ -230,7 +256,7 @@
 								<key>params</key>
 								<dict>
 									<key>title</key>
-									<string>@&quot;click item at [%#i, %#i]&quot;,.indexPath.section,.indexPath.row</string>
+									<string>@&quot;Click item at [%#i, %#i]!&quot;,.indexPath.section,.indexPath.row</string>
 								</dict>
 							</dict>
 						</dict>
