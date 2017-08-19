@@ -30,14 +30,14 @@
 }
 
 - (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target {
-    [self shouldParse:source toValue:result withData:data target:target context:nil];
+    [self shouldParse:source toValue:result withData:data target:target owner:nil];
 }
 
-- (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target context:(UIView *)context {
+- (void)shouldParse:(NSString *)source toValue:(id)result withData:(id)data target:(id)target owner:(UIView *)owner {
     PBExpression *exp = [PBMutableExpression expressionWithString:source];
     XCTAssert([source isEqualToString:[exp stringValue]]);
     
-    id value = [exp valueWithData:data target:target context:context];
+    id value = [exp valueWithData:data target:target owner:owner context:nil];
     XCTAssert((result == nil && value == nil) || [result isEqual:value]);
 }
 
@@ -47,23 +47,23 @@
              withData:@{@"hello": @"Pbind"}];
 }
 
-- (void)testCanParseContextData {
-    UIView *context = [[UIView alloc] init];
-    context.data = @{@"hello": @"Pbind"};
+- (void)testCanParseOwnerData {
+    UIView *owner = [[UIView alloc] init];
+    owner.data = @{@"hello": @"Pbind"};
     
     [self shouldParse:@".$hello"
               toValue:@"Pbind"
              withData:nil
               target:nil
-              context:context];
+               owner:owner];
 }
 
-- (void)testCanParseContextProperties {
+- (void)testCanParseOwnerProperties {
     PBExpression *exp = [PBExpression expressionWithString:@".frame"];
     
     CGRect frame = CGRectMake(1, 2, 3, 4);
-    UIView *context = [[UIView alloc] initWithFrame:frame];
-    id value = [exp valueWithData:nil target:nil context:context];
+    UIView *owner = [[UIView alloc] initWithFrame:frame];
+    id value = [exp valueWithData:nil target:nil owner:owner context:nil];
     
     XCTAssert([[exp stringValue] isEqualToString:@".frame"]);
     XCTAssert(CGRectEqualToRect(frame, [value CGRectValue]));
