@@ -14,6 +14,7 @@
 #import "PBMessageInterceptor.h"
 #import "PBRowMapper.h"
 #import "PBSectionMapper.h"
+#import "PBRowControlMapper.h"
 
 @protocol PBRowMapping;
 

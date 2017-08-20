@@ -11,6 +11,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PBRowDataSource.h"
+#import "PBLoadMoreControl.h"
 
 @protocol PBRowPaging;
 
@@ -20,9 +21,8 @@
 @interface PBRowDelegate : PBMessageInterceptor<UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 {
     UIRefreshControl *_refreshControl;
-    UIRefreshControl *_pullupControl;
-    NSTimeInterval _pullupBeginTime;
-    UITableView *_pullControlWrapper;
+    PBLoadMoreControl *_loadMoreControl;
+    NSTimeInterval _loadMoreBeginTime;
 }
 
 #pragma mark - Context
@@ -44,13 +44,22 @@
 ///=============================================================================
 
 /** Whether the owner is refreshing data */
-@property (nonatomic, assign) BOOL refreshing;
+@property (nonatomic, assign, getter=isRefreshing) BOOL refreshing;
 
 /** Whether the owner is pulling more data */
-@property (nonatomic, assign) BOOL pulling;
+@property (nonatomic, assign, getter=isLoadingMore) BOOL loadingMore;
+
+/** The mapper to map the data for pulled-to-load-more control */
+@property (nonatomic, strong) PBRowControlMapper *more;
 
 - (void)beginRefreshingForPagingView:(UIScrollView<PBRowPaging> *)pagingView;
-- (void)endPullingForPagingView:(UIScrollView<PBRowPaging> *)pagingView;
+
+- (BOOL)pagingViewCanReloadData:(UIScrollView<PBRowPaging> *)pagingView;
+
+#pragma mark - Purging
+
+/** Reset the mappers */
+- (void)reset;
 
 #pragma mark - FlowLayout
 ///=============================================================================

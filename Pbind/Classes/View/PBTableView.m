@@ -27,7 +27,7 @@
 
 @implementation PBTableView
 
-@synthesize listKey, page, pagingParams, needsLoadMore;
+@synthesize listKey, page, pagingParams, more;
 @synthesize row, rows, section, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
@@ -251,39 +251,40 @@
 
 - (void)pb_resetMappers {
     [rowDataSource reset];
+    [rowDelegate reset];
     [self setHeaders:nil];
     [self setFooters:nil];
 }
 
 - (void)reloadData {
-    if (rowDelegate.pulling) {
-        [rowDelegate endPullingForPagingView:self];
-    } else {
-        [rowDataSource updateSections];
-
-        if (!self.dataUpdated) {
-            return;
-        }
-        
-        if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
-            PBScrollView *headerView = (id) self.tableHeaderView;
-            [headerView reloadData];
-        }
-        
-        if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
-            PBScrollView *footerView = (id) self.tableFooterView;
-            [footerView reloadData];
-        }
-        
-        [super reloadData];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.dataUpdated = NO;
-            if (self.autoResize) {
-                [self invalidateIntrinsicContentSize];
-                [self setNeedsLayout];
-            }
-        });
+    if (![rowDelegate pagingViewCanReloadData:self]) {
+        return;
     }
+    
+    [rowDataSource updateSections];
+
+    if (!self.dataUpdated) {
+        return;
+    }
+    
+    if ([self.tableHeaderView isKindOfClass:[PBScrollView class]]) {
+        PBScrollView *headerView = (id) self.tableHeaderView;
+        [headerView reloadData];
+    }
+    
+    if ([self.tableFooterView isKindOfClass:[PBScrollView class]]) {
+        PBScrollView *footerView = (id) self.tableFooterView;
+        [footerView reloadData];
+    }
+    
+    [super reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.dataUpdated = NO;
+        if (self.autoResize) {
+            [self invalidateIntrinsicContentSize];
+            [self setNeedsLayout];
+        }
+    });
 }
 
 - (void)dealloc {

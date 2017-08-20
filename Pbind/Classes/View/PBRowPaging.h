@@ -30,18 +30,8 @@
  */
 @property (nonatomic, assign) NSInteger page;
 
-/**
- Whether needs to load more page.
- 
- @discussion This needs binding an expression by:
- 
- - setting `needsLoadMore=$expression` in your plist or
- - call [self setExpression:@"$expression" forKey:@"needsLoadMore"]
- 
- The default expression is nil and the value will be always YES. If an expression was set, then
- while pulling up to load more, the expression will be re-calculated and set to this property.
- */
-@property (nonatomic, assign) BOOL needsLoadMore;
+/** more mapper */
+@property (nonatomic, strong) NSDictionary *more;
 
 /**
  Re-fetch data with the initial paging parameters and reload the table view.

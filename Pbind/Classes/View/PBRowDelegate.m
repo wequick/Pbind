@@ -18,6 +18,7 @@
 #import "PBDataFetching.h"
 #import "PBHeaderFooterMapper.h"
 #import "PBSectionView.h"
+#import "PBLoadMoreControlMapper.h"
 
 @implementation PBRowDelegate
 
@@ -52,6 +53,18 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     [_refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
+- (PBRowControlMapper *)more {
+    if (_more == nil) {
+        if ([self.dataSource.owner conformsToProtocol:@protocol(PBRowPaging)]) {
+            NSDictionary *info = [(id)self.dataSource.owner more];
+            if (info) {
+                _more = [PBLoadMoreControlMapper mapperWithDictionary:info];
+            }
+        }
+    }
+    return _more;
+}
+
 - (void)scrollViewDidScroll:(UIScrollView<PBRowPaging> *)pagingView {
     if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver scrollViewDidScroll:pagingView];
@@ -61,38 +74,16 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return;
     }
     
-    if (_pullupControl != nil && ![_pullupControl isEnabled]) {
+    if (_loadMoreControl != nil && ![_loadMoreControl isEnabled]) {
         return;
     }
     
     CGPoint contentOffset = pagingView.contentOffset;
     UIEdgeInsets contentInset = pagingView.contentInset;
     CGFloat height = pagingView.bounds.size.height;
-    CGFloat pullupY = (contentOffset.y + contentInset.top + height) - MAX((pagingView.contentSize.height + contentInset.bottom + contentInset.top), height);
+    CGFloat pulledUpDistance = (contentOffset.y + contentInset.top + height) - MAX((pagingView.contentSize.height + contentInset.bottom + contentInset.top), height);
     
-    if (pullupY > 0) {
-        // Pull up to load more
-        if (!pagingView.needsLoadMore) {
-            return;
-        }
-        
-        UITableView *wrapper = _pullControlWrapper;
-        if (wrapper == nil) {
-            wrapper = [[UITableView alloc] initWithFrame:pagingView.frame];
-            wrapper.userInteractionEnabled = NO;
-            wrapper.backgroundColor = [UIColor clearColor];
-            wrapper.separatorStyle = UITableViewCellSeparatorStyleNone;
-            wrapper.transform = CGAffineTransformMakeRotation(M_PI);
-            _pullupControl = [[UIRefreshControl alloc] init];
-            [_pullupControl addTarget:self action:@selector(pullupControlDidReleased:) forControlEvents:UIControlEventValueChanged];
-            [wrapper addSubview:_pullupControl];
-            _pullControlWrapper = wrapper;
-            
-            pagingView.needsLoadMore = YES;
-            
-            [pagingView.superview insertSubview:_pullControlWrapper aboveSubview:pagingView];
-        }
-    } else {
+    if (pulledUpDistance <= 0) {
         // Pull down to refresh
         if (_refreshControl == nil) {
             UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
@@ -102,28 +93,60 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         }
     }
     
-    if (_pullControlWrapper == nil) {
+    // Pull up to load more
+    if (![pagingView isDragging]) {
+        return;
+    }
+    PBRowControlMapper *moreMapper = self.more;
+    if (moreMapper == nil) {
         return;
     }
     
-    if (pullupY >= _pullupControl.bounds.size.height * 1.5) {
-        if (!_pullupControl.refreshing) {
-            [_pullupControl beginRefreshing];
-            [_pullupControl sendActionsForControlEvents:UIControlEventValueChanged];
+    UIView *owner = pagingView;
+    id data = owner.rootData;
+    [moreMapper updateWithData:data owner:pagingView context:pagingView];
+    
+    if (_loadMoreControl == nil) {
+        PBLoadMoreControl *moreControl = [moreMapper createView];
+        if (![moreControl isKindOfClass:[PBLoadMoreControl class]]) {
+            NSLog(@"Pbind: Requires a <PBLoadMoreControl> but got <%@>.", moreControl.class);
+            return;
         }
+        
+        [moreMapper initPropertiesForTarget:moreControl];
+        [moreControl addTarget:self action:@selector(loadMoreControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+        [owner addSubview:moreControl];
+        _loadMoreControl = moreControl;
+    }
+    
+    CGFloat moreControlTriggerThreshold = _loadMoreControl.beginDistance;
+    CGFloat moreControlInitialThreshold = MIN(0, moreControlTriggerThreshold);
+    if (pulledUpDistance > moreControlInitialThreshold) {
+        CGFloat height = [moreMapper heightForView:_loadMoreControl withData:data];
+        CGRect frame = CGRectMake(0, pagingView.contentSize.height, owner.frame.size.width, height);
+        _loadMoreControl.frame = frame;
+        _loadMoreControl.hidden = NO;
+        [moreMapper mapPropertiesToTarget:_loadMoreControl withData:data owner:owner context:owner];
     } else {
-        CGPoint pullupOffset = _pullControlWrapper.contentOffset;
-        pullupOffset.y = -pullupY;
-        _pullControlWrapper.contentOffset = pullupOffset;
+        _loadMoreControl.hidden = YES;
+    }
+    
+    if (pulledUpDistance >= moreControlTriggerThreshold) {
+        if ([_loadMoreControl isEnding] || [_loadMoreControl isLoading]) {
+            return;
+        }
+        
+        [_loadMoreControl beginLoading];
+        [_loadMoreControl sendActionsForControlEvents:UIControlEventValueChanged];
     }
 }
 
 - (void)refreshControlDidReleased:(UIRefreshControl *)sender {
     NSDate *start = [NSDate date];
     
-    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)[sender nextResponder];
+    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)self.dataSource.owner;
     if ([pagingView isFetching] || pagingView.clients == nil) {
-        [self endRefreshing:sender startAt:start];
+        [self endRefreshingControl:sender fromBeginTime:start];
         return;
     }
     
@@ -132,39 +155,44 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     [pagingView pb_mapData:pagingView.data forKey:@"pagingParams"];
     
     [pagingView.fetcher fetchDataWithTransformation:^id(id data, NSError *error) {
-        [self endRefreshing:sender startAt:start];
+        [self endRefreshingControl:sender fromBeginTime:start];
         return data;
     }];
 }
 
-- (void)endRefreshing:(UIRefreshControl *)sender startAt:(NSDate *)start {
-    NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:start];
+- (void)endRefreshingControl:(UIRefreshControl *)control fromBeginTime:(NSDate *)beginTime {
+    NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:beginTime];
     if (spentTime < kMinRefreshControlDisplayingTime) {
         NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [sender endRefreshing];
+            [control endRefreshing];
         });
     } else {
-        [sender endRefreshing];
+        [control endRefreshing];
     }
     
-    if (_pullupControl != nil) {
-        [_pullupControl setEnabled:YES];
+    if (_loadMoreControl != nil) {
+        [_loadMoreControl setEnabled:YES];
     }
 }
 
-- (void)pullupControlDidReleased:(UIRefreshControl *)sender {
-    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)[sender nextResponder];
+- (void)loadMoreControlDidReleased:(UIRefreshControl *)sender {
+    UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)(self.dataSource.owner);
     
     UIEdgeInsets insets = pagingView.contentInset;
-    insets.bottom += _pullupControl.bounds.size.height;
+    insets.bottom += _loadMoreControl.bounds.size.height;
     pagingView.contentInset = insets;
+    
+    _loadMoreBeginTime = [[NSDate date] timeIntervalSince1970];
+    _loadingMore = YES;
+    if (pagingView.fetcher == nil) {
+        [pagingView reloadData];
+        return;
+    }
     
     // Increase page
     pagingView.page++;
     [pagingView pb_mapData:pagingView.data forKey:@"pagingParams"];
-    
-    _pullupBeginTime = [[NSDate date] timeIntervalSince1970];
     [pagingView.fetcher fetchDataWithTransformation:^id(id data, NSError *error) {
         if (pagingView.listKey != nil) {
             NSMutableArray *list = [NSMutableArray arrayWithArray:[self.dataSource list]];
@@ -187,27 +215,45 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)endPullingForPagingView:(UIScrollView<PBRowPaging> *)pagingView {
-    NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _pullupBeginTime;
+    NSTimeInterval spentTime = [[NSDate date] timeIntervalSince1970] - _loadMoreBeginTime;
     if (spentTime < kMinRefreshControlDisplayingTime) {
         NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self endPullup:pagingView];
+            [self endLoadingMore:pagingView];
         });
     } else {
-        [self endPullup:pagingView];
+        [self endLoadingMore:pagingView];
     }
 }
 
-- (void)endPullup:(UIScrollView<PBRowPaging> *)pagingView {
-    [_pullupControl endRefreshing];
+- (void)endLoadingMore:(UIScrollView<PBRowPaging> *)pagingView {
+    _loadingMore = NO;
+    [_loadMoreControl endLoading];
+    pagingView.data = [pagingView.data arrayByAddingObjectsFromArray:pagingView.data];
     [pagingView reloadData];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         // Adjust content insets
         UIEdgeInsets insets = pagingView.contentInset;
-        insets.bottom -= _pullupControl.bounds.size.height;
+        insets.bottom -= _loadMoreControl.bounds.size.height;
         pagingView.contentInset = insets;
     });
+}
+
+- (BOOL)pagingViewCanReloadData:(UIScrollView<PBRowPaging> *)pagingView {
+    if (_loadingMore) {
+        [self endPullingForPagingView:pagingView];
+        return NO;
+    }
+    return YES;
+}
+
+- (void)reset {
+    _more = nil;
+    if (_loadMoreControl != nil) {
+        [_loadMoreControl removeFromSuperview];
+        _loadMoreControl = nil;
+    }
 }
 
 #pragma mark - UITableView

@@ -21,7 +21,7 @@
     UICollectionViewFlowLayout *_flowLayout;
 }
 
-@synthesize listKey, page, pagingParams, needsLoadMore;
+@synthesize listKey, page, pagingParams, more;
 @synthesize row, rows, section, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
@@ -124,8 +124,7 @@
 }
 
 - (void)reloadData {
-    if (rowDelegate.pulling) {
-        [rowDelegate endPullingForPagingView:self];
+    if (![rowDelegate pagingViewCanReloadData:self]) {
         return;
     }
     
@@ -139,24 +138,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         self.dataUpdated = NO;
-        
         [self autoresizeWithAnimated:NO];
-//        [_flowLayout invalidateLayout];
-        
-        // Select the item with index path.
-//        BOOL needsSelectedItem = (selectedIndexPath != nil && [rowDataSource dataAtIndexPath:selectedIndexPath] != nil);
-//        if (!needsSelectedItem) {
-//            return;
-//        }
-//        
-//        NSArray *selectedIndexPaths = [self indexPathsForSelectedItems];
-//        BOOL hasSelectedItem = (selectedIndexPaths != nil && [selectedIndexPaths containsObject:selectedIndexPath]);
-//        if (hasSelectedItem) {
-//            return;
-//        }
-//        
-//        [self selectItemAtIndexPath:selectedIndexPath animated:NO scrollPosition:0];
-//        [rowDelegate collectionView:self didSelectItemAtIndexPath:selectedIndexPath];
     });
 }
 
@@ -164,6 +146,7 @@
     [super pb_didUnbind];
     
     [rowDataSource reset];
+    [rowDelegate reset];
     _selectedData = nil;
     selectedIndexPath = nil;
 }
