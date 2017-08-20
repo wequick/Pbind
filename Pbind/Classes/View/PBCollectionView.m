@@ -21,7 +21,7 @@
     UICollectionViewFlowLayout *_flowLayout;
 }
 
-@synthesize listKey, page, pagingParams, more;
+@synthesize listKey, page, pagingParams, refresh, more;
 @synthesize row, rows, section, sections, rowDataSource, rowDelegate;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
@@ -184,7 +184,7 @@
 
 #pragma mark - Paging
 
-- (void)refresh {
+- (void)refreshData {
     [rowDelegate beginRefreshingForPagingView:self];
 }
 

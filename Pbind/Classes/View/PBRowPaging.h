@@ -30,13 +30,16 @@
  */
 @property (nonatomic, assign) NSInteger page;
 
-/** more mapper */
+/** The dictionary to be parsed as a `PBRowControlMapper' to map the data for pulled-down-to-refresh control */
+@property (nonatomic, strong) NSDictionary *refresh;
+
+/** The dictionary to be parsed as a `PBRowControlMapper' to map the data for pulled-up-to-load-more control */
 @property (nonatomic, strong) NSDictionary *more;
 
 /**
  Re-fetch data with the initial paging parameters and reload the table view.
  */
-- (void)refresh;
+- (void)refreshData;
 
 /**
  Reload the data to display new list

@@ -49,8 +49,11 @@
 /** Whether the owner is pulling more data */
 @property (nonatomic, assign, getter=isLoadingMore) BOOL loadingMore;
 
-/** The mapper to map the data for pulled-to-load-more control */
-@property (nonatomic, strong) PBRowControlMapper *more;
+/** The mapper to map the data for pulled-down-to-refresh control */
+@property (nonatomic, strong) PBRowControlMapper *refershMapper;
+
+/** The mapper to map the data for pulled-up-to-load-more control */
+@property (nonatomic, strong) PBRowControlMapper *moreMapper;
 
 - (void)beginRefreshingForPagingView:(UIScrollView<PBRowPaging> *)pagingView;
 
