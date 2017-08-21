@@ -40,4 +40,12 @@
     return self.selected;
 }
 
+- (BOOL)isReached {
+    return self.highlighted;
+}
+
+- (void)setReached:(BOOL)reached {
+    self.highlighted = reached;
+}
+
 @end

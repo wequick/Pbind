@@ -31,7 +31,7 @@
 
 
 /** Reached the limit to begin refreshing */
-@property (nonatomic, assign) BOOL reached;
+@property (nonatomic, assign, getter=isReached) BOOL reached;
 
 - (void)pagingView:(UIScrollView<PBRowPaging> *)pagingView didPullDownWithDistance:(CGFloat)distance;
 
