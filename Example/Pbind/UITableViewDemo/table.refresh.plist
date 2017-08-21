@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>properties</key>
+	<dict>
+		<key>refresh</key>
+		<dict>
+			<key>height</key>
+			<string>60</string>
+			<key>properties</key>
+			<dict>
+				<key>title</key>
+				<string>下拉加载更多</string>
+				<key>titleColor</key>
+				<string>#333</string>
+				<key>highlightedTitle</key>
+				<string>释放加载更多</string>
+				<key>selectedTitle</key>
+				<string>正在加载</string>
+				<key>beginDistance</key>
+				<string>60</string>
+			</dict>
+		</dict>
+		<key>more</key>
+		<dict>
+			<key>height</key>
+			<string>60</string>
+			<key>properties</key>
+			<dict>
+				<key>title</key>
+				<string>上拉加载更多</string>
+				<key>titleColor</key>
+				<string>#333</string>
+				<key>selectedTitle</key>
+				<string>正在加载</string>
+				<key>beginDistance</key>
+				<string>-60</string>
+			</dict>
+		</dict>
+		<key>data</key>
+		<array>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+			<string></string>
+		</array>
+		<key>row</key>
+		<dict>
+			<key>height</key>
+			<string>80</string>
+			<key>properties</key>
+			<dict>
+				<key>textLabel.text</key>
+				<string>@&quot;%@&quot;,.indexPath.row</string>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>

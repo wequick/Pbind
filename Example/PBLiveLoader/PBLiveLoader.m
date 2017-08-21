@@ -6,10 +6,10 @@
 //
 
 #import "PBLiveLoader.h"
+
+#if (PBLIVE_ENABLED)
+
 #include <targetconditionals.h>
-
-#if (DEBUG)
-
 #import "PBDirectoryWatcher.h"
 #import <Pbind/Pbind.h>
 
@@ -102,9 +102,21 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentPath = paths.firstObject;
     NSString *tempBundlePath = [documentPath stringByAppendingPathComponent:@".pb_liveload"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:tempBundlePath]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:tempBundlePath withIntermediateDirectories:NO attributes:nil error:nil];
+    NSError *error = nil;
+    if ([[NSFileManager defaultManager] fileExistsAtPath:tempBundlePath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:tempBundlePath error:&error];
+        if (error != nil) {
+            NSLog(@"PBLiveLoader: Failed to clear cache.");
+            return;
+        }
     }
+    
+    [[NSFileManager defaultManager] createDirectoryAtPath:tempBundlePath withIntermediateDirectories:NO attributes:nil error:&error];
+    if (error != nil) {
+        NSLog(@"PBLiveLoader: Failed to initialize cache.");
+        return;
+    }
+    
     [self defaultLoader]->tempResourcesPath = tempBundlePath;
     [Pbind addResourcesBundle:[NSBundle bundleWithPath:tempBundlePath]];
 #endif
@@ -160,15 +172,28 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
         if (method != nil && ![method isEqualToString:@"GET"]) {
             action = [action stringByAppendingFormat:@"@%@", [method lowercaseString]];
         }
-        action = [action stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
         if (kIgnoreAPIs != nil && [kIgnoreAPIs containsObject:action]) {
             complection(nil);
             return;
         }
         
-        NSString *jsonName = [NSString stringWithFormat:@"%@/%@.json", [[client class] description], action];
+        action = [action stringByReplacingOccurrencesOfString:@"/" withString:@":"];
+        if (kIgnoreAPIs != nil && [kIgnoreAPIs containsObject:action]) {
+            complection(nil);
+            return;
+        }
+        
+        NSString *clientName = [[client class] alias];
+        if (clientName == nil) {
+            clientName = [[client class] description];
+        }
+        NSString *jsonName = [NSString stringWithFormat:@"%@/%@", clientName, action];
+        if (kIgnoreAPIs != nil && [kIgnoreAPIs containsObject:jsonName]) {
+            complection(nil);
+            return;
+        }
 #if (TARGET_IPHONE_SIMULATOR)
-        NSString *jsonPath = [serverPath stringByAppendingPathComponent:jsonName];
+        NSString *jsonPath = [[serverPath stringByAppendingPathComponent:jsonName] stringByAppendingPathExtension:@"json"];
         if (![[NSFileManager defaultManager] fileExistsAtPath:jsonPath]) {
             NSLog(@"PBLiveLoader: Missing '%@', ignores!", jsonName);
             complection(nil);
@@ -278,7 +303,6 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
 - (void)requestAPI:(NSString *)api complection:(void (^)(PBResponse *))complection {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [PBLLInspector addToWindow];
         [[PBLLRemoteWatcher globalWatcher] connectDefaultIP];
     });
     
@@ -299,14 +323,26 @@ static BOOL HasSuffix(NSString *src, NSString *tail)
 
 #pragma mark - PBLLRemoteWatcherDelegate
 
+- (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didChangeConnectState:(BOOL)connected {
+    [[PBLLInspector sharedInspector] updateConnectState:connected];
+}
+
 - (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didReceiveResponse:(NSData *)jsonData {
     [[self class] receiveJsonData:jsonData withFile:nil complection:apiComplection];
 }
 
 - (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didUpdateFile:(NSString *)fileName withData:(NSData *)data {
     if (HasSuffix(fileName, @".plist")) {
-        NSString *plist = [tempResourcesPath stringByAppendingPathComponent:fileName];
-        [data writeToFile:plist atomically:NO];
+        NSError *error;
+        NSPropertyListFormat format;
+        NSDictionary *dict = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:&format error:&error];
+        if (!dict){
+            NSLog(@"PBLiveLoader: Got a invalid plist. (error: %@)", error);
+            return;
+        }
+        
+        NSString *plistPath = [tempResourcesPath stringByAppendingPathComponent:fileName];
+        [data writeToFile:plistPath atomically:NO];
         
         [Pbind reloadViewsOnPlistUpdate:fileName];
     } else if (HasSuffix(fileName, @".json")) {

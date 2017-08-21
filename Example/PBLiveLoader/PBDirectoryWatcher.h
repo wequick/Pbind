@@ -5,9 +5,10 @@
 //  Created by Galen Lin on 2016/12/9.
 //
 
+#import "PBLLOptions.h"
 #include <targetconditionals.h>
 
-#if (DEBUG && TARGET_IPHONE_SIMULATOR)
+#if (PBLIVE_ENABLED && TARGET_IPHONE_SIMULATOR)
 
 #import <Foundation/Foundation.h>
 

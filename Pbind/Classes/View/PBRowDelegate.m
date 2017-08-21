@@ -19,6 +19,8 @@
 #import "PBHeaderFooterMapper.h"
 #import "PBSectionView.h"
 #import "PBLoadMoreControlMapper.h"
+#import "PBRefreshControlMapper.h"
+#import "PBRefreshControl.h"
 
 @implementation PBRowDelegate
 
@@ -42,73 +44,123 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         [self.receiver scrollViewDidScroll:pagingView];
     }
     
+    if (pagingView.refresh != nil) {
+        // Pull down to refresh
+        [self checkIfNeedsRefreshForPagingView:pagingView];
+    }
+    
+    if (pagingView.more != nil) {
+        // Pull up to load more
+        [self checkIfNeedsLoadMoreForPagingView:pagingView];
+    }
+}
+
+- (void)checkIfNeedsRefreshForPagingView:(UIScrollView<PBRowPaging> *)pagingView {
+    if (_refreshMapper == nil) {
+        _refreshMapper = [PBRefreshControlMapper mapperWithDictionary:pagingView.refresh];
+    }
+    
+    id data = pagingView.rootData;
+    PBRowMapper *mapper = _refreshMapper;
+    [mapper updateWithData:data owner:pagingView context:pagingView];
+    
+    if (_refreshControl == nil) {
+        if (mapper.layout != nil || mapper.height > 0) {
+            // Use custom refresh control
+            PBRefreshControl *refreshControl = (id)[mapper createView];
+            if (![refreshControl isKindOfClass:[PBRefreshControl class]]) {
+                NSLog(@"Pbind: Requires a <PBRefreshControl> but got <%@>.", _refreshControl.class);
+                return;
+            }
+            
+            [mapper initPropertiesForTarget:refreshControl];
+            _flags.usesCustomRefreshControl = 1;
+            _refreshControl = refreshControl;
+        } else {
+            _flags.usesCustomRefreshControl = 0;
+            _refreshControl = (id) [[UIRefreshControl alloc] init];
+        }
+        
+        [_refreshControl addTarget:self action:@selector(refreshControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+        [pagingView addSubview:_refreshControl];
+    }
+    
+    if (_flags.usesCustomRefreshControl) {
+        PBRefreshControl *refreshControl = (id) _refreshControl;
+        if ([pagingView isDragging]) {
+            [mapper mapPropertiesToTarget:refreshControl withData:data owner:pagingView context:pagingView];
+            CGFloat pulledDownDistance = -pagingView.contentOffset.y - pagingView.contentInset.top;
+            if (pulledDownDistance > 0) {
+                CGFloat height = [mapper heightForView:refreshControl withData:data];
+                refreshControl.frame = CGRectMake(0, -height, pagingView.frame.size.width, height);
+                refreshControl.hidden = NO;
+            } else {
+                refreshControl.hidden = YES;
+            }
+            
+            [refreshControl pagingView:pagingView didPullDownWithDistance:pulledDownDistance];
+            
+            if (pulledDownDistance >= refreshControl.beginDistance) {
+                refreshControl.reached = YES;
+            } else {
+                refreshControl.reached = NO;
+            }
+        } else if (refreshControl.reached) {
+            [self beginRefreshingForPagingView:pagingView];
+        }
+    }
+}
+
+- (void)checkIfNeedsLoadMoreForPagingView:(UIScrollView<PBRowPaging> *)pagingView {
+    
     if (![pagingView isDragging]) {
         return;
+    }
+    
+    if (_moreMapper == nil) {
+        _moreMapper = [PBLoadMoreControlMapper mapperWithDictionary:pagingView.more];
+    }
+    
+    PBRowControlMapper *moreMapper = _moreMapper;
+    id data = pagingView.rootData;
+    [moreMapper updateWithData:data owner:pagingView context:pagingView];
+    
+    if (_loadMoreControl == nil) {
+        PBLoadMoreControl *moreControl = [moreMapper createView];
+        if (![moreControl isKindOfClass:[PBLoadMoreControl class]]) {
+            NSLog(@"Pbind: Requires a <PBLoadMoreControl> but got <%@>.", moreControl.class);
+            return;
+        }
+        
+        [moreMapper initPropertiesForTarget:moreControl];
+        [moreControl addTarget:self action:@selector(loadMoreControlDidReleased:) forControlEvents:UIControlEventValueChanged];
+        [pagingView addSubview:moreControl];
+        _loadMoreControl = moreControl;
     }
     
     CGPoint contentOffset = pagingView.contentOffset;
     UIEdgeInsets contentInset = pagingView.contentInset;
     CGFloat height = pagingView.bounds.size.height;
-    
-    if (pagingView.refresh != nil) {
-        // Pull down to refresh
-        if (_refershMapper == nil) {
-            _refershMapper = [PBRowControlMapper mapperWithDictionary:pagingView.refresh];
-        }
-        
-        if (_refreshControl == nil) {
-            UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-            [refreshControl addTarget:self action:@selector(refreshControlDidReleased:) forControlEvents:UIControlEventValueChanged];
-            [pagingView addSubview:refreshControl];
-            _refreshControl = refreshControl;
-        }
+    CGFloat pulledUpDistance = (contentOffset.y + contentInset.top + height) - MAX((pagingView.contentSize.height + contentInset.bottom + contentInset.top), height);
+    CGFloat moreControlTriggerThreshold = _loadMoreControl.beginDistance;
+    CGFloat moreControlInitialThreshold = MIN(0, moreControlTriggerThreshold);
+    if (pulledUpDistance > moreControlInitialThreshold) {
+        CGFloat height = [moreMapper heightForView:_loadMoreControl withData:data];
+        CGRect frame = CGRectMake(0, pagingView.contentSize.height, pagingView.frame.size.width, height);
+        _loadMoreControl.frame = frame;
+        _loadMoreControl.hidden = NO;
+        [moreMapper mapPropertiesToTarget:_loadMoreControl withData:data owner:pagingView context:pagingView];
+    } else {
+        _loadMoreControl.hidden = YES;
     }
     
-    if (pagingView.more != nil) {
-        // Pull up to load more
-        if (_moreMapper == nil) {
-            _moreMapper = [PBLoadMoreControlMapper mapperWithDictionary:pagingView.more];
+    if (pulledUpDistance >= moreControlTriggerThreshold) {
+        if ([_loadMoreControl isEnding] || [_loadMoreControl isLoading]) {
+            return;
         }
         
-        PBRowControlMapper *moreMapper = _moreMapper;
-        
-        id data = pagingView.rootData;
-        [moreMapper updateWithData:data owner:pagingView context:pagingView];
-        
-        if (_loadMoreControl == nil) {
-            PBLoadMoreControl *moreControl = [moreMapper createView];
-            if (![moreControl isKindOfClass:[PBLoadMoreControl class]]) {
-                NSLog(@"Pbind: Requires a <PBLoadMoreControl> but got <%@>.", moreControl.class);
-                return;
-            }
-            
-            [moreMapper initPropertiesForTarget:moreControl];
-            [moreControl addTarget:self action:@selector(loadMoreControlDidReleased:) forControlEvents:UIControlEventValueChanged];
-            [pagingView addSubview:moreControl];
-            _loadMoreControl = moreControl;
-        }
-        
-        CGFloat pulledUpDistance = (contentOffset.y + contentInset.top + height) - MAX((pagingView.contentSize.height + contentInset.bottom + contentInset.top), height);
-        CGFloat moreControlTriggerThreshold = _loadMoreControl.beginDistance;
-        CGFloat moreControlInitialThreshold = MIN(0, moreControlTriggerThreshold);
-        if (pulledUpDistance > moreControlInitialThreshold) {
-            CGFloat height = [moreMapper heightForView:_loadMoreControl withData:data];
-            CGRect frame = CGRectMake(0, pagingView.contentSize.height, pagingView.frame.size.width, height);
-            _loadMoreControl.frame = frame;
-            _loadMoreControl.hidden = NO;
-            [moreMapper mapPropertiesToTarget:_loadMoreControl withData:data owner:pagingView context:pagingView];
-        } else {
-            _loadMoreControl.hidden = YES;
-        }
-        
-        if (pulledUpDistance >= moreControlTriggerThreshold) {
-            if ([_loadMoreControl isEnding] || [_loadMoreControl isLoading]) {
-                return;
-            }
-            
-            [_loadMoreControl beginLoading];
-            [_loadMoreControl sendActionsForControlEvents:UIControlEventValueChanged];
-        }
+        [_loadMoreControl beginLoading];
+        [_loadMoreControl sendActionsForControlEvents:UIControlEventValueChanged];
     }
 }
 
@@ -121,19 +173,31 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return;
     }
     
-    CGPoint offset = pagingView.contentOffset;
-    offset.y = -pagingView.contentInset.top - _refreshControl.bounds.size.height;
-    pagingView.contentOffset = offset;
+    if (_flags.usesCustomRefreshControl) {
+        // Adjust content insets
+        UIEdgeInsets insets = pagingView.contentInset;
+        insets.top += _refreshControl.bounds.size.height;
+        pagingView.contentInset = insets;
+    } else {
+        // Adjust content offset
+        CGPoint offset = pagingView.contentOffset;
+        offset.y = -pagingView.contentInset.top - _refreshControl.bounds.size.height;
+        pagingView.contentOffset = offset;
+    }
+    
     [_refreshControl beginRefreshing];
     [_refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
-- (void)refreshControlDidReleased:(UIRefreshControl *)sender {
+- (void)refreshControlDidReleased:(UIControl<PBRefreshing> *)sender {
     NSDate *start = [NSDate date];
     
     UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)self.dataSource.owner;
     if ([pagingView isFetching] || pagingView.clients == nil) {
         [self endRefreshingControl:sender fromBeginTime:start];
+        if (_flags.usesCustomRefreshControl) {
+            [self adjustInsetForPagingViewAfterRefresh:pagingView];
+        }
         return;
     }
     
@@ -147,7 +211,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }];
 }
 
-- (void)endRefreshingControl:(UIRefreshControl *)control fromBeginTime:(NSDate *)beginTime {
+- (void)endRefreshingControl:(UIControl<PBRefreshing> *)control fromBeginTime:(NSDate *)beginTime {
     NSTimeInterval spentTime = [[NSDate date] timeIntervalSinceDate:beginTime];
     if (spentTime < kMinRefreshControlDisplayingTime) {
         NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
@@ -171,7 +235,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     pagingView.contentInset = insets;
     
     _loadMoreBeginTime = [[NSDate date] timeIntervalSince1970];
-    _loadingMore = YES;
+    _flags.loadingMore = 1;
     if (pagingView.fetcher == nil) {
         [pagingView reloadData];
         return;
@@ -214,7 +278,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)endLoadingMore:(UIScrollView<PBRowPaging> *)pagingView {
-    _loadingMore = NO;
+    _flags.loadingMore = 0;
     [_loadMoreControl endLoading];
     pagingView.data = [pagingView.data arrayByAddingObjectsFromArray:pagingView.data];
     [pagingView reloadData];
@@ -227,10 +291,25 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     });
 }
 
+- (void)adjustInsetForPagingViewAfterRefresh:(UIScrollView<PBRowPaging> *)pagingView {
+    if (_flags.usesCustomRefreshControl) {
+        // Adjust content insets
+        UIEdgeInsets insets = pagingView.contentInset;
+        insets.top -= _refreshControl.bounds.size.height;
+        pagingView.contentInset = insets;
+    }
+}
+
 - (BOOL)pagingViewCanReloadData:(UIScrollView<PBRowPaging> *)pagingView {
-    if (_loadingMore) {
+    if (_flags.loadingMore) {
         [self endPullingForPagingView:pagingView];
         return NO;
+    }
+    if (_flags.usesCustomRefreshControl && _refreshControl ) {
+        // Adjust content insets
+        UIEdgeInsets insets = pagingView.contentInset;
+        insets.top -= _refreshControl.bounds.size.height;
+        pagingView.contentInset = insets;
     }
     return YES;
 }

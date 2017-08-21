@@ -6,9 +6,10 @@
 //  Copyright © 2017 galen. All rights reserved.
 //
 
+#import "PBLLOptions.h"
 #include <targetconditionals.h>
 
-#if (DEBUG && !(TARGET_IPHONE_SIMULATOR))
+#if (PBLIVE_ENABLED)
 
 #import <UIKit/UIKit.h>
 
@@ -16,7 +17,7 @@
 
 + (instancetype)sharedInspector;
 
-+ (void)addToWindow;
+- (void)updateConnectState:(BOOL)connected;
 
 @end
 

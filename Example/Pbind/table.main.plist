@@ -51,6 +51,8 @@
 						<string>PBTableViewController</string>
 						<key>plist</key>
 						<string>table.view</string>
+						<key>grouped</key>
+						<true/>
 					</dict>
 				</dict>
 			</dict>
@@ -66,7 +68,7 @@
 						<key>plist</key>
 						<string>table.label</string>
 						<key>grouped</key>
-						<string>1</string>
+						<true/>
 					</dict>
 				</dict>
 			</dict>
@@ -81,6 +83,8 @@
 						<string>PBTableViewController</string>
 						<key>plist</key>
 						<string>table.button</string>
+						<key>grouped</key>
+						<true/>
 					</dict>
 				</dict>
 			</dict>
@@ -95,6 +99,20 @@
 						<string>PBScrollViewController</string>
 						<key>plist</key>
 						<string>scroll.action</string>
+					</dict>
+				</dict>
+			</dict>
+			<dict>
+				<key>properties</key>
+				<dict>
+					<key>textLabel.text</key>
+					<string>UITableView (Refresh)</string>
+					<key>data</key>
+					<dict>
+						<key>target</key>
+						<string>PBTableViewController</string>
+						<key>plist</key>
+						<string>table.refresh</string>
 					</dict>
 				</dict>
 			</dict>

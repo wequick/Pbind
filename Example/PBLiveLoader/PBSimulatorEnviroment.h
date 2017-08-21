@@ -5,7 +5,9 @@
 //  Created by Galen Lin on 13/03/2017.
 //
 
-#if (DEBUG)
+#import "PBLLOptions.h"
+
+#if (PBLIVE_ENABLED)
 
 #include <targetconditionals.h>
 #import <Foundation/Foundation.h>
@@ -22,7 +24,7 @@ FOUNDATION_STATIC_INLINE NSString *PBLLMainBundlePath() {
     if ([[NSFileManager defaultManager] fileExistsAtPath:bundlePath]) {
         return bundlePath;
     }
-    
+
     NSArray *subdirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:projectPath error:nil];
     for (NSString *subdir in subdirs) {
         bundlePath = [projectPath stringByAppendingPathComponent:subdir];

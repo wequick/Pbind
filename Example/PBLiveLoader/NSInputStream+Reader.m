@@ -8,7 +8,7 @@
 
 #import "NSInputStream+Reader.h"
 
-#if (DEBUG && !(TARGET_IPHONE_SIMULATOR))
+#if (PBLIVE_ENABLED && !(TARGET_IPHONE_SIMULATOR))
 
 @implementation NSInputStream (Reader)
 
@@ -21,8 +21,18 @@
 
 - (NSData *)readData {
     int length = [self readInt];
+    if (length < 0) {
+        return nil;
+    }
     uint8_t *bytes = malloc(length);
     NSInteger len = [self read:bytes maxLength:length];
+    while (len < length) {
+        len += [self read:bytes + len maxLength:length - len];
+    }
+    if (len != length) {
+        NSLog(@"Failed to read data in length %i, only got %i bytes", length, (int)len);
+        return nil;
+    }
     return [NSData dataWithBytes:bytes length:len];
 }
 

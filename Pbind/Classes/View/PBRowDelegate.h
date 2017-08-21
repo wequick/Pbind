@@ -13,6 +13,7 @@
 #import "PBRowDataSource.h"
 #import "PBLoadMoreControl.h"
 
+@protocol PBRefreshing;
 @protocol PBRowPaging;
 
 /**
@@ -20,9 +21,13 @@
  */
 @interface PBRowDelegate : PBMessageInterceptor<UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 {
-    UIRefreshControl *_refreshControl;
+    UIControl<PBRefreshing> *_refreshControl;
     PBLoadMoreControl *_loadMoreControl;
     NSTimeInterval _loadMoreBeginTime;
+    struct {
+        unsigned int loadingMore : 1;
+        unsigned int usesCustomRefreshControl : 1;
+    } _flags;
 }
 
 #pragma mark - Context
@@ -43,14 +48,8 @@
 /// @name Paging
 ///=============================================================================
 
-/** Whether the owner is refreshing data */
-@property (nonatomic, assign, getter=isRefreshing) BOOL refreshing;
-
-/** Whether the owner is pulling more data */
-@property (nonatomic, assign, getter=isLoadingMore) BOOL loadingMore;
-
 /** The mapper to map the data for pulled-down-to-refresh control */
-@property (nonatomic, strong) PBRowControlMapper *refershMapper;
+@property (nonatomic, strong) PBRowControlMapper *refreshMapper;
 
 /** The mapper to map the data for pulled-up-to-load-more control */
 @property (nonatomic, strong) PBRowControlMapper *moreMapper;

@@ -6,9 +6,10 @@
 //  Copyright © 2017 galen. All rights reserved.
 //
 
+#import "PBLLOptions.h"
 #include <targetconditionals.h>
 
-#if (DEBUG && !(TARGET_IPHONE_SIMULATOR))
+#if (PBLIVE_ENABLED && !(TARGET_IPHONE_SIMULATOR))
 
 #import <Foundation/Foundation.h>
 
@@ -23,6 +24,8 @@
 - (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didCreateFile:(NSString *)fileName;
 - (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didDeleteFile:(NSString *)fileName;
 
+- (void)remoteWatcher:(PBLLRemoteWatcher *)watcher didChangeConnectState:(BOOL)connected;
+
 @end
 
 @interface PBLLRemoteWatcher : NSObject
@@ -34,7 +37,11 @@
 
 - (void)requestAPI:(NSString *)api success:(void (^)(NSData *))success failure:(void (^)(NSError *))failure;
 
+- (void)sendLog:(NSString *)log;
+
 @property (nonatomic, assign) id<PBLLRemoteWatcherDelegate> delegate;
+
+@property (nonatomic, strong, readonly) NSString *defaultIP;
 
 @end
 
