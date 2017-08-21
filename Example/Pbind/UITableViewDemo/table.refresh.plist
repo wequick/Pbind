@@ -18,6 +18,8 @@
 				<string>释放加载更多</string>
 				<key>selectedTitle</key>
 				<string>正在加载</string>
+				<key>disabledTitle</key>
+				<string>刷新成功</string>
 				<key>beginDistance</key>
 				<string>60</string>
 			</dict>
