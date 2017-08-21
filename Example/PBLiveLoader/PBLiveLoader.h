@@ -5,8 +5,7 @@
 //  Created by Galen Lin on 2016/12/9.
 //
 
-#import "PBLLOptions.h"
-#if (PBLIVE_ENABLED)
+#if (DEBUG)
 
 #import <Foundation/Foundation.h>
 

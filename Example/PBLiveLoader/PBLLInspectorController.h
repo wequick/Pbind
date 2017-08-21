@@ -6,10 +6,9 @@
 //  Copyright © 2017 galen. All rights reserved.
 //
 
-#import "PBLLOptions.h"
 #include <targetconditionals.h>
 
-#if (PBLIVE_ENABLED && !(TARGET_IPHONE_SIMULATOR))
+#if (DEBUG && !(TARGET_IPHONE_SIMULATOR))
 
 #import <UIKit/UIKit.h>
 

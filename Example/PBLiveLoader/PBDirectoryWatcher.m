@@ -7,7 +7,7 @@
 
 #import "PBDirectoryWatcher.h"
 
-#if (PBLIVE_ENABLED && TARGET_IPHONE_SIMULATOR)
+#if (DEBUG && TARGET_IPHONE_SIMULATOR)
 
 #include <stdio.h>
 #include <string.h>

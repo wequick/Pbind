@@ -3,8 +3,8 @@ platform :ios, '8.0'
 
 target 'Pbind_Example' do
   pod 'Pbind', :path => '../'
-  pod 'SDWebImage', '3.8.2'
-  pod 'MBProgressHUD', '1.0.0'
+  pod 'SDWebImage', :git => 'https://github.com/rs/SDWebImage', :tag => '3.8.2'
+  pod 'MBProgressHUD', :git => 'https://github.com/jdg/MBProgressHUD', :tag => '1.0.0'
   #pod 'PBKit', '0.5.1'
   #pod 'PBKit', :path => '/Users/galen/Projects/github/wequick/PBKit'
 end
