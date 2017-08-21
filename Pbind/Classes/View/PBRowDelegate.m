@@ -44,6 +44,10 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         [self.receiver scrollViewDidScroll:pagingView];
     }
     
+    if (pagingView.superview == nil) {
+        return;
+    }
+    
     if (pagingView.refresh != nil) {
         // Pull down to refresh
         [self checkIfNeedsRefreshForPagingView:pagingView];
@@ -52,6 +56,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (pagingView.more != nil) {
         // Pull up to load more
         [self checkIfNeedsLoadMoreForPagingView:pagingView];
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView<PBRowPaging> *)pagingView willDecelerate:(BOOL)decelerate {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        [self.receiver scrollViewDidEndDragging:pagingView willDecelerate:decelerate];
+    }
+    
+    if (_flags.usesCustomRefreshControl) {
+        PBRefreshControl *refreshControl = (id) _refreshControl;
+        if (refreshControl.reached) {
+            refreshControl.reached = NO;
+            [self beginRefreshingForPagingView:pagingView];
+        }
     }
 }
 
@@ -87,6 +105,13 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     if (_flags.usesCustomRefreshControl) {
         PBRefreshControl *refreshControl = (id) _refreshControl;
+        if ([refreshControl isRefreshing]) {
+            CGFloat offset = MAX(-pagingView.contentOffset.y, 0);
+            offset = MIN(offset, refreshControl.frame.size.height + _originalInsetTop);
+            pagingView.contentInset = UIEdgeInsetsMake(offset, 0.0f, 0.0f, 0.0f);
+            return;
+        }
+        
         if ([pagingView isDragging]) {
             [mapper mapPropertiesToTarget:refreshControl withData:data owner:pagingView context:pagingView];
             CGFloat pulledDownDistance = -pagingView.contentOffset.y - pagingView.contentInset.top;
@@ -98,6 +123,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
                 refreshControl.hidden = YES;
             }
             
+            refreshControl.complected = NO;
             [refreshControl pagingView:pagingView didPullDownWithDistance:pulledDownDistance];
             
             if (pulledDownDistance >= refreshControl.beginDistance) {
@@ -105,8 +131,14 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             } else {
                 refreshControl.reached = NO;
             }
-        } else if (refreshControl.reached) {
-            [self beginRefreshingForPagingView:pagingView];
+            
+            if (_originalInsetTop == 0) {
+                _originalInsetTop = pagingView.contentInset.top;
+            } else if (pagingView.contentInset.top != _originalInsetTop) {
+                UIEdgeInsets insets = pagingView.contentInset;
+                insets.top = _originalInsetTop;
+                pagingView.contentInset = insets;
+            }
         }
     }
 }
@@ -169,24 +201,28 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return;
     }
     
-    if (_refreshControl.isRefreshing) {
+    if ([_refreshControl isRefreshing]) {
         return;
     }
+    
+    [_refreshControl beginRefreshing];
+    [_refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
     
     if (_flags.usesCustomRefreshControl) {
         // Adjust content insets
         UIEdgeInsets insets = pagingView.contentInset;
-        insets.top += _refreshControl.bounds.size.height;
-        pagingView.contentInset = insets;
+        insets.top = _originalInsetTop + _refreshControl.frame.size.height;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIView animateWithDuration:.25f animations:^{
+                pagingView.contentInset = insets;
+            }];
+        });
     } else {
         // Adjust content offset
         CGPoint offset = pagingView.contentOffset;
         offset.y = -pagingView.contentInset.top - _refreshControl.bounds.size.height;
         pagingView.contentOffset = offset;
     }
-    
-    [_refreshControl beginRefreshing];
-    [_refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
 - (void)refreshControlDidReleased:(UIControl<PBRefreshing> *)sender {
@@ -195,9 +231,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     UIScrollView<PBRowPaging, PBDataFetching> *pagingView = (id)self.dataSource.owner;
     if ([pagingView isFetching] || pagingView.clients == nil) {
         [self endRefreshingControl:sender fromBeginTime:start];
-        if (_flags.usesCustomRefreshControl) {
-            [self adjustInsetForPagingViewAfterRefresh:pagingView];
-        }
         return;
     }
     
@@ -217,9 +250,15 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [control endRefreshing];
+            if (_flags.usesCustomRefreshControl) {
+                [self adjustInsetForPagingViewAfterRefresh:(id)self.dataSource.owner];
+            }
         });
     } else {
         [control endRefreshing];
+        if (_flags.usesCustomRefreshControl) {
+            [self adjustInsetForPagingViewAfterRefresh:(id)self.dataSource.owner];
+        }
     }
     
     if (_loadMoreControl != nil) {
@@ -293,10 +332,15 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 - (void)adjustInsetForPagingViewAfterRefresh:(UIScrollView<PBRowPaging> *)pagingView {
     if (_flags.usesCustomRefreshControl) {
+        PBRefreshControl *refreshControl = (id) _refreshControl;
+        refreshControl.complected = YES;
         // Adjust content insets
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.25];
         UIEdgeInsets insets = pagingView.contentInset;
-        insets.top -= _refreshControl.bounds.size.height;
+        insets.top = _originalInsetTop;
         pagingView.contentInset = insets;
+        [UIView commitAnimations];
     }
 }
 
@@ -304,12 +348,6 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     if (_flags.loadingMore) {
         [self endPullingForPagingView:pagingView];
         return NO;
-    }
-    if (_flags.usesCustomRefreshControl && _refreshControl ) {
-        // Adjust content insets
-        UIEdgeInsets insets = pagingView.contentInset;
-        insets.top -= _refreshControl.bounds.size.height;
-        pagingView.contentInset = insets;
     }
     return YES;
 }

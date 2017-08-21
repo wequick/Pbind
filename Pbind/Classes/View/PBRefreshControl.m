@@ -48,4 +48,12 @@
     self.highlighted = reached;
 }
 
+- (BOOL)isComplected {
+    return !self.enabled;
+}
+
+- (void)setComplected:(BOOL)complected {
+    self.enabled = !complected;
+}
+
 @end

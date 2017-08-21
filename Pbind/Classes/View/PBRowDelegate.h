@@ -28,6 +28,7 @@
         unsigned int loadingMore : 1;
         unsigned int usesCustomRefreshControl : 1;
     } _flags;
+    CGFloat _originalInsetTop;
 }
 
 #pragma mark - Context
