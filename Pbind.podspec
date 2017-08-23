@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Pbind'
-  s.version          = '1.3.8'
+  s.version          = '1.4.0.2'
   s.summary          = 'A tiny MVVM framework that use Plist to build UIs and Databindings.'
 
 # This description is used to generate tags and improve search results.
