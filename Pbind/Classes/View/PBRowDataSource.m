@@ -878,6 +878,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (UICollectionReusableView *)collectionView:(PBCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        return [self.receiver collectionView:collectionView viewForSupplementaryElementOfKind:kind atIndexPath:indexPath];
+    }
+    
     PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
     PBRowMapper *element;
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {

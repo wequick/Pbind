@@ -738,6 +738,12 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 
 #pragma mark - UICollectionViewDelegate
 
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.receiver respondsToSelector:_cmd]) {
+        [self.receiver collectionView:collectionView willDisplayCell:cell forItemAtIndexPath:indexPath];
+    }
+}
+
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     BOOL shouldSelect = YES;
     
@@ -800,15 +806,23 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    PBRowMapper *element = [self.dataSource.sections objectAtIndex:section];
-    return [self referenceSizeForCollectionView:collectionView withElementMapper:element];
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)theSection {
-    PBSectionMapper *section = [self.dataSource.sections objectAtIndex:theSection];
-    return [self referenceSizeForCollectionView:collectionView withElementMapper:section.footer];
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+//    if ([self.receiver respondsToSelector:_cmd]) {
+//        return [self.receiver collectionView:collectionView layout:collectionViewLayout referenceSizeForHeaderInSection:section];
+//    }
+//    
+//    PBRowMapper *element = [self.dataSource.sections objectAtIndex:section];
+//    return [self referenceSizeForCollectionView:collectionView withElementMapper:element];
+//}
+//
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)theSection {
+//    if ([self.receiver respondsToSelector:_cmd]) {
+//        return [self.receiver collectionView:collectionView layout:collectionViewLayout referenceSizeForFooterInSection:theSection];
+//    }
+//    
+//    PBSectionMapper *section = [self.dataSource.sections objectAtIndex:theSection];
+//    return [self referenceSizeForCollectionView:collectionView withElementMapper:section.footer];
+//}
 
 - (CGSize)referenceSizeForCollectionView:(UICollectionView *)collectionView withElementMapper:(PBRowMapper *)element {
     if (element == nil || (element.layout == nil && element.viewClass == [UICollectionReusableView class])) {
