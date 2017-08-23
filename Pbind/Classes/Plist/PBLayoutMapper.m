@@ -22,6 +22,10 @@
 @implementation PBLayoutMapper
 
 - (void)renderToView:(UIView *)view {
+    if ([view.pb_layoutMapper isEqual:self]) {
+        return;
+    }
+    
     NSInteger viewCount = self.views.count;
     if (viewCount == 0) {
         return;
