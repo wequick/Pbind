@@ -69,6 +69,9 @@
 /** The mappers to create the next actions */
 @property (nonatomic, strong) NSDictionary<NSString *, PBAction *> *nextActions;
 
+/** The userInfo directly passed */
+@property (nonatomic, strong) NSDictionary *userInfo;
+
 /** The store of current action */
 @property (nonatomic, weak) PBActionStore *store;
 
