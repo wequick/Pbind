@@ -18,7 +18,7 @@ NSNotificationName const PBActionStoreDidDispatchActionNotification = @"PBAction
 
 @interface PBAction (Private)
 
-- (void)_internalRun:(PBActionState *)state;
+- (BOOL)_internalRun:(PBActionState *)state;
 
 @end
 
@@ -67,7 +67,9 @@ NSNotificationName const PBActionStoreDidDispatchActionNotification = @"PBAction
     
     [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreWillDispatchActionNotification object:action];
     
-    [action _internalRun:self.state];
+    if (![action _internalRun:self.state]) {
+        return;
+    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreDidDispatchActionNotification object:action];
 }

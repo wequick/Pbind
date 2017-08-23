@@ -103,15 +103,16 @@ static NSMutableDictionary *kActionClasses;
 
 #pragma mark - Default delegate
 
-- (void)_internalRun:(PBActionState *)state {
+- (BOOL)_internalRun:(PBActionState *)state {
     if (self.mapper) {
         [self.mapper mapPropertiesToTarget:self withData:state.data owner:state.sender context:state.context];
     }
     
     if (self.disabled) {
-        return;
+        return NO;
     }
     [self run:state];
+    return YES;
 }
 
 - (void)run:(PBActionState *)state {
