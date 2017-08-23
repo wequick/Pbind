@@ -38,6 +38,9 @@ const unsigned char PBDataTagUnset = 0xFF;
 @end
 
 @implementation PBExpression
+{
+    NSArray *_variableKeys;
+}
 
 + (instancetype)expressionWithString:(NSString *)aString
 {
@@ -191,6 +194,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     }
     *p2 = '\0';
     _variable = [NSString stringWithUTF8String:temp];
+    _variableKeys = [_variable componentsSeparatedByString:@"."];
     free(temp);
     
     // Arithmetic operator
@@ -361,9 +365,8 @@ const unsigned char PBDataTagUnset = 0xFF;
 - (id)_valueWithData:(id)data
 {
     id value = data;
-    if (value != nil && _variable != nil) {
-        NSArray *keys = [_variable componentsSeparatedByString:@"."];
-        for (NSString *key in keys) {
+    if (value != nil && _variableKeys != nil) {
+        for (NSString *key in _variableKeys) {
             value = [self _valueOfObject:value forKey:key];
         }
     }
