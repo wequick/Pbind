@@ -38,7 +38,7 @@ static const CGFloat kUnsetBeginDistance = -0xFFFF;
     return !self.enabled;
 }
 
-- (BOOL)setEnding:(BOOL)ending {
+- (void)setEnding:(BOOL)ending {
     self.enabled = !ending;
 }
 

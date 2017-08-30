@@ -158,7 +158,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     [moreMapper updateWithData:data owner:pagingView context:pagingView];
     
     if (_loadMoreControl == nil) {
-        PBLoadMoreControl *moreControl = [moreMapper createView];
+        PBLoadMoreControl *moreControl = (id) [moreMapper createView];
         if (![moreControl isKindOfClass:[PBLoadMoreControl class]]) {
             NSLog(@"Pbind: Requires a <PBLoadMoreControl> but got <%@>.", moreControl.class);
             return;
