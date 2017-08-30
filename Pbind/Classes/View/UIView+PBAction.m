@@ -146,6 +146,8 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
         return;
     }
     
+    id data = [self rootData];
+    
     for (_PBViewActionEvent *event in events) {
         if (event.mapper == nil) {
             // Lazy init
@@ -158,7 +160,7 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
             }
         }
         
-        [[PBActionStore defaultStore] dispatchActionWithActionMapper:event.mapper sender:self context:self data:nil];
+        [[PBActionStore defaultStore] dispatchActionWithActionMapper:event.mapper sender:self context:self data:data];
     }
 }
 

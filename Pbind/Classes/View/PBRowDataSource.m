@@ -641,7 +641,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Init data for cell
     [cell setData:data];
     [row initPropertiesForTarget:cell];
-    [row mapPropertiesToTarget:cell withData:tableView.data owner:cell context:tableView];
+    [row mapPropertiesToTarget:cell withData:tableView.rootData owner:cell context:tableView];
     
     return cell;
 }

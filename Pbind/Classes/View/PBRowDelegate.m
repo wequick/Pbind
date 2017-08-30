@@ -940,8 +940,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
 }
 
 - (void)dispatchAction:(PBActionMapper *)action forCell:(UIView *)cell atIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary *data = indexPath == nil ? nil : @{@"indexPath": indexPath};
-    [[PBActionStore defaultStore] dispatchActionWithActionMapper:action context:cell data:data];
+    [[PBActionStore defaultStore] dispatchActionWithActionMapper:action context:cell data:cell.rootData];
 }
 
 @end
