@@ -105,17 +105,22 @@ const unsigned char PBDataTagUnset = 0xFF;
                 _flags.mapToForm = 1;
                 p++;
             } else {
-                p2 = temp = (char *)malloc(len - (p - str));
-                while (*p != '\0' && *p != '.') {
-                    *p2++ = *p++;
+                if (*p == '.') {
+                    _flags.mapToContext = 1;
+                } else {
+                    p2 = temp = (char *)malloc(len - (p - str));
+                    while (*p != '\0' && *p != '.') {
+                        *p2++ = *p++;
+                    }
+                    if (*p != '.') {
+                        return nil; // should format as '@xx.xx'
+                    }
+                    
+                    *p2 = '\0';
+                    _alias = [[NSString alloc] initWithUTF8String:temp];
+                    free(temp);
+                    _flags.mapToAliasView = 1;
                 }
-                if (*p != '.') {
-                    return nil; // should format as '@xx.xx'
-                }
-                *p2 = '\0';
-                _alias = [[NSString alloc] initWithUTF8String:temp];
-                free(temp);
-                _flags.mapToAliasView = 1;
                 p++;
             }
             break;
@@ -337,6 +342,8 @@ const unsigned char PBDataTagUnset = 0xFF;
         
         UIView *taggedView = [rootView viewWithAlias:_alias];
         return taggedView;
+    } else if (_flags.mapToContext) {
+        return context;
     }
     return nil;
 }
@@ -574,6 +581,9 @@ const unsigned char PBDataTagUnset = 0xFF;
     if (_flags.mapToAliasView) {
         return type & PBMapToAliasView;
     }
+    if (_flags.mapToContext) {
+        return type & PBMapToContext;
+    }
     if (_flags.mapToActionState) {
         return type & PBMapToActionState;
     }
@@ -761,6 +771,8 @@ const unsigned char PBDataTagUnset = 0xFF;
         [s appendString:@">!"];
     } else if (_flags.mapToAliasView) {
         [s appendFormat:@"@%@.", _alias];
+    } else if (_flags.mapToContext) {
+        [s appendString:@"@."];
     } else if (_flags.mapToActionState) {
         [s appendString:@"#."];
     } else if (_flags.mapToActionStateData) {

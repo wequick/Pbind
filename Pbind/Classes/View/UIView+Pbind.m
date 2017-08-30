@@ -99,7 +99,7 @@
         }
     }
     
-    [self pb_mapData:nil underType:PBMapToContext dataTag:PBDataTagUnset];
+    [self pb_mapData:nil underType:PBMapToAllContext dataTag:PBDataTagUnset];
 }
 
 - (void)pb_bindData
@@ -148,7 +148,7 @@
             [subview pb_mapData:data withOwner:owner context:context underType:type dataTag:tag];
         }
     } else {
-        if (type == PBMapToContext && self.frame.size.height == 0) {
+        if (type == PBMapToAllContext && self.frame.size.height == 0) {
             return;
         }
         [(id)self reloadData];
