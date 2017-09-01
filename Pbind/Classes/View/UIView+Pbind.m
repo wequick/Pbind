@@ -249,7 +249,6 @@
 
 - (void)pb_reloadLayout {
     [self _pb_resetMappersForView:self];
-    self.pb_layoutMapper = nil;
     PBLayoutMapper *layoutMapper = [PBLayoutMapper mapperNamed:self.pb_layoutMapper.plist];
     [layoutMapper renderToView:self];
     [self enumerateAllSubviewsWithBlock:^(UIView *subview) {
