@@ -1001,7 +1001,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
 }
 
 - (NSArray *)accessoryViews {
-    return _accessoryViews ?: _footerViews.allObjects;
+    return _accessoryViews;
 }
 
 - (void)adjustFloatingViewsOffset:(BOOL)raised animated:(BOOL)animated {
@@ -1020,15 +1020,45 @@ static NSString *kOriginalYKey = @"pb_originalY";
     
     [self __adjustContentInset];
     
-    dispatch_block_t animation = ^{
-        for (UIView *footerView in accessoryViews) {
-            CGRect frame = footerView.frame;
-            CGFloat y = [[footerView valueForAdditionKey:kOriginalYKey] floatValue];
+    CGFloat stickyHeight = 0;
+    NSMutableArray *movableViews = [NSMutableArray arrayWithCapacity:accessoryViews.count];
+    for (NSInteger index = 0; index < accessoryViews.count; index++) {
+        if (index >= _accessoryMappers.count) {
+            break;
+        }
+        PBRowMapper *mapper = [_accessoryMappers objectAtIndex:index];
+        UIView *view = [accessoryViews objectAtIndex:index];
+        if (mapper.floating == PBRowFloatingBottom) {
+            stickyHeight += view.frame.size.height;
+        } else {
+            [movableViews addObject:view];
+        }
+    }
+    
+    if (stickyHeight > 0) {
+        for (UIView *view in accessoryViews) {
+            CGRect frame = view.frame;
+            CGFloat y = [[view valueForAdditionKey:kOriginalYKey] floatValue];
             if (raised) {
-                y -= _keyboardHeight;
+                y += stickyHeight;
+            } else {
+                y -= stickyHeight;
             }
             frame.origin.y = y;
-            footerView.frame = frame;
+            view.frame = frame;
+        }
+    }
+    
+    CGFloat moveOffset = _keyboardHeight - stickyHeight;
+    dispatch_block_t animation = ^{
+        for (UIView *view in accessoryViews) {
+            CGRect frame = view.frame;
+            CGFloat y = [[view valueForAdditionKey:kOriginalYKey] floatValue];
+            if (raised) {
+                y -= moveOffset;
+            }
+            frame.origin.y = y;
+            view.frame = frame;
         }
     };
     if (animated) {
