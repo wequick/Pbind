@@ -113,6 +113,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                         *p2++ = *p++;
                     }
                     if (*p != '.') {
+                        free(temp);
                         return nil; // should format as '@xx.xx'
                     }
                     
@@ -158,7 +159,22 @@ const unsigned char PBDataTagUnset = 0xFF;
                 _flags.mapToFormFieldError = 1;
                 p++;
             } else {
-                _flags.mapToFormFieldText = 1;
+                char *pBak = p;
+                p2 = temp = (char *)malloc(len - (p - str));
+                while (*p != '\0' && *p != '.') {
+                    *p2++ = *p++;
+                }
+                if (*p != '.') {
+                    free(temp);
+                    _flags.mapToFormFieldText = 1;
+                    p = pBak;
+                } else {
+                    *p2 = '\0';
+                    _alias = [[NSString alloc] initWithUTF8String:temp];
+                    free(temp);
+                    _flags.mapToFormField = 1;
+                    p++;
+                }
             }
             break;
         case '#':
@@ -188,6 +204,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         *p2++ = *p++;
     } else {
         NSLog(@"<%@> Variable should be start with alphabet or underline.", [[self class] description]);
+        free(temp);
         return nil;
     }
     
@@ -250,6 +267,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                 }
                 if (*p != ':') {
                     NSLog(@"<%@> Missing ':' after '?', should as '?*:*'.", [[self class] description]);
+                    free(temp);
                     return nil;
                 }
                 p++;
@@ -314,22 +332,28 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
     } else if (_flags.mapToForm) {
-        PBForm *form = [context superviewWithClass:[PBForm class]];
+        PBForm *form = [self _formOfView:context];
         return form;
+    } else if (_flags.mapToFormField) {
+        PBForm *form = [self _formOfView:context];
+        if (form == nil) {
+            return nil;
+        }
+        return [form inputForName:_alias];
     } else if (_flags.mapToFormFieldText) {
-        PBForm *form = [context superviewWithClass:[PBForm class]];
+        PBForm *form = [self _formOfView:context];
         if (form == nil) {
             return nil;
         }
         return [form inputTexts];
     } else if (_flags.mapToFormFieldValue) {
-        PBForm *form = [context superviewWithClass:[PBForm class]];
+        PBForm *form = [self _formOfView:context];
         if (form == nil) {
             return nil;
         }
         return [form inputValues];
     } else if (_flags.mapToFormFieldError) {
-        PBForm *form = [context superviewWithClass:[PBForm class]];
+        PBForm *form = [self _formOfView:context];
         if (form == nil) {
             return nil;
         }
@@ -346,6 +370,14 @@ const unsigned char PBDataTagUnset = 0xFF;
         return context;
     }
     return nil;
+}
+
+- (PBForm *)_formOfView:(UIView *)view {
+    Class formClass = [PBForm class];
+    if ([view isKindOfClass:formClass]) {
+        return (id) view;
+    }
+    return [view superviewWithClass:formClass];
 }
 
 - (id)_dataSourceWithData:(id)data atIndex:(int)index {
@@ -572,6 +604,9 @@ const unsigned char PBDataTagUnset = 0xFF;
     if (_flags.mapToFormFieldError) {
         return type & PBMapToFormFieldError;
     }
+    if (_flags.mapToFormField) {
+        return type & PBMapToFormField;
+    }
     if (_flags.mapToForm) {
         return type & PBMapToForm;
     }
@@ -769,6 +804,8 @@ const unsigned char PBDataTagUnset = 0xFF;
         [s appendString:@">$"];
     } else if (_flags.mapToFormFieldError) {
         [s appendString:@">!"];
+    } else if (_flags.mapToFormField) {
+        [s appendFormat:@">%@.", _alias];
     } else if (_flags.mapToAliasView) {
         [s appendFormat:@"@%@.", _alias];
     } else if (_flags.mapToContext) {

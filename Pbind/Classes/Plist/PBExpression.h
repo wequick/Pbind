@@ -19,15 +19,16 @@ typedef enum : NSUInteger {
     PBMapToFormFieldText    = 0x1 << 3,
     PBMapToFormFieldValue   = 0x1 << 4,
     PBMapToFormFieldError   = 0x1 << 5,
-    PBMapToForm             = 0x1 << 6,
+    PBMapToFormField        = 0x1 << 6,
+    PBMapToForm             = 0x1 << 7,
     
-    PBMapToActiveController = 0x1 << 7,
-    PBMapToAliasView        = 0x1 << 8,
+    PBMapToActiveController = 0x1 << 8,
+    PBMapToAliasView        = 0x1 << 9,
     
-    PBMapToActionState      = 0x1 << 9,
-    PBMapToActionStateData  = 0x1 << 10,
+    PBMapToActionState      = 0x1 << 10,
+    PBMapToActionStateData  = 0x1 << 11,
     
-    PBMapToContext          = 0x1 << 11,
+    PBMapToContext          = 0x1 << 12,
     
     PBMapToAllContext       = PBMapToContext | PBMapToOwnerView | PBMapToOwnerViewData | PBMapToForm | PBMapToActiveController | PBMapToAliasView,
     PBMapToAll              = 0xFFFF
@@ -112,6 +113,7 @@ typedef enum : NSUInteger {
         unsigned int mapToFormFieldText:1;      // '>'
         unsigned int mapToFormFieldValue:1;     // '>$'
         unsigned int mapToFormFieldError:1;     // '>!'
+        unsigned int mapToFormField:1;          // '>name.'
         unsigned int mapToForm:1;               // '@>'
         
         unsigned int mapToContext:1;            // '@.'
@@ -123,7 +125,6 @@ typedef enum : NSUInteger {
         
         unsigned int disabled:1;
         unsigned int reserved1:1;
-        unsigned int reserved2:1;
         
         unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
         
