@@ -966,7 +966,18 @@ static NSString *kOriginalYKey = @"pb_originalY";
 
 - (void)adjustAccessoryViewsOffset {
     if (_accessoryViews != nil) {
-        CGFloat keyboardHeight = _presentingInput != nil ? _keyboardHeight : 0;
+        CGFloat keyboardHeight = 0;
+        if (_presentingInput != nil) {
+            keyboardHeight = _keyboardHeight;
+            for (NSInteger index = 0; index < _accessoryViews.count; index++) {
+                PBRowMapper *row = [_accessoryMappers objectAtIndex:index];
+                if (row.floating == PBRowFloatingBottom) {
+                    UIView *view = [_accessoryViews objectAtIndex:index];
+                    keyboardHeight -= view.frame.size.height;
+                }
+            }
+        }
+        
         id data = self.rootData;
         CGFloat x, y, w, h;
         y = self.superview.frame.size.height - keyboardHeight;
