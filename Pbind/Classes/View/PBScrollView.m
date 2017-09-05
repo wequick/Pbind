@@ -582,6 +582,15 @@
 
 - (void)rowMapper:(PBRowMapper *)mapper didChangeValue:(id)value forKey:(NSString *)key {
     NSInteger index = [_rowMappers indexOfObject:mapper];
+    if (index == NSNotFound) {
+        index = [_accessoryMappers indexOfObject:mapper];
+        if (index == NSNotFound) {
+            return;
+        }
+        [self adjustAccessoryViewsOffset];
+        return;
+    }
+    
     UIView *view = [self viewForRowAtIndex:index];
     if ([key isEqualToString:@"hidden"]) {
         BOOL hidden = mapper.hidden;
