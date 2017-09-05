@@ -211,6 +211,25 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     }
 }
 
+- (void)setEditing:(BOOL)editing {
+    if (editing) {
+        if (![self canBecomeFirstResponder]) {
+            return;
+        }
+        [self becomeFirstResponder];
+    } else {
+        if (![self canResignFirstResponder]) {
+            return;
+        }
+        [self resignFirstResponder];
+    }
+}
+
+- (void)notifyEditingChanged {
+    [self willChangeValueForKey:@"editing"];
+    [self didChangeValueForKey:@"editing"];
+}
+
 - (void)updateConstraints {
     // Update placeholder label left and right margin by caret rect.
     if (_placeholderLabel != nil) {
@@ -249,10 +268,12 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
+    [self notifyEditingChanged];
     [self saveOriginalText];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
+    [self notifyEditingChanged];
     if (_deletingLink == nil) {
         return;
     }

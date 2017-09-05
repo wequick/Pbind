@@ -78,6 +78,8 @@
 
 @property (nonatomic, weak) id<PBInputValueDelegate> valueDelegate;
 
+@property (nonatomic, assign, getter=isEditing) BOOL editing; // Whether the input is first responder
+
 @end
 
 //___________________________________________________________________________________________________

@@ -281,6 +281,26 @@ static NSMutableDictionary *kInitializations = nil;
     [super setTextColor:textColor];
 }
 
+- (void)setEditing:(BOOL)editing {
+    if (editing) {
+        if (![self canBecomeFirstResponder]) {
+            return;
+        }
+        [self becomeFirstResponder];
+    } else {
+        if (![self canResignFirstResponder]) {
+            return;
+        }
+        [self resignFirstResponder];
+    }
+}
+
+- (void)notifyEditingChanged {
+    [self willChangeValueForKey:@"editing"];
+    [self didChangeValueForKey:@"editing"];
+}
+
+
 #pragma mark - Hacker
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
@@ -354,6 +374,7 @@ static NSMutableDictionary *kInitializations = nil;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self notifyEditingChanged];
     if (self.inputView != nil) {
         if ([self.inputView isKindOfClass:[PBDatePicker class]]) {
             PBDatePicker *picker = (id)self.inputView;
@@ -443,6 +464,7 @@ static NSMutableDictionary *kInitializations = nil;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self notifyEditingChanged];
     if (self.inputView != nil) {
         if ([self.inputView isKindOfClass:[PBDatePicker class]]) {
             PBDatePicker *picker = (id)self.inputView;
