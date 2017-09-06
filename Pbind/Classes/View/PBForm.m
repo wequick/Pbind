@@ -51,6 +51,7 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
 
 @interface PBScrollView (Private)
 
+- (void)pb_unbind;
 - (void)didInitRowViews;
 - (UIView *)viewWithRow:(PBRowMapper *)row;
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom;
@@ -422,6 +423,13 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
         _initialData = data;
     }
     [super setData:data];
+}
+
+- (void)pb_unbind {
+    [super pb_unbind];
+    for (UIView *view in _accessoryViews) {
+        [view pb_unbindAll];
+    }
 }
 
 - (void)pb_didUnbind {
