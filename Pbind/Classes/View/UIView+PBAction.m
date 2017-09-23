@@ -12,7 +12,6 @@
 
 @interface _PBViewActionTapper : UITapGestureRecognizer
 
-@property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) BOOL ownerUserInteractionEnabled;
 
 @end
@@ -118,7 +117,6 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
             // Tap gesture
             if (initialized) {
                 _PBViewActionTapper *tapper = [[_PBViewActionTapper alloc] initWithTarget:self action:@selector(_pb_internalHandleClick:)];
-                tapper.name = eventName;
                 tapper.ownerUserInteractionEnabled = self.userInteractionEnabled;
                 self.userInteractionEnabled = YES;
                 [self addGestureRecognizer:tapper];
