@@ -26,6 +26,7 @@ static const CGFloat kHeightUnset = -2;
 @implementation PBRowMapper
 {
     NSMutableArray<PBRowActionMapper *> *_editActionMappers;
+    NSString *_identifier;
 }
 
 @synthesize editActionMappers = _editActionMappers;
@@ -86,18 +87,21 @@ static const CGFloat kHeightUnset = -2;
 
 - (NSString *)id
 {
-    NSMutableString *identifier = [[NSMutableString alloc] init];
-    if (_id != nil) {
-        [identifier appendString:_id];
-    } else {
-        [identifier appendString:_clazz];
-        if (_layout != nil) {
-            [identifier appendFormat:@"@%@", _layout];
+    if (_identifier == nil) {
+        NSMutableString *identifier = [[NSMutableString alloc] init];
+        if (_id != nil) {
+            [identifier appendString:_id];
+        } else {
+            [identifier appendString:_clazz];
+            if (_layout != nil) {
+                [identifier appendFormat:@"@%@", _layout];
+            }
         }
+        
+        [identifier appendFormat:@"%d", (int)_style];
+        _identifier = identifier;
     }
-    
-    [identifier appendFormat:@"%d", (int)_style];
-    return identifier;
+    return _identifier;
 }
 
 - (NSString *)nib
