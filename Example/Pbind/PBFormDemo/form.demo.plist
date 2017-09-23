@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>properties</key>
+	<dict>
+		<key>rows</key>
+		<array>
+			<dict>
+				<key>clazz</key>
+				<string>PBInput</string>
+				<key>margin</key>
+				<string>{10,10,10,10}</string>
+				<key>height</key>
+				<string>32</string>
+				<key>properties</key>
+				<dict>
+					<key>layer.borderWidth</key>
+					<string>1</string>
+					<key>layer.borderColor</key>
+					<string>##ccc</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>

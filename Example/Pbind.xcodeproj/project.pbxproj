@@ -45,6 +45,7 @@
 		F8039C311E47781F009C5372 /* example.xml in Resources */ = {isa = PBXBuildFile; fileRef = F8039C301E47781F009C5372 /* example.xml */; };
 		F80D43301D8E667D00FF298B /* PBExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F80D432F1D8E667D00FF298B /* PBExpressionTests.m */; };
 		F80FB22D1D913E2400DD48F4 /* table.members.plist in Resources */ = {isa = PBXBuildFile; fileRef = F80FB22C1D913E2400DD48F4 /* table.members.plist */; };
+		F84079D21F6381C200E1719D /* form.demo.plist in Resources */ = {isa = PBXBuildFile; fileRef = F84079D11F6381C200E1719D /* form.demo.plist */; };
 		F86CC7971F3A032B00DA9FFD /* table.view.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC7961F3A032B00DA9FFD /* table.view.plist */; };
 		F86CC79B1F3A0B1100DA9FFD /* header.common.plist in Resources */ = {isa = PBXBuildFile; fileRef = F86CC79A1F3A0B1100DA9FFD /* header.common.plist */; };
 		F86CC79E1F3A139600DA9FFD /* MyStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = F86CC79C1F3A139600DA9FFD /* MyStyle.h */; };
@@ -126,6 +127,7 @@
 		F8039C301E47781F009C5372 /* example.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = example.xml; sourceTree = "<group>"; };
 		F80D432F1D8E667D00FF298B /* PBExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBExpressionTests.m; sourceTree = "<group>"; };
 		F80FB22C1D913E2400DD48F4 /* table.members.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.members.plist; sourceTree = "<group>"; };
+		F84079D11F6381C200E1719D /* form.demo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = form.demo.plist; sourceTree = "<group>"; };
 		F86CC7961F3A032B00DA9FFD /* table.view.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = table.view.plist; sourceTree = "<group>"; };
 		F86CC79A1F3A0B1100DA9FFD /* header.common.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = header.common.plist; sourceTree = "<group>"; };
 		F86CC79C1F3A139600DA9FFD /* MyStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyStyle.h; sourceTree = "<group>"; };
@@ -330,6 +332,14 @@
 			path = ../Pbind/Benchmark;
 			sourceTree = "<group>";
 		};
+		F84079D01F63817000E1719D /* PBFormDemo */ = {
+			isa = PBXGroup;
+			children = (
+				F84079D11F6381C200E1719D /* form.demo.plist */,
+			);
+			path = PBFormDemo;
+			sourceTree = "<group>";
+		};
 		F86CC7981F3A0ACF00DA9FFD /* UIViewDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -414,6 +424,7 @@
 		F89500CA1D87AB8E0038A3E5 /* Plist */ = {
 			isa = PBXGroup;
 			children = (
+				F84079D01F63817000E1719D /* PBFormDemo */,
 				F86CC7AB1F49736500DA9FFD /* UITableViewDemo */,
 				F86CC7A81F4707F400DA9FFD /* PBActionDemo */,
 				F86CC7A31F46026600DA9FFD /* PBButtonDemo */,
@@ -542,6 +553,7 @@
 				F8039BE21E3437EB009C5372 /* level1.xml in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				F86CC7A71F46029C00DA9FFD /* cell.button.plist in Resources */,
+				F84079D21F6381C200E1719D /* form.demo.plist in Resources */,
 				F8A02C0E1F30DBA20058028E /* cell.view.plist in Resources */,
 				F86CC7A21F3A263600DA9FFD /* table.label.plist in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
