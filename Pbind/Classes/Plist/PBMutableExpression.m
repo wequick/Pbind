@@ -52,6 +52,7 @@
 - (instancetype)initWithUTF8String:(const char *)str {
     char *p = (char *)str;
     char fmtStart = 0, fmtEnd = 0;
+    BOOL duplexBinding, onewayBinding, usesBackticks, usesJS, usesStringLiteral;
     switch (*str) {
         case '%':
             p++;
@@ -60,9 +61,9 @@
                 p++;
                 if (*p == '=') {
                     p++;
-                    _flags.duplexBinding = 1;
+                    duplexBinding = 1;
                 } else {
-                    _flags.onewayBinding = 1;
+                    onewayBinding = 1;
                 }
             } else {
                 fmtStart = '(';
@@ -72,8 +73,8 @@
         case '`':
             p++;
             fmtEnd = '`';
-            _keywordFlags.backticks = 1;
-            _formatFlags.javascript = 1;
+            usesBackticks = 1;
+            usesJS = 1;
             break;
         case '@':
             p++;
@@ -82,11 +83,22 @@
             }
             p++;
             fmtEnd = '"';
-            _keywordFlags.string = 1;
+            usesStringLiteral = 1;
             break;
         default:
             return [super initWithUTF8String:str];
     }
+    
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
+    
+    _flags.duplexBinding = duplexBinding;
+    _flags.onewayBinding = onewayBinding;
+    _keywordFlags.backticks = usesBackticks;
+    _formatFlags.javascript = usesJS;
+    _keywordFlags.string = usesStringLiteral;
     
     NSUInteger len = strlen(str) + 1;
     char *temp;
@@ -103,7 +115,10 @@
                 }
                 *p2++ = *p++;
             }
-            if (*p == '\0') return nil;
+            if (*p == '\0') {
+                self = nil;
+                return nil;
+            }
             
             *p2 = '\0';
             if (tag_pos != NULL) {
@@ -125,6 +140,7 @@
                     _formatFlags.customized = 1;
                 } else {
                     NSLog(@"PBMutableExpression: Unknown format tag:`%@'", tag);
+                    self = nil;
                     return nil;
                 }
             }
@@ -142,9 +158,11 @@
         if (*p == '\0') {
             if ([self requiresExpression]) {
                 NSLog(@"Pbind: the expression %s should takes 1 expression as least.", str);
+                self = nil;
                 return nil;
             } else if (*(p - 1) != fmtEnd) {
                 NSLog(@"Pbind: the expression %s should ends with %c.", str, fmtEnd);
+                self = nil;
                 return nil;
             } else {
                 *(p2 - 1) = '\0';
@@ -175,6 +193,7 @@
     
     if ((_flags.onewayBinding || _flags.duplexBinding) && _expressions.count < 2) {
         NSLog(@"PBMutableExpression: '%%=' or '%%==' should keep up with as least as 2 expressions.");
+        self = nil;
         return nil;
     }
     

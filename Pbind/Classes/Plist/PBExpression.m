@@ -53,11 +53,17 @@ const unsigned char PBDataTagUnset = 0xFF;
         return nil;
     }
     
-    _flags.dataTag = PBDataTagUnset;
     return [self initWithUTF8String:[aString UTF8String]];
 }
 
 - (instancetype)initWithUTF8String:(const char *)str {
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
+    
+    _flags.dataTag = PBDataTagUnset;
+    
     char *p = (char *)str;
     char *temp, *p2;
     NSUInteger len = strlen(str) + 1;
@@ -96,6 +102,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         case '@':
             p++;
             if (*p == '[' || *p == '{') {
+                self = nil;
                 return nil; // constant tag for subscript
             }
             if (*p == '^') {
@@ -114,6 +121,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                     }
                     if (*p != '.') {
                         free(temp);
+                        self = nil;
                         return nil; // should format as '@xx.xx'
                     }
                     
@@ -135,6 +143,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                     _flags.dataTag = *p; // variable tag for `user-defined'
                     if (![PBVariableMapper registersTag:*p]) {
                         NSLog(@"<%@> Unregistered Tag: %c", [[self class] description], *p);
+                        self = nil;
                         return nil;
                     }
                 }
@@ -186,10 +195,12 @@ const unsigned char PBDataTagUnset = 0xFF;
                 _flags.mapToActionStateData = 1;
                 p++;
             } else {
+                self = nil;
                 return nil;
             }
             break;
         default:
+            self = nil;
             return nil;
     }
     
@@ -205,6 +216,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     } else {
         NSLog(@"<%@> Variable should be start with alphabet or underline.", [[self class] description]);
         free(temp);
+        self = nil;
         return nil;
     }
     
@@ -249,6 +261,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                 p++;
             } else {
                 NSLog(@"<%@> '!' should together with '=' as '!='.", [[self class] description]);
+                self = nil;
                 return nil;
             }
             break;
@@ -268,6 +281,7 @@ const unsigned char PBDataTagUnset = 0xFF;
                 if (*p != ':') {
                     NSLog(@"<%@> Missing ':' after '?', should as '?*:*'.", [[self class] description]);
                     free(temp);
+                    self = nil;
                     return nil;
                 }
                 p++;
