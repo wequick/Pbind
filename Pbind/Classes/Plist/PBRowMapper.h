@@ -15,6 +15,7 @@
 #import "PBRowActionMapper.h"
 
 @class PBRowDataSource;
+@class _PBRowHolder;
 
 //______________________________________________________________________________
 // PBRowMapperDelegate
@@ -256,5 +257,20 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 - (CGFloat)heightForData:(id)data;
 
 - (UIView *)createView;
+
+#pragma mark - JIT
+///=============================================================================
+/// @name JIT
+///=============================================================================
+
+@property (nonatomic, assign) NSInteger holderIndex;
+
+@property (nonatomic, strong) NSArray *constants;
+
+@property (nonatomic, strong) NSArray *variablePaths;
+
+- (void)compileWithHolder:(_PBRowHolder *)holder rows:(NSSet *)rows owner:(UIView *)owner;
+
+- (void)updatePropertiesForTarget:(id)target withHolder:(_PBRowHolder *)holder;
 
 @end

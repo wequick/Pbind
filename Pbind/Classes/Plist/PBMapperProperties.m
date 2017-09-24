@@ -16,10 +16,9 @@
 #import "PBPropertyUtils.h"
 
 @interface PBMapperProperties()
-{
-    NSMutableDictionary *_constants;
-    NSMutableDictionary *_expressions;
-}
+
+@property (nonatomic, strong) NSMutableDictionary *constants;
+@property (nonatomic, strong) NSMutableDictionary *expressions;
 
 @end
 
@@ -123,14 +122,19 @@
 {
     BOOL changed = NO;
     
-    if (![[owner pb_constants] isEqual:_constants]) {
-        [owner pb_setConstants:_constants fromPlist:self.mapper.plist];
-        changed = YES;
-    }
+//    if (![[owner pb_constants] isEqual:_constants]) {
+//        [owner pb_setConstants:_constants fromPlist:self.mapper.plist];
+//        changed = YES;
+//    }
+//
+//    if (![[owner pb_expressions] isEqual:_expressions]) {
+//        [owner pb_setExpressions:_expressions fromPlist:self.mapper.plist];
+//        changed = YES;
+//    }
     
-    if (![[owner pb_expressions] isEqual:_expressions]) {
-        [owner pb_setExpressions:_expressions fromPlist:self.mapper.plist];
-        changed = YES;
+    for (NSString *key in _constants) {
+        id value = [self constantForKey:key];
+        [owner pb_setValue:value forKeyPath:key];
     }
     
     return changed;

@@ -14,8 +14,35 @@
 #import "PBTableViewCell.h"
 #import "PBRowDataSource.h"
 #import "PBCollectionView.h"
+#import "_PBRowHolder.h"
+#import "PBPropertyUtils.h"
 
 static const CGFloat kHeightUnset = -2;
+
+@interface _PBPropertyIndexPath : NSObject
+
+@property (nonatomic, assign) NSInteger targetIndex;
+@property (nonatomic, assign) NSInteger keyIndex;
+@property (nonatomic, assign) NSInteger repeatCount;
+
+@end
+
+@implementation _PBPropertyIndexPath
+
+@end
+
+@interface UIView (Private)
+
+- (UIView *)viewWithAlias:(NSString *)alias;
+
+@end
+
+@interface PBMapperProperties (Private)
+
+@property (nonatomic, strong) NSMutableDictionary *constants;
+@property (nonatomic, strong) NSMutableDictionary *expressions;
+
+@end
 
 @interface PBMapper (Private)
 
@@ -35,6 +62,7 @@ static const CGFloat kHeightUnset = -2;
     _estimatedHeight = UITableViewAutomaticDimension;
     _height = UITableViewAutomaticDimension;
     _width = UITableViewAutomaticDimension;
+    _holderIndex = NSNotFound;
     
     [super setPropertiesWithDictionary:dictionary];
     
@@ -53,8 +81,6 @@ static const CGFloat kHeightUnset = -2;
                     if (_estimatedHeight <= 0) {
                         _estimatedHeight = 44.f; // initialize default estimated height
                     }
-                } else if (_height > 0) {
-                    _height = PBValue(_height);
                 }
             }
         }
@@ -113,12 +139,51 @@ static const CGFloat kHeightUnset = -2;
 }
 
 - (void)initPropertiesForTarget:(UIView *)view {
+    [self initPropertiesForTarget:view withHolder:view.pb_viewHolder baseProperties:nil];
+}
+
+- (void)updatePropertiesForTarget:(UIView *)view withHolder:(_PBRowHolder *)holder {
+    [self initPropertiesForTarget:view withHolder:view.pb_viewHolder baseProperties:holder.initialProperties];
+}
+
+- (void)initPropertiesForTarget:(UIView *)view withHolder:(_PBViewHolder *)holder baseProperties:(NSArray *)baseProperties {
     if (_height == UITableViewAutomaticDimension) {
         if ([view respondsToSelector:@selector(setAutoResize:)]) {
             [(id)view setAutoResize:YES];
         }
     }
+    
+    if (self.constants != nil) {
+        if (baseProperties == nil) {
+            for (_PBPropertyPath *property in self.constants) {
+                [holder updateProperty:property];
+            }
+            return;
+        }
+        
+        [holder updateProperties:self.constants withBaseProperties:baseProperties];
+        return;
+    } else if (baseProperties != nil) {
+        for (_PBPropertyPath *property in baseProperties) {
+            [holder updateProperty:property];
+        }
+        return;
+    }
+    
     [super initPropertiesForTarget:view];
+}
+
+- (void)mapPropertiesToTarget:(id)object withData:(id)data owner:(UIView *)owner context:(UIView *)context {
+    if (self.variablePaths != nil) {
+        _PBViewHolder *holder = owner.pb_viewHolder;
+        if (holder != nil) {
+            for (_PBPropertyPath *property in self.variablePaths) {
+                [holder mapProperty:property withData:data owner:owner context:context];
+            }
+        }
+    }
+    
+    [super mapPropertiesToTarget:object withData:data owner:owner context:context];
 }
 
 - (BOOL)hiddenForView:(id)view withData:(id)data
@@ -349,6 +414,266 @@ static const CGFloat kHeightUnset = -2;
         for (PBMapper *mapper in _editActionMappers) {
             [mapper unbind];
         }
+    }
+}
+
+#pragma mark - JIT
+
+- (void)collectPropertyPaths:(NSMutableArray *)paths holders:(NSMutableArray<_PBTargetHolder *> *)targetHolders withProperties:(PBMapperProperties *)properties expressive:(BOOL)expressive rootObject:(id)rootObject alias:(NSString *)alias outletKey:(NSString *)outletKey {
+    NSDictionary *values = expressive ? properties.expressions : properties.constants;
+    for (NSString *keyPath in values) {
+        id target;
+        NSString *prefixKey, *suffixKey;
+        [self getTarget:&target prefix:&prefixKey suffix:&suffixKey fromKeyPath:keyPath ofObject:rootObject];
+        if (target == nil || suffixKey == nil) {
+            continue;
+        }
+        
+        // Add target
+        _PBTargetHolder *targetHolder;
+        NSInteger targetIndex = NSNotFound;
+        for (NSInteger index = 0; index < targetHolders.count; index++) {
+            if ([targetHolders objectAtIndex:index].target == target) {
+                targetIndex = index;
+                break;
+            }
+        }
+        if (targetIndex == NSNotFound) {
+            targetIndex = targetHolders.count;
+            targetHolder = [[_PBTargetHolder alloc] init];
+            targetHolder.target = target;
+            targetHolder.keyPath = prefixKey;
+            targetHolder.parentAlias = alias;
+            targetHolder.parentOutletKey = outletKey;
+            targetHolder.properties = [[NSMutableArray alloc] init];
+            [targetHolders addObject:targetHolder];
+        } else {
+            targetHolder = [targetHolders objectAtIndex:targetIndex];
+        }
+        
+        // Add meta
+        NSInteger keyIndex = NSNotFound;
+        for (NSInteger index = 0; index < targetHolder.properties.count; index++) {
+            if ([[targetHolder.properties objectAtIndex:index].key isEqualToString:suffixKey]) {
+                keyIndex = index;
+                break;
+            }
+        }
+        if (keyIndex == NSNotFound) {
+            keyIndex = targetHolder.properties.count;
+            _PBMetaProperty *property = [[_PBMetaProperty alloc] initWithTarget:target key:suffixKey];
+            [targetHolder.properties addObject:property];
+        }
+        
+        _PBPropertyPath *path = nil;
+        for (_PBPropertyPath *temp in paths) {
+            if (temp.targetIndex == targetIndex && temp.keyIndex == keyIndex) {
+                path = temp;
+                break;
+            }
+        }
+        
+        if (path == nil) {
+            path = [[_PBPropertyPath alloc] init];
+            path.targetIndex = targetIndex;
+            path.keyIndex = keyIndex;
+            [paths addObject:path];
+        }
+        
+        if (expressive) {
+            path.expression = [values objectForKey:keyPath];
+        } else {
+            path.value = [values objectForKey:keyPath];
+        }
+    }
+}
+
+- (void)compileWithHolder:(_PBRowHolder *)holder rows:(NSArray *)rows owner:(UIView *)owner {
+    if (holder.targets == nil) {
+        NSMutableArray<_PBTargetHolder *> *targetHolders = [[NSMutableArray alloc] init];
+        NSMutableArray *allPaths = [[NSMutableArray alloc] init];
+        NSInteger repeatRowCount = 0;
+        
+        for (PBRowMapper *row in rows) {
+            if (row.holderIndex != self.holderIndex) {
+                continue;
+            }
+            
+            repeatRowCount++;
+            
+            NSMutableArray *constantPaths = [[NSMutableArray alloc] init];
+            NSMutableArray *variablePaths = [[NSMutableArray alloc] init];
+            PBMapperProperties *properties = row->_viewProperties;
+            [self collectPropertyPaths:constantPaths holders:targetHolders withProperties:properties expressive:NO rootObject:owner alias:nil outletKey:nil];
+            [self collectPropertyPaths:variablePaths holders:targetHolders withProperties:properties expressive:YES rootObject:owner alias:nil outletKey:nil];
+            
+            // Aliases
+            NSDictionary *aliasProperties = row->_aliasProperties;
+            for (NSString *key in aliasProperties) {
+                UIView *subview = [owner viewWithAlias:key];
+                PBMapperProperties *subproperties = [aliasProperties objectForKey:key];
+                [self collectPropertyPaths:constantPaths holders:targetHolders withProperties:subproperties expressive:NO rootObject:subview alias:key outletKey:nil];
+                [self collectPropertyPaths:variablePaths holders:targetHolders withProperties:subproperties expressive:YES rootObject:subview alias:key outletKey:nil];
+            }
+            
+            // Outlets
+            NSDictionary *outletProperties = row->_outletProperties;
+            for (NSString *key in outletProperties) {
+                UIView *subview = [PBPropertyUtils valueForKey:key ofObject:owner failure:nil];
+                if (subview == nil) {
+                    continue;
+                }
+                
+                PBMapperProperties *subproperties = [outletProperties objectForKey:key];
+                [self collectPropertyPaths:constantPaths holders:targetHolders withProperties:subproperties expressive:NO rootObject:subview alias:nil outletKey:key];
+                [self collectPropertyPaths:variablePaths holders:targetHolders withProperties:subproperties expressive:YES rootObject:subview alias:nil outletKey:key];
+            }
+            
+            row.constants = constantPaths;
+            row.variablePaths = variablePaths;
+            
+            for (_PBPropertyPath *path in constantPaths) {
+                BOOL added = NO;
+                for (_PBPropertyIndexPath *indexPath in allPaths) {
+                    if (indexPath.targetIndex == path.targetIndex && indexPath.keyIndex == path.keyIndex) {
+                        indexPath.repeatCount++;
+                        added = YES;
+                        break;
+                    }
+                }
+                if (!added) {
+                    _PBPropertyIndexPath *indexPath = [[_PBPropertyIndexPath alloc] init];
+                    indexPath.targetIndex = path.targetIndex;
+                    indexPath.keyIndex = path.keyIndex;
+                    indexPath.repeatCount = 1;
+                    [allPaths addObject:indexPath];
+                }
+            }
+            for (_PBPropertyPath *path in variablePaths) {
+                BOOL added = NO;
+                for (_PBPropertyIndexPath *indexPath in allPaths) {
+                    if (indexPath.targetIndex == path.targetIndex && indexPath.keyIndex == path.keyIndex) {
+                        indexPath.repeatCount++;
+                        added = YES;
+                        break;
+                    }
+                }
+                if (!added) {
+                    _PBPropertyIndexPath *indexPath = [[_PBPropertyIndexPath alloc] init];
+                    indexPath.targetIndex = path.targetIndex;
+                    indexPath.keyIndex = path.keyIndex;
+                    indexPath.repeatCount = 1;
+                    [allPaths addObject:indexPath];
+                }
+            }
+        }
+        
+        NSMutableArray *initialProperties = [[NSMutableArray alloc] init];
+        for (_PBPropertyIndexPath *path in allPaths) {
+            if (path.repeatCount == repeatRowCount) {
+                // No need to record the value which would be rewrite by every one
+                continue;
+            }
+            
+            _PBTargetHolder *targetHolder = [targetHolders objectAtIndex:path.targetIndex];
+            _PBMetaProperty *property = [targetHolder.properties objectAtIndex:path.keyIndex];
+            id value = [property valueOfTarget:targetHolder.target];
+            
+            _PBPropertyPath *meta = [[_PBPropertyPath alloc] init];
+            meta.targetIndex = path.targetIndex;
+            meta.keyIndex = path.keyIndex;
+            meta.value = value;
+            [initialProperties addObject:meta];
+        }
+        holder.initialProperties = initialProperties;
+        
+        _PBViewHolder *viewHolder = [[_PBViewHolder alloc] init];
+        viewHolder.targets = targetHolders;
+        owner.pb_viewHolder = viewHolder;
+        
+        NSMutableArray *copyTargets = [NSMutableArray arrayWithCapacity:targetHolders.count];
+        for (_PBTargetHolder *temp in targetHolders) {
+            _PBTargetHolder *copy = [[_PBTargetHolder alloc] init];
+            copy.keyPath = temp.keyPath;
+            copy.parentAlias = temp.parentAlias;
+            copy.parentOutletKey = temp.parentOutletKey;
+            copy.properties = temp.properties;
+            [copyTargets addObject:copy];
+        }
+        holder.targets = copyTargets;
+        return;
+    }
+    
+    if (owner.pb_viewHolder == nil) {
+        _PBViewHolder *viewHolder = [[_PBViewHolder alloc] init];
+        NSMutableArray *copyTargetHolders = [NSMutableArray arrayWithCapacity:holder.targets.count];
+        NSMutableDictionary *tempAliasViews = [[NSMutableDictionary alloc] init];
+        for (_PBTargetHolder *temp in holder.targets) {
+            _PBTargetHolder *copy = [[_PBTargetHolder alloc] init];
+            copy.properties = temp.properties;
+            id target = owner;
+            if (temp.parentAlias != nil) {
+                target = [tempAliasViews objectForKey:temp.parentAlias];
+                if (target == nil) {
+                    target = [owner viewWithAlias:temp.parentAlias];
+                    if (target == nil) {
+                        continue;
+                    }
+                    [tempAliasViews setObject:target forKey:temp.parentAlias];
+                }
+            } else if (temp.parentOutletKey != nil) {
+                target = [PBPropertyUtils valueForKey:temp.parentOutletKey ofObject:owner failure:nil];
+            }
+            
+            if (temp.keyPath == nil) {
+                copy.target = target;
+            } else {
+                NSArray *keys = [temp.keyPath componentsSeparatedByString:@"."];
+                for (NSString *key in keys) {
+                    target = [self valueForKey:key ofObject:target];
+                }
+                copy.target = target;
+            }
+            [copyTargetHolders addObject:copy];
+        }
+        viewHolder.targets = copyTargetHolders;
+        owner.pb_viewHolder = viewHolder;
+    }
+}
+
+- (void)getTarget:(id *)outTarget prefix:(NSString **)outPrefix suffix:(NSString **)outSuffix fromKeyPath:(NSString *)keyPath ofObject:(id)object {
+    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+    if (keys.count <= 1) {
+        *outTarget = object;
+        *outPrefix = nil;
+        *outSuffix = keyPath;
+        return;
+    }
+    
+    id target = object;
+    NSInteger index = 0;
+    for (; index < keys.count - 1; index++) {
+        NSString *key = [keys objectAtIndex:index];
+        target = [self valueForKey:key ofObject:target];
+        if (target == nil) {
+            return;
+        }
+    }
+    
+    *outTarget = target;
+    *outSuffix = [keys objectAtIndex:index];
+    NSMutableArray *temp = [NSMutableArray arrayWithArray:keys];
+    [temp removeLastObject];
+    *outPrefix = [temp componentsJoinedByString:@"."];
+}
+
+- (id)valueForKey:(NSString *)key ofObject:(id)object {
+    char initial = [key characterAtIndex:0];
+    if (initial == '@') {
+        NSString *alias = [key substringFromIndex:1];
+        return [object viewWithAlias:alias];
+    } else {
+        return [PBPropertyUtils valueForKey:key ofObject:object failure:nil];
     }
 }
 

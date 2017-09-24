@@ -21,6 +21,7 @@
 #import "PBHeaderFooterMapper.h"
 #import "UITableViewCell+PBIndexing.h"
 #import "UICollectionViewCell+PBIndexing.h"
+#import "_PBRowHolder.h"
 
 NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
 
@@ -45,6 +46,10 @@ NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNo
 @end
 
 @implementation PBRowDataSource
+{
+    NSSet *_allRows;
+    NSMutableArray *_rowHolders;
+}
 
 @synthesize receiver;
 
@@ -175,15 +180,20 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (void)initRowMapper {
-    if (_row != nil || _rows != nil || _sections != nil) {
+    if (_allRows != nil) {
         return;
     }
     
-    PBRowMapper *row = _row;
-    if (row != nil) {
-        return;
-    }
+    [self initRows];
     
+    [self initRowHolders];
+    
+    if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
+        [(id)self.owner setDataUpdated:YES];
+    }
+}
+
+- (void)initRows {
     NSDictionary *rowSource = self.owner.row;
     
     // Parsing rows: NSArray<NSDictionary> to NSArray<PBRowMapper>
@@ -200,9 +210,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             [temp addObject:aRow];
         }
         _rows = temp;
-        if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
-            [(id)self.owner setDataUpdated:YES];
-        }
+        _allRows = [NSSet setWithArray:temp];
         return;
     }
     
@@ -235,6 +243,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     if (sectionCount > 0) {
+        NSMutableSet *allRows = [NSMutableSet set];
         NSMutableArray *temp = [NSMutableArray arrayWithCapacity:sectionCount];
         for (NSInteger sectionIndex = 0; sectionIndex < sectionCount; sectionIndex++) {
             NSDictionary *dict = [sections objectAtIndex:sectionIndex];
@@ -254,8 +263,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                     [rows addObject:aRow];
                 }
                 aSection.rows = rows;
+                [allRows addObjectsFromArray:rows];
             } else if (aRowSource != nil) {
                 aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:self.owner];
+                [allRows addObject:aSection.row];
             }
             
             if (aSection.emptyRow != nil) {
@@ -271,6 +282,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             [temp addObject:aSection];
         }
         _sections = temp;
+        _allRows = allRows;
         // Init section index titles
         NSMutableArray *titles = [NSMutableArray arrayWithCapacity:[temp count]];
         BOOL hasTitle = NO;
@@ -287,17 +299,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         if (hasTitle) {
             _sectionIndexTitles = titles;
         }
-        if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
-            [(id)self.owner setDataUpdated:YES];
-        }
         return;
     }
     
     if (rowSource != nil) {
         _row = [PBRowMapper mapperWithDictionary:rowSource owner:self.owner];
-    }
-    if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
-        [(id)self.owner setDataUpdated:YES];
+        _allRows = [NSSet setWithObject:_row];
     }
     return;
 }
@@ -388,9 +395,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (void)reset {
+    _allRows = nil;
     _row = nil;
     _rows = nil;
     _sections = nil;
+    _rowHolders = nil;
 }
 
 #pragma mark - PBRowAction
@@ -620,30 +629,67 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     // Dequeue reusable cell
-    cell = [tableView dequeueReusableCellWithIdentifier:row.id];
+    cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell == nil) {
-        cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:row.id];
+        cell = [[row.viewClass alloc] initWithStyle:row.style reuseIdentifier:identifier];
     }
+    cell.data = data;
+    
+    _PBRowHolder *holder;
+    if (cell.indexPath == nil) {
+        // Firstly created
+        // ---------------
+        
+        // Default to non-selection
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        if ([tableView isHorizontal]) {
+            [cell.contentView setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+        }
+        
+        // Add custom layout
+        if (row.layoutMapper != nil) {
+            [row.layoutMapper renderToView:cell.contentView];
+        }
+        
+        // Record the initial values
+        holder = [_rowHolders objectAtIndex:row.holderIndex];
+        [row compileWithHolder:holder rows:_allRows owner:cell];
+		
+        [row initPropertiesForTarget:cell];
+    } else {
+        // Reusing
+        holder = [_rowHolders objectAtIndex:row.holderIndex];
+        [row updatePropertiesForTarget:cell withHolder:holder];
+    }
+    
+    // Map data for cell
     cell.indexPath = indexPath;
-    
-    // Add custom layout
-    if (row.layoutMapper != nil) {
-        [row.layoutMapper renderToView:cell.contentView];
-    }
-    
-    // Default to non-selection
-    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    
-    if ([tableView isHorizontal]) {
-        [cell.contentView setTransform:CGAffineTransformMakeRotation(M_PI_2)];
-    }
-    
-    // Init data for cell
-    [cell setData:data];
-    [row initPropertiesForTarget:cell];
     [row mapPropertiesToTarget:cell withData:tableView.rootData owner:cell context:tableView];
     
     return cell;
+}
+
+- (void)initRowHolders {
+    if (_rowHolders != nil || _allRows == nil) {
+        return;
+    }
+    
+    // Compile metas
+    _rowHolders = [[NSMutableArray alloc] init];
+    NSMutableArray *identifiers = [[NSMutableArray alloc] init];
+    for (PBRowMapper *row in _allRows) {
+        NSString *identifier = row.id;
+        NSInteger index = [identifiers indexOfObject:identifier];
+        if (index == NSNotFound) {
+            row.holderIndex = identifiers.count;
+            [identifiers addObject:identifier];
+            
+            _PBRowHolder *rowHolder = [[_PBRowHolder alloc] init];
+            [_rowHolders addObject:rowHolder];
+        } else {
+            row.holderIndex = index;
+        }
+    }
 }
 
 - (void)updateRowMapper:(PBRowMapper *)row forRowAtIndexPath:(NSIndexPath *)indexPath inView:(UIView *)view withData:(id)data {
@@ -838,7 +884,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Dequeue reusable cell
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
-    cell.indexPath = indexPath;
+    cell.data = data;
     
     // Auto size
     if ([item isAutoHeight]) {
@@ -864,15 +910,30 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
     }
     
-    // Add custom layout
-    if (item.layoutMapper != nil) {
-        [item.layoutMapper renderToView:cell.contentView];
+    _PBRowHolder *holder;
+    if (cell.indexPath == nil) {
+        // Firstly created
+        // ---------------
+        
+        // Add custom layout
+        if (item.layoutMapper != nil) {
+            [item.layoutMapper renderToView:cell.contentView];
+        }
+        
+        // Record the initial values
+        holder = [_rowHolders objectAtIndex:item.holderIndex];
+        [item compileWithHolder:holder rows:_allRows owner:cell];
+        
+        [item initPropertiesForTarget:cell];
+    } else {
+        // Reusing
+        holder = [_rowHolders objectAtIndex:item.holderIndex];
+        [item updatePropertiesForTarget:cell withHolder:holder];
     }
     
-    // Init data for cell
-    [cell setData:data];
-    [item initPropertiesForTarget:cell];
-    [item mapPropertiesToTarget:cell withData:collectionView.data owner:cell context:collectionView];
+    // Map data for cell
+    cell.indexPath = indexPath;
+    [item mapPropertiesToTarget:cell withData:collectionView.rootData owner:cell context:collectionView];
     
     return cell;
 }

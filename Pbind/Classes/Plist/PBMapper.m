@@ -261,9 +261,39 @@ static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMap
     if ([target isKindOfClass:[UIView class]]) {
         /* for view */
         /*----------*/
-        [target pb_mapData:data withOwner:owner context:context];
+//        [target pb_mapData:data withOwner:owner context:context];
+        [_viewProperties mapData:data toTarget:target withOwner:owner context:context];
         
-        /* for navigation */
+        // Map owner's tagged-subviews properties
+        for (NSString *alias in _aliasProperties) {
+            id subview = [owner viewWithAlias:alias];
+            if (subview != nil) {
+                PBMapperProperties *properties = [_aliasProperties objectForKey:alias];
+                [properties mapData:data toTarget:subview withOwner:owner context:context];
+            }
+        }
+        
+        // Map owner's subviews properties
+        for (NSInteger index = 0; index < [_subviewProperties count]; index++) {
+            if (index >= [[owner subviews] count]) {
+                break;
+            }
+            id subview = [[owner subviews] objectAtIndex:index];
+            PBMapperProperties *properties = [_subviewProperties objectAtIndex:index];
+            [properties mapData:data toTarget:subview withOwner:owner context:context];
+        }
+        
+        // Map owner's outlet view properties
+        for (NSString *key in _outletProperties) {
+            id subview = [owner valueForKey:key];
+            if (subview == nil) {
+                continue;
+            }
+            PBMapperProperties *properties = [_outletProperties objectForKey:key];
+            [properties mapData:data toTarget:subview withOwner:owner context:context];
+        }
+        
+        // Map navigation bar
         if (_navProperties != nil) {
             [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withOwner:owner context:context];
         }
