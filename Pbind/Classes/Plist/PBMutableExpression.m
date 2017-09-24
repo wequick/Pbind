@@ -51,8 +51,9 @@
 
 - (instancetype)initWithUTF8String:(const char *)str {
     char *p = (char *)str;
-    char fmtStart = 0, fmtEnd = 0;
-    BOOL duplexBinding, onewayBinding, usesBackticks, usesJS, usesStringLiteral;
+    char fmtStart = 0, fmtEnd = 0,
+         duplexBinding = 0, onewayBinding = 0,
+         usesBackticks = 0, usesJS = 0, usesStringLiteral = 0;
     switch (*str) {
         case '%':
             p++;
