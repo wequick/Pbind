@@ -152,7 +152,7 @@ typedef enum : NSUInteger {
  Example: suppose current expression is `$name` and parent is `%(hello %@!),$name`, 
  if the `$name` changed to be 'someone', then the parent value should be 'hello someone!'.
  */
-@property (nonatomic, strong) PBExpression *parent;
+@property (nonatomic, weak) PBExpression *parent;
 
 /**
  Whether the expression can be map or bound.

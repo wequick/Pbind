@@ -246,6 +246,7 @@ void appendCStrWithFormat(char **pFormat_to_go, NSMutableString *result, NSArray
                             arg=@"number format error";
                             break;
                     }
+                    objc_free(usertag_pos);
                 }
                 break;
             }
@@ -496,6 +497,7 @@ void appendCStrWithFormat(char **pFormat_to_go, NSMutableString *result, NSArray
                             arg=@"number format error";
                             break;
                     }
+                    objc_free(usertag_pos);
                 }
                 break;
             }
