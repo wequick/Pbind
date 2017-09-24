@@ -29,6 +29,8 @@
 
 @implementation PBMapper
 
+static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMappers;
+
 + (instancetype)mapperWithContentsOfURL:(NSURL *)url
 {
     NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfURL:url];
@@ -40,14 +42,31 @@
 }
 
 + (instancetype)mapperNamed:(NSString *)plistName {
+    PBMapper *mapper = [kCachedMappers objectForKey:plistName];
+    if (mapper != nil) {
+        return mapper;
+    }
+    
     NSDictionary *dictionary = PBPlist(plistName);
     if (dictionary == nil) {
         return nil;
     }
     
-    PBMapper *mapper = [self mapperWithDictionary:dictionary];
+    mapper = [self mapperWithDictionary:dictionary];
     mapper.plist = plistName;
+    if (kCachedMappers == nil) {
+        kCachedMappers = [[NSMutableDictionary alloc] init];
+    }
+    [kCachedMappers setObject:mapper forKey:plistName];
     return mapper;
+}
+
++ (void)purgeMapperForName:(NSString *)name {
+    PBMapper *mapper = [kCachedMappers objectForKey:name];
+    if (mapper != nil) {
+        [mapper unbind];
+        [kCachedMappers removeObjectForKey:name];
+    }
 }
 
 + (instancetype)mapperWithDictionary:(NSDictionary *)dictionary

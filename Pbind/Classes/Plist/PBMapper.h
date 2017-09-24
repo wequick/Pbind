@@ -57,6 +57,8 @@
 @property (nonatomic, strong) NSString *plist;
 @property (nonatomic, weak) UIView *owner;
 
++ (void)purgeMapperForName:(NSString *)name;
+
 #pragma mark - Inheriting
 ///=============================================================================
 /// @name Inheriting

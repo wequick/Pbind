@@ -111,6 +111,8 @@ static void (^kJSContextInitializer)(JSContext *context) = nil;
     // Reload the specify views that using the plist.
     NSArray *pathComponents = [plist componentsSeparatedByString:@"/"];
     NSString *changedPlist = [[pathComponents lastObject] stringByReplacingOccurrencesOfString:@".plist" withString:@""];
+    [PBMapper purgeMapperForName:changedPlist];
+    
     NSMutableSet *reloadedViews = [NSMutableSet set];
     [self enumerateControllersUsingBlock:^(UIViewController *controller) {
 //        if (![controller isKindOfClass:[PBViewController class]]) {
