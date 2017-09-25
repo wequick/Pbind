@@ -48,7 +48,7 @@ NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNo
 @implementation PBRowDataSource
 {
     NSSet *_allRows;
-    NSMutableArray *_rowHolders;
+    NSMutableDictionary *_rowHolders;
 }
 
 @synthesize receiver;
@@ -185,8 +185,6 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     [self initRows];
-    
-    [self initRowHolders];
     
     if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
         [(id)self.owner setDataUpdated:YES];
@@ -635,7 +633,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     cell.data = data;
     
-    _PBRowHolder *holder;
+    _PBRowHolder *holder = [self dequeueRowHolderWithIdentifier:identifier];
     if (cell.indexPath == nil) {
         // Firstly created
         // ---------------
@@ -652,13 +650,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
         
         // Record the initial values
-        holder = [_rowHolders objectAtIndex:row.holderIndex];
         [row compileWithHolder:holder rows:_allRows owner:cell];
 		
         [row initPropertiesForTarget:cell];
     } else {
         // Reusing
-        holder = [_rowHolders objectAtIndex:row.holderIndex];
         [row updatePropertiesForTarget:cell withHolder:holder];
     }
     
@@ -669,27 +665,20 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     return cell;
 }
 
-- (void)initRowHolders {
-    if (_rowHolders != nil || _allRows == nil) {
-        return;
+- (_PBRowHolder *)dequeueRowHolderWithIdentifier:(NSString *)identifier {
+    if (identifier == nil) {
+        return nil;
     }
     
-    // Compile metas
-    _rowHolders = [[NSMutableArray alloc] init];
-    NSMutableArray *identifiers = [[NSMutableArray alloc] init];
-    for (PBRowMapper *row in _allRows) {
-        NSString *identifier = row.id;
-        NSInteger index = [identifiers indexOfObject:identifier];
-        if (index == NSNotFound) {
-            row.holderIndex = identifiers.count;
-            [identifiers addObject:identifier];
-            
-            _PBRowHolder *rowHolder = [[_PBRowHolder alloc] init];
-            [_rowHolders addObject:rowHolder];
-        } else {
-            row.holderIndex = index;
-        }
+    if (_rowHolders == nil) {
+        _rowHolders = [[NSMutableDictionary alloc] init];
     }
+    _PBRowHolder *holder = [_rowHolders objectForKey:identifier];
+    if (holder == nil) {
+        holder = [[_PBRowHolder alloc] init];
+        [_rowHolders setObject:holder forKey:identifier];
+    }
+    return holder;
 }
 
 - (void)updateRowMapper:(PBRowMapper *)row forRowAtIndexPath:(NSIndexPath *)indexPath inView:(UIView *)view withData:(id)data {
@@ -883,7 +872,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
     
     // Dequeue reusable cell
-    cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
+    cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
     cell.data = data;
     
     // Auto size
@@ -910,7 +899,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
     }
     
-    _PBRowHolder *holder;
+    _PBRowHolder *holder = [self dequeueRowHolderWithIdentifier:identifier];
     if (cell.indexPath == nil) {
         // Firstly created
         // ---------------
@@ -921,13 +910,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
         
         // Record the initial values
-        holder = [_rowHolders objectAtIndex:item.holderIndex];
         [item compileWithHolder:holder rows:_allRows owner:cell];
         
         [item initPropertiesForTarget:cell];
     } else {
         // Reusing
-        holder = [_rowHolders objectAtIndex:item.holderIndex];
         [item updatePropertiesForTarget:cell withHolder:holder];
     }
     

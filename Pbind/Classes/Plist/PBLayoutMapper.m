@@ -31,13 +31,13 @@
         return;
     }
     
+    view.pb_layoutName = self.plist;
+    view.pb_layoutMapper = self;
+    
     UIView *contentView = view;
     if ([contentView isKindOfClass:[UITableViewCell class]] || [contentView isKindOfClass:[UICollectionViewCell class]]) {
         contentView = [(id)contentView contentView];
     }
-    
-    contentView.pb_layoutName = self.plist;
-    contentView.pb_layoutMapper = self;
     
     // Check if any view be removed.
     NSArray *aliases = [self.views allKeys];

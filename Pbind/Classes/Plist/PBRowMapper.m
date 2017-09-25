@@ -54,6 +54,7 @@ static const CGFloat kHeightUnset = -2;
 {
     NSMutableArray<PBRowActionMapper *> *_editActionMappers;
     NSString *_identifier;
+    NSString *_id;
 }
 
 @synthesize editActionMappers = _editActionMappers;
@@ -109,6 +110,17 @@ static const CGFloat kHeightUnset = -2;
 - (void)setClazz:(NSString *)clazz {
     _clazz = clazz;
     _viewClass = NSClassFromString(clazz);
+    _identifier = nil;
+}
+
+- (void)setStyle:(UITableViewCellStyle)style {
+    _style = style;
+    _identifier = nil;
+}
+
+- (void)setId:(NSString *)anId {
+    _id = anId;
+    _identifier = nil;
 }
 
 - (NSString *)id
@@ -326,6 +338,7 @@ static const CGFloat kHeightUnset = -2;
     
     _layout = layout;
     _layoutMapper = [PBLayoutMapper mapperNamed:layout];
+    _identifier = nil;
 }
 
 - (void)setActions:(NSDictionary *)as {
