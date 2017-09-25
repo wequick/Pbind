@@ -109,14 +109,17 @@
 }
 
 - (void)updateProperties:(NSArray *)properties withBaseProperties:(NSArray *)baseProperties {
+    NSMutableArray *particularProperties = [NSMutableArray arrayWithArray:properties];
+    
+    // Update base properties
     for (_PBPropertyPath *property in baseProperties) {
         _PBTargetHolder *targetHolder = [self.targets objectAtIndex:property.targetIndex];
         _PBMetaProperty *metaProperty = [targetHolder.properties objectAtIndex:property.keyIndex];
-        
         id value = property.value;
-        for (_PBPropertyPath *rewriteProperty in properties) {
-            if (rewriteProperty.targetIndex == property.targetIndex && rewriteProperty.keyIndex == property.keyIndex) {
-                value = rewriteProperty.value;
+        for (_PBPropertyPath *overwriteProperty in properties) {
+            if (overwriteProperty.targetIndex == property.targetIndex && overwriteProperty.keyIndex == property.keyIndex) {
+                value = overwriteProperty.value;
+                [particularProperties removeObject:overwriteProperty];
                 break;
             }
         }
@@ -126,6 +129,20 @@
 //            NSLog(@" > (%p) %@.%@ = %@", targetHolder.target, targetHolder.keyPath, metaProperty.key, value);
 //        } else {
 //            NSLog(@" > (%p) %@ = %@", targetHolder.target, metaProperty.key, value);
+//        }
+    }
+    
+    // Update particular properties
+    for (_PBPropertyPath *property in particularProperties) {
+        _PBTargetHolder *targetHolder = [self.targets objectAtIndex:property.targetIndex];
+        _PBMetaProperty *metaProperty = [targetHolder.properties objectAtIndex:property.keyIndex];
+        id value = property.value;
+        [metaProperty setValue:value toTarget:targetHolder.target];
+        
+//        if (targetHolder.keyPath != nil) {
+//            NSLog(@" # (%p) %@.%@ = %@", targetHolder.target, targetHolder.keyPath, metaProperty.key, value);
+//        } else {
+//            NSLog(@" # (%p) %@ = %@", targetHolder.target, metaProperty.key, value);
 //        }
     }
 }
