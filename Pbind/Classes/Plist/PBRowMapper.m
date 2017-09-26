@@ -193,6 +193,7 @@ static const CGFloat kHeightUnset = -2;
                 [holder mapProperty:property withData:data owner:owner context:context];
             }
         }
+        return;
     }
     
     [super mapPropertiesToTarget:object withData:data owner:owner context:context];
