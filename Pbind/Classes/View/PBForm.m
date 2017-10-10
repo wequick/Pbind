@@ -55,7 +55,6 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
 - (void)didInitRowViews;
 - (UIView *)viewWithRow:(PBRowMapper *)row;
 - (CGRect)frameForFloatingView:(UIView *)view withBottom:(CGFloat)bottom;
-- (CGFloat)footerHeight;
 - (void)__adjustContentInset;
 - (PBRowMapper *)rowMapperAtIndex:(NSInteger)index;
 - (void)reloadRowAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void (^)(BOOL finished))completion;
@@ -1087,6 +1086,21 @@ static NSString *kOriginalYKey = @"pb_originalY";
     }
 }
 
+- (CGFloat)inputAccessoryViewHeight {
+    CGFloat height = 0;
+    for (UIView *footerView in _footerViews) {
+        height += footerView.frame.size.height;
+    }
+    for (NSInteger index = 0; index < _accessoryViews.count; index++) {
+        PBRowMapper *row = [_accessoryMappers objectAtIndex:index];
+        if (row.floating != PBRowFloatingBottom) {
+            UIView *footerView = [_accessoryViews objectAtIndex:index];
+            height += footerView.frame.size.height;
+        }
+    }
+    return height;
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (void)setContentSize:(CGSize)contentSize
@@ -1161,7 +1175,7 @@ static NSString *kOriginalYKey = @"pb_originalY";
     /*
      * Center the presenting input to form's visible rect
      */
-    CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - _keyboardHeight - [self footerHeight];
+    CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - _keyboardHeight - [self inputAccessoryViewHeight];
     CGRect formRect = [self convertRect:self.bounds toView:self.window];
     CGRect inputRect = [input convertRect:input.bounds toView:self];
     CGPoint offset = [self contentOffset];
