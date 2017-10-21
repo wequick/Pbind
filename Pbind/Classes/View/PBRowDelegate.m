@@ -854,21 +854,23 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     }
 
     // Explicit
-    CGFloat itemWidth = item.width;
-    CGFloat itemHeight = item.height;
+    if ([item isWidthUnset] && [item isHeightUnset]) {
+        return collectionViewLayout.itemSize;
+    }
+    
+    id data = collectionView.data;
+    CGFloat itemWidth = [item widthForData:data withRowDataSource:self.dataSource indexPath:indexPath];
+    CGFloat itemHeight = [item heightForData:data withRowDataSource:self.dataSource indexPath:indexPath];
     if (itemWidth == -1) {
         itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right;
     }
-    if (itemWidth != 0) {
-        if (itemHeight == -1) {
-            // Auto height
-            itemWidth = 1.f; // the width is ignored here, after the cell created it will be set as a width  constraint.
-            itemHeight = 1.f;//collectionView.bounds.size.height;
-        }
-        return CGSizeMake(itemWidth, itemHeight);
-    }
     
-    return collectionViewLayout.itemSize;
+    if (itemHeight == -1) {
+        // Auto height
+        itemWidth = 1.f; // the width is ignored here, after the cell created it will be set as a width  constraint.
+        itemHeight = 1.f;//collectionView.bounds.size.height;
+    }
+    return CGSizeMake(itemWidth, itemHeight);
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
