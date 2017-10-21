@@ -10,8 +10,29 @@
 //
 
 #import "UIView+PBLayoutConstraint.h"
+#import "PBLayoutConstraint.h"
 
 @implementation UIView (PBLayoutConstraint)
+
+- (void)pb_addConstraintsWithSubviews:(NSDictionary<NSString *, id> *)views
+                        visualFormats:(NSArray<NSString *> *)visualFormats
+                         pbindFormats:(NSArray<NSString *> *)pbindFormats {
+    [self pb_addConstraintsWithSubviews:views metrics:nil visualFormats:visualFormats pbindFormats:pbindFormats];
+}
+
+- (void)pb_addConstraintsWithSubviews:(NSDictionary<NSString *, id> *)views
+                              metrics:(NSDictionary<NSString *, id> *)metrics
+                        visualFormats:(NSArray<NSString *> *)visualFormats
+                         pbindFormats:(NSArray<NSString *> *)pbindFormats {
+    for (NSString *key in views) {
+        UIView *view = views[key];
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    for (NSString *vfl in visualFormats) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:vfl options:0 metrics:metrics views:views]];
+    }
+    [PBLayoutConstraint addConstraintsWithPbindFormats:pbindFormats metrics:metrics views:views forParentView:self];
+}
 
 - (CGSize)pb_constraintSize {
     CGSize size = self.frame.size;

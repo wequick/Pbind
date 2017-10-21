@@ -13,6 +13,15 @@
 
 @interface UIView (PBLayoutConstraint)
 
+- (void)pb_addConstraintsWithSubviews:(NSDictionary<NSString *, id> *)views
+                        visualFormats:(NSArray<NSString *> *)visualFormats
+                         pbindFormats:(NSArray<NSString *> *)pbindFormats;
+
+- (void)pb_addConstraintsWithSubviews:(NSDictionary<NSString *, id> *)views
+                              metrics:(NSDictionary<NSString *, id> *)metrics
+                        visualFormats:(NSArray<NSString *> *)visualFormats
+                         pbindFormats:(NSArray<NSString *> *)pbindFormats;
+
 - (CGSize)pb_constraintSize;
 
 @end
