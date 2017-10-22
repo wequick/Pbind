@@ -16,6 +16,7 @@
 #import "PBCollectionView.h"
 #import "_PBRowHolder.h"
 #import "PBPropertyUtils.h"
+#import "_PBRowDataWrapper.h"
 
 static const CGFloat kHeightUnset = -2;
 
@@ -85,6 +86,15 @@ static const CGFloat kHeightUnset = -2;
                 }
             }
         }
+    } else {
+        _pbFlags.heightUnset = 1;
+    }
+    
+    NSString *widthString = [dictionary objectForKey:@"width"];
+    if (widthString != nil) {
+        _pbFlags.widthExpressive = [_properties isExpressiveForKey:@"width"];
+    } else {
+        _pbFlags.widthUnset = 1;
     }
     
     if (_clazz == nil) {
@@ -273,6 +283,14 @@ static const CGFloat kHeightUnset = -2;
     return _estimatedHeight > 0;
 }
 
+- (BOOL)isWidthUnset {
+    return _pbFlags.widthUnset;
+}
+
+- (BOOL)isHeightUnset {
+    return _pbFlags.heightUnset;
+}
+
 - (BOOL)isAutofit {
     return [self isAutoHeight] || [self isAutoWidth];
 }
@@ -307,30 +325,42 @@ static const CGFloat kHeightUnset = -2;
     return self.height;
 }
 
+- (CGFloat)widthForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath
+{
+    return [self metricOfHorizontal:YES withData:data rowDataSource:dataSource indexPath:indexPath];
+}
+
 - (CGFloat)heightForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath
 {
+    return [self metricOfHorizontal:NO withData:data rowDataSource:dataSource indexPath:indexPath];
+}
+
+- (CGFloat)metricOfHorizontal:(BOOL)horizontal withData:(id)data rowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath
+{
+    BOOL expressive = horizontal ? _pbFlags.widthExpressive : _pbFlags.heightExpressive;
     if (!_pbFlags.hiddenExpressive) {
         if (self.hidden) {
             return 0;
-        } else if (!_pbFlags.heightExpressive) {
-            return self.height;
+        } else if (!expressive) {
+            return horizontal ? self.width : self.height;
         }
     }
     
     id rowViewWrapper = nil;
     id rowData = [dataSource dataAtIndexPath:indexPath];
     if (rowData != nil) {
-        rowViewWrapper = @{@"data": rowData};
+        rowViewWrapper = [[_PBRowDataWrapper alloc] initWithData:rowData indexPath:indexPath];
     }
-    [self updateValueForKey:@"hidden" withData:data owner:rowViewWrapper context:nil];
+    [self updateValueForKey:@"hidden" withData:data owner:rowViewWrapper context:dataSource.owner];
     if (self.hidden) {
         return 0;
     }
     
-    if (_pbFlags.heightExpressive) {
-        [self updateValueForKey:@"height" withData:data owner:rowViewWrapper context:nil];
+    NSString *key = horizontal ? @"width" : @"height";
+    if (expressive) {
+        [self updateValueForKey:key withData:data owner:rowViewWrapper context:dataSource.owner];
     }
-    return self.height;
+    return horizontal ? self.width : self.height;
 }
 
 - (void)setLayout:(NSString *)layout {

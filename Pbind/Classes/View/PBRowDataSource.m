@@ -22,28 +22,9 @@
 #import "UITableViewCell+PBIndexing.h"
 #import "UICollectionViewCell+PBIndexing.h"
 #import "_PBRowHolder.h"
+#import "_PBRowDataWrapper.h"
 
 NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
-
-@interface _RowDataWrapper : NSObject
-
-@property (nonatomic, weak) id data;
-@property (nonatomic, copy) NSIndexPath *indexPath;
-
-- (instancetype)initWithData:(id)data;
-
-@end
-
-@implementation _RowDataWrapper
-
-- (instancetype)initWithData:(id)data {
-    if (self = [super init]) {
-        self.data = data;
-    }
-    return self;
-}
-
-@end
 
 @implementation PBRowDataSource
 {
@@ -688,8 +669,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         [row setMappable:YES forKey:key];
     }
     
-    _RowDataWrapper *dataWrapper = [[_RowDataWrapper alloc] initWithData:data];
-    dataWrapper.indexPath = indexPath;
+    _PBRowDataWrapper *dataWrapper = [[_PBRowDataWrapper alloc] initWithData:data indexPath:indexPath];
     [row updateWithData:view.rootData owner:(id)dataWrapper context:self.owner];
     
     for (NSString *key in keys) {

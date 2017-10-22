@@ -50,9 +50,12 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 @interface PBRowMapper : PBMapper
 {
     struct {
-        unsigned int mapping:1;
-        unsigned int heightExpressive:1;
-        unsigned int hiddenExpressive:1;
+        unsigned char mapping:1;
+        unsigned char widthExpressive:1;
+        unsigned char heightExpressive:1;
+        unsigned char hiddenExpressive:1;
+        unsigned char widthUnset:1;
+        unsigned char heightUnset:1;
     } _pbFlags;
 }
 
@@ -247,6 +250,16 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, assign, readonly, getter=isHeightExpressive) BOOL heightExpressive;
 
+/**
+ Whether the height is undefined.
+ */
+@property (nonatomic, assign, readonly, getter=isHeightUnset) BOOL heightUnset;
+
+/**
+ Whether the width is undefined.
+ */
+@property (nonatomic, assign, readonly, getter=isWidthUnset) BOOL widthUnset;
+
 /** The view alias */
 @property (nonatomic, strong) NSString *alias;
 
@@ -255,6 +268,8 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 
 - (CGFloat)heightForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath;
 - (CGFloat)heightForData:(id)data;
+
+- (CGFloat)widthForData:(id)data withRowDataSource:(PBRowDataSource *)dataSource indexPath:(NSIndexPath *)indexPath;
 
 - (UIView *)createView;
 
