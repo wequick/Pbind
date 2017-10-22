@@ -655,7 +655,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         [row initPropertiesForTarget:cell];
     } else {
         // Reusing
-        [row updatePropertiesForTarget:cell withHolder:holder];
+        [row updatePropertiesForTarget:cell withRowHolder:holder];
     }
     
     // Map data for cell
@@ -915,12 +915,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         [item initPropertiesForTarget:cell];
     } else {
         // Reusing
-        [item updatePropertiesForTarget:cell withHolder:holder];
+        [item updatePropertiesForTarget:cell withRowHolder:holder];
     }
     
     // Map data for cell
     cell.indexPath = indexPath;
-    [item mapPropertiesToTarget:cell withData:collectionView.rootData owner:cell context:collectionView];
+    [item mapPropertiesToTarget:cell withData:collectionView.rootData owner:cell context:collectionView rowHolder:holder];
     
     return cell;
 }

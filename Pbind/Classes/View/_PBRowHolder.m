@@ -72,6 +72,54 @@
 
 @implementation _PBTargetHolder
 
+- (instancetype)copyWithOwner:(id)owner {
+    _PBTargetHolder *copy = [[_PBTargetHolder alloc] init];
+    copy.properties = self.properties;
+    id target = owner;
+    if (self.parentAlias != nil) {
+        target = [owner viewWithAlias:self.parentAlias];
+        copy.parentAlias = self.parentAlias;
+    } else if (self.parentOutletKey != nil) {
+        target = [PBPropertyUtils valueForKey:self.parentOutletKey ofObject:owner failure:nil];
+        copy.parentOutletKey = self.parentOutletKey;
+    }
+    
+    if (_keyPath == nil) {
+        copy.target = target;
+    } else {
+        NSArray *keys = [_keyPath componentsSeparatedByString:@"."];
+        for (NSString *key in keys) {
+            target = [self valueForKey:key ofObject:target];
+        }
+        copy.target = target;
+        copy.keyPath = _keyPath;
+    }
+    return copy;
+}
+
+- (NSString *)keyPath {
+    if (_keyPath != nil) {
+        return _keyPath;
+    }
+    if (_parentAlias != nil) {
+        return [@"@" stringByAppendingString:_parentAlias];
+    }
+    if (_parentOutletKey != nil) {
+        return [@"." stringByAppendingString:_parentOutletKey];
+    }
+    return nil;
+}
+
+- (id)valueForKey:(NSString *)key ofObject:(id)object {
+    char initial = [key characterAtIndex:0];
+    if (initial == '@') {
+        NSString *alias = [key substringFromIndex:1];
+        return [object viewWithAlias:alias];
+    } else {
+        return [PBPropertyUtils valueForKey:key ofObject:object failure:nil];
+    }
+}
+
 @end
 
 @implementation _PBViewHolder
@@ -102,9 +150,9 @@
     [metaProperty setValue:value toTarget:targetHolder.target];
     
 //    if (targetHolder.keyPath != nil) {
-//        NSLog(@" >> (%p) %@.%@ = %@", targetHolder.target, targetHolder.keyPath, metaProperty.key, value);
+//        NSLog(@" >> %p (%p) %@.%@ = %@", targetHolder, targetHolder.target, targetHolder.keyPath, metaProperty.key, [expression stringValue]);
 //    } else {
-//        NSLog(@" >> (%p) %@ = %@", targetHolder.target, metaProperty.key, value);
+//        NSLog(@" >> %p (%p) %@ = %@", targetHolder, targetHolder.target, metaProperty.key, [expression stringValue]);
 //    }
 }
 
@@ -150,6 +198,10 @@
 @end
 
 @implementation _PBRowHolder
+
+@end
+
+@implementation _PBRowCompiledInfo
 
 @end
 

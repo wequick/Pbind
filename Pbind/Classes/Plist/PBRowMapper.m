@@ -55,6 +55,7 @@ static const CGFloat kHeightUnset = -2;
     NSMutableArray<PBRowActionMapper *> *_editActionMappers;
     NSString *_identifier;
     NSString *_id;
+    NSMutableDictionary *_compiledInfos;
 }
 
 @synthesize editActionMappers = _editActionMappers;
@@ -63,7 +64,6 @@ static const CGFloat kHeightUnset = -2;
     _estimatedHeight = UITableViewAutomaticDimension;
     _height = UITableViewAutomaticDimension;
     _width = UITableViewAutomaticDimension;
-    _holderIndex = NSNotFound;
     
     [super setPropertiesWithDictionary:dictionary];
     
@@ -151,33 +151,34 @@ static const CGFloat kHeightUnset = -2;
 }
 
 - (void)initPropertiesForTarget:(UIView *)view {
-    [self initPropertiesForTarget:view withHolder:view.pb_viewHolder baseProperties:nil];
+    [self initPropertiesForTarget:view withViewHolder:view.pb_viewHolder rowHolder:nil];
 }
 
-- (void)updatePropertiesForTarget:(UIView *)view withHolder:(_PBRowHolder *)holder {
-    [self initPropertiesForTarget:view withHolder:view.pb_viewHolder baseProperties:holder.initialProperties];
+- (void)updatePropertiesForTarget:(UIView *)view withRowHolder:(_PBRowHolder *)rowHolder {
+    [self initPropertiesForTarget:view withViewHolder:view.pb_viewHolder rowHolder:rowHolder];
 }
 
-- (void)initPropertiesForTarget:(UIView *)view withHolder:(_PBViewHolder *)holder baseProperties:(NSArray *)baseProperties {
+- (void)initPropertiesForTarget:(UIView *)view withViewHolder:(_PBViewHolder *)viewHolder rowHolder:(_PBRowHolder *)rowHolder {
     if (_height == UITableViewAutomaticDimension) {
         if ([view respondsToSelector:@selector(setAutoResize:)]) {
             [(id)view setAutoResize:YES];
         }
     }
     
-    if (self.constants != nil) {
+    NSArray *baseProperties = rowHolder.initialProperties;
+    if (self.constantPaths != nil) {
         if (baseProperties == nil) {
-            for (_PBPropertyPath *property in self.constants) {
-                [holder updateProperty:property];
+            for (_PBPropertyPath *property in self.constantPaths) {
+                [viewHolder updateProperty:property];
             }
             return;
         }
         
-        [holder updateProperties:self.constants withBaseProperties:baseProperties];
+        [viewHolder updateProperties:self.constantPaths withBaseProperties:baseProperties];
         return;
     } else if (baseProperties != nil) {
         for (_PBPropertyPath *property in baseProperties) {
-            [holder updateProperty:property];
+            [viewHolder updateProperty:property];
         }
         return;
     }
@@ -185,18 +186,18 @@ static const CGFloat kHeightUnset = -2;
     [super initPropertiesForTarget:view];
 }
 
-- (void)mapPropertiesToTarget:(id)object withData:(id)data owner:(UIView *)owner context:(UIView *)context {
+- (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context rowHolder:(_PBRowHolder *)rowHolder {
     if (self.variablePaths != nil) {
-        _PBViewHolder *holder = owner.pb_viewHolder;
-        if (holder != nil) {
+        _PBViewHolder *viewHolder = owner.pb_viewHolder;
+        if (viewHolder != nil) {
             for (_PBPropertyPath *property in self.variablePaths) {
-                [holder mapProperty:property withData:data owner:owner context:context];
+                [viewHolder mapProperty:property withData:data owner:owner context:context];
             }
         }
         return;
     }
     
-    [super mapPropertiesToTarget:object withData:data owner:owner context:context];
+    [super mapPropertiesToTarget:target withData:data owner:owner context:context];
 }
 
 - (BOOL)hiddenForView:(id)view withData:(id)data
@@ -502,14 +503,34 @@ static const CGFloat kHeightUnset = -2;
     }
 }
 
+- (NSArray *)constantPaths {
+    if (_compiledInfos == nil) {
+        return nil;
+    }
+    
+    _PBRowCompiledInfo *compiledInfo = [_compiledInfos objectForKey:self.id];
+    return compiledInfo.constantPaths;
+}
+
+- (NSArray *)variablePaths {
+    if (_compiledInfos == nil) {
+        return nil;
+    }
+    
+    _PBRowCompiledInfo *compiledInfo = [_compiledInfos objectForKey:self.id];
+    return compiledInfo.variablePaths;
+}
+
 - (void)compileWithHolder:(_PBRowHolder *)holder rows:(NSArray *)rows owner:(UIView *)owner {
     if (holder.targets == nil) {
         NSMutableArray<_PBTargetHolder *> *targetHolders = [[NSMutableArray alloc] init];
         NSMutableArray *allPaths = [[NSMutableArray alloc] init];
         NSInteger repeatRowCount = 0;
+        NSString *identifier = self.id;
         
         for (PBRowMapper *row in rows) {
-            if (row.holderIndex != self.holderIndex) {
+            NSString *rowIdentifier = row.id;
+            if (![rowIdentifier isEqualToString:identifier]) {
                 continue;
             }
             
@@ -543,8 +564,14 @@ static const CGFloat kHeightUnset = -2;
                 [self collectPropertyPaths:variablePaths holders:targetHolders withProperties:subproperties expressive:YES rootObject:subview alias:nil outletKey:key];
             }
             
-            row.constants = constantPaths;
-            row.variablePaths = variablePaths;
+            if (row->_compiledInfos == nil) {
+                row->_compiledInfos = [[NSMutableDictionary alloc] init];
+            }
+            _PBRowCompiledInfo *compiledInfo = [[_PBRowCompiledInfo alloc] init];
+            compiledInfo.identifier = rowIdentifier;
+            compiledInfo.constantPaths = constantPaths;
+            compiledInfo.variablePaths = variablePaths;
+            [row->_compiledInfos setObject:compiledInfo forKey:rowIdentifier];
             
             for (_PBPropertyPath *path in constantPaths) {
                 BOOL added = NO;
@@ -621,33 +648,8 @@ static const CGFloat kHeightUnset = -2;
     if (owner.pb_viewHolder == nil) {
         _PBViewHolder *viewHolder = [[_PBViewHolder alloc] init];
         NSMutableArray *copyTargetHolders = [NSMutableArray arrayWithCapacity:holder.targets.count];
-        NSMutableDictionary *tempAliasViews = [[NSMutableDictionary alloc] init];
         for (_PBTargetHolder *temp in holder.targets) {
-            _PBTargetHolder *copy = [[_PBTargetHolder alloc] init];
-            copy.properties = temp.properties;
-            id target = owner;
-            if (temp.parentAlias != nil) {
-                target = [tempAliasViews objectForKey:temp.parentAlias];
-                if (target == nil) {
-                    target = [owner viewWithAlias:temp.parentAlias];
-                    if (target == nil) {
-                        continue;
-                    }
-                    [tempAliasViews setObject:target forKey:temp.parentAlias];
-                }
-            } else if (temp.parentOutletKey != nil) {
-                target = [PBPropertyUtils valueForKey:temp.parentOutletKey ofObject:owner failure:nil];
-            }
-            
-            if (temp.keyPath == nil) {
-                copy.target = target;
-            } else {
-                NSArray *keys = [temp.keyPath componentsSeparatedByString:@"."];
-                for (NSString *key in keys) {
-                    target = [self valueForKey:key ofObject:target];
-                }
-                copy.target = target;
-            }
+            _PBTargetHolder *copy = [temp copyWithOwner:owner];
             [copyTargetHolders addObject:copy];
         }
         viewHolder.targets = copyTargetHolders;

@@ -263,14 +263,10 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
 /// @name JIT
 ///=============================================================================
 
-@property (nonatomic, assign) NSInteger holderIndex;
-
-@property (nonatomic, strong) NSArray *constants;
-
-@property (nonatomic, strong) NSArray *variablePaths;
-
 - (void)compileWithHolder:(_PBRowHolder *)holder rows:(NSSet *)rows owner:(UIView *)owner;
 
-- (void)updatePropertiesForTarget:(id)target withHolder:(_PBRowHolder *)holder;
+- (void)updatePropertiesForTarget:(id)target withRowHolder:(_PBRowHolder *)rowHolder;
+
+- (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context rowHolder:(_PBRowHolder *)rowHolder;
 
 @end

@@ -40,6 +40,8 @@
 @property (nonatomic, strong) NSString *parentOutletKey;
 @property (nonatomic, strong) NSMutableArray<_PBMetaProperty *> *properties;
 
+- (instancetype)copyWithOwner:(id)owner;
+
 @end
 
 @interface _PBViewHolder : NSObject
@@ -56,6 +58,17 @@
 
 @property (nonatomic, strong) NSArray *initialProperties;
 
+@property (nonatomic, strong) NSArray *constantPaths;
+@property (nonatomic, strong) NSArray *variablePaths;
+
+@end
+
+@interface _PBRowCompiledInfo : NSObject
+
+@property (nonatomic, strong) NSString *identifier;
+@property (nonatomic, strong) NSArray *constantPaths;
+@property (nonatomic, strong) NSArray *variablePaths;
+
 @end
 
 @interface UIView (PBViewHolder)
@@ -63,3 +76,4 @@
 @property (nonatomic, strong) _PBViewHolder *pb_viewHolder;
 
 @end
+
