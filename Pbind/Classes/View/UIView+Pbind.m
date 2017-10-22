@@ -700,7 +700,23 @@
         return [self viewWithTag:tag];
     }
     
-    return [self _pb_lookupViewWithAlias:alias];
+    NSMutableDictionary *cachedAliasViews = [self valueForAdditionKey:@"_pb_cachedAliasViews"];
+    UIView *aliasView = [cachedAliasViews objectForKey:alias];
+    if (aliasView != nil) {
+        return aliasView;
+    }
+    
+    aliasView = [self _pb_lookupViewWithAlias:alias];
+    if (aliasView == nil) {
+        return nil;
+    }
+    
+    if (cachedAliasViews == nil) {
+        cachedAliasViews = [[NSMutableDictionary alloc] init];
+        [self setValue:cachedAliasViews forAdditionKey:@"_pb_cachedAliasViews"];
+    }
+    [cachedAliasViews setObject:aliasView forKey:alias];
+    return aliasView;
 }
 
 #pragma mark - Mapping
