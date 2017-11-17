@@ -724,14 +724,13 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     if (links != nil) {
         // Sort links
         [links sortUsingComparator:^NSComparisonResult(PBTextLink *link1, PBTextLink *link2) {
-            int diff = link2->_valueRange.location - link1->_valueRange.location;
+            NSInteger diff = link2->_valueRange.location - link1->_valueRange.location;
             return diff > 0 ? NSOrderedAscending : NSOrderedDescending;
         }];
         
         // Concat text
         NSInteger offset = 0;
         for (PBTextLink *link in links) {
-            NSRegularExpression *reg = link->_matcher.regexp;
             NSRange range = link->_valueRange;
             
             NSString *matchment = [aValue substringWithRange:range];
