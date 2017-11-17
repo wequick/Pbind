@@ -14,7 +14,7 @@
 
 NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextViewTextWillBeginEditingNotification";
 
-@interface PBTextLink ()
+@interface PBTextLinkMatcher ()
 
 #pragma mark - Caching
 ///=============================================================================
@@ -23,16 +23,11 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 
 @property (nonatomic, strong) NSRegularExpression *regexp;
 
-@property (nonatomic, strong) NSArray<NSValue *> *textRanges;
-
-@property (nonatomic, strong) NSArray<NSValue *> *valueRanges;
-
 @property (nonatomic, assign) BOOL calculatedRegexp;
-@property (nonatomic, assign) NSRange deletingRange;
 
 @end
 
-@implementation PBTextLink
+@implementation PBTextLinkMatcher
 
 - (NSRegularExpression *)regexp {
     if (_regexp == nil) {
@@ -52,7 +47,26 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 
 @end
 
+@interface PBTextLink : NSObject
+{
+  @package
+    PBTextLinkMatcher *_matcher;
+    NSRange _textRange;
+    NSRange _valueRange;
+    NSString *_value;
+}
+
+@end
+
+@implementation PBTextLink
+
+@end
+
 @implementation PBTextView
+{
+    NSArray<PBTextLink *> *_links;
+    PBTextLink *_deletingLink;
+}
 
 @synthesize type, name, value, required, requiredTips;
 @synthesize maxlength, maxchars, pattern, validators;
@@ -161,7 +175,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)updateValueWithText:(NSString *)text notifyChanged:(BOOL)notifyChanges {
-    if (self.links != nil) {
+    if (self.linkMatchers != nil) {
         return;
     }
     
@@ -279,7 +293,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     }
     
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-    [attributedText setAttributes:[self mergedAttributes:_deletingLink.attributes] range:_deletingLink.deletingRange];
+    [attributedText setAttributes:[self mergedAttributes:_deletingLink->_matcher.attributes] range:_deletingLink->_textRange];
     self.attributedText = attributedText;
     _deletingLink = nil;
 }
@@ -320,7 +334,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
         return;
     }
     
-    if (self.links != nil) {
+    if (self.linkMatchers != nil) {
         if (textView.markedTextRange == nil) { // End inputing
             if (!_pbFlags.needsUpdateValue) {
                 return;
@@ -427,7 +441,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (BOOL)canDeleteTextInRange:(NSRange)range {
-    if (self.links == nil) {
+    if (self.linkMatchers == nil) {
         return YES;
     }
     
@@ -443,21 +457,15 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     
     // We take a #link# as a whole part which can not be delete only while it had been select
     PBTextLink *deletingLink = nil;
-    for (PBTextLink *link in self.links) {
-        if (link.deletingAttributes == nil) {
+    for (PBTextLink *link in _links) {
+        if (link->_matcher.deletingAttributes == nil) {
             // If missing the style of deleting, directly delete it
             continue;
         }
         
-        for (NSValue *wrapper in link.textRanges) {
-            NSRange textRange = [wrapper rangeValue];
-            if (textRange.location + textRange.length == range.location + 1) {
-                link.deletingRange = textRange;
-                deletingLink = link;
-                break;
-            }
-        }
-        if (deletingLink != nil) {
+        NSRange textRange = link->_textRange;
+        if (textRange.location + textRange.length == range.location + 1) {
+            deletingLink = link;
             break;
         }
     }
@@ -467,7 +475,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     }
     
     // If the #link# has been selected then it can be delete
-    NSRange deletingRange = deletingLink.deletingRange;
+    NSRange deletingRange = deletingLink->_textRange;
     NSRange selectedRange = self.selectedRange;
     if (NSEqualRanges(selectedRange, deletingRange)) {
         return YES;
@@ -478,7 +486,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     
     // Update the selection style
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-    [attributedText setAttributes:[self mergedAttributes:deletingLink.deletingAttributes] range:deletingRange];
+    [attributedText setAttributes:[self mergedAttributes:deletingLink->_matcher.deletingAttributes] range:deletingRange];
     self.attributedText = attributedText;
     
     // TODO: Let the keyboard accessory view displays the auto-complection tips
@@ -499,46 +507,44 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)textViewDidChangeSelection:(UITextView *)textView {
-    if (self.links == nil) {
+    if (_links == nil) {
         return;
     }
     
     NSRange selectedRange = textView.selectedRange;
-    for (PBTextLink *link in self.links) {
-        for (NSValue *wrapper in link.textRanges) {
-            NSRange textRange = [wrapper rangeValue];
-            // We take a #link# as a whole part which can not put cursor in the middle of it.
-            if (NSLocationInRange(selectedRange.location, textRange)) {
-                if (selectedRange.length == 0) {
-                    // move the cursor to the edge of the #link#
-                    NSInteger edgeLocation = textRange.location;
-                    if (selectedRange.location >= textRange.location + textRange.length / 2) {
-                        edgeLocation = MIN(textRange.location + textRange.length, textView.text.length);
-                    }
-                    if (selectedRange.location != edgeLocation) {
-                        selectedRange.location = edgeLocation;
-                        textView.selectedRange = selectedRange;
-                    }
-                } else {
-                    // select the whole #link#
-                    BOOL changed = NO;
-                    NSUInteger selectedRangeRight = NSMaxRange(selectedRange);
-                    if (selectedRange.location > textRange.location) {
-                        selectedRange.location = textRange.location;
-                        selectedRange.length = selectedRangeRight - selectedRange.location;
-                        changed = YES;
-                    }
-                    NSUInteger textRangeRight = NSMaxRange(textRange);
-                    if (selectedRangeRight < textRangeRight) {
-                        selectedRange.length = textRangeRight - selectedRange.location;
-                        changed = YES;
-                    }
-                    if (changed) {
-                        textView.selectedRange = selectedRange;
-                    }
+    for (PBTextLink *link in _links) {
+        NSRange textRange = link->_textRange;
+        // We take a #link# as a whole part which can not put cursor in the middle of it.
+        if (NSLocationInRange(selectedRange.location, textRange)) {
+            if (selectedRange.length == 0) {
+                // move the cursor to the edge of the #link#
+                NSInteger edgeLocation = textRange.location;
+                if (selectedRange.location >= textRange.location + textRange.length / 2) {
+                    edgeLocation = MIN(textRange.location + textRange.length, textView.text.length);
                 }
-                return;
+                if (selectedRange.location != edgeLocation) {
+                    selectedRange.location = edgeLocation;
+                    textView.selectedRange = selectedRange;
+                }
+            } else {
+                // select the whole #link#
+                BOOL changed = NO;
+                NSUInteger selectedRangeRight = NSMaxRange(selectedRange);
+                if (selectedRange.location > textRange.location) {
+                    selectedRange.location = textRange.location;
+                    selectedRange.length = selectedRangeRight - selectedRange.location;
+                    changed = YES;
+                }
+                NSUInteger textRangeRight = NSMaxRange(textRange);
+                if (selectedRangeRight < textRangeRight) {
+                    selectedRange.length = textRangeRight - selectedRange.location;
+                    changed = YES;
+                }
+                if (changed) {
+                    textView.selectedRange = selectedRange;
+                }
             }
+            return;
         }
     }
 }
@@ -619,23 +625,19 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     BOOL deleting = NO;
     BOOL empty = [string length] == 0;
     for (PBTextLink *link in _links) {
-        for (NSInteger index = link.textRanges.count - 1; index >= 0; index--) {
-            NSRange textRange = [link.textRanges[index] rangeValue];
-            NSRange valueRange = [link.valueRanges[index] rangeValue];
-            if (empty && range.location > textRange.location && NSMaxRange(range) <= NSMaxRange(textRange)) {
-                deletingValueRange = valueRange;
-                deleting = YES;
-                break;
-            }
-            
-            NSInteger temp = range.location - textRange.location - textRange.length;
-            if (temp >= 0 && offset > temp) {
-                offset = temp;
-                valueLoc = valueRange.location + valueRange.length;
-            }
+        NSRange textRange = link->_textRange;
+        NSRange valueRange = link->_valueRange;
+        if (empty && range.location > textRange.location && NSMaxRange(range) <= NSMaxRange(textRange)) {
+            deletingValueRange = valueRange;
+            deleting = YES;
+            break;
         }
         
-        if (deleting) break;
+        NSInteger temp = range.location - textRange.location - textRange.length;
+        if (temp >= 0 && offset > temp) {
+            offset = temp;
+            valueLoc = valueRange.location + valueRange.length;
+        }
     }
     if (deleting) {
         [mutableValue deleteCharactersInRange:deletingValueRange];
@@ -692,49 +694,69 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (BOOL)updateTextWithValue:(NSString *)aValue {
-    if (aValue == nil || self.links == nil) {
+    if (aValue == nil || self.linkMatchers == nil) {
         return YES;
     }
     
     NSString *text = aValue;
-    NSInteger offset = 0;
-    for (PBTextLink *link in self.links) {
-        NSRegularExpression *reg = link.regexp;
+    NSMutableArray *links = nil;
+    // Match links
+    for (PBTextLinkMatcher *linkMatcher in self.linkMatchers) {
+        NSRegularExpression *reg = linkMatcher.regexp;
         if (reg == nil) {
             continue;
         }
         
-        NSMutableArray *valueRanges = [NSMutableArray array];
-        NSMutableArray *textRanges = [NSMutableArray array];
         NSArray<NSTextCheckingResult *> *results = [reg matchesInString:aValue options:0 range:NSMakeRange(0,  aValue.length)];
         for (NSTextCheckingResult *result in results) {
-            NSRange range = result.range;
-            [valueRanges addObject:[NSValue valueWithRange:range]];
+            PBTextLink *link = [[PBTextLink alloc] init];
+            link->_matcher = linkMatcher;
+            link->_valueRange = result.range;
+            link->_value = [reg replacementStringForResult:result inString:aValue offset:0 template:linkMatcher.replacement];
+            if (links == nil) {
+                links = [[NSMutableArray alloc] init];
+            }
+            [links addObject:link];
+        }
+    }
+    _links = links;
+    
+    if (links != nil) {
+        // Sort links
+        [links sortUsingComparator:^NSComparisonResult(PBTextLink *link1, PBTextLink *link2) {
+            int diff = link2->_valueRange.location - link1->_valueRange.location;
+            return diff > 0 ? NSOrderedAscending : NSOrderedDescending;
+        }];
+        
+        // Concat text
+        NSInteger offset = 0;
+        for (PBTextLink *link in links) {
+            NSRegularExpression *reg = link->_matcher.regexp;
+            NSRange range = link->_valueRange;
             
             NSString *matchment = [aValue substringWithRange:range];
-            NSString *replacement = [reg replacementStringForResult:result inString:aValue offset:0 template:link.text];
+            NSString *replacement = link->_value;
             
             range.location += offset;
             text = [text stringByReplacingCharactersInRange:range withString:replacement];
             offset += replacement.length - matchment.length;
             
             range.length = replacement.length;
-            [textRanges addObject:[NSValue valueWithRange:range]];
+            link->_textRange = range;
+            link->_value = nil;
         }
-        
-        link.valueRanges = valueRanges;
-        link.textRanges = textRanges;
     }
     
     if (![self validateText:text]) {
         return NO;
     }
     
+    // Concat attributed text
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text];
     [attributedText addAttributes:@{NSFontAttributeName: _originalFont} range:NSMakeRange(0, text.length)];
-    for (PBTextLink *link in self.links) {
-        for (NSValue *wrapper in link.textRanges) {
-            [attributedText addAttributes:[self mergedAttributes:link.attributes] range:[wrapper rangeValue]];
+    if (links != nil) {
+        for (PBTextLink *link in links) {
+            [attributedText addAttributes:[self mergedAttributes:link->_matcher.attributes] range:link->_textRange];
         }
     }
     
@@ -817,20 +839,14 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)enumerateLinkRanges:(void (^)(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped))operation {
-    if (self.links == nil) {
+    if (_links == nil) {
         return;
     }
     
     BOOL stopped = NO;
-    for (PBTextLink *link in self.links) {
-        for (NSInteger index = 0; index < link.textRanges.count; index++) {
-            NSRange textRange = [link.textRanges[index] rangeValue];
-            NSRange valueRange = [link.valueRanges[index] rangeValue];
-            operation(link, textRange, valueRange, &stopped);
-            if (stopped) {
-                break;
-            }
-        }
+    for (NSInteger index = 0; index < _links.count; index++) {
+        PBTextLink *link = _links[index];
+        operation(link, link->_textRange, link->_valueRange, &stopped);
         if (stopped) {
             break;
         }
@@ -838,20 +854,14 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)reverseEnumerateLinkRanges:(void (^)(PBTextLink *link, NSRange textRange, NSRange valueRange, BOOL *stopped))operation {
-    if (self.links == nil) {
+    if (_links == nil) {
         return;
     }
     
     BOOL stopped = NO;
-    for (PBTextLink *link in self.links) {
-        for (NSInteger index = link.textRanges.count - 1; index >= 0; index--) {
-            NSRange textRange = [link.textRanges[index] rangeValue];
-            NSRange valueRange = [link.valueRanges[index] rangeValue];
-            operation(link, textRange, valueRange, &stopped);
-            if (stopped) {
-                break;
-            }
-        }
+    for (NSInteger index = _links.count - 1; index >= 0; index--) {
+        PBTextLink *link = _links[index];
+        operation(link, link->_textRange, link->_valueRange, &stopped);
         if (stopped) {
             break;
         }
