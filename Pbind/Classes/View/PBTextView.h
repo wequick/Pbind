@@ -13,7 +13,7 @@
 #import "PBInput.h"
 #import "PBViewResizingDelegate.h"
 
-@interface PBTextLink : NSObject
+@interface PBTextLinkMatcher : NSObject
 
 #pragma mark - Building
 ///=============================================================================
@@ -22,7 +22,7 @@
 
 @property (nonatomic, strong) NSString *pattern;
 
-@property (nonatomic, strong) NSString *text;
+@property (nonatomic, strong) NSString *replacement;
 
 #pragma mark - Styling
 ///=============================================================================
@@ -50,7 +50,6 @@
     NSLayoutConstraint *_placeholderLeftMarginConstraint;
     NSLayoutConstraint *_placeholderRightMarginConstraint;
     NSLayoutConstraint *_heightConstraint;
-    PBTextLink *_deletingLink;
     
     struct {
         unsigned int needsUpdateValue: 1;
@@ -83,7 +82,7 @@
  */
 @property (nonatomic, assign) CGFloat maxHeight;
 
-@property (nonatomic, strong) NSArray<PBTextLink *> *links; // pattern=>string, value=>string, attributes=>dict
+@property (nonatomic, strong) NSArray<PBTextLinkMatcher *> *linkMatchers; // pattern=>string, replacement=>string, attributes=>dict
 
 #pragma mark - Forming
 ///=============================================================================
