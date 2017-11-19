@@ -157,23 +157,17 @@
 
 - (void)pb_mapData:(id)data forKeys:(NSArray *)keys withOwner:(UIView *)owner context:(UIView *)context underType:(PBMapType)type dataTag:(unsigned char)tag
 {
-    NSDictionary *expressions = [self pb_expressions];
-    if (keys == nil) {
-        keys = [expressions allKeys];
+    PBMapper *mapper = [self pb_mapper];
+    if (mapper == nil) {
+        return;
     }
     
-    for (NSString *key in keys) {
-        if (![self mappableForKeyPath:key]) {
-            continue;
+    [mapper mapPropertiesToTarget:self withData:data owner:owner context:context verifier:^BOOL(NSString *keyPath, PBExpression *exp) {
+        if (![self mappableForKeyPath:keyPath]) {
+            return NO;
         }
-        
-        PBExpression *exp = [expressions objectForKey:key];
-        if (![exp matchesType:type dataTag:tag]) {
-            continue;
-        }
-        
-        [exp mapData:data toTarget:self forKeyPath:key withOwner:owner inContext:context];
-    }
+        return [exp matchesType:type dataTag:tag];
+    }];
 }
 
 - (void)pb_loadData:(id)data

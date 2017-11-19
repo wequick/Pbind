@@ -74,6 +74,7 @@
 - (void)initPropertiesForTarget:(id)target;
 - (void)initPropertiesForTarget:(id)target transform:(id (^)(NSString *key, id value))transform;
 - (void)mapPropertiesToTarget:(id)object withData:(id)data owner:(UIView *)owner context:(UIView *)context;
+- (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context verifier:(BOOL (^)(NSString *keyPath, PBExpression *exp))verifier;
 
 - (void)updateWithData:(id)data owner:(UIView *)owner context:(UIView *)context;
 - (void)updateValueForKey:(NSString *)key withData:(id)data owner:(UIView *)owner context:(UIView *)context;

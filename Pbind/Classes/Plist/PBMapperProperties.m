@@ -183,15 +183,13 @@
     [self mapData:data toTarget:target forKeyPath:nil withOwner:owner context:context];
 }
 
-- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context {
-    for (NSString *key in keyPaths) {
-        PBExpression *exp = _expressions[key];
-        if (exp == nil) {
-            continue;
-        }
-        
-        [exp mapData:data toTarget:target forKeyPath:key withOwner:owner inContext:context];
+- (void)mapData:(id)data toTarget:(id)target withOwner:(UIView *)owner context:(UIView *)context verifier:(BOOL (^)(NSString *keyPath, PBExpression *exp))verifier
+{
+    if (_expressions == nil) {
+        return;
     }
+    
+    [self mapData:data toTarget:target forKeyPaths:_expressions.allKeys withOwner:owner context:context verifier:verifier];
 }
 
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withOwner:(UIView *)owner context:(UIView *)context
@@ -205,6 +203,25 @@
     }
     
     [self mapData:data toTarget:target forKeyPaths:keyPaths withOwner:owner context:context];
+}
+
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context {
+    [self mapData:data toTarget:target forKeyPaths:keyPaths withOwner:owner context:context verifier:nil];
+}
+
+- (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context verifier:(BOOL (^)(NSString *keyPath, PBExpression *))verifier {
+    for (NSString *key in keyPaths) {
+        PBExpression *exp = _expressions[key];
+        if (exp == nil) {
+            continue;
+        }
+        
+        if (verifier != nil && !verifier(key, exp)) {
+            continue;
+        }
+        
+        [exp mapData:data toTarget:target forKeyPath:key withOwner:owner inContext:context];
+    }
 }
 
 - (void)setMappable:(BOOL)mappable forKey:(NSString *)key {

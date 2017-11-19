@@ -254,6 +254,10 @@ static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMap
 
 - (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context
 {
+    [self mapPropertiesToTarget:target withData:data owner:owner context:context verifier:nil];
+}
+
+- (void)mapPropertiesToTarget:(id)target withData:(id)data owner:(UIView *)owner context:(UIView *)context verifier:(BOOL (^)(NSString *keyPath, PBExpression *exp))verifier {
     /* for self */
     /*----------*/
     [self _mapValuesForKeysWithData:data owner:owner context:context];
@@ -262,14 +266,14 @@ static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMap
         /* for view */
         /*----------*/
 //        [target pb_mapData:data withOwner:owner context:context];
-        [_viewProperties mapData:data toTarget:target withOwner:owner context:context];
+        [_viewProperties mapData:data toTarget:target withOwner:owner context:context verifier:verifier];
         
         // Map owner's tagged-subviews properties
         for (NSString *alias in _aliasProperties) {
             id subview = [owner viewWithAlias:alias];
             if (subview != nil) {
                 PBMapperProperties *properties = [_aliasProperties objectForKey:alias];
-                [properties mapData:data toTarget:subview withOwner:owner context:context];
+                [properties mapData:data toTarget:subview withOwner:owner context:context verifier:verifier];
             }
         }
         
@@ -280,7 +284,7 @@ static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMap
             }
             id subview = [[owner subviews] objectAtIndex:index];
             PBMapperProperties *properties = [_subviewProperties objectAtIndex:index];
-            [properties mapData:data toTarget:subview withOwner:owner context:context];
+            [properties mapData:data toTarget:subview withOwner:owner context:context verifier:verifier];
         }
         
         // Map owner's outlet view properties
@@ -290,17 +294,17 @@ static NSMutableDictionary<NSString */*name*/, PBMapper */*mapper*/> *kCachedMap
                 continue;
             }
             PBMapperProperties *properties = [_outletProperties objectForKey:key];
-            [properties mapData:data toTarget:subview withOwner:owner context:context];
+            [properties mapData:data toTarget:subview withOwner:owner context:context verifier:verifier];
         }
         
         // Map navigation bar
         if (_navProperties != nil) {
-            [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withOwner:owner context:context];
+            [_navProperties mapData:context.rootData toTarget:context.supercontroller.navigationItem withOwner:owner context:context verifier:verifier];
         }
     } else {
         /* for any object */
         /*----------------*/
-        [_viewProperties mapData:data toTarget:target withOwner:owner context:context];
+        [_viewProperties mapData:data toTarget:target withOwner:owner context:context verifier:verifier];
     }
 }
 

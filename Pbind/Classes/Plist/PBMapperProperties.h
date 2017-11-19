@@ -67,6 +67,7 @@
 
 - (BOOL)matchesType:(PBMapType)type dataTag:(unsigned char)dataTag;
 - (void)mapData:(id)data toTarget:(id)target withOwner:(UIView *)owner context:(UIView *)context;
+- (void)mapData:(id)data toTarget:(id)target withOwner:(UIView *)owner context:(UIView *)context verifier:(BOOL (^)(NSString *keyPath, PBExpression *exp))verifier;
 - (void)mapData:(id)data toTarget:(id)target forKeyPath:(NSString *)keyPath withOwner:(UIView *)owner context:(UIView *)context;
 - (void)mapData:(id)data toTarget:(id)target forKeyPaths:(NSArray *)keyPaths withOwner:(UIView *)owner context:(UIView *)context;
 
