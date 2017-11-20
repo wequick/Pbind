@@ -590,40 +590,40 @@ const unsigned char PBDataTagUnset = 0xFF;
         return _flags.dataTag == dataTag;
     }
     if (_flags.mapToOwnerView) {
-        return type & PBMapToOwnerView;
+        return (type & PBMapToOwnerView) != 0;
     }
     if (_flags.mapToOwnerViewData) {
-        return type & PBMapToOwnerViewData;
+        return (type & PBMapToOwnerViewData) != 0;
     }
     if (_flags.mapToFormFieldText) {
-        return type & PBMapToFormFieldText;
+        return (type & PBMapToFormFieldText) != 0;
     }
     if (_flags.mapToFormFieldValue) {
-        return type & PBMapToFormFieldValue;
+        return (type & PBMapToFormFieldValue) != 0;
     }
     if (_flags.mapToFormFieldError) {
-        return type & PBMapToFormFieldError;
+        return (type & PBMapToFormFieldError) != 0;
     }
     if (_flags.mapToFormField) {
-        return type & PBMapToFormField;
+        return (type & PBMapToFormField) != 0;
     }
     if (_flags.mapToForm) {
-        return type & PBMapToForm;
+        return (type & PBMapToForm) != 0;
     }
     if (_flags.mapToActiveController) {
-        return type & PBMapToActiveController;
+        return (type & PBMapToActiveController) != 0;
     }
     if (_flags.mapToAliasView) {
-        return type & PBMapToAliasView;
+        return (type & PBMapToAliasView) != 0;
     }
     if (_flags.mapToContext) {
-        return type & PBMapToContext;
+        return (type & PBMapToContext) != 0;
     }
     if (_flags.mapToActionState) {
-        return type & PBMapToActionState;
+        return (type & PBMapToActionState) != 0;
     }
     if (_flags.mapToActionStateData) {
-        return type & PBMapToActionStateData;
+        return (type & PBMapToActionStateData) != 0;
     }
     return NO;
 }
