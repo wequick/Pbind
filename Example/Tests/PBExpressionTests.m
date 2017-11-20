@@ -232,4 +232,15 @@
              withData:@{@"owner": @"wequick", @"repo": @"Pbind"}];
 }
 
+#pragma mark - Scope
+
+- (void)testCanMatchType {
+    PBExpression *expression = [PBExpression expressionWithString:@"@^title"];
+    BOOL matches = [expression matchesType:PBMapToActiveController dataTag:PBDataTagUnset];
+    XCTAssert(matches, "Unmatched");
+    
+    matches = [expression matchesType:PBMapToOwnerView dataTag:PBDataTagUnset];
+    XCTAssert(!matches, "matched");
+}
+
 @end

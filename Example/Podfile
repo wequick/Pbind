@@ -8,3 +8,7 @@ target 'Pbind_Example' do
   #pod 'PBKit', '0.5.1'
   #pod 'PBKit', :path => '/Users/galen/Projects/github/wequick/PBKit'
 end
+
+target 'Pbind_Tests' do
+
+end
