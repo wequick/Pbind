@@ -69,6 +69,8 @@ static const CGFloat kHeightUnset = -2;
         _pbFlags.widthUnset = 1;
     }
     
+    _pbFlags.dataUnset = [dictionary objectForKey:@"data"] == nil;
+    
     if (_clazz == nil) {
         [self initDefaultViewClass];
     }
@@ -210,6 +212,10 @@ static const CGFloat kHeightUnset = -2;
 
 - (BOOL)isAutofit {
     return [self isAutoHeight] || [self isAutoWidth];
+}
+
+- (BOOL)isDataUnset {
+    return _pbFlags.dataUnset;
 }
 
 - (void)_mapValuesForKeysWithData:(id)data owner:(UIView *)owner context:(UIView *)context

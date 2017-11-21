@@ -360,7 +360,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         count = [self.rows count];
     } else if (self.sections != nil) {
         PBSectionMapper *aSection = [self.sections objectAtIndex:section];
-        if (![aSection isExpressiveForKey:@"data"]) {
+        if (aSection.dataUnset) {
             aSection.data = [self listForData:data key:key];
         }
         count = aSection.rowCount;

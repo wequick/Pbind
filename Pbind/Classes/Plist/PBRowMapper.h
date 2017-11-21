@@ -55,6 +55,7 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
         unsigned char hiddenExpressive:1;
         unsigned char widthUnset:1;
         unsigned char heightUnset:1;
+        unsigned char dataUnset:1;
     } _pbFlags;
 }
 
@@ -258,6 +259,11 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  Whether the width is undefined.
  */
 @property (nonatomic, assign, readonly, getter=isWidthUnset) BOOL widthUnset;
+
+/**
+ Whether the data is undefined.
+ */
+@property (nonatomic, assign, readonly, getter=isDataUnset) BOOL dataUnset;
 
 /** The view alias */
 @property (nonatomic, strong) NSString *alias;
