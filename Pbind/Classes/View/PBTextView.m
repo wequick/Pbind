@@ -89,7 +89,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
             NSRange foundRange;
             while (searchRange.location < string.length) {
                 searchRange.length = string.length - searchRange.location;
-                foundRange = [string rangeOfString:self.pattern options:nil range:searchRange];
+                foundRange = [string rangeOfString:self.pattern options:0 range:searchRange];
                 if (foundRange.location == NSNotFound) {
                     // no more substring to find
                     break;
@@ -121,7 +121,6 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 
 @implementation PBTextView
 {
-    NSMutableArray<PBTextLinkMatcher *> *_linkMatchers;
     NSArray<PBTextLink *> *_links;
     PBTextLink *_deletingLink;
 }
@@ -130,7 +129,6 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 @synthesize maxlength, maxchars, pattern, validators;
 @synthesize acceptsClearOnAccessory;
 @synthesize errorRow;
-@synthesize linkMatchers = _linkMatchers;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
