@@ -14,6 +14,23 @@
 
 NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextViewTextWillBeginEditingNotification";
 
+@class PBTextLinkMatcher;
+
+@interface PBTextLink : NSObject
+{
+    @package
+    PBTextLinkMatcher *_matcher;
+    NSRange _textRange;
+    NSRange _valueRange;
+    NSString *_value;
+}
+
+@end
+
+@implementation PBTextLink
+
+@end
+
 @interface PBTextLinkMatcher ()
 
 #pragma mark - Caching
@@ -45,25 +62,66 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     return _regexp;
 }
 
-@end
-
-@interface PBTextLink : NSObject
-{
-  @package
-    PBTextLinkMatcher *_matcher;
-    NSRange _textRange;
-    NSRange _valueRange;
-    NSString *_value;
+- (NSArray<PBTextLink *> *)matchesInString:(NSString *)string {
+    NSMutableArray *links = nil;
+    switch (self.type) {
+        case PBTextLinkMatchTypeRegularExpression: {
+            NSRegularExpression *reg = self.regexp;
+            if (reg == nil) {
+                return nil;
+            }
+            
+            NSArray<NSTextCheckingResult *> *results = [reg matchesInString:string options:0 range:NSMakeRange(0,  string.length)];
+            for (NSTextCheckingResult *result in results) {
+                PBTextLink *link = [[PBTextLink alloc] init];
+                link->_matcher = self;
+                link->_valueRange = result.range;
+                link->_value = [reg replacementStringForResult:result inString:string offset:0 template:self.replacement];
+                if (links == nil) {
+                    links = [[NSMutableArray alloc] init];
+                }
+                [links addObject:link];
+            }
+            break;
+        }
+        case PBTextLinkMatchTypeFullMatch: {
+            NSRange searchRange = NSMakeRange(0, string.length);
+            NSRange foundRange;
+            while (searchRange.location < string.length) {
+                searchRange.length = string.length - searchRange.location;
+                foundRange = [string rangeOfString:self.pattern options:nil range:searchRange];
+                if (foundRange.location == NSNotFound) {
+                    // no more substring to find
+                    break;
+                }
+                
+                // found an occurrence of the substring! do stuff here
+                PBTextLink *link = [[PBTextLink alloc] init];
+                link->_matcher = self;
+                link->_valueRange = foundRange;
+                link->_value = self.replacement;
+                if (links == nil) {
+                    links = [[NSMutableArray alloc] init];
+                }
+                [links addObject:link];
+                
+                searchRange.location = foundRange.location + foundRange.length;
+            }
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    return links;
 }
-
-@end
-
-@implementation PBTextLink
 
 @end
 
 @implementation PBTextView
 {
+    NSMutableArray<PBTextLinkMatcher *> *_linkMatchers;
     NSArray<PBTextLink *> *_links;
     PBTextLink *_deletingLink;
 }
@@ -72,6 +130,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 @synthesize maxlength, maxchars, pattern, validators;
 @synthesize acceptsClearOnAccessory;
 @synthesize errorRow;
+@synthesize linkMatchers = _linkMatchers;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -184,6 +243,13 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     } else {
         value = text;
     }
+}
+
+- (void)addLinkMatcher:(PBTextLinkMatcher *)linkMatcher {
+    if (_linkMatchers == nil) {
+        _linkMatchers = [[NSMutableArray alloc] init];
+    }
+    _linkMatchers = [_linkMatchers arrayByAddingObject:linkMatcher];
 }
 
 - (void)initPlaceholder {
@@ -431,10 +497,10 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     } while (false);
     
     if (shouldChange) {
-        if (_replacingString == nil) { // Save to format text at `textFieldDidChange:'
+//        if (_replacingString == nil) { // Save to format text at `textFieldDidChange:'
             _replacingRange = range;
             _replacingString = string;
-        }
+//        }
     }
     
     return shouldChange;
@@ -546,6 +612,22 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
             }
             return;
         }
+    }
+}
+
+#pragma mark - UITextInput
+
+- (BOOL)shouldChangeTextInRange:(nonnull UITextRange *)range replacementText:(nonnull NSString *)text {
+    NSInteger loc = [self offsetFromPosition:self.beginningOfDocument toPosition:range.start];
+    NSInteger len = [self offsetFromPosition:range.start toPosition:range.end];
+    return [self textView:self shouldChangeTextInRange:NSMakeRange(loc, len) replacementText:text];
+}
+
+- (void)tryDeleteBackward {
+    UITextPosition *start = [self positionFromPosition:self.selectedTextRange.start offset:-1];
+    UITextRange *range = [self textRangeFromPosition:start toPosition:self.selectedTextRange.end];
+    if ([self shouldChangeTextInRange:range replacementText:@""]) {
+        [super deleteBackward];
     }
 }
 
@@ -702,21 +784,13 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     NSMutableArray *links = nil;
     // Match links
     for (PBTextLinkMatcher *linkMatcher in self.linkMatchers) {
-        NSRegularExpression *reg = linkMatcher.regexp;
-        if (reg == nil) {
-            continue;
-        }
-        
-        NSArray<NSTextCheckingResult *> *results = [reg matchesInString:aValue options:0 range:NSMakeRange(0,  aValue.length)];
-        for (NSTextCheckingResult *result in results) {
-            PBTextLink *link = [[PBTextLink alloc] init];
-            link->_matcher = linkMatcher;
-            link->_valueRange = result.range;
-            link->_value = [reg replacementStringForResult:result inString:aValue offset:0 template:linkMatcher.replacement];
+        NSArray *matchLinks = [linkMatcher matchesInString:aValue];
+        if (matchLinks != nil) {
             if (links == nil) {
-                links = [[NSMutableArray alloc] init];
+                links = [NSMutableArray arrayWithArray:matchLinks];
+            } else {
+                [links addObjectsFromArray:matchLinks];
             }
-            [links addObject:link];
         }
     }
     _links = links;

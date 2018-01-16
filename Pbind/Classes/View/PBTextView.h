@@ -13,6 +13,11 @@
 #import "PBInput.h"
 #import "PBViewResizingDelegate.h"
 
+typedef NS_ENUM(NSInteger, PBTextLinkMatchType) {
+    PBTextLinkMatchTypeRegularExpression = 0,
+    PBTextLinkMatchTypeFullMatch
+};
+
 @interface PBTextLinkMatcher : NSObject
 
 #pragma mark - Building
@@ -23,6 +28,8 @@
 @property (nonatomic, strong) NSString *pattern;
 
 @property (nonatomic, strong) NSString *replacement;
+
+@property (nonatomic, assign) PBTextLinkMatchType type;
 
 #pragma mark - Styling
 ///=============================================================================
@@ -82,7 +89,14 @@
  */
 @property (nonatomic, assign) CGFloat maxHeight;
 
+#pragma mark - Linking
+///=============================================================================
+/// @name Linking
+///=============================================================================
+
 @property (nonatomic, strong) NSArray<PBTextLinkMatcher *> *linkMatchers; // pattern=>string, replacement=>string, attributes=>dict
+
+- (void)addLinkMatcher:(PBTextLinkMatcher *)linkMatcher;
 
 #pragma mark - Forming
 ///=============================================================================
@@ -90,6 +104,8 @@
 ///=============================================================================
 
 - (void)insertValue:(NSString *)value;
+
+- (void)tryDeleteBackward;
 
 @end
 
