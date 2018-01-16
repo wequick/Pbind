@@ -328,11 +328,20 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     
     // Update height
     CGSize size = [self sizeThatFits:CGSizeMake(self.bounds.size.width, FLT_MAX)];
+    CGFloat height = size.height;
+    if (_minHeight > 0 && height < _minHeight) {
+        height = _minHeight;
+        self.scrollEnabled = NO;
+    }
+    if (_maxHeight > 0 && height > _maxHeight) {
+        height = _maxHeight;
+        self.scrollEnabled = YES;
+    }
     if (_heightConstraint == nil) {
-        _heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:size.height];
+        _heightConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:height];
         [self addConstraint:_heightConstraint];
     } else {
-        _heightConstraint.constant = size.height;
+        _heightConstraint.constant = height;
     }
     
     [super updateConstraints];
@@ -652,6 +661,16 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     _minHeight = minHeight;
     if (minHeight > 0) {
         self.scrollEnabled = NO;
+    }
+    if (!self.translatesAutoresizingMaskIntoConstraints) {
+        [self setNeedsUpdateConstraints];
+    }
+}
+
+- (void)setMaxHeight:(CGFloat)maxHeight {
+    _maxHeight = maxHeight;
+    if (!self.translatesAutoresizingMaskIntoConstraints) {
+        [self setNeedsUpdateConstraints];
     }
 }
 
