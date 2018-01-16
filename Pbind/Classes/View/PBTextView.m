@@ -409,11 +409,11 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
             if (_previousMarkedTextRange != nil) {
                 // Autocomplete
                 UITextRange *replacingTextRange = _previousMarkedTextRange;
-                if (replacingString == nil) {
+                replacingString = [textView textInRange:replacingTextRange];
+                if ([replacingString isEqualToString:_replacingString]) {
                     replacingRange.location = [textView offsetFromPosition:textView.beginningOfDocument toPosition:replacingTextRange.start];
                     replacingRange.length = 0;
                 }
-                replacingString = [textView textInRange:replacingTextRange];
             }
             if (replacingString == nil) {
                 const char *str2 = [textView.text UTF8String];
@@ -572,6 +572,10 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 
 - (void)textViewDidChangeSelection:(UITextView *)textView {
     if (_links == nil) {
+        return;
+    }
+    
+    if (textView.markedTextRange != nil) {
         return;
     }
     
