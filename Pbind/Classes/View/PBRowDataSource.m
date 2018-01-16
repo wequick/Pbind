@@ -865,7 +865,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
     PBRowMapper *element;
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        element = section;
+        element = section.header;
     } else {
         element = section.footer;
     }

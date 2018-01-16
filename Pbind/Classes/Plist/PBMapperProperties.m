@@ -121,6 +121,11 @@
 
 - (BOOL)initPropertiesForOwner:(id)owner
 {
+    if (![owner isKindOfClass:[UIView class]]) {
+        [self initDataForOwner:owner];
+        return YES;
+    }
+    
     BOOL changed = NO;
     
     if (![[owner pb_constants] isEqual:_constants]) {

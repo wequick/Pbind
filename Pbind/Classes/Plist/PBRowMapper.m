@@ -32,6 +32,7 @@ static const CGFloat kHeightUnset = -2;
 @synthesize editActionMappers = _editActionMappers;
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
+    _estimatedWidth = UITableViewAutomaticDimension;
     _estimatedHeight = UITableViewAutomaticDimension;
     _height = UITableViewAutomaticDimension;
     _width = UITableViewAutomaticDimension;
@@ -65,6 +66,23 @@ static const CGFloat kHeightUnset = -2;
     NSString *widthString = [dictionary objectForKey:@"width"];
     if (widthString != nil) {
         _pbFlags.widthExpressive = [_properties isExpressiveForKey:@"width"];
+        if (!_pbFlags.widthExpressive) {
+            NSArray *components = nil;
+            if ([heightString isKindOfClass:[NSString class]]) {
+                components = [heightString componentsSeparatedByString:@"@"];
+            }
+            if (components.count == 2) {
+                _width = PBPixelByScale([components[0] floatValue], [components[1] floatValue]);
+            } else {
+                if (_width == UITableViewAutomaticDimension) {
+                    if (_estimatedWidth <= 0) {
+                        _estimatedWidth = 44.f; // initialize default estimated height
+                    }
+                } else if (_width > 0) {
+                    _width = PBValue(_width);
+                }
+            }
+        }
     } else {
         _pbFlags.widthUnset = 1;
     }

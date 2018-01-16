@@ -14,7 +14,11 @@
 @implementation PBHeaderFooterMapper
 
 - (void)initDefaultViewClass {
-    self.clazz = @"UIView";
+    if ([self.owner isKindOfClass:[UICollectionView class]]) {
+        self.clazz = @"UICollectionReusableView";
+    } else {
+        self.clazz = @"UIView";
+    }
 }
 
 - (void)setTitle:(NSString *)title {
