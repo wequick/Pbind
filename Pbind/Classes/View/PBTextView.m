@@ -187,11 +187,6 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
         return;
     }
     
-    if (value == nil) {
-        [self setValue:aValue];
-        return;
-    }
-    
     [self replaceValueInTextRange:self.selectedRange withString:aValue textChanged:NO];
 }
 
@@ -419,9 +414,8 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
                 // Autocomplete
                 UITextRange *replacingTextRange = _previousMarkedTextRange;
                 replacingString = [textView textInRange:replacingTextRange];
-                if ([replacingString isEqualToString:_replacingString]) {
+                if (![replacingString isEqualToString:_replacingString]) {
                     replacingRange.location = [textView offsetFromPosition:textView.beginningOfDocument toPosition:replacingTextRange.start];
-                    replacingRange.length = 0;
                 }
             }
             if (replacingString == nil) {
@@ -456,6 +450,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
             [self replaceValueInTextRange:replacingRange withString:replacingString textChanged:YES];
 //            [self updateValueAfterChangeCharactersInRange:replacingRange replacementString:replacingString];
             _replacingString = nil;
+            _replacingRange = textView.selectedRange;
             _previousMarkedTextRange = textView.markedTextRange;
         } else {
             _previousMarkedTextRange = textView.markedTextRange;
@@ -504,10 +499,10 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     } while (false);
     
     if (shouldChange) {
-//        if (_replacingString == nil) { // Save to format text at `textFieldDidChange:'
-            _replacingRange = range;
+        if (_replacingString == nil) {
+            _replacingRange = range; // Save to format text at `textFieldDidChange:'
             _replacingString = string;
-//        }
+        }
     }
     
     return shouldChange;
@@ -580,10 +575,6 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)textViewDidChangeSelection:(UITextView *)textView {
-    if (_links == nil) {
-        return;
-    }
-    
     if (textView.markedTextRange != nil) {
         return;
     }
@@ -621,8 +612,14 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
                     textView.selectedRange = selectedRange;
                 }
             }
-            return;
+            break;
         }
+    }
+    
+    // iOS 9
+    selectedRange = textView.selectedRange;
+    if (_replacingString == nil && selectedRange.length != 0) {
+        _replacingRange.length = selectedRange.length;
     }
 }
 
@@ -872,6 +869,11 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 }
 
 - (void)replaceValueInTextRange:(NSRange)range withString:(NSString *)string textChanged:(BOOL)textChanged {
+    if (value == nil) {
+        [self setValue:string];
+        return;
+    }
+    
     NSUInteger rangeLeft = range.location;
     NSUInteger rangeRight = NSMaxRange(range);
     __block NSInteger start = rangeLeft;
