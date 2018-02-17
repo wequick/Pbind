@@ -336,6 +336,7 @@ static float readcolor(char **str, int len) {
 
 + (UIFont *)fontWithUTF8String:(const char *)str {
     // {F:[name][bold|italic][size]}
+    // {F:size@weight}
     int size = [UIFont systemFontSize];
     UIFont *systemFont = [UIFont systemFontOfSize:size];
     
@@ -363,7 +364,9 @@ static float readcolor(char **str, int len) {
     
     UIFontDescriptorSymbolicTraits traits = 0;
     NSString *name = nil;
+    UIFontWeight fontWeight;
     char *temp;
+    BOOL fontWeightSpecified = NO;
     
     switch (i) {
         case 3:
@@ -406,6 +409,33 @@ static float readcolor(char **str, int len) {
         case 1:
             temp = components[0];
             if (*temp >= '0' && *temp <= '9') {
+                p = temp;
+                while (*p != '\0' && *p != '@') {
+                    p++;
+                }
+                if (*p == '@') {
+                    *p = '\0';
+                    fontWeightSpecified = YES;
+                    char *weight = p + 1;
+                    fontWeight = UIFontWeightRegular;
+                    if (strcmp(weight, "bold") == 0) {
+                        fontWeight = UIFontWeightBold;
+                    } else if (strcmp(weight, "semibold") == 0) {
+                        fontWeight = UIFontWeightSemibold;
+                    } else if (strcmp(weight, "medium") == 0) {
+                        fontWeight = UIFontWeightMedium;
+                    } else if (strcmp(weight, "light") == 0) {
+                        fontWeight = UIFontWeightLight;
+                    } else if (strcmp(weight, "thin") == 0) {
+                        fontWeight = UIFontWeightThin;
+                    } else if (strcmp(weight, "ultralight") == 0) {
+                        fontWeight = UIFontWeightUltraLight;
+                    } else if (strcmp(weight, "heavy") == 0) {
+                        fontWeight = UIFontWeightHeavy;
+                    } else if (strcmp(weight, "black") == 0) {
+                        fontWeight = UIFontWeightBlack;
+                    }
+                }
                 size = PBPixelFromUTF8String(temp);
             } else if (strcmp(temp, "bold") == 0) {
                 traits = UIFontDescriptorTraitBold;
@@ -422,6 +452,10 @@ static float readcolor(char **str, int len) {
     
     for (int j = 0; j < i; j++) {
         free(components[j]);
+    }
+    
+    if (fontWeightSpecified) {
+        return [UIFont systemFontOfSize:size weight:fontWeight];
     }
     
     NSDictionary *defaultAttributes = systemFont.fontDescriptor.fontAttributes;
