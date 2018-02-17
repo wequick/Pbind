@@ -11,6 +11,7 @@
 
 #import "PBLayoutConstraint.h"
 #import "PBInline.h"
+#import "UIView+Pbind.h"
 
 #pragma mark -
 #pragma mark - _PBMergedWrapperView
@@ -126,6 +127,10 @@
             // Merge and align
             BOOL horizontal = (*p == 'C');
             [self addConstraintsWithMergeCenterFormat:p horizontal:horizontal metrics:metrics views:views forParentView:parentView mergedViews:mergedViews outMergedViews:outMergedViews];
+        } else if (*p == 'T' || *p == 'B') {
+            // Layout guide
+            BOOL isTop = (*p == 'T');
+            [self addConstraintWithLayoutGuideFormat:p isTop:isTop views:views forParentView:parentView];
         }
     } else {
         [self addConstraintWithExplicitFormat:p metrics:metrics views:views forParentView:parentView];
@@ -142,6 +147,51 @@
 }
 
 #pragma mark - PVFL
+
++ (void)addConstraintWithLayoutGuideFormat:(const char *)str isTop:(BOOL)isTop views:(NSDictionary *)views forParentView:(UIView *)parentView {
+    char *p = (char *) str + 2;
+    char *p2;
+    BOOL failed = NO;
+    
+    NSString *viewName = [self nameByReadingFormat:&p];
+    if (viewName == nil) {
+        [self printMissingViewErrorOnFormat:str pos:p];
+        return;
+    }
+    
+    UIView *targetView = views[viewName];
+    if (targetView == nil) {
+        [self printUndefinedViewError:viewName onFormat:str pos:p];
+        return;
+    }
+    
+    NSLayoutRelation relation = [self relationByReadingFormat:&p failed:&failed];
+    if (failed) {
+        [self printUnknownRelationErrorOnFormat:str pos:p];
+        return;
+    }
+    
+    float margin = strtof(p, &p2);
+    if (p == p2) {
+        [self printMissingIntegerErrorOnFormat:str pos:p];
+        return;
+    }
+    
+    UIViewController *owningVC = [parentView supercontroller];
+    if (owningVC == nil || ![owningVC isViewLoaded]) {
+        [self printErrorWithTips:@"Failed to get the owning view controller, please add this constraint after 'viewDidLoad'." onFormat:str pos:p];
+        return;
+    }
+    
+    NSLayoutConstraint *constraint;
+    if (isTop) {
+        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:owningVC.topLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1 constant:margin];
+    } else {
+        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:owningVC.bottomLayoutGuide attribute:NSLayoutAttributeTop multiplier:1 constant:margin];
+    }
+    constraint.identifier = [NSString stringWithUTF8String:str];
+    [parentView addConstraint:constraint];
+}
 
 + (void)addConstraintWithAspectRatioFormat:(const char *)str views:(NSDictionary *)views forParentView:(UIView *)parentView {
     char *p = (char *) str + 2;
