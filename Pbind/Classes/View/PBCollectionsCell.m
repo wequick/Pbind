@@ -25,7 +25,6 @@
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         _collectionView = [[PBCollectionView alloc] init];
         [_collectionView setTag:1];
-        [_collectionView setScrollEnabled:NO];
         [_collectionView setAutoResize:YES];
         [self.contentView addSubview:_collectionView];
         

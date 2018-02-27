@@ -231,7 +231,6 @@
 
 - (void)setAutoResize:(BOOL)autoResize {
     _pbCollectionViewFlags.autoResize = autoResize ? 1 : 0;
-    self.scrollEnabled = !autoResize;
 }
 
 - (BOOL)isAutoResize {
@@ -241,6 +240,13 @@
 - (CGSize)intrinsicContentSize {
     if (self.autoResize) {
         [self layoutIfNeeded];
+        
+        if (self.horizontal) {
+            if (self.rowDataSource.sections.count > 0) {
+                CGSize itemSize = [self.rowDelegate collectionView:self layout:self.collectionViewLayout sizeForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                return CGSizeMake(UIViewNoIntrinsicMetric, itemSize.height);
+            }
+        }
         return CGSizeMake(UIViewNoIntrinsicMetric, self.contentSize.height);
     }
     return [super intrinsicContentSize];
@@ -252,10 +258,14 @@
     }
     
     CGSize size = self.collectionViewLayout.collectionViewContentSize;
+    if (CGSizeEqualToSize(size, CGSizeZero)) {
+        return;
+    }
+    
     self.contentSize = size;
     CGRect frame = self.frame;
-    if (!CGSizeEqualToSize(frame.size, size)) {
-        frame.size = size;
+    if (frame.size.height != size.height) {
+        frame.size.height = size.height;
         dispatch_block_t resizeBlock = ^{
             self.frame = frame;
             if (self.resizingDelegate != nil) {
