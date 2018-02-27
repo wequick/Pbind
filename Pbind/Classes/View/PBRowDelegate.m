@@ -853,14 +853,21 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         return CGSizeMake(width, height);
     }
 
-    // Explicit
+    // Undefined
     if ([item isWidthUnset] && [item isHeightUnset]) {
         return collectionViewLayout.itemSize;
     }
     
+    // Explicit
     id data = collectionView.data;
+    CGFloat itemHeight;
     CGFloat itemWidth = [item widthForData:data withRowDataSource:self.dataSource indexPath:indexPath];
-    CGFloat itemHeight = [item heightForData:data withRowDataSource:self.dataSource indexPath:indexPath];
+    if (item.ratio > 0 || item.additionalHeight != 0) {
+        CGFloat ratio = item.ratio == 0 ? 1 : item.ratio;
+        itemHeight = itemWidth / ratio + item.additionalHeight;
+    } else {
+        itemHeight = [item heightForData:data withRowDataSource:self.dataSource indexPath:indexPath];
+    }
     if (itemWidth == -1) {
         itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right;
     }
