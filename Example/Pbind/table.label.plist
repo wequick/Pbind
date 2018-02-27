@@ -36,7 +36,7 @@
 			<key>footer</key>
 			<dict>
 				<key>height</key>
-				<string>:auto</string>
+				<string>20</string>
 				<key>titleFont</key>
 				<string>{F:14}</string>
 				<key>margin</key>
