@@ -569,7 +569,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     // Create content view
     UIView *contentView = nil;
     NSString *title = mapper.title;
-    if (title != nil) {
+    if (title != nil && mapper.layout == nil) {
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.text = title;
         titleLabel.numberOfLines = 0;
