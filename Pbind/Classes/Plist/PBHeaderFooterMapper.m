@@ -23,12 +23,33 @@
 
 - (void)setTitle:(NSString *)title {
     _title = title;
-    if (title != nil) {
+    
+    if (self.layout == nil && title == nil) {
+        self.height = 0.f;
+    } else {
         self.height = UITableViewAutomaticDimension;
+    }
+}
+
+- (void)setLayout:(NSString *)layout {
+    [super setLayout:layout];
+    
+    if (layout == nil && _title == nil) {
+        self.height = 0.f;
+    } else {
+        self.height = UITableViewAutomaticDimension;
+    }
+}
+
+- (void)setHeight:(CGFloat)height {
+    [super setHeight:height];
+    
+    if (height == 0.f) {
+        self.estimatedHeight = 0.f;
+    } else if (height == UITableViewAutomaticDimension) {
         self.estimatedHeight = 21.f;
     } else {
-        self.height = 0.f;
-        self.estimatedHeight = 0.f;
+        self.estimatedHeight = height;
     }
 }
 
