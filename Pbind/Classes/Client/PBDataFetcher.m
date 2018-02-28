@@ -130,7 +130,13 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
             
             // Map data
             [_owner pb_mapData:_owner.rootData underType:PBMapToData dataTag:i];
-            [_owner layoutIfNeeded];
+            if ([NSThread isMainThread]) {
+                [_owner layoutIfNeeded];
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_owner layoutIfNeeded];
+                });
+            }
             
             fetchingCount--;
             if (fetchingCount == 0) {
