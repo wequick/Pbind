@@ -364,7 +364,7 @@ static float readcolor(char **str, int len) {
     
     UIFontDescriptorSymbolicTraits traits = 0;
     NSString *name = nil;
-    UIFontWeight fontWeight;
+    UIFontWeight fontWeight = UIFontWeightRegular;
     char *temp;
     BOOL fontWeightSpecified = NO;
     

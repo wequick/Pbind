@@ -185,9 +185,9 @@
     
     NSLayoutConstraint *constraint;
     if (isTop) {
-        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:owningVC.topLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1 constant:margin];
+        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeTop relatedBy:relation toItem:owningVC.topLayoutGuide attribute:NSLayoutAttributeBottom multiplier:1 constant:margin];
     } else {
-        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:owningVC.bottomLayoutGuide attribute:NSLayoutAttributeTop multiplier:1 constant:margin];
+        constraint = [NSLayoutConstraint constraintWithItem:targetView attribute:NSLayoutAttributeBottom relatedBy:relation toItem:owningVC.bottomLayoutGuide attribute:NSLayoutAttributeTop multiplier:1 constant:margin];
     }
     constraint.identifier = [NSString stringWithUTF8String:str];
     [parentView addConstraint:constraint];
