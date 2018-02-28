@@ -28,7 +28,7 @@ Pbind, a data binder with Plist, which help you to achieve "Less code, More effi
   s.source           = { :git => 'https://github.com/wequick/Pbind.git', :tag => s.version.to_s }
   s.social_media_url = 'https://weibo.com/galenlin'
 
-  s.ios.deployment_target = '7.0'
+  s.ios.deployment_target = '8.2'
 
   s.source_files = 'Pbind/Classes/**/*'
   
