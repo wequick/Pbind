@@ -23,8 +23,8 @@
         return;
     }
     
-    UIView<PBRowMapping> *mappingView = (id) state.context.supercontroller.view;
-    if (![mappingView conformsToProtocol:@protocol(PBRowMapping)]) {
+    UIView<PBRowMapping> *mappingView = [self mappableParentViewOfSubview:state.context];
+    if (mappingView == nil) {
         return;
     }
     
@@ -45,6 +45,18 @@
         }
         [mappingView.rowDataSource deleteRowDataAtIndexPath:indexPath];
     }
+}
+
+- (UIView<PBRowMapping> *)mappableParentViewOfSubview:(UIView *)view {
+    if (view == nil) {
+        return nil;
+    }
+    
+    if ([view conformsToProtocol:@protocol(PBRowMapping)]) {
+        return (id) view;
+    }
+    
+    return [self mappableParentViewOfSubview:view.superview];
 }
 
 @end
