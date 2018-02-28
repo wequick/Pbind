@@ -26,13 +26,20 @@ static NSString *const DONE = @"done";
 static NSString *const kUserInfoTargetControllerKey = @"target";
 static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
 
+static UIViewController *(^kTopViewControllerFinder)(UIView *context);
+
 @pbactions(@"push", @"pop", @"present", @"dismiss")
 - (void)run:(PBActionState *)state {
     if (state.context == nil) {
         return;
     }
     
-    UIViewController *controller = [state.context supercontroller];
+    UIViewController *controller;
+    if (kTopViewControllerFinder != nil) {
+        controller = kTopViewControllerFinder(state.context);
+    } else {
+        controller = [state.context supercontroller];
+    }
     if (controller == nil) {
         return;
     }
@@ -90,11 +97,22 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
             [_viewLoadedDetectionTimer fire];
         }
         
+        BOOL shouldResetContext = YES;
         id newContext = nil;
         if (targetController != nil) {
             [self initPropertiesForController:targetController];
-            newContext = targetController.view;
             [controller.navigationController popToViewController:targetController animated:YES];
+            UIViewController *topController;
+            if (kTopViewControllerFinder != nil) {
+                topController = kTopViewControllerFinder(targetController.view);
+            } else {
+                topController = targetController;
+            }
+            if (state.context.supercontroller != topController) {
+                newContext = topController.view;
+            } else {
+                shouldResetContext = NO;
+            }
         } else {
             [controller.navigationController popViewControllerAnimated:YES];
         }
@@ -102,7 +120,9 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
         // the current context would be deallocated while it's parent controller pop,
         // so replace it with an active one or set to nil.
         // FIXME: Be careful to use the context.
-        state.context = newContext;
+        if (shouldResetContext) {
+            state.context = newContext;
+        }
     } else if ([self.type isEqualToString:@"present"]) {
         UIViewController *nextController = [self targetController];
         if (nextController == nil) {
@@ -176,6 +196,10 @@ static NSString *const kUserInfoTargetLoadedValueKey = @"loaded";
             NSLog(@"Pbind: Failed to set value(%@) for key(%@) to controller(%@).", value, key, self.target);
         }
     }
+}
+
++ (void)registerTopViewControllerFinder:(UIViewController *(^)(UIView *))topViewControllerFinder {
+    kTopViewControllerFinder = topViewControllerFinder;
 }
 
 @end

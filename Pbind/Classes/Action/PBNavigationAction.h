@@ -16,4 +16,6 @@
  */
 @interface PBNavigationAction : PBAction
 
++ (void)registerTopViewControllerFinder:(UIViewController *(^)(UIView *context))topViewControllerFinder;
+
 @end
