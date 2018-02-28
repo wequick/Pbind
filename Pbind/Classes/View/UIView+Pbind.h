@@ -154,6 +154,13 @@
 - (id)superviewWithClass:(Class)clazz;
 
 /**
+ Layout the subviews with plist
+
+ @param layoutName The layout plist file name
+ */
+- (void)pb_layout:(NSString *)layoutName;
+
+/**
  Reload the plist.
  
  @discussion This will search the plist from `[Pbind allResourcesBundles]' and reload it.

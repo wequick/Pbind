@@ -184,6 +184,10 @@
     [self layoutIfNeeded];
 }
 
+- (void)pb_layout:(NSString *)layoutName {
+    [[PBLayoutMapper mapperNamed:layoutName] renderToView:self];
+}
+
 - (void)pb_reloadPlist
 {
     [self pb_unbindAll];
