@@ -139,6 +139,11 @@ const unsigned char PBDataTagUnset = 0xFF;
                     }
                 }
                 p += 2;
+            } else if (*(p + 1) == '\0') {
+                if (*p >= '0' && *p <= '9') {
+                    _flags.dataTag = *p - '0';
+                    p++;
+                }
             }
             break;
         case '.':
