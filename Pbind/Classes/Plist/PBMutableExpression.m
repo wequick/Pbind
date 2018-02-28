@@ -41,7 +41,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         context = [[JSContext alloc] init];
-        context[@"screenSize"] = ^(){
+        context[@"$screenSize"] = ^(){
             return [UIScreen mainScreen].bounds.size;
         };
         void (^initializer)(JSContext *) = [Pbind jsContextInitializer];
