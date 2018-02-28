@@ -312,10 +312,54 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             if (mapper.footer != nil) {
                 [mapper.footer updateWithData:data owner:self.owner context:self.owner];
             }
+            
+            // Auto width
+            if (mapper.numberOfColumns > 0) {
+                [self calculateItemWidthWeightsForSection:mapper];
+            }
         }
     }
     if ([self.owner respondsToSelector:@selector(setAutoItemSizing:)]) {
         [(id) self.owner setAutoItemSizing:[self isAutoItemSizing]];
+    }
+}
+
+- (void)calculateItemWidthWeightsForSection:(PBSectionMapper *)section {
+    NSUInteger numberOfItems = section.items.count;
+    if (numberOfItems > 0) {
+        PBRowMapper *row = section.items.firstObject;
+        if (numberOfItems == 1) {
+            row.widthWeight = 1.f / section.numberOfColumns;
+        } else if (row.weight > 0) {
+            NSInteger numberOfRows = ceil(numberOfItems * 1.f / section.numberOfColumns);
+            NSInteger index = 0;
+            for (NSInteger row = 0; index < numberOfRows; row++) {
+                CGFloat weight = 0;
+                BOOL invalid = NO;
+                for (NSInteger column = 0; column < section.numberOfColumns; column++) {
+                    if (index + column >= numberOfItems) {
+                        invalid = YES;
+                        break;
+                    }
+                    
+                    PBRowMapper *row = section.items[index + column];
+                    if (row.weight == 0) {
+                        invalid = YES;
+                        break;
+                    }
+                    weight += row.weight;
+                }
+                
+                if (invalid) {
+                    break;
+                }
+                
+                for (NSInteger column = 0; column < section.numberOfColumns; column++) {
+                    PBRowMapper *row = section.items[index++];
+                    row.widthWeight = row.weight / weight;
+                }
+            }
+        }
     }
 }
 

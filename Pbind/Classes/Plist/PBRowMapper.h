@@ -194,6 +194,15 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, assign) PBRowFloating floating;
 
+/**
+ The weight for the width.
+ 
+ @discussion This property is only for PBCollectionView. If the `numberOfColumns` is specified in the `PBSectionMapper`, then uses the `weight` to calculate each column's `widthWeight`.
+ */
+@property (nonatomic, assign) NSUInteger weight;
+
+@property (nonatomic, assign) CGFloat widthWeight;
+
 #pragma mark - Behavior
 ///=============================================================================
 /// @name Behavior

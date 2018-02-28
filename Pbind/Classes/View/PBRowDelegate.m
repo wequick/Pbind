@@ -844,7 +844,8 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     // Average
     if (section.numberOfColumns != 0) {
         NSInteger numberOfGaps = section.numberOfColumns - 1;
-        CGFloat width = (collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) / section.numberOfColumns;
+        CGFloat widthWeight = item.widthWeight;
+        CGFloat width = floor((collectionView.bounds.size.width - numberOfGaps * section.inner.width - section.inset.left - section.inset.right) * widthWeight);
         CGFloat height = item.height;
         if (height < 0) {
             CGFloat ratio = item.ratio == 0 ? 1 : item.ratio;
