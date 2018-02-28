@@ -426,7 +426,20 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         [indexes addIndex:indexPath.row];
     }
     
-    id list = self.owner.data;
+    id target;
+    if (self.sections.count > 0) {
+        // TODO: specify section index
+        PBSectionMapper *section = self.sections.firstObject;
+        target = section;
+    } else {
+        target = self.owner;
+    }
+    id list = [target data];
+    if (list == nil) {
+        list = [NSMutableArray array];
+        [target setData:list];
+    }
+    
     if ([list isKindOfClass:[NSArray class]]) {
         if ([list isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray *mutableList = list;
@@ -434,7 +447,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         } else {
             NSMutableArray *mutableList = [NSMutableArray arrayWithArray:list];
             handler(mutableList, newDatas, indexes);
-            self.owner.data = list;
+            [target setData:list];
         }
         return list;
     }
@@ -482,7 +495,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             if (array != nil) {
                 array[array.listElementIndex] = mutableContainer;
             } else {
-                self.owner.data = mutableContainer;
+                [target setData:mutableContainer];
             }
         }
         return mutableList;
@@ -533,14 +546,13 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Reload view
     if ([self.owner isKindOfClass:[UITableView class]]) {
         [(UITableView *)self.owner insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kUITableViewRowAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self notifyDataChangedWithDelay];
-        });
+        [self notifyDataChangedWithDelay];
     } else {
         UICollectionView *collectionView = (id) self.owner;
         [collectionView performBatchUpdates:^{
             [collectionView insertItemsAtIndexPaths:indexPaths];
         } completion:^(BOOL finished) {
+            [collectionView scrollToItemAtIndexPath:indexPaths[0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
             [self notifyDataChanged];
         }];
     }

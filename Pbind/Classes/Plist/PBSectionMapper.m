@@ -63,4 +63,9 @@
     return self.rows;
 }
 
+- (void)setData:(id)data {
+    _data = data;
+    _pbFlags.dataUnset = 0;
+}
+
 @end
