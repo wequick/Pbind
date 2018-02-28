@@ -330,7 +330,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         PBRowMapper *row = section.items.firstObject;
         if (numberOfItems == 1) {
             row.widthWeight = 1.f / section.numberOfColumns;
-        } else if (row.weight > 0) {
+        } else {
             NSInteger numberOfRows = ceil(numberOfItems * 1.f / section.numberOfColumns);
             NSInteger index = 0;
             for (NSInteger row = 0; index < numberOfRows; row++) {
@@ -344,8 +344,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                     
                     PBRowMapper *row = section.items[index + column];
                     if (row.weight == 0) {
-                        invalid = YES;
-                        break;
+                        row.weight = 1;
                     }
                     weight += row.weight;
                 }
