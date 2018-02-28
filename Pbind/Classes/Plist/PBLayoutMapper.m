@@ -106,6 +106,11 @@
         
         if (needsCreate) {
             subview = [[mapper.viewClass alloc] init];
+            if (subview == nil) {
+                NSLog(@"Pbind: Failed to create view with class '%@'", mapper.viewClass);
+                continue;
+            }
+            
             subview.translatesAutoresizingMaskIntoConstraints = NO;
             subview.alias = alias;
             if (mapper.parent != nil) {
