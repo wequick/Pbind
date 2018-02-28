@@ -98,6 +98,7 @@ static NSMutableDictionary *kActionClasses;
         return;
     }
     
+    nextAction.store = self.store;
     [nextAction _internalRun:self.store.state];
 }
 
