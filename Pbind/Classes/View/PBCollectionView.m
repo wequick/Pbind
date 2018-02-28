@@ -243,8 +243,9 @@
         
         if (self.horizontal) {
             if (self.rowDataSource.sections.count > 0) {
+                PBSectionMapper *section = self.rowDataSource.sections.firstObject;
                 CGSize itemSize = [self.rowDelegate collectionView:self layout:self.collectionViewLayout sizeForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-                return CGSizeMake(UIViewNoIntrinsicMetric, itemSize.height);
+                return CGSizeMake(UIViewNoIntrinsicMetric, itemSize.height + section.inset.top + section.inset.bottom);
             }
         }
         return CGSizeMake(UIViewNoIntrinsicMetric, self.contentSize.height);
