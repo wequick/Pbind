@@ -16,6 +16,8 @@
 #import "PBValueParser.h"
 #import "PBActionStore.h"
 #import "PBPropertyUtils.h"
+#import "UIView+Pbind.h"
+#import "PBDataFetching.h"
 
 #pragma mark -
 #pragma mark - _PBBarButtonItemSpec
@@ -120,8 +122,33 @@
 
 - (void)handleAction:(_PBBarButtonItem *)item {
     // FIXME: Using the private API of `_view'
-    UIView *context = [self valueForKey:@"view"];
-    [[PBActionStore defaultStore] dispatchActionWithActionMapper:self.actionMapper context:context];
+    UIView *sender = [self valueForKey:@"view"];
+    
+    // Find the main view which carries data
+    UIViewController *owningVC = [sender supercontroller];
+    UIView *dataView = [self dataViewOfParentView:owningVC.view];
+    id data = dataView.data;
+    
+    [[PBActionStore defaultStore] dispatchActionWithActionMapper:self.actionMapper sender:sender context:dataView data:data];
+}
+
+- (UIView *)dataViewOfParentView:(UIView *)view {
+    if (view == nil) {
+        return nil;
+    }
+    
+    if ([view conformsToProtocol:@protocol(PBDataFetching)]) {
+        return view;
+    }
+    
+    UIView *dataView = nil;
+    for (UIView *subview in view.subviews) {
+        dataView = [self dataViewOfParentView:subview];
+        if (dataView != nil) {
+            return dataView;
+        }
+    }
+    return nil;
 }
 
 @end
