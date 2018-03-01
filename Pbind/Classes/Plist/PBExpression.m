@@ -607,6 +607,7 @@ static NSString *kTemporaryKey;
         if (dataSource == nil) {
             return;
         }
+        _originalBindingOwner = target;
         if ([targetKeyPath hasPrefix:@"@"] && [target isKindOfClass:[UIView class]]) {
             NSInteger dotIndex = [targetKeyPath rangeOfString:@"."].location;
             if (dotIndex != NSNotFound) {
@@ -765,7 +766,7 @@ static NSString *kTemporaryKey;
 }
 
 - (void)unbind:(id)target forKeyPath:(NSString *)keyPath {
-    if (![_bindingOwner isEqual:target]) {
+    if (![_originalBindingOwner isEqual:target]) {
         return;
     }
     

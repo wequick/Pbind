@@ -142,6 +142,7 @@ typedef enum : NSUInteger {
     __unsafe_unretained id _bindingOwner;
     __unsafe_unretained id _bindingData;
     id _initialDataSourceValue;
+    __unsafe_unretained id _originalBindingOwner;
 }
 
 + (instancetype)expressionWithString:(NSString *)aString;
