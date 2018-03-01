@@ -151,7 +151,13 @@
         if (type == PBMapToAllContext && self.frame.size.height == 0) {
             return;
         }
-        [(id)self reloadData];
+        if ([NSThread isMainThread]) {
+            [(id)self reloadData];
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [(id)self reloadData];
+            });
+        };
     }
 }
 

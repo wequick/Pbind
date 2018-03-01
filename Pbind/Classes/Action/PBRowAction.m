@@ -23,6 +23,16 @@
         return;
     }
     
+    if ([NSThread isMainThread]) {
+        [self runOnMainThread:state];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self runOnMainThread:state];
+        });
+    }
+}
+
+- (void)runOnMainThread:(PBActionState *)state {
     UIView<PBRowMapping> *mappingView = [self mappableParentViewOfSubview:state.context];
     if (mappingView == nil) {
         return;
