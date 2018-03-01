@@ -91,4 +91,9 @@
  */
 @property (nonatomic, strong) id deselectedData;
 
+/**
+ The editing state, call the setter will trigger reloadData.
+ */
+@property (nonatomic, assign, getter=isEditing) BOOL editing;
+
 @end
