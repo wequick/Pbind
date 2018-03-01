@@ -881,15 +881,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     return CGSizeMake(itemWidth, itemHeight);
 }
 
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewFlowLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)sectionIndex {
     if ([self.receiver respondsToSelector:_cmd]) {
-        return [self.receiver collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:section];
+        return [self.receiver collectionView:collectionView layout:collectionViewLayout insetForSectionAtIndex:sectionIndex];
     }
     
-    if (self.dataSource.sections != nil) {
-        PBSectionMapper *mapper = [self.dataSource.sections objectAtIndex:section];
-        UIEdgeInsets inset = mapper.inset;
+    NSArray<PBSectionMapper *> *sections = self.dataSource.sections;
+    if (sections != nil) {
+        PBSectionMapper *section = [sections objectAtIndex:sectionIndex];
+        UIEdgeInsets inset = section.inset;
         if (!UIEdgeInsetsEqualToEdgeInsets(inset, UIEdgeInsetsZero)) {
+            if (sectionIndex + 1 < sections.count && section.rowCount == 0) {
+                // If has next section, but current section is empty, then let the inset.right as 0 to pin two sections together.
+                inset.right = 0;
+            }
             return inset;
         }
     }
