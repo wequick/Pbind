@@ -28,7 +28,7 @@
     return response;
 }
 
-- (void)loadRequest:(PBRequest *)request success:(void (^)(id))success failure:(void (^)(NSError *))failure
+- (void)loadRequest:(PBRequest *)request success:(void (^)(id, PBResponseStatus))success failure:(void (^)(NSError *))failure
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSError *error = nil;
@@ -37,7 +37,7 @@
             if (error != nil) {
                 failure(error);
             } else {
-                success(data);
+                success(data, PBResponseStatusOK);
             }
         });
     });

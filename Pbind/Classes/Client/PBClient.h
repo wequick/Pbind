@@ -98,7 +98,7 @@ FOUNDATION_EXPORT NSInteger const PBClientCacheForever;
 @interface PBClient (Loading)
 
 - (id)loadRequest:(PBRequest *)request error:(NSError **)error; // synchronous loading
-- (void)loadRequest:(PBRequest *)request success:(void (^)(id responseData))success failure:(void (^)(NSError *error))failure; // if above method has not been implemented, asynchronous loading
+- (void)loadRequest:(PBRequest *)request success:(void (^)(id responseData, PBResponseStatus status))success failure:(void (^)(NSError *error))failure; // if above method has not been implemented, asynchronous loading
 
 - (PBRequest *)transformingRequest:(PBRequest *)request; // user transforming for loading request
 - (PBResponse *)debugResponse; // default is nil. if set, return the response without loading

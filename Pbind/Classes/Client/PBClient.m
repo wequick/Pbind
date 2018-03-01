@@ -174,9 +174,10 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
     }
     
     // Load request
-    [self loadRequest:aRequest success:^(id responseData) {
+    [self loadRequest:aRequest success:^(id responseData, PBResponseStatus status) {
         PBResponse *response = [[PBResponse alloc] init];
         response.data = responseData;
+        response.status = status;
         response =  [self transformingResponse:response withRequest:request];
         if (_canceled) {
             return;
