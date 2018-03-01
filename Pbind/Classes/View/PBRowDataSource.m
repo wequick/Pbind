@@ -25,6 +25,11 @@
 
 NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNotification";
 
+typedef NS_ENUM(NSUInteger, PBRowInteractionType) {
+    PBRowInteractionTypeInsert,
+    PBRowInteractionTypeDelete,
+};
+
 @implementation PBRowDataSource
 
 @synthesize receiver;
@@ -544,17 +549,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }];
     
     // Reload view
-    if ([self.owner isKindOfClass:[UITableView class]]) {
-        [(UITableView *)self.owner insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-        [self notifyDataChangedWithDelay];
+    if ([NSThread isMainThread]) {
+        [self amimateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
     } else {
-        UICollectionView *collectionView = (id) self.owner;
-        [collectionView performBatchUpdates:^{
-            [collectionView insertItemsAtIndexPaths:indexPaths];
-        } completion:^(BOOL finished) {
-            [collectionView scrollToItemAtIndexPath:indexPaths[0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
-            [self notifyDataChanged];
-        }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self amimateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
+        });
     }
 }
 
@@ -565,14 +565,46 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }];
     
     // Reload view
+    if ([NSThread isMainThread]) {
+        [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
+        });
+    }
+}
+
+- (void)amimateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
     if ([self.owner isKindOfClass:[UITableView class]]) {
-        [(UITableView *)self.owner deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        UITableView *tableView = (id) self.owner;
+        switch (type) {
+            case PBRowInteractionTypeDelete:
+                [tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case PBRowInteractionTypeInsert:
+                [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            default:
+                break;
+        }
         [self notifyDataChangedWithDelay];
     } else {
         UICollectionView *collectionView = (id) self.owner;
         [collectionView performBatchUpdates:^{
-            [collectionView deleteItemsAtIndexPaths:@[indexPath]];
+            switch (type) {
+                case PBRowInteractionTypeDelete:
+                    [collectionView deleteItemsAtIndexPaths:indexPaths];
+                    break;
+                case PBRowInteractionTypeInsert:
+                    [collectionView insertItemsAtIndexPaths:indexPaths];
+                    break;
+                default:
+                    break;
+            }
         } completion:^(BOOL finished) {
+            if (type == PBRowInteractionTypeInsert) {
+                [collectionView scrollToItemAtIndexPath:indexPaths[0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
+            }
             [self notifyDataChanged];
         }];
     }
