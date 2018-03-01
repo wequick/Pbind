@@ -20,6 +20,7 @@
 #import "PBArray.h"
 #import "PBActionStore.h"
 #import "PBPropertyUtils.h"
+#import <objc/runtime.h>
 
 const unsigned char PBDataTagUnset = 0xFF;
 
@@ -34,6 +35,30 @@ const unsigned char PBDataTagUnset = 0xFF;
 @interface PBMutableExpression (Private)
 
 - (id)valueByUpdatingObservedValue:(id)value fromChild:(PBExpression *)child;
+
+@end
+
+@interface UIViewController (PBExpressionTemporary)
+
+@property (nonatomic, strong) PBDictionary *pb_temporaries;
+
+@end
+
+@implementation UIViewController (PBExpressionTemporary)
+
+static NSString *kTemporaryKey;
+
+- (void)setPb_temporaries:(PBDictionary *)pb_temporaries {
+    objc_setAssociatedObject(self, &kTemporaryKey, pb_temporaries, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (PBDictionary *)pb_temporaries {
+    PBDictionary *tempories = objc_getAssociatedObject(self, &kTemporaryKey);
+    if (tempories == nil) {
+        tempories = self.pb_temporaries = [[PBDictionary alloc] init];
+    }
+    return tempories;
+}
 
 @end
 
@@ -103,6 +128,9 @@ const unsigned char PBDataTagUnset = 0xFF;
                 p++;
             } else if (*p == '>') {
                 _flags.mapToForm = 1;
+                p++;
+            } else if (*p == '~') {
+                _flags.mapToTemporary = 1;
                 p++;
             } else {
                 if (*p == '.') {
@@ -336,6 +364,12 @@ const unsigned char PBDataTagUnset = 0xFF;
         return [self _dataSourceWithData:[owner data] atIndex:0];
     } else if (_flags.mapToActiveController) {
         return [context supercontroller];
+    } else if (_flags.mapToTemporary) {
+        UIViewController *owningVC = [context supercontroller];
+        if (owningVC == nil) {
+            return nil;
+        }
+        return owningVC.pb_temporaries;
     } else if (_flags.mapToForm) {
         PBForm *form = [self _formOfView:context];
         return form;
@@ -618,6 +652,9 @@ const unsigned char PBDataTagUnset = 0xFF;
     if (_flags.mapToActiveController) {
         return (type & PBMapToActiveController) != 0;
     }
+    if (_flags.mapToTemporary) {
+        return (type & PBMapToTemporary) != 0;
+    }
     if (_flags.mapToAliasView) {
         return (type & PBMapToAliasView) != 0;
     }
@@ -801,6 +838,8 @@ const unsigned char PBDataTagUnset = 0xFF;
         [s appendString:@".$"];
     } else if (_flags.mapToActiveController) {
         [s appendString:@"@^"];
+    } else if (_flags.mapToTemporary) {
+        [s appendString:@"@~"];
     } else if (_flags.mapToForm) {
         [s appendString:@"@>"];
     } else if (_flags.mapToFormFieldText) {

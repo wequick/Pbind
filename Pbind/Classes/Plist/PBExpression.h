@@ -30,6 +30,8 @@ typedef enum : NSUInteger {
     
     PBMapToContext          = 0x1 << 12,
     
+    PBMapToTemporary        = 0x1 << 13,
+    
     PBMapToAllContext       = PBMapToContext | PBMapToOwnerView | PBMapToOwnerViewData | PBMapToForm | PBMapToActiveController | PBMapToAliasView,
     PBMapToAll              = 0xFFFF
 } PBMapType;
@@ -119,12 +121,12 @@ typedef enum : NSUInteger {
         unsigned int mapToContext:1;            // '@.'
         unsigned int mapToAliasView:1;          // '@alias.'
         unsigned int mapToActiveController:1;   // '@^'
+        unsigned int mapToTemporary:1;          // '@~'
         
         unsigned int mapToActionState:1;        // '#.'
         unsigned int mapToActionStateData:1;    // '#$' <==> '#.data'
         
         unsigned int disabled:1;
-        unsigned int reserved1:1;
         
         unsigned int dataTag:8;                 // '0-9' for multi data, other for user-defined tag. Default is 0xFF(unset).
         

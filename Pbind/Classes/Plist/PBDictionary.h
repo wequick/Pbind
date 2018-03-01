@@ -16,6 +16,7 @@
  */
 @interface PBDictionary : NSObject <NSCopying, NSFastEnumeration>
 {
+  @package
     NSMutableDictionary *_dictionary;
 }
 
