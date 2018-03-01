@@ -191,7 +191,11 @@
 + (void)setValue:(id)value forKeyPath:(NSString *)keyPath toObject:(id)object failure:(void (^)(void))failure
 {
     @try {
-        [object setValue:value forKeyPath:keyPath];
+        if ([object respondsToSelector:@selector(setObject:forKey:)]) {
+            [object setObject:value forKey:keyPath];
+        } else {
+            [object setValue:value forKeyPath:keyPath];
+        }
     } @catch (NSException *exception) {
         [self printError:exception bySettingInconsistencyValue:value forKeyPath:keyPath toObject:object];
         if (failure) {
