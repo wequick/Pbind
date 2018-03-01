@@ -607,6 +607,14 @@ static NSString *kTemporaryKey;
         if (dataSource == nil) {
             return;
         }
+        if ([targetKeyPath hasPrefix:@"@"] && [target isKindOfClass:[UIView class]]) {
+            NSInteger dotIndex = [targetKeyPath rangeOfString:@"."].location;
+            if (dotIndex != NSNotFound) {
+                NSString *prefix = [targetKeyPath substringToIndex:dotIndex];
+                targetKeyPath = [targetKeyPath substringFromIndex:dotIndex + 1];
+                target = [target viewWithAlias:[prefix substringFromIndex:1]];
+            }
+        }
         _bindingKeyPath = targetKeyPath;
         _bindingData = dataSource;
         _bindingOwner = target;
