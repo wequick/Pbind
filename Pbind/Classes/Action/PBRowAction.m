@@ -41,9 +41,19 @@
         
         NSIndexPath *indexPath = mappingView.editingIndexPath ?: state.params[@"indexPath"];
         if (indexPath == nil) {
-            return;
+            indexPath = [self indexPathForSubview:state.context inOwnerView:mappingView];
+            if (indexPath == nil) {
+                return;
+            }
         }
         [mappingView.rowDataSource deleteRowDataAtIndexPath:indexPath];
+    }
+    
+    if ([self hasNext:@"done"]) {
+        // FIXME: Add completion block on row action
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self dispatchNext:@"done"];
+        });
     }
 }
 
@@ -57,6 +67,23 @@
     }
     
     return [self mappableParentViewOfSubview:view.superview];
+}
+
+- (NSIndexPath *)indexPathForSubview:(UIView *)subview inOwnerView:(UIView *)ownerView {
+    if ([ownerView isKindOfClass:[UICollectionView class]]) {
+        UICollectionViewCell *cell = [subview superviewWithClass:[UICollectionViewCell class]];
+        if (cell == nil) {
+            return nil;
+        }
+        return [(UICollectionView *)ownerView indexPathForCell:cell];
+    } else if ([ownerView isKindOfClass:[UITableView class]]) {
+        UITableViewCell *cell = [subview superviewWithClass:[UITableViewCell class]];
+        if (cell == nil) {
+            return nil;
+        }
+        return [(UITableView *)ownerView indexPathForCell:cell];
+    }
+    return nil;
 }
 
 @end
