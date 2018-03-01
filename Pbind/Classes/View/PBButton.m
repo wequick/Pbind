@@ -18,6 +18,10 @@
 {
     UIColor *_backgroundColor;
     PBActionMapper *_actionMapper;
+    struct {
+        unsigned char checkable: 1;
+        unsigned char registeredCheckingHandler: 1;
+    } _pbFlags;
 }
 
 #pragma mark - PBInput
@@ -251,6 +255,32 @@
 
 - (void)setDisabledAttributedTitle:(NSAttributedString *)attributedTitle {
     [self setAttributedTitle:attributedTitle forState:UIControlStateDisabled];
+}
+
+#pragma mark - Checking
+
+- (void)setCheckable:(BOOL)checkable {
+    _pbFlags.checkable = checkable;
+    if (checkable && !_pbFlags.registeredCheckingHandler) {
+        [self addTarget:self action:@selector(handleCheck:) forControlEvents:UIControlEventTouchUpInside];
+        _pbFlags.registeredCheckingHandler = 1;
+    }
+}
+
+- (BOOL)isCheckable {
+    return _pbFlags.checkable;
+}
+
+- (void)setChecked:(BOOL)checked {
+    self.selected = checked;
+}
+
+- (BOOL)isChecked {
+    return self.selected;
+}
+
+- (void)handleCheck:(PBButton *)sender {
+    sender.checked = !sender.checked;
 }
 
 #pragma mark - Labeling

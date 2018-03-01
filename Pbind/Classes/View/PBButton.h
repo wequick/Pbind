@@ -88,6 +88,20 @@
 /** The attributed title for the highlighted state */
 @property (nonatomic, strong) NSAttributedString *highlightedAttributedTitle;
 
+#pragma mark - Checking
+///=============================================================================
+/// @name Checking
+///=============================================================================
+
+/**
+ Mark if the button can be checked (toggled the selected state on click).
+ Default is NO.
+ */
+@property (nonatomic, assign, getter=isCheckable) BOOL checkable;
+
+/** same to `selected` */
+@property (nonatomic, assign, getter=isChecked) BOOL checked;
+
 #pragma mark - Labeling
 ///=============================================================================
 /// @name Labeling
