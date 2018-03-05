@@ -17,7 +17,7 @@
 
 @implementation PBRowAction
 
-@pbactions(@"addRow", @"deleteRow", @"updateRow")
+@pbactions(@"addRow", @"deleteRow", @"updateRow", @"updateSection")
 - (void)run:(PBActionState *)state {
     if (state.context == nil) {
         return;
@@ -33,7 +33,8 @@
 }
 
 - (void)runOnMainThread:(PBActionState *)state {
-    UIView<PBRowMapping> *mappingView = [self mappableParentViewOfSubview:state.context];
+    UIView *target = self.target ?: state.context;
+    UIView<PBRowMapping> *mappingView = [self mappableParentViewOfSubview:target];
     if (mappingView == nil) {
         return;
     }
@@ -66,6 +67,18 @@
             }
         }
         [mappingView.rowDataSource updateRowDataAtIndexPath:indexPath];
+    } else if ([self.type isEqualToString:@"updateSection"]) {
+        NSInteger section = 0;
+        NSNumber *sectionValue = self.params[@"index"];
+        if (sectionValue != nil) {
+            section = [sectionValue integerValue];
+        } else {
+            NSIndexPath *indexPath = [self indexPathForSubview:state.context inOwnerView:mappingView];
+            if (indexPath != nil) {
+                section = indexPath.section;
+            }
+        }
+        [mappingView.rowDataSource updateRowDataAtSection:section];
     }
     
     if ([self hasNext:@"done"]) {
