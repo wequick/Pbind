@@ -196,6 +196,7 @@
 
 - (void)pb_setValue:(id)value forKeyPath:(NSString *)keyPath;
 - (id)pb_valueForKeyPath:(NSString *)keyPath;
+- (id)pb_valueForKeyPath:(NSString *)key failure:(void (^)(void))failure;
 
 /**
  Unbind all the observers from the view.

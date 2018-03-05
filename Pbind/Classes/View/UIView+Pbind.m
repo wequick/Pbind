@@ -259,7 +259,14 @@
 
 - (void)pb_reloadLayout {
     [self _pb_resetMappersForView:self];
-    PBLayoutMapper *layoutMapper = [PBLayoutMapper mapperNamed:self.pb_layoutMapper.plist];
+    PBLayoutMapper *layoutMapper = self.pb_layoutMapper;
+    if (layoutMapper != nil) {
+        for (PBRowMapper *viewMapper in layoutMapper.viewMappers) {
+            UIView *subview = [self viewWithAlias:viewMapper.alias];
+            [viewMapper->_viewProperties unbind:subview];
+        }
+    }
+    layoutMapper = [PBLayoutMapper mapperNamed:self.pb_layoutMapper.plist];
     [layoutMapper renderToView:self];
     [self enumerateAllSubviewsWithBlock:^(UIView *subview) {
         if ([subview respondsToSelector:@selector(setDataUpdated:)]) {
@@ -299,6 +306,7 @@
         }
     }
     
+    [self.pb_layoutMapper unbind];
     [self pb_unbindActionMappers];
 }
 
@@ -335,7 +343,6 @@
 
 - (void)_pb_unbindView:(UIView *)view {
     [view pb_unbind];
-    
     for (UIView *subview in view.subviews) {
         [self _pb_unbindView:subview];
     }
@@ -447,6 +454,10 @@
                 }
             }
         }];
+        if ([target isKindOfClass:[NSLayoutConstraint class]] && [self.layer actionForKey:@"position"] != nil) {
+            // Animate auto layout constraint
+            [self.superview layoutIfNeeded];
+        }
     }
 }
 
@@ -542,6 +553,11 @@
 
 - (id)pb_valueForKeyPath:(NSString *)key
 {
+    return [self pb_valueForKeyPath:key failure:nil];
+}
+
+- (id)pb_valueForKeyPath:(NSString *)key failure:(void (^)(void))failure
+{
     id target = self;
     NSArray *keys = [key componentsSeparatedByString:@"."];
     NSUInteger N = keys.count;
@@ -576,7 +592,7 @@
         return [actionSources objectForKey:event];
     }
     
-    return [PBPropertyUtils valueForKeyPath:key ofObject:target failure:nil];
+    return [PBPropertyUtils valueForKeyPath:key ofObject:target failure:failure];
 }
 
 - (void)setMappable:(BOOL)mappable forKeyPath:(NSString *)keyPath

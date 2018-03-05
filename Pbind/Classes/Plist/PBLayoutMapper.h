@@ -11,6 +11,8 @@
 
 #import "PBMapper.h"
 
+@class PBRowMapper;
+
 /**
  The PBLayoutMapper is one of the base component of Pbind.
  
@@ -79,5 +81,7 @@
  Reload the mapper with the initial layout plist.
  */
 - (void)reload;
+
+@property (nonatomic, strong) NSArray<PBRowMapper *> *viewMappers;
 
 @end

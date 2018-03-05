@@ -103,6 +103,11 @@ typedef NS_ENUM(NSUInteger, PBRowFloating)
  */
 @property (nonatomic, assign) NSInteger order;
 
+/**
+ The mask view alias name
+ */
+@property (nonatomic, copy) NSString *mask;
+
 #pragma mark - Styling
 ///=============================================================================
 /// @name Styling

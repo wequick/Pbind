@@ -37,6 +37,7 @@
     }
     
     contentView.pb_layoutName = self.plist;
+    [contentView.pb_layoutMapper unbind];
     contentView.pb_layoutMapper = self;
     
     // Check if any view be removed.
@@ -100,6 +101,7 @@
             }
             
             if (needsCreate) {
+                [subview pb_unbindAll];
                 [subview removeFromSuperview];
             }
         }
@@ -120,13 +122,15 @@
                 [contentView addSubview:subview];
             }
             
+            if (mapper.layout != nil) {
+                [subview pb_layout:mapper.layout];
+            }
+            
             needsReset = YES;
         } else {
             [originalViews addObject:subview];
         }
         
-        [mapper initPropertiesForTarget:subview];
-        [mapper mapPropertiesToTarget:subview withData:nil owner:view context:view];
         [views setObject:subview forKey:alias];
     }
     
@@ -169,11 +173,35 @@
     
     // PVFL (Pbind Visual Format Language)
     [PBLayoutConstraint addConstraintsWithPbindFormats:self.constraints metrics:metrics views:views forParentView:contentView];
+    
+    // Map data
+    for (PBRowMapper *mapper in orderedMappers) {
+        UIView *subview = [contentView viewWithAlias:mapper.alias];
+        [mapper initPropertiesForTarget:subview];
+        [mapper mapPropertiesToTarget:subview withData:nil owner:view context:view];
+    }
+    _viewMappers = orderedMappers;
 }
 
 - (void)reload {
     [self unbind];
     [self setPropertiesWithDictionary:PBPlist(self.plist)];
+}
+
+- (void)unbind {
+    [super unbind];
+    for (PBLayoutMapper *mapper in _viewMappers) {
+        [mapper unbind];
+    }
+}
+
+- (void)dealloc {
+    if (_viewMappers != nil) {
+        for (PBLayoutMapper *mapper in _viewMappers) {
+            [mapper unbind];
+        }
+    }
+    _viewMappers = nil;
 }
 
 #pragma mark - Helper

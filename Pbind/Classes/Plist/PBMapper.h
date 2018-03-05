@@ -29,6 +29,7 @@
  */
 @interface PBMapper : NSObject
 {
+  @package
     PBMapperProperties *_properties; // for self
     PBMapperProperties *_viewProperties; // for view
     PBMapperProperties *_navProperties;// for view super controller's navigationItem
