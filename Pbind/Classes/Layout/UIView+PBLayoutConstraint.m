@@ -11,6 +11,70 @@
 
 #import "UIView+PBLayoutConstraint.h"
 #import "PBLayoutConstraint.h"
+#import <objc/runtime.h>
+
+@interface PBLayoutConstraintFinder : NSObject
+
+@property (nonatomic, weak) UIView *ownerView;
+
+@end
+
+@implementation PBLayoutConstraintFinder
+
+- (id)valueForKey:(NSString *)key {
+    return [self constraintNamed:key ofView:_ownerView];
+}
+
+- (NSLayoutConstraint *)constraintNamed:(NSString *)name ofView:(UIView *)ownerView {
+    // Find the explicit named constraint first.
+    for (NSLayoutConstraint *constraint in ownerView.superview.constraints) {
+        if ([constraint.identifier isEqualToString:name]) {
+            return constraint;
+        }
+    }
+    
+    // Takes the name as an attribute.
+    NSLayoutAttribute attribute;
+    if ([name isEqualToString:@"height"]) {
+        attribute = NSLayoutAttributeHeight;
+    } else if ([name isEqualToString:@"width"]) {
+        attribute = NSLayoutAttributeWidth;
+    } else if ([name isEqualToString:@"top"]) {
+        attribute = NSLayoutAttributeTop;
+    } else if ([name isEqualToString:@"left"]) {
+        attribute = NSLayoutAttributeLeft;
+    } else if ([name isEqualToString:@"bottom"]) {
+        attribute = NSLayoutAttributeBottom;
+    } else if ([name isEqualToString:@"right"]) {
+        attribute = NSLayoutAttributeRight;
+    } else {
+        return nil;
+    }
+    
+    NSLayoutConstraint *constraint = [self constraintWithAttribute:attribute ofView:ownerView inParentView:ownerView];
+    if (constraint != nil) {
+        return constraint;
+    }
+    return [self constraintWithAttribute:attribute ofView:ownerView inParentView:ownerView.superview];
+}
+
+- (NSLayoutConstraint *)constraintWithAttribute:(NSLayoutAttribute)attribute ofView:(UIView *)ownerView inParentView:(UIView *)parentView {
+    for (NSLayoutConstraint *constraint in parentView.constraints) {
+        if ([NSStringFromClass(constraint.class) isEqualToString:@"NSContentSizeLayoutConstraint"]) {
+            // Ignores the system-autoresizing constraint
+            continue;
+        }
+        
+        if (constraint.firstItem == ownerView
+            && constraint.firstAttribute == attribute) {
+            return constraint;
+        }
+    }
+    
+    return nil;
+}
+
+@end
 
 @implementation UIView (PBLayoutConstraint)
 
@@ -209,6 +273,24 @@
     }
     
     return size;
+}
+
+#pragma mark - KVC
+
+static NSString *kFinderKey;
+
+- (PBLayoutConstraintFinder *)constraint {
+    if (self.constraints.count == 0) {
+        return nil;
+    }
+    
+    PBLayoutConstraintFinder *finder = objc_getAssociatedObject(self, &kFinderKey);
+    if (finder == nil) {
+        finder = [[PBLayoutConstraintFinder alloc] init];
+        finder.ownerView = self;
+        objc_setAssociatedObject(self, &kFinderKey, finder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return finder;
 }
 
 @end
