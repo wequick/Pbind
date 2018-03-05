@@ -103,6 +103,11 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         }
         
         [client _loadRequest:request notifys:NO complection:^(PBResponse *response) {
+            if (_owner.window == nil) {
+                NSLog(@"Pbind: load request complected, but the view is not active.");
+                return;
+            }
+            
             BOOL handledError = NO;
             if ([_owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [_owner view:_owner didFinishLoading:response handledError:&handledError];
