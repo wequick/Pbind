@@ -112,7 +112,12 @@ static NSMutableDictionary *kActionClasses;
     if (self.disabled) {
         return NO;
     }
-    [self run:state];
+    
+    @try {
+        [self run:state];
+    } @catch (NSException *e) {
+        NSLog(@"Pbind: Failed to run action %@. (exception: %@)", self, e);
+    }
     return YES;
 }
 
