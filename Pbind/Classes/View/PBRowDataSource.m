@@ -28,6 +28,7 @@ NSNotificationName const PBRowDataDidChangeNotification = @"PBRowDataDidChangeNo
 typedef NS_ENUM(NSUInteger, PBRowInteractionType) {
     PBRowInteractionTypeInsert,
     PBRowInteractionTypeDelete,
+    PBRowInteractionTypeUpdate,
 };
 
 @implementation PBRowDataSource
@@ -574,6 +575,17 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
 }
 
+- (void)updateRowDataAtIndexPath:(NSIndexPath *)indexPath {
+    // Reload view
+    if ([NSThread isMainThread]) {
+        [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+        });
+    }
+}
+
 - (void)amimateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
     if ([self.owner isKindOfClass:[UITableView class]]) {
         UITableView *tableView = (id) self.owner;
@@ -583,6 +595,9 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                 break;
             case PBRowInteractionTypeInsert:
                 [tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case PBRowInteractionTypeUpdate:
+                [tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
                 break;
             default:
                 break;
@@ -597,6 +612,9 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                     break;
                 case PBRowInteractionTypeInsert:
                     [collectionView insertItemsAtIndexPaths:indexPaths];
+                    break;
+                case PBRowInteractionTypeUpdate:
+                    [collectionView reloadItemsAtIndexPaths:indexPaths];
                     break;
                 default:
                     break;
@@ -908,9 +926,11 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     cell.indexPath = indexPath;
     
     // Auto size
-    if ([item isAutoHeight]) {
+    if ([item isAutoWidth]) {
+        
+    } else if ([item isAutoHeight]) {
         CGFloat width = item.width;
-        if (width == -1) {
+        if (width == -2) {
             PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
             width = collectionView.bounds.size.width - section.inset.left - section.inset.right;
         }

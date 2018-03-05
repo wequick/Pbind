@@ -77,6 +77,7 @@
 
 - (void)addRowData:(id)data;
 - (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath;
+- (void)updateRowDataAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)addRowDatas:(NSArray *)datas;
 - (void)appendRowDatas:(NSArray *)datas;
