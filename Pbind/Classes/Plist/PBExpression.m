@@ -123,35 +123,44 @@ static NSString *kTemporaryKey;
             if (*p == '[' || *p == '{') {
                 return nil; // constant tag for subscript
             }
+            
+            if (*p == '\0') {
+                _flags.mapToContext = 1;
+                return self;
+            }
+            
             if (*p == '^') {
                 _flags.mapToActiveController = 1;
-                p++;
             } else if (*p == '>') {
                 _flags.mapToForm = 1;
-                p++;
             } else if (*p == '~') {
                 _flags.mapToTemporary = 1;
-                p++;
+            } else if (*p == '.') {
+                _flags.mapToContext = 1;
             } else {
-                if (*p == '.') {
-                    _flags.mapToContext = 1;
-                } else {
-                    p2 = temp = (char *)malloc(len - (p - str));
-                    while (*p != '\0' && *p != '.') {
-                        *p2++ = *p++;
-                    }
-                    if (*p != '.') {
-                        free(temp);
-                        return nil; // should format as '@xx.xx'
-                    }
-                    
-                    *p2 = '\0';
-                    _alias = [[NSString alloc] initWithUTF8String:temp];
-                    free(temp);
-                    _flags.mapToAliasView = 1;
+                p2 = temp = (char *)malloc(len - (p - str));
+                while (*p != '\0'
+                       && *p != '.'
+                       && ((*p >= 'a' && *p <= 'z')
+                           || (*p >= 'A' && *p <= 'Z')
+                           || (*p >= '0' && *p <= '9')
+                           || (*p == '_'))) {
+                    *p2++ = *p++;
                 }
-                p++;
+                if (*p != '.' && *p != '\0') {
+                    free(temp);
+                    return nil; // should format as '@xx.xx'
+                }
+                
+                *p2 = '\0';
+                _alias = [[NSString alloc] initWithUTF8String:temp];
+                free(temp);
+                _flags.mapToAliasView = 1;
+                if (*p == '\0') {
+                    return self;
+                }
             }
+            p++;
             break;
         case '$':
             p++;
@@ -398,17 +407,43 @@ static NSString *kTemporaryKey;
         }
         return [form inputErrorTips];
     } else if (_flags.mapToAliasView) {
-        UIView *rootView = [context supercontroller].view;
-        if (rootView == nil) {
-            rootView = context;
+        UIView *aliasView = [owner viewWithAlias:_alias];
+        if (aliasView != nil) {
+            return aliasView;
         }
         
-        UIView *taggedView = [rootView viewWithAlias:_alias];
-        return taggedView;
+        aliasView = [self _viewAliased:_alias inSuperviewWithoutSubview:owner];
+        if (aliasView != nil) {
+            return aliasView;
+        }
+        
+        UIView *rootView = [context supercontroller].view;
+        if (rootView != nil && ![aliasView isDescendantOfView:rootView]) {
+            return [rootView viewWithAlias:_alias];
+        }
     } else if (_flags.mapToContext) {
         return context;
     }
     return nil;
+}
+
+- (UIView *)_viewAliased:(NSString *)alias inSuperviewWithoutSubview:(UIView *)ignoringSubview {
+    UIView *superview = ignoringSubview.superview;
+    if (superview == nil) {
+        return nil;
+    }
+    
+    for (UIView *subview in superview.subviews) {
+        if (subview == ignoringSubview) {
+            continue;
+        }
+        
+        UIView *aliasView = [subview viewWithAlias:alias];
+        if (aliasView != nil) {
+            return aliasView;
+        }
+    }
+    return [self _viewAliased:alias inSuperviewWithoutSubview:superview];
 }
 
 - (PBForm *)_formOfView:(UIView *)view {
@@ -766,7 +801,7 @@ static NSString *kTemporaryKey;
 }
 
 - (void)unbind:(id)target forKeyPath:(NSString *)keyPath {
-    if (![_originalBindingOwner isEqual:target]) {
+    if (_originalBindingOwner != target && _bindingOwner != target) {
         return;
     }
     
