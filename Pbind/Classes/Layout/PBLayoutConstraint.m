@@ -57,6 +57,9 @@
 #pragma mark - PBLayoutConstraint
 
 @implementation PBLayoutConstraint
+{
+    NSString *_pbIdentifier; // For ease debugging
+}
 
 + (NSArray<__kindof NSLayoutConstraint *> *)constraintsWithVisualFormat:(NSString *)format options:(NSLayoutFormatOptions)opts metrics:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views {
     NSArray *constraints = [super constraintsWithVisualFormat:format options:opts metrics:metrics views:views];
@@ -541,16 +544,17 @@
 
 + (void)addConstraintWithExplicitFormat:(const char *)str metrics:(NSDictionary *)metrics views:(NSDictionary *)views forParentView:(UIView *)parentView {
     //
-    // firstItem.firstAttr = secondItem.secondAttr * multiplier + constant @ priority
+    // firstItem.firstAttr = secondItem.secondAttr * multiplier + constant @ priority | identifier
     //
     char *p = (char *) str;
     char *p2;
     NSString *viewName;
-    UIView *firstItem, *secondItem;
-    NSLayoutAttribute firstAttr, secondAttr;
+    UIView *firstItem, *secondItem = nil;
+    NSLayoutAttribute firstAttr, secondAttr = NSLayoutAttributeNotAnAttribute;
     CGFloat multiplier = 0, constant = 0;
     NSLayoutRelation relation;
     UILayoutPriority priority = 0;
+    NSString *identifier = nil;
     BOOL failed = NO;
     
     // firstItem
@@ -584,6 +588,26 @@
         return;
     }
     
+    BOOL isConstant = NO;
+    if (*p == '-') {
+        isConstant = YES;
+        if (*p < '0' || *p > '9') {
+            [self printInvalidValueError:@"constant" mustbe:@"a float" onFormat:str pos:p];
+            return;
+        }
+        p++;
+    } else if (*p >= '0' && *p <= '9') {
+        isConstant = YES;
+    }
+    if (isConstant) {
+        constant = strtof(p, &p2);
+        if (p == p2) {
+            [self printInvalidValueError:@"multiplier" mustbe:@"a float" onFormat:str pos:p];
+            return;
+        }
+        goto parse_tail;
+    }
+    
     // secondItem
     viewName = [self nameByReadingFormat:&p];
     if (viewName == nil) {
@@ -597,24 +621,26 @@
     }
     
     // secondAttr
-    if (*p != '.') {
-        [self printMissingAttributePrefixErrorOnFormat:str pos:p];
-        return;
-    }
-    p++;
-    secondAttr = [self attributeByReadingFormat:&p failed:&failed];
-    if (failed) {
-        [self printUnknownAttributeErrorOnFormat:str pos:p];
-        return;
+    secondAttr = firstAttr;
+    if (*p == '.') {
+        p++;
+        secondAttr = [self attributeByReadingFormat:&p failed:&failed];
+        if (failed) {
+            [self printUnknownAttributeErrorOnFormat:str pos:p];
+            return;
+        }
+        if (*p == '\0' || *p == '|') {
+            goto parse_tail;
+        }
+        
+        if (*p != '*' && *p != '+' && *p != '-' && *p != '@') {
+            [self printInvalidValueError:@"operator" mustbe:@"* + - or @" onFormat:str pos:p];
+            return;
+        }
     }
     
-    if (*p != '\0' && *p != '*' && *p != '+' && *p != '-' && *p != '@') {
-        [self printInvalidValueError:@"operator" mustbe:@"* + - or @" onFormat:str pos:p];
-        return;
-    }
-    
+    // multiplier
     if (*p == '*') {
-        // multiplier
         p++;
         multiplier = strtof(p, &p2);
         if (p == p2 || multiplier <= 0) {
@@ -622,22 +648,28 @@
             return;
         }
         p = p2;
-        if (*p != '\0' && *p != '+' && *p != '-' && *p != '@') {
+        if (*p == '\0' || *p == '|') {
+            goto parse_tail;
+        }
+        if (*p != '+' && *p != '-' && *p != '@') {
             [self printInvalidValueError:@"operator" mustbe:@"+|-constant or @priority after multiplier" onFormat:str pos:p];
             return;
         }
     }
+    // constant
     if (*p == '+' || *p == '-') {
-        // constant
         BOOL negative = *p == '-';
         p++;
         constant = strtof(p, &p2);
         if (p == p2) {
-            [self printInvalidValueError:@"multiplier" mustbe:@"a float" onFormat:str pos:p];
+            [self printInvalidValueError:@"constant" mustbe:@"a float" onFormat:str pos:p];
             return;
         }
         p = p2;
-        if (*p != '\0' && *p != '+' && *p != '@') {
+        if (*p == '\0' || *p == '|') {
+            goto parse_tail;
+        }
+        if (*p != '+' && *p != '@') {
             [self printInvalidValueError:@"operator" mustbe:@"@priority after constant" onFormat:str pos:p];
             return;
         }
@@ -646,8 +678,8 @@
             constant = -constant;
         }
     }
+    // priority
     if (*p == '@') {
-        // priority
         p++;
         priority = strtol(p, &p2, priority);
         if (p == p2) {
@@ -657,6 +689,15 @@
         p = p2;
     }
     
+parse_tail:
+    if (*p == '|') {
+        p++;
+        identifier = [self nameByReadingFormat:&p];
+        if (identifier == nil) {
+            [self printErrorWithTips:@"Excepted an alias here." onFormat:str pos:p];
+            return;
+        }
+    }
     if (*p != '\0') {
         [self printRedundantErrorOnFormat:str pos:p];
         return;
@@ -668,10 +709,23 @@
     if (priority == 0) {
         priority = UILayoutPriorityRequired;
     }
-    NSLayoutConstraint *constraint = [self constraintWithItem:firstItem attribute:firstAttr relatedBy:relation toItem:secondItem attribute:secondAttr multiplier:multiplier constant:constant];
+    NSString *originalFormat = [NSString stringWithFormat:@"%s", str];
+    PBLayoutConstraint *constraint = [self constraintWithItem:firstItem attribute:firstAttr relatedBy:relation toItem:secondItem attribute:secondAttr multiplier:multiplier constant:constant];
     constraint.priority = priority;
-    constraint.identifier = [NSString stringWithFormat:@"%s", str];
+    if (identifier) {
+        constraint.identifier = identifier;
+        constraint->_pbIdentifier = originalFormat;
+    } else {
+        constraint.identifier = originalFormat;
+    }
     [parentView addConstraint:constraint];
+}
+
+- (NSString *)description {
+    if (_pbIdentifier != nil) {
+        return [NSString stringWithFormat:@"%@ (%@)", [super description], _pbIdentifier];
+    }
+    return [super description];
 }
 
 #pragma mark - Partial parsing
