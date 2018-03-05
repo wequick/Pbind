@@ -127,4 +127,9 @@
  */
 @property (nonatomic, assign) NSUInteger numberOfColumns;
 
+/**
+ The collection view cell alignment. Default is `:center`.
+ */
+@property (nonatomic, assign) NSTextAlignment alignment;
+
 @end

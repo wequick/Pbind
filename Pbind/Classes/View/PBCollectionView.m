@@ -15,10 +15,15 @@
 #import "PBSection.h"
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
+#import "PBCollectionViewFlowLayout.h"
+
+@interface PBCollectionView () <PBCollectionViewFlowLayoutDelegate>
+
+@end
 
 @implementation PBCollectionView
 {
-    UICollectionViewFlowLayout *_flowLayout;
+    PBCollectionViewFlowLayout *_flowLayout;
 }
 
 @synthesize listKey, page, pagingParams, refresh, more;
@@ -29,12 +34,13 @@
 @synthesize resizingDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    _flowLayout = [[UICollectionViewFlowLayout alloc] init];
+    _flowLayout = [[PBCollectionViewFlowLayout alloc] init];
     _flowLayout.itemSize = CGSizeMake(44, 44);
     _flowLayout.minimumInteritemSpacing = 0;
     _flowLayout.minimumLineSpacing = 0;
     if (self = [super initWithFrame:frame collectionViewLayout:_flowLayout]) {
         [self config];
+        _flowLayout.layoutDelegate = self;
     }
     return self;
 }
@@ -325,6 +331,17 @@
     _flowLayout.minimumLineSpacing = spacingSize.height;
     _flowLayout.minimumInteritemSpacing = spacingSize.width;
 //    [rowDelegate setSpacingSize:spacingSize];
+}
+
+#pragma mark - PBCollectionViewFlowLayoutDelegate
+
+- (NSTextAlignment)collectionViewFlowLayout:(PBCollectionViewFlowLayout *)layout alignmentForSectionAtIndex:(NSUInteger)sectionIndex {
+    if (rowDataSource == nil) {
+        return NSTextAlignmentCenter;
+    }
+    
+    PBSectionMapper *section = rowDataSource.sections[sectionIndex];
+    return section.alignment;
 }
 
 @end

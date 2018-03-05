@@ -23,6 +23,7 @@
 
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
     self.inner = CGSizeMake(-1, -1);
+    _alignment = NSTextAlignmentCenter;
     [super setPropertiesWithDictionary:dictionary];
 }
 
