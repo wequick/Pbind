@@ -130,16 +130,40 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
                 }
             }
         }
+    } else if ([type isEqualToString:@"change"]) {
+        UIControl *control = [self pb_valueControl];
+        if (control == nil && [self isKindOfClass:[UIControl class]]) {
+            control = self;
+        }
+        if (control != nil) {
+            if (initialized) {
+                [control addTarget:self action:@selector(_pb_internalValueChanged:) forControlEvents:UIControlEventValueChanged];
+            } else if (finalized) {
+                [control removeTarget:self action:@selector(_pb_internalValueChanged:) forControlEvents:UIControlEventValueChanged];
+            }
+        }
     }
 }
 
+- (UIControl *)pb_valueControl {
+    return nil;
+}
+
+- (void)_pb_internalValueChanged:(id)sender {
+    [self _pb_internalTriggerEvent:@"change" forSender:sender];
+}
+
 - (void)_pb_internalHandleClick:(id)sender {
+    [self _pb_internalTriggerEvent:@"click" forSender:sender];
+}
+
+- (void)_pb_internalTriggerEvent:(NSString *)eventName forSender:(id)sender {
     NSMutableDictionary *actionEvents = self.pb_actionEvents;
     if (actionEvents == nil) {
         return;
     }
     
-    NSArray *events = [actionEvents objectForKey:@"click"];
+    NSArray *events = [actionEvents objectForKey:eventName];
     if (events == nil) {
         return;
     }

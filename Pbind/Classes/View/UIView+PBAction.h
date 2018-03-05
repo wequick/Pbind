@@ -15,4 +15,6 @@
 
 - (void)pb_unbindActionMappers;
 
+@property (nonatomic, strong, readonly) UIControl *pb_valueControl; // Used to trigger !change event, default is nil.
+
 @end
