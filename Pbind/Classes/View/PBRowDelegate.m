@@ -869,15 +869,20 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     } else {
         itemHeight = [item heightForData:data withRowDataSource:self.dataSource indexPath:indexPath];
     }
-    if (itemWidth == -1) {
-        itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right;
+    
+    if (itemWidth == -2) {
+        itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right; // fill
+    } else if (itemWidth == -1) {
+        itemWidth = 1.f; // auto resizing
     }
     
-    if (itemHeight == -1) {
-        // Auto height
-        itemWidth = 1.f; // the width is ignored here, after the cell created it will be set as a width  constraint.
-        itemHeight = 1.f;//collectionView.bounds.size.height;
+    CGFloat maxHeight = collectionView.bounds.size.height - section.inset.top - section.inset.bottom;
+    if (itemHeight == -2) {
+        itemHeight = maxHeight; // fill
+    } else if (itemHeight == -1) {
+        itemHeight = 1.f; // auto resizing
     }
+//    itemHeight = MIN(maxHeight, itemHeight);
     return CGSizeMake(itemWidth, itemHeight);
 }
 
