@@ -16,4 +16,8 @@
  */
 @interface PBAlertAction : PBAction
 
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *message;
+@property (nonatomic, strong) NSArray<NSString *> *buttons;
+
 @end

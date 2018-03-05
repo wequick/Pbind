@@ -21,9 +21,9 @@
         return;
     }
     
-    NSString *title = self.params[@"title"];
-    NSString *message = self.params[@"message"];
-    NSArray *buttons = self.params[@"buttons"];
+    NSString *title = self.title ?: self.params[@"title"];
+    NSString *message = self.message ?: self.params[@"message"];
+    NSArray *buttons = self.buttons ?: self.params[@"buttons"];
     if (title == nil && message == nil && buttons == nil) {
         // UIAlertController must have a title, a message or an action to display
         return;
