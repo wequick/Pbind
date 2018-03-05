@@ -191,7 +191,9 @@
 + (void)setValue:(id)value forKeyPath:(NSString *)keyPath toObject:(id)object failure:(void (^)(void))failure
 {
     @try {
-        if ([object respondsToSelector:@selector(setObject:forKey:)]) {
+        if (value == nil && [object respondsToSelector:@selector(removeObjectForKey:)]) {
+            [object removeObjectForKey:keyPath];
+        } else if ([object respondsToSelector:@selector(setObject:forKey:)]) {
             [object setObject:value forKey:keyPath];
         } else {
             [object setValue:value forKeyPath:keyPath];
