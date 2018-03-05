@@ -107,6 +107,9 @@ if (strcmp(type, @encode(BOOL)) == 0) { \
             void *ret = nil;
             [invocation getReturnValue:&ret];
             state.data = (__bridge id)ret;
+            if ([self hasNext:@"done"]) {
+                [self dispatchNext:@"done"];
+            }
             return;
         }
         
@@ -114,6 +117,9 @@ if (strcmp(type, @encode(BOOL)) == 0) { \
             [invocation getReturnValue:&ret];
             state.data = [NSValue value:&ret withObjCType:type];
         })
+        if ([self hasNext:@"done"]) {
+            [self dispatchNext:@"done"];
+        }
     } @catch (NSException *exception) {
         NSLog(@"Pbind: Failed to trigger action '%@' for target <%@>. (error: %@)", self.name, [[self.target class] description], exception);
     }
