@@ -24,6 +24,7 @@
 @implementation PBCollectionView
 {
     PBCollectionViewFlowLayout *_flowLayout;
+    UIControl *_valueControl;
 }
 
 @synthesize listKey, page, pagingParams, refresh, more;
@@ -72,6 +73,7 @@
     
     // Default settings
     _spacingSize = CGSizeMake(2, 2);
+    _valueControl = [[UIControl alloc] init];
 }
 
 - (void)initDataSource {
@@ -342,6 +344,12 @@
     
     PBSectionMapper *section = rowDataSource.sections[sectionIndex];
     return section.alignment;
+}
+
+#pragma mark - Value changed event
+
+- (UIControl *)pb_valueControl {
+    return _valueControl;
 }
 
 @end

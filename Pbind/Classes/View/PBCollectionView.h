@@ -96,4 +96,9 @@
  */
 @property (nonatomic, assign, getter=isEditing) BOOL editing;
 
+/**
+ The multi-selected datas. Available if `allowsMultipleSelection` is YES.
+ */
+@property (nonatomic, strong) NSArray<id> *selectedDatas;
+
 @end

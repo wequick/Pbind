@@ -551,10 +551,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Reload view
     if ([NSThread isMainThread]) {
-        [self amimateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
+        [self animateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self amimateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
+            [self animateRowViewAtIndexPaths:indexPaths interactionType:PBRowInteractionTypeInsert];
         });
     }
 }
@@ -567,10 +567,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     
     // Reload view
     if ([NSThread isMainThread]) {
-        [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
+        [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
+            [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeDelete];
         });
     }
 }
@@ -578,15 +578,22 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 - (void)updateRowDataAtIndexPath:(NSIndexPath *)indexPath {
     // Reload view
     if ([NSThread isMainThread]) {
-        [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+        [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self amimateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+            [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
         });
     }
 }
 
-- (void)amimateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
+- (void)updateRowDataAtSection:(NSInteger)section {
+    if (section >= self.sections.count) {
+        return;
+    }
+    [self animateRowViewAtSections:[NSIndexSet indexSetWithIndex:section] interactionType:PBRowInteractionTypeUpdate];
+}
+
+- (void)animateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
     if ([self.owner isKindOfClass:[UITableView class]]) {
         UITableView *tableView = (id) self.owner;
         switch (type) {
@@ -623,6 +630,45 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
             if (type == PBRowInteractionTypeInsert) {
                 [collectionView scrollToItemAtIndexPath:indexPaths[0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
             }
+            [self notifyDataChanged];
+        }];
+    }
+}
+
+- (void)animateRowViewAtSections:(NSIndexSet *)sectionIndexes interactionType:(PBRowInteractionType)type {
+    if ([self.owner isKindOfClass:[UITableView class]]) {
+        UITableView *tableView = (id) self.owner;
+        switch (type) {
+            case PBRowInteractionTypeDelete:
+                [tableView deleteSections:sectionIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case PBRowInteractionTypeInsert:
+                [tableView insertSections:sectionIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case PBRowInteractionTypeUpdate:
+                [tableView reloadSections:sectionIndexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            default:
+                break;
+        }
+        [self notifyDataChangedWithDelay];
+    } else {
+        UICollectionView *collectionView = (id) self.owner;
+        [collectionView performBatchUpdates:^{
+            switch (type) {
+                case PBRowInteractionTypeDelete:
+                    [collectionView deleteSections:sectionIndexes];
+                    break;
+                case PBRowInteractionTypeInsert:
+                    [collectionView insertSections:sectionIndexes];
+                    break;
+                case PBRowInteractionTypeUpdate:
+                    [collectionView reloadSections:sectionIndexes];
+                    break;
+                default:
+                    break;
+            }
+        } completion:^(BOOL finished) {
             [self notifyDataChanged];
         }];
     }

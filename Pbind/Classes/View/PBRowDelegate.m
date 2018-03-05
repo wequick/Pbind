@@ -11,6 +11,7 @@
 
 #import "PBRowDelegate.h"
 #import "UIView+Pbind.h"
+#import "UIView+PBAction.h"
 #import "PBSection.h"
 #import "PBActionStore.h"
 #import "PBCollectionView.h"
@@ -767,8 +768,17 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         [self dispatchAction:row.selectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
-    collectionView.selectedData = [self.dataSource dataAtIndexPath:indexPath];
+    id selectedData = [self.dataSource dataAtIndexPath:indexPath];
+    if (collectionView.allowsMultipleSelection) {
+        NSMutableArray *datas = [NSMutableArray arrayWithArray:collectionView.selectedDatas];
+        if (![datas containsObject:selectedData]) {
+            [datas addObject:selectedData];
+        }
+        collectionView.selectedDatas = datas;
+    }
+    collectionView.selectedData = selectedData;
     collectionView.selectedIndexPath = indexPath;
+    [collectionView.pb_valueControl sendActionsForControlEvents:UIControlEventValueChanged];
     
     if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver collectionView:collectionView didSelectItemAtIndexPath:indexPath];
@@ -798,8 +808,17 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         [self dispatchAction:row.deselectActionMapper forCell:cell atIndexPath:indexPath];
     }
     
+    id selectedData = [self.dataSource dataAtIndexPath:indexPath];
+    if (collectionView.allowsMultipleSelection) {
+        NSMutableArray *datas = [NSMutableArray arrayWithArray:collectionView.selectedDatas];
+        [datas removeObject:selectedData];
+        collectionView.selectedDatas = datas;
+    }
+    
     collectionView.deselectedData = [self.dataSource dataAtIndexPath:indexPath];
     collectionView.selectedIndexPath = nil;
+    
+    [collectionView.pb_valueControl sendActionsForControlEvents:UIControlEventValueChanged];
     
     if ([self.receiver respondsToSelector:_cmd]) {
         [self.receiver collectionView:collectionView didDeselectItemAtIndexPath:indexPath];
