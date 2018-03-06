@@ -36,6 +36,10 @@
 }
 
 - (NSInteger)rowCount {
+    if (self.hidden) {
+        return 0;
+    }
+    
     NSInteger rowCount = 0;
     if (self.row != nil) {
         rowCount = [self.data count];
