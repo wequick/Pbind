@@ -17,7 +17,9 @@
 
 @implementation PBRowAction
 
-@pbactions(@"addRow", @"deleteRow", @"updateRow", @"updateSection")
+@pbactions(@"addRow", @"deleteRow", @"updateRow",
+           @"updateSection", @"updateSections",
+           @"reloadData")
 - (void)run:(PBActionState *)state {
     if (state.context == nil) {
         return;
@@ -79,6 +81,10 @@
             }
         }
         [mappingView.rowDataSource updateRowDataAtSection:section];
+    } else if ([self.type isEqualToString:@"updateSections"]) {
+        [mappingView.rowDataSource updateRowDataAtAllSections];
+    } else if ([self.type isEqualToString:@"realoadData"]) {
+        [mappingView.rowDataSource reloadData];
     }
     
     if ([self hasNext:@"done"]) {

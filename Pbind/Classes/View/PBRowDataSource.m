@@ -593,6 +593,22 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     [self animateRowViewAtSections:[NSIndexSet indexSetWithIndex:section] interactionType:PBRowInteractionTypeUpdate];
 }
 
+- (void)updateRowDataAtAllSections {
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+    for (NSUInteger index = 0; index < self.sections.count; index++) {
+        [indexes addIndex:index];
+    }
+    [self animateRowViewAtSections:indexes interactionType:PBRowInteractionTypeUpdate];
+}
+
+- (void)reloadData {
+    if ([self.owner isKindOfClass:[UITableView class]]
+        || [self.owner isKindOfClass:[UICollectionView class]]) {
+        [(id)self.owner setDataUpdated:YES];
+        [(id)self.owner reloadData];
+    }
+}
+
 - (void)animateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
     if ([self.owner isKindOfClass:[UITableView class]]) {
         UITableView *tableView = (id) self.owner;
