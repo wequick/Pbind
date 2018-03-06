@@ -113,12 +113,22 @@ static NSMutableDictionary *kActionClasses;
         return NO;
     }
     
+    if (self.delay > 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self safelyRun:state];
+        });
+    } else {
+        [self safelyRun:state];
+    }
+    return YES;
+}
+
+- (void)safelyRun:(PBActionState *)state {
     @try {
         [self run:state];
     } @catch (NSException *e) {
         NSLog(@"Pbind: Failed to run action %@. (exception: %@)", self, e);
     }
-    return YES;
 }
 
 - (void)run:(PBActionState *)state {

@@ -63,6 +63,9 @@
 /** The parameters of the action */
 @property (nonatomic, strong) NSDictionary *params;
 
+/** Trigger the action after a delay time */
+@property (nonatomic, assign) CGFloat delay;
+
 /** Whether doesn't allow the action to be triggered, default is NO */
 @property (nonatomic, assign) BOOL disabled;
 
