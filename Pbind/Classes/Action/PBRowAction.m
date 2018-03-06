@@ -83,7 +83,7 @@
         [mappingView.rowDataSource updateRowDataAtSection:section];
     } else if ([self.type isEqualToString:@"updateSections"]) {
         [mappingView.rowDataSource updateRowDataAtAllSections];
-    } else if ([self.type isEqualToString:@"realoadData"]) {
+    } else if ([self.type isEqualToString:@"reloadData"]) {
         [mappingView.rowDataSource reloadData];
     }
     
