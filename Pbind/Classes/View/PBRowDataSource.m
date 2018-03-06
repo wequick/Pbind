@@ -627,9 +627,6 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                     break;
             }
         } completion:^(BOOL finished) {
-            if (type == PBRowInteractionTypeInsert) {
-                [collectionView scrollToItemAtIndexPath:indexPaths[0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
-            }
             [self notifyDataChanged];
         }];
     }
