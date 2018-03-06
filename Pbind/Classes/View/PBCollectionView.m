@@ -305,16 +305,8 @@
     }
     
     _editing = editing;
-    
-    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
-    for (NSUInteger index = 0; index < [self numberOfSections]; index++) {
-        [indexes addIndex:index];
-    }
-    [UIView animateWithDuration:0 animations:^{
-        [self performBatchUpdates:^{
-            [super reloadSections:indexes];
-        } completion:nil];
-    }];
+    [self setDataUpdated:YES];
+    [self reloadData];
 }
 
 #pragma mark - PBRowDelegate
