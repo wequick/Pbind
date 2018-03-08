@@ -17,7 +17,7 @@
 
 @implementation PBRowAction
 
-@pbactions(@"addRow", @"deleteRow", @"updateRow",
+@pbactions(@"addRow", @"appendRow", @"deleteRow", @"updateRow",
            @"updateSection", @"updateSections", @"deselectSections",
            @"reloadData")
 - (void)run:(PBActionState *)state {
@@ -47,6 +47,13 @@
         }
         
         [mappingView.rowDataSource addRowData:state.data];
+    } else if ([self.type isEqualToString:@"appendRow"]) {
+        if (state.data == nil) {
+            return;
+        }
+        
+        NSUInteger section = [self currentSectionForState:state ownerView:mappingView];
+        [mappingView.rowDataSource appendRowDatas:@[state.data] atSection:section];
     } else if ([self.type isEqualToString:@"deleteRow"]) {
         if (state.status != PBResponseStatusNoContent) {
             return;
@@ -70,16 +77,7 @@
         }
         [mappingView.rowDataSource updateRowDataAtIndexPath:indexPath];
     } else if ([self.type isEqualToString:@"updateSection"]) {
-        NSInteger section = 0;
-        NSNumber *sectionValue = self.params[@"index"];
-        if (sectionValue != nil) {
-            section = [sectionValue integerValue];
-        } else {
-            NSIndexPath *indexPath = [self indexPathForSubview:state.context inOwnerView:mappingView];
-            if (indexPath != nil) {
-                section = indexPath.section;
-            }
-        }
+        NSUInteger section = [self currentSectionForState:state ownerView:mappingView];
         [mappingView.rowDataSource updateRowDataAtSection:section];
     } else if ([self.type isEqualToString:@"updateSections"]) {
         [mappingView.rowDataSource updateRowDataAtAllSections];
@@ -95,6 +93,20 @@
             [self dispatchNext:@"done"];
         });
     }
+}
+
+- (NSUInteger)currentSectionForState:(PBActionState *)state ownerView:(UIView *)ownerView {
+    NSInteger section = 0;
+    NSNumber *sectionValue = self.params[@"index"];
+    if (sectionValue != nil) {
+        section = [sectionValue integerValue];
+    } else {
+        NSIndexPath *indexPath = [self indexPathForSubview:state.context inOwnerView:ownerView];
+        if (indexPath != nil) {
+            section = indexPath.section;
+        }
+    }
+    return section;
 }
 
 - (UIView<PBRowMapping> *)mappableParentViewOfSubview:(UIView *)view {

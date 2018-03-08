@@ -530,6 +530,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (void)appendRowDatas:(NSArray *)datas {
+    [self appendRowDatas:datas atSection:0];
+}
+
+- (void)appendRowDatas:(NSArray *)datas atSection:(NSInteger)section {
     if (datas == nil) {
         return;
     }
@@ -538,7 +542,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     NSUInteger count = datas.count;
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:count];
     for (NSInteger index = 0; index < count; index++) {
-        [indexPaths addObject:[NSIndexPath indexPathForRow:index + orgCount inSection:0]];
+        [indexPaths addObject:[NSIndexPath indexPathForRow:index + orgCount inSection:section]];
     }
     [self insertRowDatas:datas atIndexPaths:indexPaths];
 }
