@@ -85,6 +85,7 @@
 - (void)appendRowDatas:(NSArray *)datas;
 
 - (void)reloadData;
+- (void)deselectSections;
 
 @end
 

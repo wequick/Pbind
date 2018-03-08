@@ -609,6 +609,19 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
 }
 
+- (void)deselectSections {
+    if ([self.owner isKindOfClass:[PBCollectionView class]]) {
+        PBCollectionView *collectionView = (id) self.owner;
+        NSArray<NSIndexPath *> *indexPaths = collectionView.indexPathsForSelectedItems;
+        for (NSIndexPath *indexPath in indexPaths) {
+            [collectionView deselectItemAtIndexPath:indexPath animated:NO];
+        }
+        collectionView.selectedData = nil;
+        collectionView.selectedDatas = nil;
+        collectionView.selectedIndexPath = nil;
+    }
+}
+
 - (void)animateRowViewAtIndexPaths:(NSArray *)indexPaths interactionType:(PBRowInteractionType)type {
     if ([self.owner isKindOfClass:[UITableView class]]) {
         UITableView *tableView = (id) self.owner;
