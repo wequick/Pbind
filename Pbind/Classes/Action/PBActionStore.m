@@ -65,13 +65,9 @@ NSNotificationName const PBActionStoreDidDispatchActionNotification = @"PBAction
     self.state.data = data;
     action.store = self;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreWillDispatchActionNotification object:action];
-    
     if (![action _internalRun:self.state]) {
         return;
     }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreDidDispatchActionNotification object:action];
 }
 
 @end

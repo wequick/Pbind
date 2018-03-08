@@ -105,6 +105,8 @@ static NSMutableDictionary *kActionClasses;
 #pragma mark - Default delegate
 
 - (BOOL)_internalRun:(PBActionState *)state {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreWillDispatchActionNotification object:self];
+    
     if (self.mapper) {
         [self.mapper mapPropertiesToTarget:self withData:state.data owner:state.sender context:state.context];
     }
@@ -126,6 +128,7 @@ static NSMutableDictionary *kActionClasses;
 - (void)safelyRun:(PBActionState *)state {
     @try {
         [self run:state];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PBActionStoreDidDispatchActionNotification object:self];
     } @catch (NSException *e) {
         NSLog(@"Pbind: Failed to run action %@. (exception: %@)", self, e);
     }
