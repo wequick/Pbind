@@ -198,6 +198,24 @@
                         // self.right = parent.right * k + b
                         insets.right = parentInsets.right * constraint.multiplier + constraint.constant;
                     }
+                } else if (constraint.firstAttribute == NSLayoutAttributeLeading) {
+                    // TODO: Resolve the leading to left or right by language.
+                    if (constraint.secondAttribute == NSLayoutAttributeLeading) {
+                        // self.leading = parent.leading * k + b
+                        insets.left = parentInsets.left * constraint.multiplier + constraint.constant;
+                    } else if (constraint.secondAttribute == NSLayoutAttributeTrailing) {
+                        // self.leading = parent.trailing * k + b
+                        insets.bottom = parentInsets.bottom * constraint.multiplier + constraint.constant;
+                    }
+                } else if (constraint.firstAttribute == NSLayoutAttributeTrailing) {
+                    // TODO: Resolve the leading to left or right by language.
+                    if (constraint.secondAttribute == NSLayoutAttributeLeading) {
+                        // self.right = parent.left * k + b
+                        insets.right = parentInsets.left * constraint.multiplier + constraint.constant;
+                    } else if (constraint.secondAttribute == NSLayoutAttributeTrailing) {
+                        // self.right = parent.right * k + b
+                        insets.right = parentInsets.right * constraint.multiplier + constraint.constant;
+                    }
                 }
             } else if (constraint.firstItem == parent && constraint.secondItem == self) {
                 if (constraint.firstAttribute == NSLayoutAttributeTop) {
@@ -229,6 +247,24 @@
                         // parent.right = self.left * k + b
                         insets.left = (parentInsets.right - constraint.constant) / constraint.multiplier;
                     } else if (constraint.secondAttribute == NSLayoutAttributeRight) {
+                        // parent.right = self.right * k + b
+                        insets.right = (parentInsets.right - constraint.constant) / constraint.multiplier;
+                    }
+                } else if (constraint.firstAttribute == NSLayoutAttributeLeading) {
+                    // TODO: Resolve the leading to left or right by language.
+                    if (constraint.secondAttribute == NSLayoutAttributeLeading) {
+                        // parent.left = self.left * k + b
+                        insets.left = (parentInsets.left - constraint.constant) / constraint.multiplier;
+                    } else if (constraint.secondAttribute == NSLayoutAttributeTrailing) {
+                        // parent.left = self.right * k + b
+                        insets.right = (parentInsets.left - constraint.constant) / constraint.multiplier;
+                    }
+                } else if (constraint.firstAttribute == NSLayoutAttributeTrailing) {
+                    // TODO: Resolve the leading to left or right by language.
+                    if (constraint.secondAttribute == NSLayoutAttributeLeading) {
+                        // parent.right = self.left * k + b
+                        insets.left = (parentInsets.right - constraint.constant) / constraint.multiplier;
+                    } else if (constraint.secondAttribute == NSLayoutAttributeTrailing) {
                         // parent.right = self.right * k + b
                         insets.right = (parentInsets.right - constraint.constant) / constraint.multiplier;
                     }
