@@ -85,6 +85,7 @@ FOUNDATION_EXPORT const unsigned char PbindVersionString[];
 #import "PBMessageInterceptor.h"
 #import "PBMutableExpression.h"
 #import "PBStringFormatter.h"
+#import "UIViewController+PBExpression.h"
 
 #pragma mark - Utils
 ///=============================================================================
