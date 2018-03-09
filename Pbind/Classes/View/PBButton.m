@@ -77,6 +77,9 @@
         [super setBackgroundColor:_backgroundColor];
     } else {
         [super setBackgroundColor:self.disabledBackgroundColor];
+        if (self.checkable && self.checked) {
+            self.checked = NO;
+        }
     }
 }
 

@@ -711,6 +711,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (void)notifyDataChanged {
+    [self.owner rowDataSourceDidChange];
     [[NSNotificationCenter defaultCenter] postNotificationName:PBRowDataDidChangeNotification object:self];
 }
 

@@ -54,4 +54,9 @@
  */
 @property (nonatomic, strong) NSMutableArray *registeredSectionIdentifiers;
 
+/** The data count */
+@property (nonatomic, assign) NSUInteger dataCount;
+
+- (void)rowDataSourceDidChange;
+
 @end

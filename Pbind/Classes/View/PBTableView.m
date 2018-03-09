@@ -28,7 +28,7 @@
 @implementation PBTableView
 
 @synthesize listKey, page, pagingParams, refresh, more;
-@synthesize row, rows, section, sections, rowDataSource, rowDelegate;
+@synthesize row, rows, section, sections, rowDataSource, rowDelegate, dataCount;
 @synthesize selectedIndexPath, editingIndexPath;
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize registeredCellIdentifiers, registeredSectionIdentifiers;
@@ -329,6 +329,21 @@
         request.params = params;
     }
     return YES;
+}
+
+#pragma mark - RowMapping
+
+- (void)setData:(id)data {
+    [super setData:data];
+    if ([data isKindOfClass:[NSArray class]]) {
+        self.dataCount = [data count];
+    }
+}
+
+- (void)rowDataSourceDidChange {
+    if ([self.data isKindOfClass:[NSArray class]]) {
+        self.dataCount = [self.data count];
+    }
 }
 
 @end
