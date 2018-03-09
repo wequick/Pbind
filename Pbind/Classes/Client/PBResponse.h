@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "_PBRequest.h"
 
 typedef enum : NSUInteger {
     PBResponseStatusOK = 200, // GET|POST done
@@ -39,5 +40,8 @@ typedef enum : NSUInteger {
 
 /** The user info passed from PBRequest */
 @property (nonatomic, strong) NSDictionary *userInfo;
+
+/** The request */
+@property (nonatomic, strong) PBRequest *request;
 
 @end

@@ -150,6 +150,7 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
             cacheData = [self cacheDataForKey:cacheKey];
             if (cacheData != nil) {
                 PBResponse *response = [[PBResponse alloc] init];
+                response.request = request;
                 response.data = cacheData;
                 response = [self transformingResponse:response];
                 if (_canceled) {
@@ -176,6 +177,7 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
     // Load request
     [self loadRequest:aRequest success:^(id responseData, PBResponseStatus status) {
         PBResponse *response = [[PBResponse alloc] init];
+        response.request = _request;
         response.data = responseData;
         response.status = status;
         response =  [self transformingResponse:response withRequest:request];
@@ -199,6 +201,7 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
         }
     } failure:^(NSError *error) {
         PBResponse *response = [[PBResponse alloc] init];
+        response.request = _request;
         response.error = error;
         response = [self transformingResponse:response];
         if (_canceled) {
