@@ -151,7 +151,15 @@
  @param clazz the searching class
  @return the super view with the class
  */
-- (id)superviewWithClass:(Class)clazz;
+- (UIView *)superviewWithClass:(Class)clazz;
+
+/**
+ Check if self is or find a super view with the specify class
+ 
+ @param clazz the searching class
+ @return self or the super view with the class
+ */
+- (UIView *)selfOrSuperviewWithClass:(Class)clazz;
 
 /**
  Layout the subviews with plist

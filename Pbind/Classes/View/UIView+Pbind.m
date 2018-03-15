@@ -698,9 +698,15 @@
     return view.data;
 }
 
-- (id)superviewWithClass:(Class)clazz
+- (UIView *)superviewWithClass:(Class)clazz containsSelf:(BOOL)contanisSelf
 {
-    id view = [self superview];
+    if (contanisSelf) {
+        if ([self isKindOfClass:clazz]) {
+            return self;
+        }
+    }
+    
+    UIView * view = [self superview];
     while (![view isKindOfClass:clazz]) {
         view = [view superview];
         if (view == nil) {
@@ -708,6 +714,16 @@
         }
     }
     return view;
+}
+
+- (UIView *)superviewWithClass:(Class)clazz
+{
+    return [self superviewWithClass:clazz containsSelf:NO];
+}
+
+- (UIView *)selfOrSuperviewWithClass:(Class)clazz
+{
+    return [self superviewWithClass:clazz containsSelf:YES];
 }
 
 - (UIView *)viewWithAlias:(NSString *)alias

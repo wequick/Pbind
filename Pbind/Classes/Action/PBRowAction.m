@@ -123,13 +123,13 @@
 
 - (NSIndexPath *)indexPathForSubview:(UIView *)subview inOwnerView:(UIView *)ownerView {
     if ([ownerView isKindOfClass:[UICollectionView class]]) {
-        UICollectionViewCell *cell = [subview superviewWithClass:[UICollectionViewCell class]];
+        UICollectionViewCell *cell = [subview selfOrSuperviewWithClass:[UICollectionViewCell class]];
         if (cell == nil) {
             return nil;
         }
         return [(UICollectionView *)ownerView indexPathForCell:cell];
     } else if ([ownerView isKindOfClass:[UITableView class]]) {
-        UITableViewCell *cell = [subview superviewWithClass:[UITableViewCell class]];
+        UITableViewCell *cell = [subview selfOrSuperviewWithClass:[UITableViewCell class]];
         if (cell == nil) {
             return nil;
         }
