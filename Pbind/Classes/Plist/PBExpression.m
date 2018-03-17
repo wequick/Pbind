@@ -39,6 +39,14 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 @end
 
+@interface PBExpression ()
+
+@property (nonatomic, weak) id bindingOwner;
+@property (nonatomic, weak) id bindingData;
+@property (nonatomic, weak) id originalBindingOwner;
+
+@end
+
 @implementation PBExpression
 {
     NSArray *_variableKeys;
@@ -619,7 +627,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         if (dataSource == nil) {
             return;
         }
-        _originalBindingOwner = target;
+        self.originalBindingOwner = target;
         if ([targetKeyPath hasPrefix:@"@"] && [target isKindOfClass:[UIView class]]) {
             NSInteger dotIndex = [targetKeyPath rangeOfString:@"."].location;
             if (dotIndex != NSNotFound) {
@@ -629,12 +637,12 @@ const unsigned char PBDataTagUnset = 0xFF;
             }
         }
         _bindingKeyPath = targetKeyPath;
-        _bindingData = dataSource;
-        _bindingOwner = target;
+        self.bindingData = dataSource;
+        self.bindingOwner = target;
         _initialDataSourceValue = [PBPropertyUtils valueForKeyPath:_variable ofObject:dataSource failure:nil];
-        [dataSource addObserver:self forKeyPath:_variable options:NSKeyValueObservingOptionNew context:(__bridge void *)target];
+        [dataSource addObserver:self forKeyPath:_variable options:NSKeyValueObservingOptionNew context:nil];
         if (_flags.duplexBinding) {
-            [target addObserver:self forKeyPath:targetKeyPath options:NSKeyValueObservingOptionNew context:(__bridge void *)dataSource];
+            [target addObserver:self forKeyPath:targetKeyPath options:NSKeyValueObservingOptionNew context:nil];
         }
     }
 }
@@ -744,11 +752,12 @@ const unsigned char PBDataTagUnset = 0xFF;
     if ([newValue isEqual:[NSNull null]]) {
         newValue = nil;
     }
-    id contextObject = (__bridge id)(context);
-    NSString *contextKeyPath = nil;
+    id contextObject;
+    NSString *contextKeyPath;
     if ([keyPath isEqualToString:_variable]) {
         // Data source value changed
         contextKeyPath = _bindingKeyPath;
+        contextObject = _bindingOwner;
         newValue = [self valueByOperatingValue:newValue];
         if (self.parent != nil) {
             PBMutableExpression *parent = (id) self.parent;
@@ -756,6 +765,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         }
     } else {
         contextKeyPath = _variable;
+        contextObject = _bindingData;
     }
     
     id oldValue = [self valueForKeyPath:contextKeyPath ofTarget:contextObject];
@@ -764,12 +774,12 @@ const unsigned char PBDataTagUnset = 0xFF;
     }
     
     if (_flags.duplexBinding) {
-        [contextObject removeObserver:self forKeyPath:contextKeyPath context:(__bridge void *)(object)];
+        [contextObject removeObserver:self forKeyPath:contextKeyPath context:nil];
     }
     [self setValue:newValue toTarget:contextObject forKeyPath:contextKeyPath];
 //    NSLog(@"%@->%@, %@->%@", keyPath, contextKeyPath, [[object class] description], [[contextObject class] description]);
     if (_flags.duplexBinding) {
-        [contextObject addObserver:self forKeyPath:contextKeyPath options:NSKeyValueObservingOptionNew context:(__bridge void *)(object)];
+        [contextObject addObserver:self forKeyPath:contextKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 
