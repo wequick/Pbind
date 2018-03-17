@@ -32,4 +32,17 @@
     receiver = nil;
 }
 
+// Safe guard
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
+    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
+    if (signature) {
+        return signature;
+    }
+    return [NSObject instanceMethodSignatureForSelector:@selector(init)]; //stub
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation {
+}
+
 @end
