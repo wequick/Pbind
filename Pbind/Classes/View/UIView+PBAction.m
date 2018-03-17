@@ -203,7 +203,6 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
             }
         }
     }
-    self.pb_actionEvents = nil;
 }
 
 - (NSDictionary *)pb_actionForEvent:(NSString *)eventName {
