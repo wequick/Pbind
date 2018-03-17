@@ -150,6 +150,10 @@
     });
 }
 
+- (NSArray *)pb_mappersForBinding {
+    return rowDataSource.sections;
+}
+
 - (void)pb_didUnbind {
     [super pb_didUnbind];
     

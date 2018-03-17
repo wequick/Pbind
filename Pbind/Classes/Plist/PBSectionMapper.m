@@ -73,4 +73,19 @@
     _pbFlags.dataUnset = 0;
 }
 
+- (void)unbind {
+    [super unbind];
+    
+    if (_row != nil && [_row isKindOfClass:[PBRowMapper class]]) {
+        [_row unbind];
+    }
+    if (_rows != nil) {
+        for (PBRowMapper *row in _rows) {
+            if ([row isKindOfClass:[PBRowMapper class]]) {
+                [row unbind];
+            }
+        }
+    }
+}
+
 @end

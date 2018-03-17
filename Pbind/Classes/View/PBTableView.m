@@ -249,6 +249,10 @@
 //    [super layoutSubviews]; // *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Auto Layout still required after executing -layoutSubviews. PBTableView's implementation of -layoutSubviews needs to call super.'
 //}
 
+- (NSArray *)pb_mappersForBinding {
+    return rowDataSource.sections;
+}
+
 - (void)pb_resetMappers {
     [rowDataSource reset];
     [rowDelegate reset];
