@@ -76,6 +76,7 @@
 - (void)unbind {
     [super unbind];
     
+    // TODO: save the rowMapper to another property and remove this class checker
     if (_row != nil && [_row isKindOfClass:[PBRowMapper class]]) {
         [_row unbind];
     }

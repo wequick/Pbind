@@ -83,7 +83,7 @@
 
 - (void)addRowDatas:(NSArray *)datas;
 - (void)appendRowDatas:(NSArray *)datas;
-- (void)appendRowDatas:(NSArray *)datas atSection:(NSInteger)section;
+- (void)appendRowDatas:(NSArray *)datas atSection:(NSUInteger)section;
 
 - (void)reloadData;
 - (void)deselectSections;

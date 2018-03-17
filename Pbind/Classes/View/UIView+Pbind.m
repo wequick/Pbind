@@ -699,7 +699,7 @@
     return view.data;
 }
 
-- (UIView *)superviewWithClass:(Class)clazz containsSelf:(BOOL)contanisSelf
+- (__kindof UIView *)superviewWithClass:(Class)clazz containsSelf:(BOOL)contanisSelf
 {
     if (contanisSelf) {
         if ([self isKindOfClass:clazz]) {
@@ -717,12 +717,12 @@
     return view;
 }
 
-- (UIView *)superviewWithClass:(Class)clazz
+- (__kindof UIView *)superviewWithClass:(Class)clazz
 {
     return [self superviewWithClass:clazz containsSelf:NO];
 }
 
-- (UIView *)selfOrSuperviewWithClass:(Class)clazz
+- (__kindof UIView *)selfOrSuperviewWithClass:(Class)clazz
 {
     return [self superviewWithClass:clazz containsSelf:YES];
 }

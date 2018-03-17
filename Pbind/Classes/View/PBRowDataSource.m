@@ -533,7 +533,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     [self appendRowDatas:datas atSection:0];
 }
 
-- (void)appendRowDatas:(NSArray *)datas atSection:(NSInteger)section {
+- (void)appendRowDatas:(NSArray *)datas atSection:(NSUInteger)section {
     if (datas == nil) {
         return;
     }
@@ -590,7 +590,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
 }
 
-- (void)updateRowDataAtSection:(NSInteger)section {
+- (void)updateRowDataAtSection:(NSUInteger)section {
     if (section >= self.sections.count) {
         return;
     }

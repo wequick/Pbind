@@ -133,7 +133,7 @@ static NSString *const kActionEventsKey = @"pb_actionEvents";
     } else if ([type isEqualToString:@"change"]) {
         UIControl *control = [self pb_valueControl];
         if (control == nil && [self isKindOfClass:[UIControl class]]) {
-            control = self;
+            control = (id) self;
         }
         if (control != nil) {
             if (initialized) {
