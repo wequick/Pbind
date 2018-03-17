@@ -23,6 +23,7 @@
 #import "PBDataFetcher.h"
 #import "UIView+PBLayoutConstraint.h"
 #import "UIView+PBAction.h"
+#import "PBMessageInterceptor.h"
 
 @interface _PBPlistProperties : NSObject
 
@@ -869,11 +870,14 @@
 }
 
 - (void)setLoadingDelegate:(id<PBViewLoadingDelegate>)value {
-    [self setValue:value forAdditionKey:@"loadingDelegate"];
+    PBMessageInterceptor *interceptor = [[PBMessageInterceptor alloc] init];
+    interceptor.receiver = value;
+    [self setValue:interceptor forAdditionKey:@"loadingDelegate"];
 }
 
 - (id<PBViewLoadingDelegate>)loadingDelegate {
-    return [self valueForAdditionKey:@"loadingDelegate"];
+    PBMessageInterceptor *interceptor = [self valueForAdditionKey:@"loadingDelegate"];
+    return interceptor.receiver;
 }
 
 - (void)setPb_preparation:(void (^)(void))value {

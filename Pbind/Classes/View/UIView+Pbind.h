@@ -75,7 +75,7 @@
 @property (nonatomic, strong, readonly, getter=rootData) id rootData;
 
 /** The delegate triggered by loading */
-@property (nonatomic, assign) id<PBViewLoadingDelegate> loadingDelegate;
+@property (nonatomic, weak) id<PBViewLoadingDelegate> loadingDelegate;
 
 #pragma mark - Caching
 ///=============================================================================
