@@ -93,6 +93,9 @@
  */
 - (void)dispatchNext:(NSString *)key;
 
+- (void)retainAction;
+- (void)releaseAction;
+
 @end
 
 #pragma mark - Annotation

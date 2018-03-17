@@ -22,6 +22,12 @@ NSNotificationName const PBActionStoreDidDispatchActionNotification = @"PBAction
 
 @end
 
+@interface PBActionStore ()
+
+@property (nonatomic, strong) PBAction *retainedAction;
+
+@end
+
 @implementation PBActionStore
 
 + (instancetype)defaultStore {

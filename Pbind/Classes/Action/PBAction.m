@@ -14,6 +14,12 @@
 #import "UIView+Pbind.h"
 #import "PBActionStore.h"
 
+@interface PBActionStore (_PBActionRetain)
+
+@property (nonatomic, strong) PBAction *retainedAction;
+
+@end
+
 @interface PBAction (PBMapping)
 
 @property (nonatomic, strong) NSMutableDictionary *next;
@@ -136,6 +142,16 @@ static NSMutableDictionary *kActionClasses;
 
 - (void)run:(PBActionState *)state {
     
+}
+
+#pragma mark - Life Cycle
+
+- (void)retainAction {
+    self.store.retainedAction = self;
+}
+
+- (void)releaseAction {
+    self.store.retainedAction = nil;
 }
 
 @end
