@@ -50,7 +50,8 @@
                 || [key isEqualToString:@"accessoryView"]
                 || [key isEqualToString:@"views"]
                 || ([key isEqualToString:@"action"] || [key rangeOfString:@".action"].length != 0)
-                || ([key rangeOfString:@"!"].location == 0)
+                || ([key rangeOfString:@"!"].location == 0) /* events */
+                || ([key rangeOfString:@".!"].location != NSNotFound) /* events */
                 || [key rangeOfString:@"next."].location == 0) { // ignores the action mapper cause it have done by self.
                 [properties setConstant:value forKey:key];
                 continue;
