@@ -57,6 +57,7 @@
     char fmtStart = 0, fmtEnd = 0;
     switch (*str) {
         case '%':
+            self = [super init];
             p++;
             if (*p == '=') {
                 // Mutable variable binding
@@ -75,6 +76,7 @@
         case '`':
             p++;
             fmtEnd = '`';
+            self = [super init];
             _keywordFlags.backticks = 1;
             _formatFlags.javascript = 1;
             break;
@@ -85,6 +87,7 @@
             }
             p++;
             fmtEnd = '"';
+            self = [super init];
             _keywordFlags.string = 1;
             break;
         default:
@@ -106,7 +109,10 @@
                 }
                 *p2++ = *p++;
             }
-            if (*p == '\0') return nil;
+            if (*p == '\0') {
+                self = nil;
+                return nil;
+            }
             
             *p2 = '\0';
             if (tag_pos != NULL) {
@@ -128,6 +134,7 @@
                     _formatFlags.customized = 1;
                 } else {
                     NSLog(@"PBMutableExpression: Unknown format tag:`%@'", tag);
+                    self = nil;
                     return nil;
                 }
             }
@@ -145,9 +152,13 @@
         if (*p == '\0') {
             if ([self requiresExpression]) {
                 NSLog(@"Pbind: the expression %s should takes 1 expression as least.", str);
+                free(temp);
+                self = nil;
                 return nil;
             } else if (*(p - 1) != fmtEnd) {
                 NSLog(@"Pbind: the expression %s should ends with %c.", str, fmtEnd);
+                free(temp);
+                self = nil;
                 return nil;
             } else {
                 *(p2 - 1) = '\0';
@@ -178,6 +189,7 @@
     
     if ((_flags.onewayBinding || _flags.duplexBinding) && _expressions.count < 2) {
         NSLog(@"PBMutableExpression: '%%=' or '%%==' should keep up with as least as 2 expressions.");
+        self = nil;
         return nil;
     }
     
@@ -348,8 +360,9 @@
             if (value == nil) {
                 if (_formatFlags.testEmpty) {
                     value = [NSNull null];
+                } else {
+                    value = @"";
                 }
-                value = @"";
             }
             [arguments addObject:value];
         }

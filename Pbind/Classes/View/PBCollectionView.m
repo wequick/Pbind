@@ -35,13 +35,14 @@
 @synthesize resizingDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    _flowLayout = [[PBCollectionViewFlowLayout alloc] init];
-    _flowLayout.itemSize = CGSizeMake(44, 44);
-    _flowLayout.minimumInteritemSpacing = 0;
-    _flowLayout.minimumLineSpacing = 0;
-    if (self = [super initWithFrame:frame collectionViewLayout:_flowLayout]) {
+    PBCollectionViewFlowLayout *flowLayout = [[PBCollectionViewFlowLayout alloc] init];
+    flowLayout.itemSize = CGSizeMake(44, 44);
+    flowLayout.minimumInteritemSpacing = 0;
+    flowLayout.minimumLineSpacing = 0;
+    if (self = [super initWithFrame:frame collectionViewLayout:flowLayout]) {
         [self config];
-        _flowLayout.layoutDelegate = self;
+        flowLayout.layoutDelegate = self;
+        _flowLayout = flowLayout;
     }
     return self;
 }

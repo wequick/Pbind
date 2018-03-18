@@ -39,14 +39,6 @@ const unsigned char PBDataTagUnset = 0xFF;
 
 @end
 
-@interface PBExpression ()
-
-@property (nonatomic, weak) id bindingOwner;
-@property (nonatomic, weak) id bindingData;
-@property (nonatomic, weak) id originalBindingOwner;
-
-@end
-
 @implementation PBExpression
 {
     NSArray *_variableKeys;
@@ -627,7 +619,7 @@ const unsigned char PBDataTagUnset = 0xFF;
         if (dataSource == nil) {
             return;
         }
-        self.originalBindingOwner = target;
+        _originalBindingOwner = target;
         if ([targetKeyPath hasPrefix:@"@"] && [target isKindOfClass:[UIView class]]) {
             NSInteger dotIndex = [targetKeyPath rangeOfString:@"."].location;
             if (dotIndex != NSNotFound) {
@@ -637,8 +629,8 @@ const unsigned char PBDataTagUnset = 0xFF;
             }
         }
         _bindingKeyPath = targetKeyPath;
-        self.bindingData = dataSource;
-        self.bindingOwner = target;
+        _bindingData = dataSource;
+        _bindingOwner = target;
         _initialDataSourceValue = [PBPropertyUtils valueForKeyPath:_variable ofObject:dataSource failure:nil];
         [dataSource addObserver:self forKeyPath:_variable options:NSKeyValueObservingOptionNew context:nil];
         if (_flags.duplexBinding) {
@@ -815,6 +807,7 @@ const unsigned char PBDataTagUnset = 0xFF;
     _bindingKeyPath = nil;
     _bindingOwner = nil;
     _bindingData = nil;
+    _originalBindingOwner = nil;
 }
 
 #pragma mark - Properties

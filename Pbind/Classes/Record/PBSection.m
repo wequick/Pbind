@@ -254,7 +254,9 @@
     if (!aString && !string) {
         return YES;
     } else if (self && string) {
-        if ([aString length] < [string length]) {
+        if (aString == nil) {
+            return NO;
+        } else if ([aString length] < [string length]) {
             return ([string rangeOfString:aString].length != 0);
         } else {
             return ([aString rangeOfString:string].length != 0);

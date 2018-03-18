@@ -471,6 +471,7 @@
         
         // Check if has been added
         char *methodKey = (char *) malloc(len - 3);
+        memset(methodKey, 0, len - 3);
         char *p2 = methodKey;
         char *p = (char *)methodName + 3;
         while (*p != ':') {

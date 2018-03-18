@@ -11,6 +11,7 @@
 
 #import "PBTableViewCell.h"
 #import "PBRowMapper.h"
+#import "UIView+Pbind.h"
 
 @interface PBTableViewCell ()
 {
@@ -76,6 +77,13 @@
     } else {
         [super setAccessoryView:accessoryView];
     }
+}
+
+- (NSArray *)pb_mappersForBinding {
+    if (_accessoryMapper != nil) {
+        return @[_accessoryMapper];
+    }
+    return nil;
 }
 
 @end

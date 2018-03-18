@@ -434,6 +434,7 @@
     if (*p == '\0') {
         NSLog(@"Pbind: Failed to parse PVFL: \"%s\", requires '/' region for Merge-Center-Format.", str);
         free(containerFormatStr);
+        free(temp);
         return;
     }
     p++;
@@ -472,6 +473,8 @@
         free(name);
         if (views[viewName] == nil) {
             [self printUndefinedViewError:viewName onFormat:str pos:p];
+            free(containerFormatStr);
+            free(temp);
             return;
         }
         [innerViewNames addObject:viewName];
@@ -531,6 +534,7 @@
     
     // Container outer margin
     NSString *containerFormat = [NSString stringWithFormat:@"%c:%s", outerOrientation, containerFormatStr];
+    free(containerFormatStr);
     NSMutableDictionary *newViews = [NSMutableDictionary dictionaryWithDictionary:views];
     newViews[mergedContainerViewName] = wrapperView;
     [parentView addConstraints:[self constraintsWithVisualFormat:containerFormat options:0 metrics:metrics views:newViews]];
