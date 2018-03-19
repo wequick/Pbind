@@ -32,4 +32,6 @@
 
 + (void)registerEnums:(NSDictionary *)enums; // <NSString *, NSNumber *>
 
++ (void)registerLocalizer:(NSString *(^)(NSString *key, NSString *comment))localizer;
+
 @end

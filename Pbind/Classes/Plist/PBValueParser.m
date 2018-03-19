@@ -17,6 +17,8 @@
 
 static NSMutableDictionary *kEnums = nil;
 
+static NSString *(^kLocalizer)(NSString *key, NSString *comment);
+
 @implementation PBValueParser
 
 + (id)valueWithString:(NSString *)aString
@@ -53,6 +55,21 @@ static NSMutableDictionary *kEnums = nil;
                 [dictionary setObject:value forKey:key];
             }
             return dictionary;
+        } else if (second == '\'') { // Localize string
+            aString = [aString substringFromIndex:2]; // bypass `@''
+            NSInteger index = [aString rangeOfString:@"',"].location;
+            NSString *key;
+            NSString *comment = nil;
+            if (index == NSNotFound) {
+                key = [aString substringToIndex:aString.length-1]; // bypass '
+            } else {
+                key = [aString substringToIndex:index];
+                comment = [aString substringFromIndex:index + 2];
+            }
+            if (kLocalizer == nil) {
+                return NSLocalizedString(key, comment);
+            }
+            return kLocalizer(key, comment);
         }
     }
     // Color
@@ -262,6 +279,11 @@ static NSMutableDictionary *kEnums = nil;
     } else {
         [kEnums setValuesForKeysWithDictionary:enums];
     }
+}
+
++ (void)registerLocalizer:(NSString *(^)(NSString *key, NSString *comment))localizer
+{
+    kLocalizer = localizer;
 }
 
 #pragma mark - UIColor
