@@ -619,6 +619,9 @@ const unsigned char PBDataTagUnset = 0xFF;
         if (dataSource == nil) {
             return;
         }
+        if (_originalBindingOwner != nil) {
+            [self unbind:_originalBindingOwner forKeyPath:nil];
+        }
         _originalBindingOwner = target;
         if ([targetKeyPath hasPrefix:@"@"] && [target isKindOfClass:[UIView class]]) {
             NSInteger dotIndex = [targetKeyPath rangeOfString:@"."].location;
