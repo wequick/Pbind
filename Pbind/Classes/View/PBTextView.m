@@ -454,12 +454,22 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
                 NSUInteger newLengh = [self.text length];
                 NSInteger deltaLengh = oldLengh + replacingString.length - replacingRange.length - newLengh;
                 if (deltaLengh != 0) {
+                    NSUInteger replacingLength;
                     if (newLengh <= oldLengh) {
-                        NSUInteger replacingLength = oldLengh - newLengh + 1;
-                        replacingRange = NSMakeRange(newLengh - replacingLength, replacingLength);
+                        replacingLength = oldLengh - newLengh + 1;
                     } else {
-                        NSUInteger replacingLength = newLengh - oldLengh + 1;
-                        replacingRange = NSMakeRange(newLengh - replacingLength, replacingLength);
+                        replacingLength = newLengh - oldLengh + 1;
+                    }
+                    NSUInteger replacingLocation;
+                    if (newLengh > replacingLength) {
+                        replacingLocation = newLengh - replacingLength;
+                    } else {
+                        replacingLocation = 0;
+                    }
+                    replacingRange = NSMakeRange(replacingLocation, replacingLength);
+                    if (replacingRange.location + replacingRange.length > newLengh) {
+                        NSLog(@"Pbind: Failed to recompose text.");
+                        return;
                     }
                     replacingString = [self.text substringWithRange:replacingRange];
                 } else if (replacingRange.location > 0) {
@@ -467,17 +477,21 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
                     NSString *lastCharInOldText = [[_originalText string] substringWithRange:lastCharRange];
                     NSString *lastCharInNewText = [self.text substringWithRange:lastCharRange];
                     if (![lastCharInOldText isEqualToString:lastCharInNewText]) {
+                        NSRange textRange;
                         if (newLengh <= oldLengh) {
                             replacingRange.location -= 1;
-                            replacingString = [self.text substringWithRange:replacingRange];
+                            textRange = replacingRange;
                             replacingRange.length += 1;
                         } else {
                             replacingRange.location -= 1;
                             replacingRange.length += 1;
-                            
-                            NSRange range = NSMakeRange(replacingRange.location, newLengh - oldLengh + 1);
-                            replacingString = [self.text substringWithRange:range];
+                            textRange = NSMakeRange(replacingRange.location, newLengh - oldLengh + 1);
                         }
+                        if (textRange.location + textRange.length > newLengh) {
+                            NSLog(@"Pbind: Failed to recompose text.");
+                            return;
+                        }
+                        replacingString = [self.text substringWithRange:textRange];
                     }
                 }
             }
