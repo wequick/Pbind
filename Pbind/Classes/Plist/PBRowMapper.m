@@ -43,20 +43,13 @@ static const CGFloat kHeightUnset = -2;
     if (heightString != nil) {
         _pbFlags.heightExpressive = [_properties isExpressiveForKey:@"height"];
         if (!_pbFlags.heightExpressive) {
-            NSArray *components = nil;
-            if ([heightString isKindOfClass:[NSString class]]) {
-                components = [heightString componentsSeparatedByString:@"@"];
-            }
-            if (components.count == 2) {
-                _height = PBPixelByScale([components[0] floatValue], [components[1] floatValue]);
-            } else {
-                if (_height == UITableViewAutomaticDimension) {
-                    if (_estimatedHeight <= 0) {
-                        _estimatedHeight = 44.f; // initialize default estimated height
-                    }
-                } else if (_height > 0) {
-                    _height = PBValue(_height);
+            _height = PBPixelFromString(heightString);
+            if (_height == UITableViewAutomaticDimension) {
+                if (_estimatedHeight <= 0) {
+                    _estimatedHeight = 44.f; // initialize default estimated height
                 }
+            } else if (_height > 0) {
+                _height = PBValue(_height);
             }
         }
     } else {
