@@ -671,13 +671,15 @@
         }
         p = p2;
         if (*p == '\0' || *p == '|') {
+            if (negative) {
+                constant = -constant;
+            }
             goto parse_tail;
         }
         if (*p != '+' && *p != '@') {
             [self printInvalidValueError:@"operator" mustbe:@"@priority after constant" onFormat:str pos:p];
             return;
         }
-        constant = PBValue(constant);
         if (negative) {
             constant = -constant;
         }
