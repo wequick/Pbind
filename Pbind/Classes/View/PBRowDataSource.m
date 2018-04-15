@@ -95,7 +95,20 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         // Distinct row configured by `sections'
         PBSectionMapper *section = [self.sections objectAtIndex:indexPath.section];
         if (section != nil) {
-            if (section.row != nil) {
+            if (section.rowConditions != nil) {
+                id data = [self dataAtIndexPath:indexPath];
+                for (NSDictionary *condition in section.rowConditions) {
+                    NSString *flag = condition[@"if"];
+                    if (isascii([flag characterAtIndex:0])) {
+                        flag = [@"!!$" stringByAppendingString:flag];
+                    }
+                    PBExpression *exp = [PBExpression expressionWithString:flag];
+                    BOOL matches = [[exp valueWithData:data] boolValue];
+                    if (matches) {
+                        return condition[@"rowMapper"];
+                    }
+                }
+            } else if (section.row != nil) {
                 if (section.emptyRow != nil && [self dataAtIndexPath:indexPath] == nil) {
                     return section.emptyRow;
                 }
@@ -243,6 +256,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
                 aSection.rows = rows;
             } else if (aRowSource != nil) {
                 aSection.row = [PBRowMapper mapperWithDictionary:aRowSource owner:self.owner];
+            }
+            
+            if (aSection.rowConditions != nil) {
+                for (NSMutableDictionary *condition in aSection.rowConditions) {
+                    condition[@"rowMapper"] = [PBRowMapper mapperWithDictionary:condition[@"row"] owner:self.owner];
+                }
             }
             
             if (aSection.emptyRow != nil) {

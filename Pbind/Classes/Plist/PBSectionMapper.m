@@ -12,6 +12,7 @@
 #import "PBSectionMapper.h"
 #import "PBRowMapper.h"
 #import "Pbind+API.h"
+#import "PBMutableExpression.h"
 
 @interface PBRowMapper (Private)
 
@@ -24,6 +25,33 @@
 - (void)setPropertiesWithDictionary:(NSDictionary *)dictionary {
     self.inner = CGSizeMake(-1, -1);
     _alignment = NSTextAlignmentCenter;
+    
+    NSMutableArray *conditions = nil;
+    NSMutableArray *conditionKeys = nil;
+    NSArray *keys = [dictionary allKeys];
+    for (NSString *key in keys) {
+        if ([key hasPrefix:@"row@"]) {
+            NSMutableDictionary *condition = [NSMutableDictionary dictionaryWithCapacity:2];
+            condition[@"if"] = [key substringFromIndex:4];
+            condition[@"row"] = dictionary[key];
+            if (conditions == nil) {
+                conditions = [[NSMutableArray alloc] init];
+            }
+            [conditions addObject:condition];
+            
+            if (conditionKeys == nil) {
+                conditionKeys = [[NSMutableArray alloc] init];
+            }
+            [conditionKeys addObject:key];
+        }
+    }
+    if (conditions != nil) {
+        self.rowConditions = conditions;
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+        [temp removeObjectsForKeys:conditionKeys];
+        dictionary = temp;
+    }
+    
     [super setPropertiesWithDictionary:dictionary];
 }
 
@@ -41,7 +69,7 @@
     }
     
     NSInteger rowCount = 0;
-    if (self.row != nil) {
+    if (self.row != nil || _rowConditions != nil) {
         rowCount = [self.data count];
         if (rowCount == 0 && self.emptyRow != nil) {
             rowCount = 1;
@@ -80,6 +108,12 @@
             if ([row isKindOfClass:[PBRowMapper class]]) {
                 [row unbind];
             }
+        }
+    }
+    if (_rowConditions != nil) {
+        for (NSDictionary *condition in _rowConditions) {
+            PBRowMapper *row = condition[@"rowMapper"];
+            [row unbind];
         }
     }
 }

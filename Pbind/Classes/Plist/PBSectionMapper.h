@@ -59,6 +59,11 @@
 @property (nonatomic, strong) id emptyRow;
 
 /**
+ The conditions to determine `row` mapper.
+ */
+@property (nonatomic, strong) NSArray *rowConditions;
+
+/**
  The header view of the section.
  
  @discussion the dictionary here will be parsed to a PBHeaderFooterMapper.
