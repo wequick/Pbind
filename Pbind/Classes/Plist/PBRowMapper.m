@@ -43,7 +43,11 @@ static const CGFloat kHeightUnset = -2;
     if (heightString != nil) {
         _pbFlags.heightExpressive = [_properties isExpressiveForKey:@"height"];
         if (!_pbFlags.heightExpressive) {
-            _height = PBPixelFromString(heightString);
+            if (_height == 0 && [heightString isKindOfClass:[NSString class]] && [heightString hasPrefix:@"~"]) {
+                // TODO: PBValueParser parse `~number` to constant ahead
+                _height = PBPixelFromString(heightString);
+            }
+            
             if (_height == UITableViewAutomaticDimension) {
                 if (_estimatedHeight <= 0) {
                     _estimatedHeight = 44.f; // initialize default estimated height
