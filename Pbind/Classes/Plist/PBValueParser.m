@@ -480,6 +480,14 @@ static float readcolor(char **str, int len) {
         return [UIFont systemFontOfSize:size weight:fontWeight];
     }
     
+    if (name == nil) {
+        if (traits == UIFontDescriptorTraitBold) {
+            return [UIFont boldSystemFontOfSize:size];
+        } else if (traits == UIFontDescriptorTraitItalic) {
+            return [UIFont italicSystemFontOfSize:size];
+        }
+    }
+    
     NSDictionary *defaultAttributes = systemFont.fontDescriptor.fontAttributes;
     NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:defaultAttributes];
     if (name != nil) {
