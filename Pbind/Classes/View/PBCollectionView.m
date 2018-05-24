@@ -16,7 +16,6 @@
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
 #import "PBCollectionViewFlowLayout.h"
-
 @interface PBCollectionView () <PBCollectionViewFlowLayoutDelegate>
 
 @end
@@ -282,6 +281,7 @@
         frame.size.height = size.height;
         dispatch_block_t resizeBlock = ^{
             self.frame = frame;
+            [self invalidateIntrinsicContentSize];
             if (self.resizingDelegate != nil) {
                 [self.resizingDelegate viewDidChangeFrame:self];
             }

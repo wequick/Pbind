@@ -130,6 +130,20 @@
 					</dict>
 				</dict>
 			</dict>
+			<dict>
+				<key>properties</key>
+				<dict>
+					<key>textLabel.text</key>
+					<string>Nested Table</string>
+					<key>data</key>
+					<dict>
+						<key>target</key>
+						<string>PBTableViewController</string>
+						<key>plist</key>
+						<string>table.nested</string>
+					</dict>
+				</dict>
+			</dict>
 		</array>
 	</dict>
 </dict>

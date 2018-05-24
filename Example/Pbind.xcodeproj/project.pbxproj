@@ -32,6 +32,9 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		9424118A18D64DBFAE4E1D03 /* PBLLInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FFE9138696A2C556E8940BC /* PBLLInspectorController.m */; };
+		9AB175F220B58365004E23A4 /* table.nested.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB175F120B58365004E23A4 /* table.nested.plist */; };
+		9AB175F420B584CD004E23A4 /* collect.demo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB175F320B584CD004E23A4 /* collect.demo.plist */; };
+		9AB175F620B58767004E23A4 /* item.tag.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AB175F520B58767004E23A4 /* item.tag.plist */; };
 		A4A96007E949080FF119465E /* PBLLRemoteWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAC7DAE25FAB7C4F433AD37 /* PBLLRemoteWatcher.m */; };
 		B7A7EC036637F3314E985F9E /* PBLLInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 84AEF82C9B5991A26075B41F /* PBLLInspectorController.h */; };
 		D788144B42F8CA58B47BDDC9 /* NSInputStream+Reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA74845B6E451804F5E9640 /* NSInputStream+Reader.h */; };
@@ -112,6 +115,9 @@
 		84AEF82C9B5991A26075B41F /* PBLLInspectorController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PBLLInspectorController.h; path = PBLiveLoader/PBLLInspectorController.h; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		8E5C1EDC3D5832EFD4BCABA6 /* NSInputStream+Reader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSInputStream+Reader.m"; path = "PBLiveLoader/NSInputStream+Reader.m"; sourceTree = "<group>"; };
+		9AB175F120B58365004E23A4 /* table.nested.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = table.nested.plist; sourceTree = "<group>"; };
+		9AB175F320B584CD004E23A4 /* collect.demo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = collect.demo.plist; sourceTree = "<group>"; };
+		9AB175F520B58767004E23A4 /* item.tag.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = item.tag.plist; sourceTree = "<group>"; };
 		A7E021022D852731E7140278 /* PBLLRemoteWatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PBLLRemoteWatcher.h; path = PBLiveLoader/PBLLRemoteWatcher.h; sourceTree = "<group>"; };
 		ACAC7DAE25FAB7C4F433AD37 /* PBLLRemoteWatcher.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PBLLRemoteWatcher.m; path = PBLiveLoader/PBLLRemoteWatcher.m; sourceTree = "<group>"; };
 		AF7337D711C82BD7E47ECDE1 /* PBDirectoryWatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PBDirectoryWatcher.h; path = PBLiveLoader/PBDirectoryWatcher.h; sourceTree = "<group>"; };
@@ -323,6 +329,16 @@
 			name = PBLiveLoader;
 			sourceTree = SOURCE_ROOT;
 		};
+		9AB175F020B582F6004E23A4 /* NestedTableViewDemo */ = {
+			isa = PBXGroup;
+			children = (
+				9AB175F120B58365004E23A4 /* table.nested.plist */,
+				9AB175F320B584CD004E23A4 /* collect.demo.plist */,
+				9AB175F520B58767004E23A4 /* item.tag.plist */,
+			);
+			name = NestedTableViewDemo;
+			sourceTree = "<group>";
+		};
 		F8039BDE1E3437DC009C5372 /* Benchmark */ = {
 			isa = PBXGroup;
 			children = (
@@ -430,6 +446,7 @@
 		F89500CA1D87AB8E0038A3E5 /* Plist */ = {
 			isa = PBXGroup;
 			children = (
+				9AB175F020B582F6004E23A4 /* NestedTableViewDemo */,
 				F84079D01F63817000E1719D /* PBFormDemo */,
 				F86CC7AB1F49736500DA9FFD /* UITableViewDemo */,
 				F86CC7A81F4707F400DA9FFD /* PBActionDemo */,
@@ -556,11 +573,13 @@
 			files = (
 				F89500CD1D87AB9C0038A3E5 /* form.addgroup.plist in Resources */,
 				F86CC79B1F3A0B1100DA9FFD /* header.common.plist in Resources */,
+				9AB175F620B58767004E23A4 /* item.tag.plist in Resources */,
 				F86CC7A51F46027400DA9FFD /* table.button.plist in Resources */,
 				F86CC7AA1F47082700DA9FFD /* scroll.action.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				F8039BE21E3437EB009C5372 /* level1.xml in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
+				9AB175F420B584CD004E23A4 /* collect.demo.plist in Resources */,
 				F86CC7A71F46029C00DA9FFD /* cell.button.plist in Resources */,
 				F84079D21F6381C200E1719D /* form.demo.plist in Resources */,
 				F8A02C0E1F30DBA20058028E /* cell.view.plist in Resources */,
@@ -575,6 +594,7 @@
 				F89500CE1D87AB9C0038A3E5 /* table.group.plist in Resources */,
 				F86CC7971F3A032B00DA9FFD /* table.view.plist in Resources */,
 				F80FB22D1D913E2400DD48F4 /* table.members.plist in Resources */,
+				9AB175F220B58365004E23A4 /* table.nested.plist in Resources */,
 				F8A02BEB1F1217D30058028E /* item.member.plist in Resources */,
 				F8039BE41E343871009C5372 /* level1.json in Resources */,
 				F8039BE01E3437DC009C5372 /* level1.plist in Resources */,
