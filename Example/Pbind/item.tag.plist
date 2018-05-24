@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>views</key>
+	<dict>
+		<key>label</key>
+		<dict>
+			<key>clazz</key>
+			<string>UILabel</string>
+			<key>properties</key>
+			<dict>
+				<key>textColor</key>
+				<string>#f00</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>formats</key>
+	<array>
+		<string>|-[label]-|</string>
+	</array>
+	<key>constraints</key>
+	<array>
+		<string>label.centerY=super</string>
+	</array>
+</dict>
+</plist>
