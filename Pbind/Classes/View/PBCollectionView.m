@@ -16,7 +16,6 @@
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
 #import "PBCollectionViewFlowLayout.h"
-#import "PBTableView.h"
 @interface PBCollectionView () <PBCollectionViewFlowLayoutDelegate>
 
 @end
