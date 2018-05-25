@@ -16,6 +16,8 @@
 #import "PBSectionMapper.h"
 #import "UIView+Pbind.h"
 #import "PBCollectionViewFlowLayout.h"
+#import "PBTableView.h"
+
 @interface PBCollectionView () <PBCollectionViewFlowLayoutDelegate>
 
 @end
@@ -270,6 +272,19 @@
         return;
     }
     
+    // Check if super cell is hidden
+    UITableViewCell *superCell = [self superviewWithClass:[UITableViewCell class]];
+    if (superCell != nil) {
+        PBTableView *superTableView = [superCell superviewWithClass:[PBTableView class]];
+        NSIndexPath *indexPath = [superTableView indexPathForCell:superCell];
+        if (indexPath != nil) {
+            PBRowMapper *row = [superTableView.rowDataSource rowAtIndexPath:indexPath];
+            if (row.hidden) {
+                return;
+            }
+        }
+    }
+    
     CGSize size = self.collectionViewLayout.collectionViewContentSize;
     if (CGSizeEqualToSize(size, CGSizeZero)) {
         return;
@@ -297,10 +312,12 @@
 
 - (void)setAutoItemSizing:(BOOL)autoItemSizing {
     _autoItemSizing = autoItemSizing;
-    if (autoItemSizing) {
-        _flowLayout.estimatedItemSize = CGSizeMake(1.f, 1.f);
-    } else {
-        _flowLayout.estimatedItemSize = CGSizeZero;
+    if (@available(iOS 11, *)) {
+        if (autoItemSizing) {
+            _flowLayout.estimatedItemSize = CGSizeMake(1.f, 1.f);
+        } else {
+            _flowLayout.estimatedItemSize = CGSizeZero;
+        }
     }
 }
 

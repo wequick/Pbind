@@ -302,6 +302,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     if (rowSource != nil) {
         _row = [PBRowMapper mapperWithDictionary:rowSource owner:self.owner];
     }
+    if (_row == nil) {
+        return;
+    }
+    
     if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
         [(id)self.owner setDataUpdated:YES];
     }
@@ -985,6 +989,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 }
 
 - (UICollectionViewCell *)collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    return [self _collectionView:collectionView cellForItemAtIndexPath:indexPath reusing:YES];
+}
+
+- (UICollectionViewCell *)_collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath reusing:(BOOL)reusing {
     UICollectionViewCell *cell = nil;
     if ([self.receiver respondsToSelector:_cmd]) {
         cell = [self.receiver collectionView:collectionView cellForItemAtIndexPath:indexPath];
@@ -999,27 +1007,30 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     [self updateRowMapper:item forRowAtIndexPath:indexPath inView:collectionView withData:data];
     
     // Lazy register reusable cell
-    NSString *identifier = item.id;
-    BOOL needsRegister = NO;
-    if (collectionView.registeredCellIdentifiers == nil) {
-        collectionView.registeredCellIdentifiers = [[NSMutableArray alloc] init];
-        needsRegister = YES;
-    } else {
-        needsRegister = ![collectionView.registeredCellIdentifiers containsObject:identifier];
-    }
-    if (needsRegister) {
-        UINib *nib = PBNib(item.nib);
-        if (nib != nil) {
-            [collectionView registerNib:nib forCellWithReuseIdentifier:identifier];
+    if (reusing) {
+        NSString *identifier = item.id;
+        BOOL needsRegister = NO;
+        if (collectionView.registeredCellIdentifiers == nil) {
+            collectionView.registeredCellIdentifiers = [[NSMutableArray alloc] init];
+            needsRegister = YES;
         } else {
-            [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:identifier];
+            needsRegister = ![collectionView.registeredCellIdentifiers containsObject:identifier];
         }
-        [collectionView.registeredCellIdentifiers addObject:identifier];
+        if (needsRegister) {
+            UINib *nib = PBNib(item.nib);
+            if (nib != nil) {
+                [collectionView registerNib:nib forCellWithReuseIdentifier:identifier];
+            } else {
+                [collectionView registerClass:item.viewClass forCellWithReuseIdentifier:identifier];
+            }
+            [collectionView.registeredCellIdentifiers addObject:identifier];
+        }
+        
+        // Dequeue reusable cell
+        cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
+    } else {
+        cell = [item createView];
     }
-    
-    // Dequeue reusable cell
-    cell = [collectionView dequeueReusableCellWithReuseIdentifier:item.id forIndexPath:indexPath];
-    cell.indexPath = indexPath;
     
     // Auto size
     if ([item isAutoWidth]) {
@@ -1047,6 +1058,13 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
         }
     }
     
+    [self _updateCell:cell forIndexPath:indexPath withData:data item:item context:collectionView];
+    return cell;
+}
+
+- (void)_updateCell:(UICollectionViewCell *)cell forIndexPath:(NSIndexPath *)indexPath withData:(id)data item:(PBRowMapper *)item context:(UIView *)context {
+    cell.indexPath = indexPath;
+    
     // Add custom layout
     if (item.layoutMapper != nil) {
         [item.layoutMapper renderToView:cell.contentView];
@@ -1055,9 +1073,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     // Init data for cell
     [cell setData:data];
     [item initPropertiesForTarget:cell];
-    [item mapPropertiesToTarget:cell withData:collectionView.data owner:cell context:collectionView];
-    
-    return cell;
+    [item mapPropertiesToTarget:cell withData:context.data owner:cell context:context];
 }
 
 - (UICollectionReusableView *)collectionView:(PBCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
