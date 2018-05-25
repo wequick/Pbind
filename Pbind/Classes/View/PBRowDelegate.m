@@ -23,7 +23,17 @@
 #import "PBRefreshControlMapper.h"
 #import "PBRefreshControl.h"
 
+@interface PBRowDataSource (Private)
+
+- (UICollectionViewCell *)_collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath reusing:(BOOL)reusing;
+- (void)_updateCell:(UICollectionViewCell *)cell forIndexPath:(NSIndexPath *)indexPath withData:(id)data item:(PBRowMapper *)item context:(UIView *)context;
+
+@end
+
 @implementation PBRowDelegate
+{
+    NSMutableDictionary<NSString *, UICollectionViewCell *> *_placeholderCells;
+}
 
 @synthesize receiver;
 
@@ -880,6 +890,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     // Explicit
     id data = collectionView.data;
+    BOOL isAutoWidth, isAutoHeight;
     CGFloat itemHeight;
     CGFloat itemWidth = [item widthForData:data withRowDataSource:self.dataSource indexPath:indexPath];
     if (item.ratio > 0 || item.additionalHeight != 0) {
@@ -893,6 +904,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         itemWidth = collectionView.bounds.size.width - section.inset.left - section.inset.right; // fill
     } else if (itemWidth == -1) {
         itemWidth = 1.f; // auto resizing
+        isAutoWidth = YES;
     }
     
     CGFloat maxHeight = collectionView.bounds.size.height - section.inset.top - section.inset.bottom;
@@ -900,7 +912,42 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         itemHeight = maxHeight; // fill
     } else if (itemHeight == -1) {
         itemHeight = 1.f; // auto resizing
+        isAutoHeight = YES;
     }
+    
+    if (@available(iOS 11, *)) {
+        
+    } else {
+        if (isAutoWidth || isAutoHeight) {
+            if (_placeholderCells == nil) {
+                _placeholderCells = [[NSMutableDictionary alloc] init];
+            }
+            UICollectionViewCell *placeholderCell = _placeholderCells[item.id];
+            if (placeholderCell == nil) {
+                placeholderCell = [self.dataSource _collectionView:collectionView cellForItemAtIndexPath:indexPath reusing:NO];
+                _placeholderCells[item.id] = placeholderCell;
+            } else {
+                id itemData = [self.dataSource dataAtIndexPath:indexPath];
+                [self.dataSource _updateCell:placeholderCell forIndexPath:indexPath withData:itemData item:item context:collectionView];
+            }
+            
+            CGSize itemSize = [placeholderCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+            if (!isAutoWidth) {
+                itemSize.width = itemWidth;
+            }
+            if (!isAutoHeight) {
+                itemSize.height = itemHeight;
+            }
+            if (itemSize.width <= 0) {
+                itemSize.width = 1.f;
+            }
+            if (itemSize.height <= 0) {
+                itemSize.height = 1.f;
+            }
+            return itemSize;
+        }
+    }
+    
 //    itemHeight = MIN(maxHeight, itemHeight);
     return CGSizeMake(itemWidth, itemHeight);
 }
