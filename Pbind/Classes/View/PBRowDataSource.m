@@ -302,6 +302,10 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     if (rowSource != nil) {
         _row = [PBRowMapper mapperWithDictionary:rowSource owner:self.owner];
     }
+    if (_row == nil) {
+        return;
+    }
+    
     if ([self.owner conformsToProtocol:@protocol(PBDataFetching)]) {
         [(id)self.owner setDataUpdated:YES];
     }
