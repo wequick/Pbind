@@ -86,6 +86,8 @@ static const CGFloat kHeightUnset = -2;
     
     _pbFlags.dataUnset = [dictionary objectForKey:@"data"] == nil;
     
+    _pbFlags.hiddenExpressive = [_properties isExpressiveForKey:@"hidden"];
+
     if (_clazz == nil) {
         [self initDefaultViewClass];
     }
