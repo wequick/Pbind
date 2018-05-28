@@ -890,7 +890,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     
     // Explicit
     id data = collectionView.data;
-    BOOL isAutoWidth, isAutoHeight;
+    BOOL isAutoWidth = NO, isAutoHeight = NO;
     CGFloat itemHeight;
     CGFloat itemWidth = [item widthForData:data withRowDataSource:self.dataSource indexPath:indexPath];
     if (item.ratio > 0 || item.additionalHeight != 0) {
