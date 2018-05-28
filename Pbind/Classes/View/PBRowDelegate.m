@@ -924,7 +924,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
             }
             UICollectionViewCell *placeholderCell = _placeholderCells[item.id];
             if (placeholderCell == nil) {
-                placeholderCell = [self.dataSource _collectionView:collectionView cellForItemAtIndexPath:indexPath reusing:NO];
+                placeholderCell = [self.dataSource _collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:indexPath reusing:NO];
                 _placeholderCells[item.id] = placeholderCell;
             } else {
                 id itemData = [self.dataSource dataAtIndexPath:indexPath];
