@@ -994,7 +994,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 
 - (UICollectionViewCell *)_collectionView:(PBCollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath reusing:(BOOL)reusing {
     UICollectionViewCell *cell = nil;
-    if ([self.receiver respondsToSelector:_cmd]) {
+    if ([self.receiver respondsToSelector:@selector(collectionView:cellForItemAtIndexPath:)]) {
         cell = [self.receiver collectionView:collectionView cellForItemAtIndexPath:indexPath];
         if (cell != nil) {
             return cell;
