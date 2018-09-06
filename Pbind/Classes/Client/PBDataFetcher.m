@@ -74,6 +74,7 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     }
     
     // Fetch data parallelly
+    __weak PBDataFetcher *wSelf = self;
     __block NSInteger fetchingCount = clientCount;
     for (NSInteger i = 0; i < clientCount; i++) {
         PBClient *client = [self.clients objectAtIndex:i];
@@ -103,12 +104,14 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
         }
         
         [client _loadRequest:request notifys:NO complection:^(PBResponse *response) {
+            __strong PBDataFetcher *self = wSelf;
+            UIView<PBDataFetching> *owner = self->_owner;
             BOOL handledError = NO;
-            if ([_owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [_owner view:_owner didFinishLoading:response handledError:&handledError];
+            if ([owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
+                [owner view:owner didFinishLoading:response handledError:&handledError];
             }
-            if ([_owner.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
-                [_owner.loadingDelegate view:_owner didFinishLoading:response handledError:&handledError];
+            if ([owner.loadingDelegate respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
+                [owner.loadingDelegate view:owner didFinishLoading:response handledError:&handledError];
             }
             NSDictionary *userInfo = nil;
             if (response != nil) {
@@ -125,25 +128,25 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
                 data = [NSNull null];
             }
             
-            _owner.data[i] = data;
-            _owner.dataUpdated = YES;
+            owner.data[i] = data;
+            owner.dataUpdated = YES;
             
             // Map data
-            [_owner pb_mapData:_owner.rootData underType:PBMapToData dataTag:i];
+            [owner pb_mapData:owner.rootData underType:PBMapToData dataTag:i];
             if ([NSThread isMainThread]) {
-                [_owner layoutIfNeeded];
+                [owner layoutIfNeeded];
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [_owner layoutIfNeeded];
+                    [owner layoutIfNeeded];
                 });
             }
             
             fetchingCount--;
             if (fetchingCount == 0) {
-                _owner.fetching = NO;
+                owner.fetching = NO;
                 
                 // Notify loading finish
-                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidFinishLoadNotification object:_owner userInfo:userInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:PBViewDidFinishLoadNotification object:owner userInfo:userInfo];
             }
         }];
     }

@@ -261,7 +261,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
         NSTimeInterval fakeAwaitingTime = kMinRefreshControlDisplayingTime - spentTime;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fakeAwaitingTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [control endRefreshing];
-            if (_flags.usesCustomRefreshControl) {
+            if (self->_flags.usesCustomRefreshControl) {
                 [self adjustInsetForPagingViewAfterRefresh:(id)self.dataSource.owner];
             }
         });
@@ -336,7 +336,7 @@ static const CGFloat kMinRefreshControlDisplayingTime = .75f;
     dispatch_async(dispatch_get_main_queue(), ^{
         // Adjust content insets
         UIEdgeInsets insets = pagingView.contentInset;
-        insets.bottom -= _loadMoreControl.bounds.size.height;
+        insets.bottom -= self->_loadMoreControl.bounds.size.height;
         pagingView.contentInset = insets;
     });
 }

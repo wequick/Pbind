@@ -520,7 +520,7 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
             _indicator.alpha = 0;
             [UIView animateWithDuration:.3 delay:0 options:UIViewAnimationOptionRepeat animations:^{
                 [UIView setAnimationRepeatCount:2];
-                _indicator.alpha = 1;
+                self->_indicator.alpha = 1;
             } completion:nil];
         } else if ([(id)invalidInput canBecomeFirstResponder]) {
             [(id)invalidInput becomeFirstResponder];
@@ -893,10 +893,10 @@ static UIViewAnimationOptions kKeyboardAnimationOptions = 0;
     // Dismiss the indicator
     if (_indicator.alpha != 0) {
         [self animateAsKeyboardWithAnimations:^{
-            [_indicator setFrame:CGRectZero];
-            [_indicator setText:nil];
-            if ([_presentingInput isKindOfClass:[PBInput class]]) {
-                [(PBInput *)_presentingInput setSelected:NO];
+            [self->_indicator setFrame:CGRectZero];
+            [self->_indicator setText:nil];
+            if ([self->_presentingInput isKindOfClass:[PBInput class]]) {
+                [(PBInput *)self->_presentingInput setSelected:NO];
             }
         } completion:nil];
     }
@@ -1220,17 +1220,18 @@ static NSString *kOriginalYKey = @"pb_originalY";
     _offsetYForPresentingInput = offset.y;
     dispatch_block_t animations = ^{
         [self setContentOffset:offset];
-        _indicator.layer.cornerRadius = cornerRadius;
-        [_indicator setFrame:indicatorRect];
-        if ([_presentedInput isKindOfClass:[PBInput class]]) {
-            [(PBInput *)_presentedInput setSelected:NO];
+        UIView *indicator = self->_indicator;
+        indicator.layer.cornerRadius = cornerRadius;
+        [indicator setFrame:indicatorRect];
+        if ([self->_presentedInput isKindOfClass:[PBInput class]]) {
+            [(PBInput *)self->_presentedInput setSelected:NO];
         }
         if ([input isKindOfClass:[PBInput class]]) {
             [(PBInput *)input setSelected:YES];
         }
         
         if ([self isErrorInput:input]) {
-            _indicator.layer.borderColor = [UIColor redColor].CGColor;
+            indicator.layer.borderColor = [UIColor redColor].CGColor;
         }
     };
     if (animated) {

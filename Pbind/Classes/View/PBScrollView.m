@@ -697,7 +697,7 @@
         }
         [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
             NSInteger viewIndex = temp - idx;
-            UIView *footerView = [_rowViews objectAtIndex:viewIndex];
+            UIView *footerView = [self->_rowViews objectAtIndex:viewIndex];
             CGRect frame = [self frameForFloatingView:footerView withBottom:bottom];
             [footerView setFrame:frame];
             
