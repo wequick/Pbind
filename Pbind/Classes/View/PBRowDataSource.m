@@ -602,7 +602,12 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
 }
 
-- (void)updateRowDataAtIndexPath:(NSIndexPath *)indexPath {
+- (void)updateRowData:(NSDictionary *)data atIndexPath:(NSIndexPath *)indexPath {
+    // Process data
+    [self processRowDatas:@[data] atIndexPaths:@[indexPath] withHandler:^(NSMutableArray *list, NSArray *newDatas, NSIndexSet *indexes) {
+        [list replaceObjectsAtIndexes:indexes withObjects:newDatas];
+    }];
+    
     // Reload view
     if ([NSThread isMainThread]) {
         [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
@@ -613,14 +618,25 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
     }
 }
 
-- (void)updateRowDataAtSection:(NSUInteger)section {
+- (void)reloadRowDataAtIndexPath:(NSIndexPath *)indexPath {
+    // Reload view
+    if ([NSThread isMainThread]) {
+        [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self animateRowViewAtIndexPaths:@[indexPath] interactionType:PBRowInteractionTypeUpdate];
+        });
+    }
+}
+
+- (void)reloadRowDataAtSection:(NSUInteger)section {
     if (section >= self.sections.count) {
         return;
     }
     [self animateRowViewAtSections:[NSIndexSet indexSetWithIndex:section] interactionType:PBRowInteractionTypeUpdate];
 }
 
-- (void)updateRowDataAtAllSections {
+- (void)reloadRowDataAtAllSections {
     NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
     for (NSUInteger index = 0; index < self.sections.count; index++) {
         [indexes addIndex:index];
