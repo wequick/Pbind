@@ -605,7 +605,7 @@ static const CGFloat kUITableViewRowAnimationDuration = .25f;
 - (void)updateRowData:(NSDictionary *)data atIndexPath:(NSIndexPath *)indexPath {
     // Process data
     [self processRowDatas:@[data] atIndexPaths:@[indexPath] withHandler:^(NSMutableArray *list, NSArray *newDatas, NSIndexSet *indexes) {
-        [list replaceObjectAtIndex:indexPath.row withObject:data];
+        [list replaceObjectsAtIndexes:indexes withObjects:newDatas];
     }];
     
     // Reload view
