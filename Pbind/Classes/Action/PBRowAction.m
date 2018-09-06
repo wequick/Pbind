@@ -18,7 +18,7 @@
 @implementation PBRowAction
 
 @pbactions(@"addRow", @"appendRow", @"deleteRow", @"updateRow",
-           @"updateSection", @"updateSections", @"deselectSections",
+           @"reloadRow", @"reloadSection", @"reloadSections", @"deselectSections",
            @"reloadData")
 - (void)run:(PBActionState *)state {
     if (state.context == nil) {
@@ -75,12 +75,21 @@
                 return;
             }
         }
-        [mappingView.rowDataSource updateRowDataAtIndexPath:indexPath];
-    } else if ([self.type isEqualToString:@"updateSection"]) {
+        [mappingView.rowDataSource updateRowData:state.data atIndexPath:indexPath];
+    } else if ([self.type isEqualToString:@"reloadRow"]) {
+        NSIndexPath *indexPath = mappingView.editingIndexPath ?: state.params[@"indexPath"];
+        if (indexPath == nil) {
+            indexPath = [self indexPathForSubview:state.context inOwnerView:mappingView];
+            if (indexPath == nil) {
+                return;
+            }
+        }
+        [mappingView.rowDataSource reloadRowDataAtIndexPath:indexPath];
+    } else if ([self.type isEqualToString:@"reloadSection"]) {
         NSUInteger section = [self currentSectionForState:state ownerView:mappingView];
-        [mappingView.rowDataSource updateRowDataAtSection:section];
-    } else if ([self.type isEqualToString:@"updateSections"]) {
-        [mappingView.rowDataSource updateRowDataAtAllSections];
+        [mappingView.rowDataSource reloadRowDataAtSection:section];
+    } else if ([self.type isEqualToString:@"reloadSections"]) {
+        [mappingView.rowDataSource reloadRowDataAtAllSections];
     } else if ([self.type isEqualToString:@"reloadData"]) {
         [mappingView.rowDataSource reloadData];
     } else if ([self.type isEqualToString:@"deselectSections"]) {

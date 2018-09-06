@@ -77,9 +77,10 @@
 
 - (void)addRowData:(id)data;
 - (void)deleteRowDataAtIndexPath:(NSIndexPath *)indexPath;
-- (void)updateRowDataAtIndexPath:(NSIndexPath *)indexPath;
-- (void)updateRowDataAtSection:(NSUInteger)section;
-- (void)updateRowDataAtAllSections;
+- (void)reloadRowDataAtIndexPath:(NSIndexPath *)indexPath;
+- (void)reloadRowDataAtSection:(NSUInteger)section;
+- (void)reloadRowDataAtAllSections;
+- (void)updateRowData:(NSDictionary*)data atIndexPath:(NSIndexPath *)indexPath;
 
 - (void)addRowDatas:(NSArray *)datas;
 - (void)appendRowDatas:(NSArray *)datas;
