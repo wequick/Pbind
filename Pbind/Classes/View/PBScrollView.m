@@ -21,6 +21,10 @@
 @synthesize clients, fetching, interrupted, dataUpdated, fetcher;
 @synthesize resizingDelegate;
 
++ (Class)rowMapperClass {
+    return [PBRowMapper class];
+}
+
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self config];
@@ -241,7 +245,7 @@
     [self initAccessoryViews];
     
     if (_row != nil) {
-        _rowMapper = [PBRowMapper mapperWithDictionary:_row owner:self];
+        _rowMapper = [[[self class] rowMapperClass] mapperWithDictionary:_row owner:self];
         
         if ([self.data isKindOfClass:[NSArray class]]) {
             _footerViews = nil;
@@ -259,7 +263,7 @@
     } else if (_rows != nil) {
         NSMutableArray *mappers = [NSMutableArray arrayWithCapacity:[_rows count]];
         for (NSDictionary *dict in _rows) {
-            PBRowMapper *mapper = [PBRowMapper mapperWithDictionary:dict owner:self];
+            PBRowMapper *mapper = [[[self class] rowMapperClass] mapperWithDictionary:dict owner:self];
             mapper.delegate = self;
             [mappers addObject:mapper];
         }

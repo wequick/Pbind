@@ -9,7 +9,6 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-#import <Pbind/Pbind.h>
 #import "PBTableHeaderView.h"
 
 @interface PBTableFooterView : PBTableHeaderView

@@ -11,7 +11,23 @@
 
 #import "PBTableHeaderView.h"
 
+@interface _PBTableHeaderViewRowMapper : PBRowMapper
+
+@end
+
+@implementation _PBTableHeaderViewRowMapper
+
+- (void)initDefaultViewClass {
+    self.clazz = @"UIView";
+}
+
+@end
+
 @implementation PBTableHeaderView
+
++ (Class)rowMapperClass {
+    return [_PBTableHeaderViewRowMapper class];
+}
 
 - (void)setContentSize:(CGSize)contentSize {
     if (contentSize.height == 0) {
