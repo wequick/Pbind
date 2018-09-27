@@ -74,7 +74,6 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
     }
     
     // Fetch data parallelly
-    __weak PBDataFetcher *wSelf = self;
     __block NSInteger fetchingCount = clientCount;
     for (NSInteger i = 0; i < clientCount; i++) {
         PBClient *client = [self.clients objectAtIndex:i];
@@ -103,9 +102,8 @@ NSString *const PBViewHasHandledLoadErrorKey = @"PBViewHasHandledLoadError";
             }
         }
         
+        UIView<PBDataFetching> *owner = _owner;
         [client _loadRequest:request notifys:NO complection:^(PBResponse *response) {
-            __strong PBDataFetcher *self = wSelf;
-            UIView<PBDataFetching> *owner = self->_owner;
             BOOL handledError = NO;
             if ([owner respondsToSelector:@selector(view:didFinishLoading:handledError:)]) {
                 [owner view:owner didFinishLoading:response handledError:&handledError];
