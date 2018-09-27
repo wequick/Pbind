@@ -175,9 +175,7 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
     }
     
     // Load request
-    __weak PBClient *wSelf = self;
     [self loadRequest:aRequest success:^(id responseData, PBResponseStatus status) {
-        __strong PBClient *self = wSelf;
         PBResponse *response = [[PBResponse alloc] init];
         response.request = self->_request;
         response.data = responseData;
@@ -202,7 +200,6 @@ static void (^kDebugServer)(PBClient *client, PBRequest *request, void (^complec
             [[NSNotificationCenter defaultCenter] postNotificationName:PBClientDidLoadRequestNotification object:self userInfo:userInfo];
         }
     } failure:^(NSError *error) {
-        __strong PBClient *self = wSelf;
         PBResponse *response = [[PBResponse alloc] init];
         response.request = self->_request;
         response.error = error;
