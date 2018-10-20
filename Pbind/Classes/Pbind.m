@@ -119,30 +119,43 @@ static void (^kJSContextInitializer)(JSContext *context) = nil;
         
         // Check the layout configured in the plist
         UIView *rootView = controller.view;
-        [self enumerateSubviewsForView:rootView usingBlock:^(UIView *subview, BOOL *stop) {
-            if ([reloadedViews containsObject:subview]) {
-                return;
-            }
-            
-            if ([subview.plist isEqualToString:changedPlist]) {
-                [reloadedViews addObject:subview];
-                [subview pb_reloadPlist];
-                *stop = YES;
-            } else if ([subview.pb_layoutName isEqualToString:changedPlist]) {
-                [reloadedViews addObject:subview];
-                [subview pb_reloadLayout];
-            } else if (kPlistReloaders != nil) {
-                for (PBPlistReloader reloader in kPlistReloaders) {
-                    BOOL handled = reloader(rootView, subview, changedPlist, stop);
-                    if (*stop) {
-                        return;
-                    }
-                    if (handled) {
-                        [reloadedViews addObject:subview];
-                    }
+        [self reloadSubviewsInRootView:rootView ifMatchPlist:changedPlist excludeViews:reloadedViews];
+    }];
+    
+    UIWindow *window = [[UIApplication sharedApplication].delegate window];
+    for (UIView *subview in window.subviews) {
+        if ([[[subview class] description] hasPrefix:@"UILayout"]) {
+            continue;
+        }
+        
+        [self reloadSubviewsInRootView:subview ifMatchPlist:changedPlist excludeViews:reloadedViews];
+    }
+}
+
++ (void)reloadSubviewsInRootView:(UIView *)rootView ifMatchPlist:(NSString *)changedPlist excludeViews:(NSMutableSet *)reloadedViews {
+    [self enumerateSubviewsForView:rootView usingBlock:^(UIView *subview, BOOL *stop) {
+        if ([reloadedViews containsObject:subview]) {
+            return;
+        }
+        
+        if ([subview.plist isEqualToString:changedPlist]) {
+            [reloadedViews addObject:subview];
+            [subview pb_reloadPlist];
+            *stop = YES;
+        } else if ([subview.pb_layoutName isEqualToString:changedPlist]) {
+            [reloadedViews addObject:subview];
+            [subview pb_reloadLayout];
+        } else if (kPlistReloaders != nil) {
+            for (PBPlistReloader reloader in kPlistReloaders) {
+                BOOL handled = reloader(rootView, subview, changedPlist, stop);
+                if (*stop) {
+                    return;
+                }
+                if (handled) {
+                    [reloadedViews addObject:subview];
                 }
             }
-        }];
+        }
     }];
 }
 
