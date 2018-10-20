@@ -51,6 +51,7 @@ typedef NS_ENUM(NSInteger, PBTextLinkMatchType) {
     id/*NSString|NSAttributedString*/ _originalText;
     NSString *_originalValue;
     UIFont *_originalFont;
+    UIColor *_originalTextColor;
     NSString *_replacingString;
     NSRange _replacingRange;
     UITextRange *_previousMarkedTextRange;

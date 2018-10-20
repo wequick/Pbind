@@ -150,6 +150,9 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     self.acceptsClearOnAccessory = YES;
     _pbFlags.needsUpdateValue = YES;
     
+    _originalFont = self.font;
+    _originalTextColor = self.textColor;
+    
     UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeUpDown:)];
     swipe.direction = UISwipeGestureRecognizerDirectionDown | UISwipeGestureRecognizerDirectionUp;
     [self addGestureRecognizer:swipe];
@@ -282,6 +285,11 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     if (_placeholderLabel != nil) {
         [_placeholderLabel setFont:font];
     }
+}
+
+- (void)setTextColor:(UIColor *)textColor {
+    [super setTextColor:textColor];
+    _originalTextColor = textColor;
 }
 
 - (void)setEditing:(BOOL)editing {
@@ -891,8 +899,7 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
     }
     
     // Concat attributed text
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text];
-    [attributedText addAttributes:@{NSFontAttributeName: _originalFont} range:NSMakeRange(0, text.length)];
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:[self baseAttributes]];
     if (links != nil) {
         for (PBTextLink *link in links) {
             [attributedText addAttributes:[self mergedAttributes:link->_matcher.attributes] range:link->_textRange];
@@ -910,9 +917,16 @@ NSNotificationName const PBTextViewTextWillBeginEditingNotification = @"PBTextVi
 - (NSDictionary *)mergedAttributes:(NSDictionary *)attributes {
     if (attributes[NSFontAttributeName] == nil) {
         NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:attributes];
-        temp[NSFontAttributeName] = _originalFont;
+        [temp addEntriesFromDictionary:[self baseAttributes]];
         return temp;
     }
+    return attributes;
+}
+
+- (NSDictionary *)baseAttributes {
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithCapacity:2];
+    attributes[NSFontAttributeName] = _originalFont;
+    attributes[NSForegroundColorAttributeName] = _originalTextColor;
     return attributes;
 }
 
