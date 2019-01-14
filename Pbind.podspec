@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Pbind'
-  s.version          = '1.9.6'
+  s.version          = '1.9.8'
   s.summary          = 'A tiny MVVM framework that use Plist to build UIs and Databindings.'
 
 # This description is used to generate tags and improve search results.
@@ -37,6 +37,6 @@ Pbind, a data binder with Plist, which help you to achieve "Less code, More effi
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
+  s.frameworks = 'JavascriptCore'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
